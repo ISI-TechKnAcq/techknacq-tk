@@ -1,0 +1,614 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import sys
+import os
+import codecs
+import string
+import re
+import json
+import requests
+import nltk
+import multiprocessing as mp
+import wikipedia as wiki
+
+from math import log
+from collections import defaultdict, Counter
+from noaho import NoAho
+from bs4 import BeautifulSoup
+from py_bing_search import PyBingSearch
+
+from t.lx import ScrabbleLexicon, StopLexicon
+
+
+# Parameters
+
+# TechKnAcq: '97f607fc347bd27badcddcab8decb51f'
+SD_API_KEY = 'f6e3066a50131cb1b3d600c4bbaa16f2'
+PROCESSES = int(.75 * mp.cpu_count())
+
+
+def main():
+    if len(sys.argv) != 3:
+        print >> sys.stderr, 'Usage: build-corpus [corpus] [output]'
+        sys.exit(1)
+
+    corpus, outdir = sys.argv[1:]
+
+    terms = get_terms(corpus)
+
+#    doc_ids = search_sd(terms)
+#    doc_ids = [x.strip() for x in open('ids.txt').readlines()]
+#    download_sd(doc_ids, outdir)
+#    export_sd(doc_ids, outdir)
+
+    articles = search_wiki(terms[:1000])
+    export_wiki(articles, outdir)
+
+#    bing = PyBingSearch('3YCD6CMNLrnpl62JWWFF4SkBhO5pPR5Im0Q8Z0cz3dE')
+#    for term in terms[:10]:
+#        query = 'domain:edu  & tutoral & "' + term + '" & filetype:pdf'
+#        results, next_uri = bing.search(query, limit=200, format='json')
+#        for result in results:
+#            print ' -', result.title
+#            print '  ', result.url
+#            r = requests.get(result.url)
+#            fname = 'bing-' + re.sub('[ :/]', '_', result.title[:30].lower()) + '.pdf'
+#            with open(os.path.join(outdir, 'bing-download', fname), 'wb') as out:
+#                out.write(r.content)
+
+
+###
+
+
+def get_terms(dirname):
+    """Return an ordered list of technical terms or names of research
+    topics, based on citation graph density."""
+
+    stop = StopLexicon()
+    scrabble = ScrabbleLexicon()
+
+    print '-- Reading corpus.'
+    ngrams = defaultdict(set)
+    citations = defaultdict(set)
+    for i, docname in enumerate(os.listdir(dirname)):
+        if i % 2000 == 0:
+            print '   Document', i
+        with codecs.open(os.path.join(dirname, docname), 'r', 'utf8') as f:
+            j = json.load(f)
+            doc_id = j['info']['id']
+            if not 'title' in j['info']:
+                print '   No title for', docname
+                continue
+            for ng in get_ngrams([j['info']['title']]):
+                if not good_ngram(ng, scrabble, stop):
+                    continue
+                ngrams[ng].add(doc_id)
+            for ref in j['references']:
+                citations[doc_id].add(ref['id'])
+                citations[ref['id']].add(doc_id)
+
+    ngrams = filter_plurals(ngrams)
+
+    ngram_counts = dict([(x, len(ngrams[x])) for x in ngrams])
+    filtered = filter_subsumed(ngram_counts)
+
+    ngrams = score_ngrams(ngrams, citations)
+    ngrams = filter_subsumed(ngrams)
+
+    return [' '.join(x) for x in sorted(ngrams, key=lambda x: ngrams[x],
+                                        reverse=True) if x in filtered]
+
+
+def get_abstracts(dirname, maxdocs=None):
+    """Return a list of abstracts from the JSON documents in the corpus."""
+
+    def get_abstract(j):
+        """Return the abstract of the JSON document as a list of sentences. An
+        abstract is assumed to be the section with the heading 'Abstract' or,
+        if there isn't one, the first section."""
+
+        for section in j['sections'][:3]:
+            if 'heading' not in section or not section['heading']:
+                continue
+            if section['heading'].lower() == 'abstract':
+                return section['text'][:25]
+        if len(j['sections']) > 0:
+            return j['sections'][0]['text'][:25]
+
+        print '   No sections in', docname
+        return []
+
+    abstracts = []
+    for i, docname in enumerate(os.listdir(dirname)):
+        if i % 2000 == 0:
+            print '   Document', i
+        if maxdocs and i >= maxdocs:
+            break
+        with codecs.open(os.path.join(dirname, docname), 'r', 'utf8') as f:
+            abstr = get_abstract(json.load(f))
+            abstracts.append(abstr)
+    return abstracts
+
+
+
+def get_ngrams(l, min=1):
+    """Return the set of all n-grams that occur in the input strings, at
+    least 'min' times."""
+
+    def everygrams(seq):
+        """Return all possible n-grams generated from a sequence of items,
+        as an iterator."""
+        for n in range(1, len(seq) + 1):
+            for ng in nltk.util.ngrams(seq, n):
+                yield ng
+
+    counts = defaultdict(int)
+    for i, s in enumerate(l):
+        if i % 2000 == 0 and i > 0:
+            print '   Item', i
+
+        tokens = nltk.tokenize.word_tokenize(s)
+
+        # Preserve case for acronyms inside n-grams but lowercase everything
+        # else.
+        new_tokens = []
+        for token in tokens:
+            if token.isupper() and len(token) > 1:
+                new_tokens.append(token)
+            else:
+                new_tokens.append(token.lower())
+        tokens = new_tokens
+
+        for ngram in everygrams(tokens):
+            counts[ngram] += 1
+
+    return dict([(x, counts[x]) for x in counts if counts[x] >= min])
+
+
+def good_ngram(ng, scrabble, stop):
+    """Check if the n-gram is good: It's not a single word that would be
+    found in a Scrabble dictionary, and it doesn't begin or end with a
+    stopword."""
+
+    # Remove single-word n-grams that are in the Scrabble dictionary.
+    if len(ng) == 1 and ng[0].lower() in scrabble:
+        if ng[0] not in ['POS', 'HMM', 'EM', 'PENMAN', 'CHILDES', 'AI']:
+            return False
+
+    if len(ng) == 1 and not ng[0][0].isalpha():
+        return False
+
+    # Remove n-grams that begin or end with stopwords, e.g., conjunctions,
+    # prepositions, or personal pronouns.
+    for word in [ng[0], ng[-1]]:
+        if word in stop or word.lower() in stop:
+            return False
+        if word[-1].isdigit() and '-' in word:
+            # E.g., 'COLING-92'.
+            return False
+        if word[-1] == '-' or word[-1] == '.':
+            return False
+
+    # Remove n-grams containing words with no ASCII letters, e.g., numbers or
+    # symbols.
+    for word in ng:
+        if not any(c in string.ascii_letters for c in word):
+            return False
+    return True
+
+
+def filter_plurals(ngrams):
+    """Remove regular plurals if the list includes the singular."""
+
+    remove = set()
+    for ng in ngrams:
+        pl = ng[:-1] + (ng[-1] + 's',)
+        if pl in ngrams:
+            remove.add(pl)
+            try:
+                # Counts
+                ngrams[ng] += ngrams[pl]
+            except TypeError:
+                # Sets of IDs
+                ngrams[ng] |= ngrams[pl]
+        pl = ng[:-1] + (ng[-1] + 'es',)
+        if pl in ngrams:
+            remove.add(pl)
+            try:
+                # Counts
+                ngrams[ng] += ngrams[pl]
+            except TypeError:
+                # Sets of IDs
+                ngrams[ng] |= ngrams[pl]
+    for ng in remove:
+        del ngrams[ng]
+    return ngrams
+
+
+def filter_subsumed(ngrams):
+    """Remove n-grams whose scores are within 25% of subsuming n+1-grams."""
+
+    remove = set()
+    for ng in ngrams:
+        if len(ng) == 1:
+            continue
+        shorter = ng[:-1]
+        if shorter in ngrams and ngrams[shorter] <= ngrams[ng]*1.3:
+            remove.add(shorter)
+        shorter = ng[1:]
+        if shorter in ngrams and ngrams[shorter] <= ngrams[ng]*1.3:
+            remove.add(shorter)
+    for ng in remove:
+        del ngrams[ng]
+    return ngrams
+
+
+def score_ngrams(ngrams, citations, pc=0.9):
+    """Score n-grams based on the density of the citation graph for
+    documents containing them."""
+
+    scores = dict()
+    for t in ngrams:
+        # Build term citation graph.
+        gt_nodes = ngrams[t]
+        gt_edges = {}
+        for node in gt_nodes:
+            dests = citations[node].intersection(gt_nodes)
+            if dests:
+                gt_edges[node] = dests
+
+        # Terms and sets for the equations
+        n = float(len(citations))
+        na = float(len(gt_nodes))
+        nca = float(len(gt_edges.keys()))
+        connected_nodes = gt_edges.keys()
+        other_nodes = gt_nodes - set(gt_edges.keys())
+
+        # Skip ones where there aren't enough nodes to count.
+        if na < 4.0:
+            continue
+
+        # Likelihood of observing a tightly connected term citation graph
+        # if the term is a topic.
+        oh1 = nca * log(pc) + (na - nca) * log(1 - pc)
+
+        # Likelihood of observing a tightly connected term citation graph
+        # if the term is not a topic.
+        term1 = 0.0
+        for i in connected_nodes:
+            li = len(citations[i])
+            term1 += log(1.0 - (1.0 - (na - 1.0)/(n - 1.0))**li)
+        term2 = 0.0
+        for i in other_nodes:
+            li = len(citations[i])
+            term2 += li * log(1.0 - (na - 1.0)/(n - 1.0))
+        oh0 = term1 + term2
+
+        scores[t] = oh1 - oh0
+    return scores
+
+
+###
+
+
+# ScienceDirect API documentation:
+#   http://api.elsevier.com/documentation/SCIDIRSearchAPI.wadl
+
+def chunks(l, n):
+    """Yield successive n-sized chunks from l."""
+    for i in xrange(0, len(l), n):
+        yield l[i:i+n]
+
+
+def search_sd(terms):
+    print '-- Searching ScienceDirect:', len(terms), 'terms.'
+
+    matches = defaultdict(Counter)
+
+    pool = mp.Pool(PROCESSES)
+    for results in pool.imap(search_sd_helper, chunks(terms, 200)):
+        for book in results:
+            matches[book].update(results[book])
+
+    ids = []
+    for book in sorted(matches, key=lambda x: sum([matches[x][y] for y in
+                                                   matches[x]]), reverse=True):
+        book_cnt = sum([matches[book][y] for y in matches[book]])
+        if book_cnt < 4 or len(matches[book]) < 3:
+            continue
+        print ' -', book[1].encode('utf8')
+        for (doc, cnt) in matches[book].most_common():
+            print '  ', doc[1].encode('utf8'), doc[0]
+            ids.append(doc[0])
+        print
+    return ids
+
+
+def search_sd_helper(terms, start=0):
+    matches = defaultdict(Counter)
+
+    query = ' OR '.join(['"%s"' % (x) for x in terms if '*' not in x])
+
+    # Indicators that a chapter should be excluded from results.
+    query += ' AND NOT title("Glossary" OR "Index" OR'
+    query += ' "REMOVED" OR "Dedication" OR "Bibliography" OR'
+    query += ' "Copyright" OR "Front matter" OR "Frontmatter" OR'
+    query += ' "Contributors" OR "Acknowledgment" OR '
+    query += ' "Acknowledgement" OR "Preface" OR "References" OR '
+    query += ' "Postface" OR "Edited by" OR "List of" OR "About the" OR '
+    query += ' "Abbreviations" OR "Further Reading" OR "Guide to Readers" OR '
+    query += ' "Foreword" OR "Editors")'
+
+    url = 'http://api.elsevier.com/content/search/index:SCIDIR'
+    vals = {'query': query,
+            'subscribed': True,
+            'oa': True,
+            'content': 'nonserial',
+            'count': 200,
+            'start': start,
+            'apikey': SD_API_KEY}
+    r = requests.get(url, params=vals)
+
+    if r.status_code != requests.codes.ok:
+        print >> sys.stderr, '!! Server Error:', r.status_code
+        if len(terms) > 2:
+            print >> sys.stderr, '   Splitting list of', len(terms), 'terms.'
+            results = search_sd_helper(terms[:len(terms)//2])
+            for book in results:
+                matches[book].update(results[book])
+            results = search_sd_helper(terms[len(terms)//2:])
+            for book in results:
+                matches[book].update(results[book])
+        else:
+            print >> sys.stderr, terms
+        return matches
+
+    j = r.json()['search-results']
+    for entry in j['entry']:
+        try:
+            pii = re.sub('[-().]', '', entry['pii'])
+            doc_title = entry['dc:title']
+            isbn = entry['prism:isbn']
+            pub_title = entry['prism:publicationName']
+        except KeyError:
+            continue
+
+        # Filtering where we need to be more precise than is possible with
+        # the 'AND NOT' filters in the query.
+        if doc_title in ['Appendix', 'Abstract']:
+            continue
+
+        matches[(isbn, pub_title)][(pii, doc_title)] += 1
+
+    # Subsequent page of results.
+    # if start == 0:
+    #     links = j['link']
+    #     if type(links) is dict:
+    #         links = [links]
+    #     for link in links:
+    #         if link['@ref'] == 'next':
+    #             more_matches = search_sd_helper(terms,start=200)
+    #             for k in more_matches:
+    #                 matches[k].update(more_matches[k])
+
+    return matches
+
+
+def download_sd(ids, outdir):
+    print '-- Downloading ScienceDirect documents.'
+
+    url = 'http://api.elsevier.com/content/article/pii:'
+
+    for pii in ids:
+        file_path = os.path.join(outdir, 'sd-download', pii + '-full.xml')
+        if os.path.exists(file_path):
+            print '   Already downloaded:', pii + '-full.xml'
+        else:
+            print '   Downloading:', pii + '-full.xml'
+            with codecs.open(file_path, 'w', 'utf8') as out:
+                vals = {'view': 'full',
+                        'apikey': SD_API_KEY}
+                r = requests.get(url + pii, params=vals)
+                if r.status_code != requests.codes.ok:
+                    print >> sys.stderr, '!! Server Error:', r.status_code
+                    print >> sys.stderr, r.text
+                    continue
+                out.write(r.text)
+
+        file_path = os.path.join(outdir, 'sd-download', pii + '-ref.xml')
+        if os.path.exists(file_path):
+            print '   Already downloaded:', pii + '-ref.xml'
+        else:
+            print '   Downloading:', pii + '-ref.xml'
+            with codecs.open(file_path, 'w', 'utf8') as out:
+                vals = {'view': 'ref',
+                        'apikey': SD_API_KEY}
+                r = requests.get(url + pii, params=vals)
+                if r.status_code != requests.codes.ok:
+                    print >> sys.stderr, '!! Server Error:', r.status_code
+                    print >> sys.stderr, r.text
+                    continue
+                out.write(r.text)
+
+
+def export_sd(ids, outdir):
+    print '-- Exporting ScienceDirect documents.'
+
+    st = nltk.data.load('tokenizers/punkt/english.pickle')
+    abbrevs = ['dr', 'vs', 'mr', 'mrs', 'prof', 'e.g', 'i.e', 'viz', 'cf']
+    st._params.abbrev_types.update(abbrevs)
+
+    for pii in ids:
+        f = os.path.join(outdir, 'sd-download', pii + '-full.xml')
+        xml = codecs.open(f, 'r', 'utf8').read()
+        # BeautifulSoup chokes on XML namespaces.
+        xml = re.sub("([</])(dc|prism|ce|sb|xocs):", r"\1", xml)
+        soup = BeautifulSoup(xml)
+
+        fname = 'sd-' + pii.lower() + '.json'
+
+        title = ''
+        if soup.title:
+            title = soup.title.string.strip()
+        book = ''
+        if soup.publicationname:
+            book = soup.publicationname.string.strip()
+
+        base_url = 'http://www.sciencedirect.com/science/article/pii/'
+        j = {'info': {'authors': [x.string.strip() for x in soup('creator')],
+                      'id': pii,
+                      'title': title,
+                      'book': book,
+                      'url': base_url + pii},
+             'references': [],
+             'sections': []}
+
+        if soup.abstract:
+            new_sec = {'heading': 'Abstract',
+                       'text': st.tokenize(soup.abstract.get_text())}
+            j['sections'].append(new_sec)
+
+        for section in soup.find_all('section'):
+            new_sec = {'text': []}
+            heading = section.find('section-title')
+            if heading and heading.string:
+                new_sec['heading'] = heading.string.strip()
+            for p in section.find_all(['para', 'simple-para']):
+                new_sec['text'] += st.tokenize(p.get_text())
+            j['sections'].append(new_sec)
+
+        if soup.rawtext and len(j['sections']) < 3:
+            j['sections'].append({'text': st.tokenize(soup.rawtext.get_text())})
+
+        with codecs.open(os.path.join(outdir, fname), 'w', 'utf8') as out:
+            out.write(json.dumps(j, sort_keys=True, indent=2,
+                                 ensure_ascii=False))
+
+
+###
+
+
+def export_wiki(articles, outdir):
+    print '-- Exporting', len(articles), 'articles.'
+
+    sentence_tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
+    abbrevs = ['dr', 'vs', 'mr', 'mrs', 'prof', 'e.g', 'i.e', 'viz', 'cf']
+    sentence_tokenizer._params.abbrev_types.update(abbrevs)
+
+    for article in articles:
+        article_id = article.title.replace(' ', '_')
+        fname = 'wiki-' + re.sub('[:/]', '_', article_id.lower()) + '.json'
+        with open(os.path.join(outdir, fname), 'w') as out:
+            j = {'info': {'authors': ['Wikipedia'],
+                          'id': article_id,
+                          'title': article.title,
+                          'book': 'Wikipedia',
+                          'url': article.url},
+                 'references': [x.replace(' ', '_') for x in article.links],
+                 'sections': []}
+
+            # As of 2015-11-07, the wikipedia package's parsing of
+            # sections is broken. We work around it. Note that for the moment
+            # we divide the text into sections and sentences but not by
+            # paragraph. I'll probably want to change this later.
+            sections = []
+            for line in article.content.split('\n'):
+                if line.startswith('==') and line.endswith('=='):
+                    heading = re.match('=+ (.+)(Edit)? =+$', line).group(1)
+                    sections.append({'heading': heading,
+                                     'text': []})
+                elif len(sections) == 0:
+                    sections.append({'text': sentence_tokenizer.tokenize(line,
+                                               realign_boundaries=True)})
+                else:
+                    sections[-1]['text'] += sentence_tokenizer.tokenize(line,
+                                               realign_boundaries=True)
+
+            j['sections'] = sections
+
+            out.write(json.dumps(j, sort_keys=True, indent=2,
+                                 ensure_ascii=False).encode('utf8'))
+
+
+def search_wiki(terms):
+    print '-- Searching Wikipedia:', len(terms), 'terms.'
+
+    titles = set()
+    for i, term in enumerate(terms):
+        if i % 100 == 0:
+            print '   Term', i
+        titles.update(set(wiki.search(term, results=2)))
+
+    print '-- Retrieving:', len(titles), 'matches.'
+
+    trie = NoAho()
+    for term in terms:
+        trie.add(term)
+
+    cats = Counter()
+    articles = []
+
+    for title in titles:
+        if title.startswith('Category:') or 'List of ' in title or \
+           'Index of ' in title:
+            continue
+
+        try:
+            article = wiki.page(title)
+            text = article.content.lower()
+        except:
+            continue
+
+        if len(text) < 200:
+            continue
+
+        articles.append(article)
+
+        # Does it contain at least four terms in the text?
+        if len(list(trie.findall_long(text))) > 3:
+            for c in article.categories:
+                cats[c] += 1
+
+    print '-- Choosing categories.'
+
+    top_cats = set()
+    for (cat, c) in cats.most_common(100):
+        if cat.startswith('All ') or cat.startswith('Pages ') or \
+           cat.startswith('Wikipedia ') or cat.endswith(' stubs') or \
+           'articles' in cat.lower() or 'category' in cat.lower() or \
+           'CS1' in cat or 'US-centric' in cat or 'USA-centric' in cat or \
+           cat == 'Living people' or cat.endswith('Wikidata') or \
+           cat.startswith('Use '):
+            continue
+        print '   Cat:', cat, c
+        top_cats.add(cat)
+
+    print '-- Choosing articles.'
+
+    good_articles = set()
+    for article in articles:
+        try:
+            cats = article.categories
+            text = article.content.lower()
+        except:
+            # I don't know why this sometimes fails. Probably it's due to
+            # a bad response from Wikipedia.
+            continue
+        if not top_cats.intersection(set(cats)):
+            print '   - Bad cats:', article.title.encode('utf8')
+            continue
+        if len(list(trie.findall_long(text))) < 3:
+            print '   - Not enough terms:', article.title.encode('utf8')
+            continue
+        print '   + Good:', article.title.encode('utf8')
+        good_articles.add(article)
+
+    return good_articles
+
+
+###
+
+
+if __name__ == '__main__':
+    main()
