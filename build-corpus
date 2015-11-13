@@ -29,7 +29,7 @@ from t.lx import ScrabbleLexicon, StopLexicon
 
 # Parameters
 
-PROCESSES = int(.75 * mp.cpu_count())
+PROCESSES = int(.5 * mp.cpu_count())
 
 SD_API_KEY = open(os.path.expanduser('~/.t/sd.txt')).read().strip()
 BING_API_KEY = open(os.path.expanduser('~/.t/bing.txt')).read().strip()
@@ -487,74 +487,74 @@ def export_sd(ids):
 
 
 def search_wiki(terms):
-    print '-- Searching Wikipedia:', len(terms), 'terms.'
+    """Search Wikipedia for articles containing specified terms."""
+
+    print '-- Search Wikipedia:', len(terms), 'terms.'
 
     titles = set()
-    for i, term in enumerate(terms):
-        if i % 100 == 0:
-            print '   Term', i
-        titles.update(set(wiki.search(term, results=2)))
+    for result in pool.imap(search_wiki_helper, terms):
+        titles.update(result)
 
-    print '-- Retrieving:', len(titles), 'matches.'
+    print '-- Download Wikipedia:', len(titles), 'articles.'
 
-    trie = NoAho()
-    for term in terms:
-       trie.add(term)
+    categories = defaultdict(set)
+    docs_high = []
+    docs_low = []
 
-    cats = Counter()
-    articles = []
-
-    for title in titles:
-        if title.startswith('Category:') or 'List of ' in title or \
-           'Index of ' in title:
-            continue
-
-        try:
-            article = wiki.page(title)
-            text = article.content.lower()
-        except:
-            continue
-
-        if len(text) < 200:
-            continue
-
-        articles.append(article)
-
-        # Does it contain at least four terms in the text?
-        if len(list(trie.findall_long(text))) > 3:
-            for c in article.categories:
-                cats[c] += 1
+    curried = partial(get_wiki_article, terms=terms)
+    for article, count, unique in pool.imap(curried, titles):
+        if article:
+            if count >= 15 and unique >= 5:
+                docs_high.append(article)
+                try:
+                    for c in article.categories:
+                        categories[c].add(article.title)
+                except:
+                    pass
+            if count >= 4 and unique >= 2:
+                docs_low.append(article)
+            else:
+                print '   - Not enough terms:', article.title.encode('utf8')
 
     print '-- Choosing categories.'
 
-    top_cats = set()
-    for (cat, c) in cats.most_common(100):
+    covered = set()
+    top_categories = set()
+    for cat in sorted(categories, key=lambda x: len(categories[x]),
+                      reverse=True):
+        if len(covered) >= .6 * len(docs_high):
+            break
+        if len(categories[cat]) == 1:
+            break
         if cat.startswith('All ') or cat.startswith('Pages ') or \
-           cat.startswith('Wikipedia ') or cat.endswith(' stubs') or \
+           'Wikipedia' in cat or cat.endswith(' stubs') or \
            'articles' in cat.lower() or 'category' in cat.lower() or \
            'CS1' in cat or 'US-centric' in cat or 'USA-centric' in cat or \
-           cat == 'Living people' or cat.endswith('Wikidata') or \
-           cat.startswith('Use '):
+           'iving people' in cat or 'Wikidata' in cat or \
+           cat.startswith('Use ') or cat.endswith(' alumni') or \
+           'University' in cat or cat.endswith(' deaths') or \
+           cat.endswith(' births') or 'ompanies' in cat or \
+           'EngvarB' in cat or 'ambiguous time' in cat or \
+           'needing confirmation' in cat:
             continue
-        print '   Cat:', cat, c
-        top_cats.add(cat)
+        if len(top_categories) > .65 * len(categories):
+            break
+        print '  - Selected category:', cat.encode('utf8'), len(categories[cat])
+        top_categories.add(cat)
+        covered |= categories[cat]
 
     print '-- Choosing articles.'
 
     good_articles = set()
-    for article in articles:
+    for article in docs_low:
         try:
-            cats = article.categories
+            categories = article.categories
             text = article.content.lower()
         except:
-            # I don't know why this sometimes fails. Probably it's due to
-            # a bad response from Wikipedia.
             continue
-        if not top_cats.intersection(set(cats)):
-            print '   - Bad cats:', article.title.encode('utf8')
-            continue
-        if len(list(trie.findall_long(text))) < 3:
-            print '   - Not enough terms:', article.title.encode('utf8')
+
+        if not top_categories.intersection(set(categories)):
+            print '   - Bad categories:', article.title.encode('utf8')
             continue
         print '   + Good:', article.title.encode('utf8')
         good_articles.add(article)
@@ -562,46 +562,82 @@ def search_wiki(terms):
     return good_articles
 
 
+def search_wiki_helper(term):
+    return set(wiki.search(term, results=2))
+
+
+def get_wiki_article(title, terms):
+    # We can't pass the trie as an argument when using multiprocessing.
+    trie = NoAho()
+    for term in terms:
+       trie.add(term)
+
+    if title.startswith('Category:') or 'List of ' in title or 'Index of ' \
+       in title:
+        return (None, None, None)
+
+    try:
+        article = wiki.page(title)
+        text = article.content.lower()
+    except:
+        return (None, None, None)
+
+    if len(text) < 200:
+        return (None, None, None)
+
+    matches = [text[x[0]:x[1]] for x in trie.findall_long(text)]
+
+    return (article, len(matches), len(set(matches)))
+
+
 def export_wiki(articles):
     print '-- Exporting', len(articles), 'articles.'
 
+    pool.map(export_wiki_article, articles)
+
+
+def export_wiki_article(article):
     sentence_tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
-    abbrevs = ['dr', 'vs', 'mr', 'mrs', 'prof', 'e.g', 'i.e', 'viz', 'cf']
+    abbrevs = ['dr', 'vs', 'mr', 'mrs', 'prof', 'e.g', 'i.e', 'viz', 'cf',
+               'proc']
     sentence_tokenizer._params.abbrev_types.update(abbrevs)
 
-    for article in articles:
-        article_id = article.title.replace(' ', '_')
-        fname = 'wiki-' + re.sub('[:/]', '_', article_id.lower()) + '.json'
-        with open(os.path.join(outdir, fname), 'w') as out:
-            j = {'info': {'authors': ['Wikipedia'],
-                          'id': article_id,
-                          'title': article.title,
-                          'book': 'Wikipedia',
-                          'url': article.url},
-                 'references': [x.replace(' ', '_') for x in article.links],
-                 'sections': []}
+    article_id = article.title.replace(' ', '_')
+    fname = 'wiki-' + re.sub('[:/]', '_', article_id.lower()) + '.json'
+    try:
+        j = {'info': {'authors': ['Wikipedia'],
+                      'id': article_id,
+                      'title': article.title,
+                      'book': 'Wikipedia',
+                      'url': article.url},
+             'references': [x.replace(' ', '_') for x in article.links],
+             'sections': []}
+    except:
+        return
 
-            # As of 2015-11-07, the wikipedia package's parsing of
-            # sections is broken. We work around it. Note that for the moment
-            # we divide the text into sections and sentences but not by
-            # paragraph. I'll probably want to change this later.
-            sections = []
-            for line in article.content.split('\n'):
-                if line.startswith('==') and line.endswith('=='):
-                    heading = re.match('=+ (.+)(Edit)? =+$', line).group(1)
-                    sections.append({'heading': heading,
-                                     'text': []})
-                elif len(sections) == 0:
-                    sections.append({'text': sentence_tokenizer.tokenize(line,
-                                               realign_boundaries=True)})
-                else:
-                    sections[-1]['text'] += sentence_tokenizer.tokenize(line,
-                                               realign_boundaries=True)
+    # As of 2015-11-07, the wikipedia package's parsing of
+    # sections is broken. We work around it. Note that for the moment
+    # we divide the text into sections and sentences but not by
+    # paragraph. I'll probably want to change this later.
+    sections = []
+    for line in article.content.split('\n'):
+        if line.startswith('==') and line.endswith('=='):
+            line = line.replace('Edit =', ' =')
+            heading = re.match('=+ (.+) =+$', line).group(1)
+            sections.append({'heading': heading,
+                             'text': []})
+        elif len(sections) == 0:
+            sections.append({'text': sentence_tokenizer.tokenize(line,
+                                          realign_boundaries=True)})
+        else:
+            sections[-1]['text'] += sentence_tokenizer.tokenize(line,
+                                           realign_boundaries=True)
 
-            j['sections'] = sections
+    j['sections'] = sections
 
-            out.write(json.dumps(j, sort_keys=True, indent=2,
-                                 ensure_ascii=False).encode('utf8'))
+    with open(os.path.join(outdir, fname), 'w') as out:
+        out.write(json.dumps(j, sort_keys=True, indent=2,
+                             ensure_ascii=False).encode('utf8'))
 
 
 ###
@@ -708,13 +744,13 @@ if __name__ == '__main__':
 
     terms = get_terms(corpus)
 
-#    docs_by_book = search_sd(terms)
-#    download_sd(docs_by_book)
-#    doc_ids = filter_sd(docs_by_book, terms)
-#    export_sd(doc_ids)
+    docs_by_book = search_sd(terms)
+    download_sd(docs_by_book)
+    doc_ids = filter_sd(docs_by_book, terms)
+    export_sd(doc_ids)
 
     articles = search_wiki(terms[:1000])
-#    export_wiki(articles)
+    export_wiki(articles)
 
 #    tutorials = search_bing(terms[:100])
 #    download_bing(tutorials)
