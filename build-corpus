@@ -646,17 +646,46 @@ def export_wiki_article(article):
 def search_bing(terms):
     print '-- Searching bing for', len(terms), 'terms.'
 
-    bing = PyBingSearch(BING_API_KEY)
+    tutorials = Counter()
+    for results in pool.imap(search_bing_term, terms):
+        for result in results:
+            title, url = result
+            tutorials[result] += 1
 
-    # The package uses an outdated URL.
-    bing.QUERY_URL = 'https://api.datamarket.azure.com/Bing/Search/v1/Web' \
-                 + '?Query={}&$top={}&$skip={}&$format={}'
+    multimatch = set([x for x in tutorials if tutorials[x] > 1])
+    print '--', len(multimatch), 'multiple matches.'
 
+    by_site = defaultdict(set)
+    for (title, url) in multimatch:
+        site = re.sub('^https?://(www.)?', '', url)
+        site = re.sub('\.edu/.+', '.edu', site)
+        by_site[site].add((title, url))
+    print '--', len(by_site), 'sites.'
+
+    choices = set()
+    for site in sorted(by_site, key=lambda x: len(by_site[x]), reverse=True):
+        if len(choices) >= .65 * len(multimatch):
+            break
+        choices |= by_site[site]
+        for result in by_site[site]:
+            print ' -', title.encode('utf8')
+            print '  ', url.encode('utf8')[:70]
+
+    print '--', len(choices), 'choices.'
+
+    return choices
+
+
+def search_bing_term(term):
     tutorials = set()
-    for term in terms:
-        print
-        print '-- Search:', term
-        query = 'domain:edu  & tutorial & "' + term + '" & filetype:pdf -vitae -cv -syllabus -intitle:references -url:acl'
+    try:
+        bing = PyBingSearch(BING_API_KEY)
+
+        # The package uses an outdated URL.
+        bing.QUERY_URL = 'https://api.datamarket.azure.com/Bing/Search/v1/Web' \
+                     + '?Query={}&$top={}&$skip={}&$format={}'
+
+        query = 'domain:edu & tutorial & "' + term.encode('utf8') + '" & filetype:pdf -vitae -cv -syllabus -intitle:references -url:acl -resume -programme -dissertation -thesis -phd'
         results, _ = bing.search(query, limit=10)
         for result in results:
             if re.search('[a-z][0-9][0-9]-[0-9][0-9][0-9][0-9]\.pdf',
@@ -665,69 +694,76 @@ def search_bing(terms):
                 continue
             if 'acl' in result.url.lower():
                 continue
-            print ' -', result.title.encode('utf8')
-            print '  ', result.url
-            tutorials.add(result)
-    print
+            tutorials.add((result.title, result.url))
+    except:
+        print >> sys.stderr, 'Unexpected error:', sys.exc_info()[0]
+        pass
+
     return tutorials
 
 
 def download_bing(tutorials):
     print '-- Downloading', len(tutorials), 'tutorials.'
 
-    map(download_tutorial, tutorials)
+    pool.map(download_tutorial, tutorials)
 
 
 def download_tutorial(tutorial):
-    fname = 'bing-' + re.sub('[ :/()]', '_', tutorial.title[:40].lower())
+    title, url = tutorial
+
+    fname = 'bing-' + re.sub('[ :/()]', '_', title[:40].lower())
     fname = fname.replace('_...', '')
     fname = re.sub('_+', '_', fname)
     file_path = os.path.join(outdir, 'bing-download', fname + '.pdf')
 
-    if os.path.exists(file_path):
-        print '   Already downloaded:', tutorial.url
-    else:
-        print '   Download:', tutorial.url
+    if not os.path.exists(file_path):
         try:
-            r = requests.get(tutorial.url)
+            r = requests.get(url)
             with open(file_path, 'wb') as out:
                 out.write(r.content)
         except:
-            print ' ! Download failed.'
+            print >> sys.stderr, ' ! Download failed.'
             if os.path.exists(file_path):
                 os.remove(file_path)
 
 
 def export_bing(tutorials):
-    print '-- Exporting tutorials.'
+    print '-- Exporting', len(tutorials), 'tutorials.'
+    pool.map(export_tutorial, tutorials)
+
+
+def export_tutorial(tutorial):
+    title, url = tutorial
+
+    fname = 'bing-' + re.sub('[ :/()]', '_', title[:40].lower())
+    fname = fname.replace('_...', '')
+    fname = re.sub('_+', '_', fname)
+
+    if not os.path.exists(os.path.join(outdir, 'bing-download', fname+'.pdf')):
+        print >> sys.stderr, ' ! Missing download:', fname.encode('utf8')
+        return
 
     st = nltk.data.load('tokenizers/punkt/english.pickle')
     abbrevs = ['dr', 'vs', 'mr', 'mrs', 'prof', 'e.g', 'i.e', 'viz', 'cf']
     st._params.abbrev_types.update(abbrevs)
 
-    for tutorial in tutorials:
-        fname = 'bing-' + re.sub('[ :/()]', '_', tutorial.title[:40].lower())
-        fname = fname.replace('_...', '')
-        fname = re.sub('_+', '_', fname)
+    with open(os.path.join(outdir, 'bing-download', fname + '.pdf')) as pdf:
+        try:
+            text = ' '.join(slate.PDF(pdf)).decode('utf8')
+        except:
+            return
 
-        if not os.path.exists(os.path.join(outdir, 'bing-download', fname + '.pdf')):
-            continue
+    if len(text) < 400 or not ' the ' in text:
+        return
 
-        with open(os.path.join(outdir, 'bing-download', fname + '.pdf')) as pdf:
-            text = ' '.join(slate.PDF(pdf))
-        if len(text) < 200:
-            continue
-        if not ' the ' in text:
-            continue
-        with open(os.path.join(outdir, fname + '.json'), 'w') as out:
-            j = {'info': {'id': fname,
-                          'title': tutorial.title,
-                          'url': tutorial.url,
-                          'authors': '',
-                          'book': ''},
-                 'sections': [{'text': st.tokenize(text)}]}
-            out.write(json.dumps(j, sort_keys=True, indent=2,
-                                 ensure_ascii=True))
+    with open(os.path.join(outdir, fname + '.json'), 'w') as out:
+        j = {'info': {'id': fname,
+                      'title': title,
+                      'url': url,
+                      'authors': '',
+                      'book': ''},
+             'sections': [{'text': st.tokenize(text)}]}
+        out.write(json.dumps(j, sort_keys=True, indent=2, ensure_ascii=False).encode('utf8'))
 
 
 ###
@@ -749,9 +785,9 @@ if __name__ == '__main__':
     doc_ids = filter_sd(docs_by_book, terms)
     export_sd(doc_ids)
 
-    articles = search_wiki(terms[:1000])
+    articles = search_wiki(terms)
     export_wiki(articles)
 
-#    tutorials = search_bing(terms[:100])
-#    download_bing(tutorials)
-#    export_bing(tutorials)
+    tutorials = search_bing(terms[:1000])
+    download_bing(tutorials)
+    export_bing(tutorials
