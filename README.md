@@ -11,7 +11,7 @@ Tools:
   Given a directory of PDF or text files, create a directory of JSON files
   containing the document text, annotated with the features needed to judge
   their inclusion in a reading list, and download related encyclopedia
-  articles and book chapters.
+  articles, book chapters, and tutorials.
 - *concept-graph*:
   Analyze a JSON corpus to return a JSON graph of concepts and documents
   with the features and links needed to find documents for a reading
@@ -27,20 +27,38 @@ Libraries:
 
 ## Requirements
 
-T is only supported on Linux and OS X.
+T runs on Linux and OS X.
 
-Python packages:
-- NLTK: nltk.org/install.html
-- Wikipedia: https://pypi.python.org/pypi/wikipedia/
-- NoAho
-- BeautifulSoup4
-- py-bing-search
+Required Python packages:
+- NLTK: Natural language processing.
+- Wikipedia: Interface to Wikipedia API.
+- NoAho: Efficient trie-based text search.
+- BeautifulSoup4: XML processing.
+- py-bing-search: Web search API.
+- slate: Extract text from PDF files.
+
+All required Python packages should be installed with 'pip'.
+
+Slate depends on pdfminer. To deal with version incompatibility:
+
+    sudo pip install --upgrade --ignore-installed slate==0.3 pdfminer==20110515
+
+See https://github.com/timClicks/slate/issues/5 for updates.
+
+
+## Configuration
+
+Put your ScienceDirect API key in ~/.t/sd.txt.
+
+Put your Bing API key in ~/.t/bing.txt.
+
+Change the file permissions to keep these keys private.
+
 
 ## Design Principles
 
 - Most problems should not be research questions.
-- Take things always by their smooth handle: Try published methods
-  first.
+- Take things always by their smooth handle: Try published methods first.
 - Deviate from a published method when there is a measurable improvement
   worthy of publishing.
 - Create as few runnable tools as possible.
