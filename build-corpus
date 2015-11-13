@@ -456,18 +456,24 @@ def export_sd(ids):
              'sections': []}
 
         if soup.abstract:
-            new_sec = {'heading': 'Abstract',
-                       'text': st.tokenize(soup.abstract.get_text())}
-            j['sections'].append(new_sec)
+            sec = {'heading': 'Abstract',
+                   'text': st.tokenize(soup.find('abstract-sec').get_text())}
+            j['sections'].append(sec)
 
         for section in soup.find_all('section'):
-            new_sec = {'text': []}
+            sec = {'text': []}
             heading = section.find('section-title')
             if heading and heading.string:
-                new_sec['heading'] = heading.string.strip()
+                sec['heading'] = heading.string.strip()
             for p in section.find_all(['para', 'simple-para']):
-                new_sec['text'] += st.tokenize(p.get_text())
-            j['sections'].append(new_sec)
+                sec['text'] += st.tokenize(p.get_text())
+            j['sections'].append(sec)
+
+        if len(j['sections']) == 0:
+            sec = {'text': []}
+            for p in section.find_all(['para', 'simple-para']):
+                sec['text'] += st.tokenize(p.get_text())
+            j['sections'].append(sec)
 
         if soup.rawtext and len(j['sections']) < 3:
             j['sections'].append({'text': st.tokenize(soup.rawtext.get_text())})
