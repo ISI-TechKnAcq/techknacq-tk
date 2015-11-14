@@ -12,6 +12,14 @@ class Corpus:
     def __init__(self):
         self.docs = set()
 
+    def load(self, dirname):
+        for docname in os.listdir(dirname):
+            filepath = os.path.join(dirname, docname)
+            if os.path.isdir(filepath):
+                continue
+            d = Document(file=filepath)
+            self.add(d)
+
     def add(self, doc):
         self.docs.add(doc)
 
@@ -32,14 +40,19 @@ class Corpus:
 
 
 class Document:
-    def __init__(self):
-        self.id = ''
-        self.authors = []
-        self.title = ''
-        self.book = ''
-        self.url = ''
-        self.sections = []
-        self.references = set()
+    def __init__(self, file=None):
+        if file:
+            j = json.load(io.open(file, 'r', encoding='utf8'))
+        else:
+            j = {'info': {}}
+
+        self.id = j['info'].get('id', '')
+        self.authors = j['info'].get('authors', [])
+        self.title = j['info'].get('title', '')
+        self.book = j['info'].get('book', '')
+        self.url = j['info'].get('url', '')
+        self.references = set(j.get('references', []))
+        self.sections = j.get('sections', [])
 
     def json(self):
         """Return a JSON string representing the document."""
@@ -62,4 +75,9 @@ class Document:
 
     def text(self):
         """Return a plain-text string representing the document."""
-        pass
+        t = str()
+        for s in self.sections:
+            if 'heading' in s:
+                t += '\n\n' + s['heading'] + '\n\n'
+            t += '\n'.join(s['text'])
+        return t
