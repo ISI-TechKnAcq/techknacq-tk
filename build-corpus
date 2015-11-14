@@ -4,9 +4,11 @@
 # T: Build Corpus
 # Jonathan Gordon
 
+from __future__ import unicode_literals
+
 import sys
 import os
-import codecs
+import io
 import string
 import re
 import json
@@ -24,6 +26,7 @@ from bs4 import BeautifulSoup
 import wikipedia as wiki
 from py_bing_search import PyBingSearch
 
+from t.corpus import Corpus, Document
 from t.lx import ScrabbleLexicon, StopLexicon
 
 
@@ -51,7 +54,7 @@ def get_terms(dirname):
     for i, docname in enumerate(os.listdir(dirname)):
         if i % 2000 == 0:
             print '   Document', i
-        with codecs.open(os.path.join(dirname, docname), 'r', 'utf8') as f:
+        with io.open(os.path.join(dirname, docname), 'r', encoding='utf8') as f:
             j = json.load(f)
             doc_id = j['info']['id']
             if not 'title' in j['info']:
@@ -102,7 +105,7 @@ def get_abstracts(dirname, maxdocs=None):
             print '   Document', i
         if maxdocs and i >= maxdocs:
             break
-        with codecs.open(os.path.join(dirname, docname), 'r', 'utf8') as f:
+        with io.open(os.path.join(dirname, docname), 'r', encoding='utf8') as f:
             abstr = get_abstract(json.load(f))
             abstracts.append(abstr)
     return abstracts
@@ -361,7 +364,7 @@ def download_sd_doc(pii, view='full'):
             print >> sys.stderr, r.text
             return
 
-        with codecs.open(file_path, 'w', 'utf8') as out:
+        with io.open(file_path, 'w', encoding='utf8') as out:
             out.write(r.text)
 
 
@@ -418,7 +421,7 @@ def count_terms_in_doc(pii, terms):
         trie.add(term)
 
     file_path = os.path.join(outdir, 'sd-download', pii + '-full.xml')
-    text = codecs.open(file_path, 'r', 'utf8').read().lower()
+    text = io.open(file_path, 'r', encoding='utf8').read().lower()
     matches = [text[x[0]:x[1]] for x in trie.findall_long(text)]
 
     return [pii, len(matches), len(set(matches))]
@@ -428,37 +431,32 @@ def export_sd(ids):
     print '-- Exporting ScienceDirect documents.'
 
     st = nltk.data.load('tokenizers/punkt/english.pickle')
-    abbrevs = ['dr', 'vs', 'mr', 'mrs', 'prof', 'e.g', 'i.e', 'viz', 'cf']
+    abbrevs = ['dr', 'vs', 'mr', 'mrs', 'prof', 'e.g', 'i.e', 'viz', 'cf',
+               'proc', 'b']
     st._params.abbrev_types.update(abbrevs)
+
+    c = Corpus()
 
     for pii in ids:
         f = os.path.join(outdir, 'sd-download', pii + '-full.xml')
-        xml = codecs.open(f, 'r', 'utf8').read()
+        xml = io.open(f, 'r', encoding='utf8').read()
         xml = re.sub("([</])(dc|prism|ce|sb|xocs):", r"\1", xml)
         soup = BeautifulSoup(xml)
 
-        fname = 'sd-' + pii.lower() + '.json'
-
-        title = ''
+        d = Document()
+        d.id = 'sd-' + pii.lower()
+        d.authors = [x.string.strip() for x in soup('creator')]
         if soup.title:
-            title = soup.title.string.strip()
-        book = ''
+            d.title = soup.title.string.strip()
         if soup.publicationname:
-            book = soup.publicationname.string.strip()
-
-        base_url = 'http://www.sciencedirect.com/science/article/pii/'
-        j = {'info': {'authors': [x.string.strip() for x in soup('creator')],
-                      'id': pii,
-                      'title': title,
-                      'book': book,
-                      'url': base_url + pii},
-             'references': [],
-             'sections': []}
+            d.book = soup.publicationname.string.strip()
+        d.url = 'http://www.sciencedirect.com/science/article/pii/' + pii
+        d.authors = [x.string.strip() for x in soup('creator')]
 
         if soup.abstract:
             sec = {'heading': 'Abstract',
                    'text': st.tokenize(soup.find('abstract-sec').get_text())}
-            j['sections'].append(sec)
+            d.sections.append(sec)
 
         for section in soup.find_all('section'):
             sec = {'text': []}
@@ -467,20 +465,20 @@ def export_sd(ids):
                 sec['heading'] = heading.string.strip()
             for p in section.find_all(['para', 'simple-para']):
                 sec['text'] += st.tokenize(p.get_text())
-            j['sections'].append(sec)
+            d.sections.append(sec)
 
-        if len(j['sections']) == 0:
+        if len(d.sections) == 0:
             sec = {'text': []}
             for p in section.find_all(['para', 'simple-para']):
                 sec['text'] += st.tokenize(p.get_text())
-            j['sections'].append(sec)
+            d.sections.append(sec)
 
-        if soup.rawtext and len(j['sections']) < 3:
-            j['sections'].append({'text': st.tokenize(soup.rawtext.get_text())})
+        if soup.rawtext and len(d.sections) < 3:
+            d.sections.append({'text': st.tokenize(soup.rawtext.get_text())})
 
-        with codecs.open(os.path.join(outdir, fname), 'w', 'utf8') as out:
-            out.write(json.dumps(j, sort_keys=True, indent=2,
-                                 ensure_ascii=False))
+        c.add(d)
+
+    c.export(outdir)
 
 
 ###
@@ -599,19 +597,19 @@ def export_wiki(articles):
 def export_wiki_article(article):
     sentence_tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
     abbrevs = ['dr', 'vs', 'mr', 'mrs', 'prof', 'e.g', 'i.e', 'viz', 'cf',
-               'proc']
+               'proc', 'b']
     sentence_tokenizer._params.abbrev_types.update(abbrevs)
 
-    article_id = article.title.replace(' ', '_')
-    fname = 'wiki-' + re.sub('[:/]', '_', article_id.lower()) + '.json'
+    d = Document()
+    d.id = 'wiki-' + re.sub('[:/ ]', '_', article.title.lower())
+    d.authors = ['Wikipedia']
+    d.title = article.title
+    d.book = 'Wikipedia'
+
     try:
-        j = {'info': {'authors': ['Wikipedia'],
-                      'id': article_id,
-                      'title': article.title,
-                      'book': 'Wikipedia',
-                      'url': article.url},
-             'references': [x.replace(' ', '_') for x in article.links],
-             'sections': []}
+        d.url = article.url
+        d.references = ['wiki-' + re.sub('[:/ ]', '_', x.lower())
+                        for x in article.links]
     except:
         return
 
@@ -619,25 +617,22 @@ def export_wiki_article(article):
     # sections is broken. We work around it. Note that for the moment
     # we divide the text into sections and sentences but not by
     # paragraph. I'll probably want to change this later.
-    sections = []
     for line in article.content.split('\n'):
         if line.startswith('==') and line.endswith('=='):
             line = line.replace('Edit =', ' =')
             heading = re.match('=+ (.+) =+$', line).group(1)
-            sections.append({'heading': heading,
-                             'text': []})
-        elif len(sections) == 0:
-            sections.append({'text': sentence_tokenizer.tokenize(line,
+            d.sections.append({'heading': heading,
+                               'text': []})
+        elif len(d.sections) == 0:
+            d.sections.append({'text': sentence_tokenizer.tokenize(line,
                                           realign_boundaries=True)})
         else:
-            sections[-1]['text'] += sentence_tokenizer.tokenize(line,
+            d.sections[-1]['text'] += sentence_tokenizer.tokenize(line,
                                            realign_boundaries=True)
 
-    j['sections'] = sections
-
-    with open(os.path.join(outdir, fname), 'w') as out:
-        out.write(json.dumps(j, sort_keys=True, indent=2,
-                             ensure_ascii=False).encode('utf8'))
+    with io.open(os.path.join(outdir, d.id + '.json'), 'w',
+                 encoding='utf8') as out:
+        out.write(d.json())
 
 
 ###
@@ -744,7 +739,8 @@ def export_tutorial(tutorial):
         return
 
     st = nltk.data.load('tokenizers/punkt/english.pickle')
-    abbrevs = ['dr', 'vs', 'mr', 'mrs', 'prof', 'e.g', 'i.e', 'viz', 'cf']
+    abbrevs = ['dr', 'vs', 'mr', 'mrs', 'prof', 'e.g', 'i.e', 'viz', 'cf',
+               'proc', 'b']
     st._params.abbrev_types.update(abbrevs)
 
     with open(os.path.join(outdir, 'bing-download', fname + '.pdf')) as pdf:
@@ -756,14 +752,17 @@ def export_tutorial(tutorial):
     if len(text) < 400 or not ' the ' in text:
         return
 
-    with open(os.path.join(outdir, fname + '.json'), 'w') as out:
-        j = {'info': {'id': fname,
-                      'title': title,
-                      'url': url,
-                      'authors': '',
-                      'book': ''},
-             'sections': [{'text': st.tokenize(text)}]}
-        out.write(json.dumps(j, sort_keys=True, indent=2, ensure_ascii=False).encode('utf8'))
+    d = Document()
+    d.id = fname
+    d.title = title
+    d.url = url
+    d.authors = []
+    d.book = ''
+    d.sections = [{'text': st.tokenize(text)}]
+
+    with io.open(os.path.join(outdir, fname + '.json'), 'w',
+                 encoding='utf8') as out:
+        out.write(d.json)
 
 
 ###
@@ -788,6 +787,6 @@ if __name__ == '__main__':
     articles = search_wiki(terms)
     export_wiki(articles)
 
-    tutorials = search_bing(terms[:1000])
+    tutorials = search_bing(terms[:5])
     download_bing(tutorials)
     export_bing(tutorials

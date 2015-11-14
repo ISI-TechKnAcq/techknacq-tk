@@ -1,6 +1,8 @@
 # T: Lx
 # Jonathan Gordon
 
+from __future__ import unicode_literals
+
 import sys
 import os
 
@@ -12,7 +14,7 @@ except AttributeError:
 DATA_DIR = os.path.join(MOD_PATH, 'data')
 
 
-class Lexicon():
+class Lexicon:
     def __init__(self, listname):
         """Read a specified lexicon from disk."""
         self.words = set()
