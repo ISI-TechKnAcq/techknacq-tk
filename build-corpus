@@ -467,10 +467,11 @@ def export_sd(ids):
                 sec['text'] += st.tokenize(p.get_text())
             d.sections.append(sec)
 
-        if len(d.sections) == 0:
+        if len(d.sections) <= 1:
             sec = {'text': []}
-            for p in section.find_all(['para', 'simple-para']):
-                sec['text'] += st.tokenize(p.get_text())
+            if soup.sections:
+                for p in soup.sections.find_all(['para', 'simple-para']):
+                    sec['text'] += st.tokenize(p.get_text())
             d.sections.append(sec)
 
         if soup.rawtext and len(d.sections) < 3:
@@ -513,7 +514,6 @@ def search_wiki(terms):
                 docs_low.append(article)
             else:
                 print '   - Not enough terms:', article.title.encode('utf8')
-
     print '-- Choosing categories.'
 
     covered = set()
@@ -789,4 +789,4 @@ if __name__ == '__main__':
 
     tutorials = search_bing(terms[:5])
     download_bing(tutorials)
-    export_bing(tutorials
+    export_bing(tutorials)
