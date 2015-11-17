@@ -6,6 +6,9 @@ from __future__ import unicode_literals
 import os
 import io
 import json
+import datetime
+
+from xml.sax.saxutils import escape
 
 
 class Corpus:
@@ -54,6 +57,7 @@ class Document:
         self.references = set(j.get('references', []))
         self.sections = j.get('sections', [])
 
+
     def json(self):
         """Return a JSON string representing the document."""
         doc = {
@@ -69,15 +73,42 @@ class Document:
         }
         return json.dumps(doc, indent=2, sort_keys=True, ensure_ascii=False)
 
+
     def bioc(self):
         """Return a BioC XML string representing the document."""
-        pass
+
+        t = '''
+<?xml? version="1.0" encoding="UTF-8"?>
+<!DOCTYPE collection SYSTEM "BioC.dtd">
+<collection>
+<source>TechKnAcq</source>
+<key>techknacq.key</key>
+'''
+        t += '<date>' + datetime.date.today().isoformat() + '</date>'
+        t += '<document>'
+        t += '<id>' + self.id + '</id>'
+        t += '<passage><offset>0</offset>'
+        t += '<infon key="authors">' + ', '.join(self.authors) + '</infon>'
+        t += '<infon key="title">' + self.title + '</infon>'
+        t += '<infon key="book">' + self.book + '</infon>'
+        t += '<infon key="url">' + self.url + '</infon>'
+        t += '<text>'
+        for s in self.sections:
+            if s.get('heading'):
+                t += escape(s['heading']) + ' '
+            t += escape(' '.join(s['text']))
+            if s != self.sections[-1]:
+                t += ' '
+        t += '</text>'
+        t += '</passage></document></collection>'
+        return t
+
 
     def text(self):
         """Return a plain-text string representing the document."""
-        t = str()
+        t = self.title + '\n\n'
         for s in self.sections:
-            if 'heading' in s:
+            if 'heading' in s and s['heading']:
                 t += '\n\n' + s['heading'] + '\n\n'
             t += '\n'.join(s['text'])
         return t
