@@ -39,15 +39,15 @@ class Corpus:
             if format == 'json':
                 with io.open(os.path.join(outdir, d.id + '.json'), 'w',
                              encoding='utf8') as out:
-                    out.write(d.json())
+                    out.write(d.json() + '\n')
             elif format == 'bioc':
                 with io.open(os.path.join(outdir, d.id + '.xml'), 'w',
                              encoding='utf8') as out:
-                    out.write(d.bioc())
+                    out.write(d.bioc() + '\n')
             elif format == 'text':
                 with io.open(os.path.join(outdir, d.id + '.txt'), 'w',
                              encoding='utf8') as out:
-                    out.write(d.text())
+                    out.write(d.text() + '\n')
 
 
 class Document:
@@ -76,7 +76,7 @@ class Document:
                 'book': self.book,
                 'url': self.url
             },
-            'references': list(self.references),
+            'references': sorted(list(self.references)),
             'sections': self.sections
         }
         return json.dumps(doc, indent=2, sort_keys=True, ensure_ascii=False)
