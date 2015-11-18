@@ -41,32 +41,23 @@ BING_API_KEY = open(os.path.expanduser('~/.t/bing.txt')).read().strip()
 ###
 
 
-def get_terms(dirname):
+def get_terms(corpus):
     """Return an ordered list of technical terms or names of research
     topics, based on citation graph density."""
 
     stop = StopLexicon()
     scrabble = ScrabbleLexicon()
 
-    print '-- Reading corpus.'
     ngrams = defaultdict(set)
     citations = defaultdict(set)
-    for i, docname in enumerate(os.listdir(dirname)):
-        if i % 2000 == 0:
-            print '   Document', i
-        with io.open(os.path.join(dirname, docname), 'r', encoding='utf8') as f:
-            j = json.load(f)
-            doc_id = j['info']['id']
-            if not 'title' in j['info']:
-                print '   No title for', docname
-                continue
-            for ng in get_ngrams([j['info']['title']]):
-                if not good_ngram(ng, scrabble, stop):
-                    continue
-                ngrams[ng].add(doc_id)
-            for ref in j['references']:
-                citations[doc_id].add(ref['id'])
-                citations[ref['id']].add(doc_id)
+
+    for doc in corpus:
+        for ng in get_ngrams([doc.title]):
+            if good_ngram(ng, scrabble, stop):
+                ngrams[ng].add(doc.id)
+        for ref in doc.references:
+            citations[doc.id].add(ref)
+            citations[ref].add(doc.id)
 
     ngrams = filter_plurals(ngrams)
 
@@ -78,38 +69,6 @@ def get_terms(dirname):
 
     return [' '.join(x) for x in sorted(ngrams, key=lambda x: ngrams[x],
                                         reverse=True) if x in filtered]
-
-
-def get_abstracts(dirname, maxdocs=None):
-    """Return a list of abstracts from the JSON documents in the corpus."""
-
-    def get_abstract(j):
-        """Return the abstract of the JSON document as a list of sentences. An
-        abstract is assumed to be the section with the heading 'Abstract' or,
-        if there isn't one, the first section."""
-
-        for section in j['sections'][:3]:
-            if 'heading' not in section or not section['heading']:
-                continue
-            if section['heading'].lower() == 'abstract':
-                return section['text'][:25]
-        if len(j['sections']) > 0:
-            return j['sections'][0]['text'][:25]
-
-        print '   No sections in', docname
-        return []
-
-    abstracts = []
-    for i, docname in enumerate(os.listdir(dirname)):
-        if i % 2000 == 0:
-            print '   Document', i
-        if maxdocs and i >= maxdocs:
-            break
-        with io.open(os.path.join(dirname, docname), 'r', encoding='utf8') as f:
-            abstr = get_abstract(json.load(f))
-            abstracts.append(abstr)
-    return abstracts
-
 
 
 def get_ngrams(l, min=1):
@@ -124,10 +83,7 @@ def get_ngrams(l, min=1):
                 yield ng
 
     counts = defaultdict(int)
-    for i, s in enumerate(l):
-        if i % 2000 == 0 and i > 0:
-            print '   Item', i
-
+    for s in l:
         tokens = nltk.tokenize.word_tokenize(s)
 
         # Preserve case for acronyms inside n-grams but lowercase everything
@@ -226,14 +182,14 @@ def filter_subsumed(ngrams):
     return ngrams
 
 
-def score_ngrams(ngrams, citations, pc=0.9):
+def score_ngrams(ngram_docs, citations, pc=0.9):
     """Score n-grams based on the density of the citation graph for
     documents containing them."""
 
     scores = dict()
-    for t in ngrams:
+    for ng in ngram_docs:
         # Build term citation graph.
-        gt_nodes = ngrams[t]
+        gt_nodes = ngram_docs[ng]
         gt_edges = {}
         for node in gt_nodes:
             dests = citations[node].intersection(gt_nodes)
@@ -267,7 +223,7 @@ def score_ngrams(ngrams, citations, pc=0.9):
             term2 += li * log(1.0 - (na - 1.0)/(n - 1.0))
         oh0 = term1 + term2
 
-        scores[t] = oh1 - oh0
+        scores[ng] = oh1 - oh0
     return scores
 
 
@@ -427,12 +383,10 @@ def count_terms_in_doc(pii, terms):
     return [pii, len(matches), len(set(matches))]
 
 
-def export_sd(ids):
-    print '-- Exporting ScienceDirect documents.'
+def get_sd_docs(ids):
+    sd_corpus = Corpus()
 
     st = SentTokenizer()
-
-    c = Corpus()
 
     for pii in ids:
         f = os.path.join(outdir, 'sd-download', pii + '-full.xml')
@@ -474,9 +428,9 @@ def export_sd(ids):
         if soup.rawtext and len(d.sections) < 3:
             d.sections.append({'text': st.tokenize(soup.rawtext.get_text())})
 
-        c.add(d)
+        sd_corpus.add(d)
 
-    c.export(outdir)
+    return sd_corpus
 
 
 ###
@@ -585,10 +539,12 @@ def get_wiki_article(title, terms):
     return (article, len(matches), len(set(matches)))
 
 
-def export_wiki(articles):
-    print '-- Exporting', len(articles), 'articles.'
-
-    pool.map(export_wiki_article, articles)
+def get_wiki_docs(articles):
+    wiki_corpus = Corpus()
+    for doc in pool.imap(export_wiki_article, articles):
+        if doc:
+            wiki_corpus.add(doc)
+    return wiki_corpus
 
 
 def export_wiki_article(article):
@@ -603,28 +559,20 @@ def export_wiki_article(article):
         d.references = ['wiki-' + re.sub('[:/ ]', '_', x.lower())
                         for x in article.links]
     except:
-        return
+        return None
 
     st = SentTokenizer()
-
-    # As of 2015-11-07, the wikipedia package's parsing of
-    # sections is broken. We work around it. Note that for the moment
-    # we divide the text into sections and sentences but not by
-    # paragraph. I'll probably want to change this later.
     for line in article.content.split('\n'):
         if line.startswith('==') and line.endswith('=='):
             line = line.replace('Edit =', ' =')
-            heading = re.match('=+ (.+) =+$', line).group(1)
+            heading = re.match('=+ (.+) =+$', line).group(1).strip()
             d.sections.append({'heading': heading,
                                'text': []})
         elif len(d.sections) == 0:
             d.sections.append({'text': st.tokenize(line)})
         else:
             d.sections[-1]['text'] += st.tokenize(line)
-
-    with io.open(os.path.join(outdir, d.id + '.json'), 'w',
-                 encoding='utf8') as out:
-        out.write(d.json())
+    return d
 
 
 ###
@@ -714,9 +662,12 @@ def download_tutorial(tutorial):
                 os.remove(file_path)
 
 
-def export_bing(tutorials):
-    print '-- Exporting', len(tutorials), 'tutorials.'
-    pool.map(export_tutorial, tutorials)
+def get_bing_docs(tutorials):
+    bing_corpus = Corpus()
+    for doc in pool.imap(export_tutorial, tutorials):
+        if doc:
+            bing_corpus.add(doc)
+    return bing_corpus
 
 
 def export_tutorial(tutorial):
@@ -743,15 +694,11 @@ def export_tutorial(tutorial):
     d.id = fname
     d.title = title
     d.url = url
-    d.authors = []
-    d.book = ''
 
     st = SentTokenizer()
     d.sections = [{'text': st.tokenize(text)}]
 
-    with io.open(os.path.join(outdir, fname + '.json'), 'w',
-                 encoding='utf8') as out:
-        out.write(d.json)
+    return d
 
 
 ###
@@ -759,23 +706,28 @@ def export_tutorial(tutorial):
 
 if __name__ == '__main__':
     if len(sys.argv) != 3:
-        print >> sys.stderr, 'Usage: build-corpus [corpus] [output]'
+        print >> sys.stderr, 'Usage: build-corpus [indir] [outdir]'
         sys.exit(1)
 
-    corpus, outdir = sys.argv[1:]
+    indir, outdir = sys.argv[1:]
+
+    c = Corpus()
+    c.load(indir)
 
     pool = mp.Pool(PROCESSES)
 
-    terms = get_terms(corpus)
+    terms = get_terms(c)
 
     docs_by_book = search_sd(terms)
     download_sd(docs_by_book)
     doc_ids = filter_sd(docs_by_book, terms)
-    export_sd(doc_ids)
+    c |= get_sd_docs(doc_ids)
 
     articles = search_wiki(terms)
-    export_wiki(articles)
+    c |= get_wiki_docs(articles)
 
     tutorials = search_bing(terms[:5])
     download_bing(tutorials)
-    export_bing(tutorials)
+    c |= get_bing_docs(tutorials)
+
+    c.export(outdir)
