@@ -27,7 +27,7 @@ import wikipedia as wiki
 from py_bing_search import PyBingSearch
 
 from t.corpus import Corpus, Document
-from t.lx import ScrabbleLexicon, StopLexicon
+from t.lx import ScrabbleLexicon, StopLexicon, SentTokenizer
 
 
 # Parameters
@@ -430,10 +430,7 @@ def count_terms_in_doc(pii, terms):
 def export_sd(ids):
     print '-- Exporting ScienceDirect documents.'
 
-    st = nltk.data.load('tokenizers/punkt/english.pickle')
-    abbrevs = ['dr', 'vs', 'mr', 'mrs', 'prof', 'e.g', 'i.e', 'viz', 'cf',
-               'proc', 'b']
-    st._params.abbrev_types.update(abbrevs)
+    st = SentTokenizer()
 
     c = Corpus()
 
@@ -595,11 +592,6 @@ def export_wiki(articles):
 
 
 def export_wiki_article(article):
-    sentence_tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
-    abbrevs = ['dr', 'vs', 'mr', 'mrs', 'prof', 'e.g', 'i.e', 'viz', 'cf',
-               'proc', 'b']
-    sentence_tokenizer._params.abbrev_types.update(abbrevs)
-
     d = Document()
     d.id = 'wiki-' + re.sub('[:/ ]', '_', article.title.lower())
     d.authors = ['Wikipedia']
@@ -613,6 +605,8 @@ def export_wiki_article(article):
     except:
         return
 
+    st = SentTokenizer()
+
     # As of 2015-11-07, the wikipedia package's parsing of
     # sections is broken. We work around it. Note that for the moment
     # we divide the text into sections and sentences but not by
@@ -624,11 +618,9 @@ def export_wiki_article(article):
             d.sections.append({'heading': heading,
                                'text': []})
         elif len(d.sections) == 0:
-            d.sections.append({'text': sentence_tokenizer.tokenize(line,
-                                          realign_boundaries=True)})
+            d.sections.append({'text': st.tokenize(line)})
         else:
-            d.sections[-1]['text'] += sentence_tokenizer.tokenize(line,
-                                           realign_boundaries=True)
+            d.sections[-1]['text'] += st.tokenize(line)
 
     with io.open(os.path.join(outdir, d.id + '.json'), 'w',
                  encoding='utf8') as out:
@@ -738,11 +730,6 @@ def export_tutorial(tutorial):
         print >> sys.stderr, ' ! Missing download:', fname.encode('utf8')
         return
 
-    st = nltk.data.load('tokenizers/punkt/english.pickle')
-    abbrevs = ['dr', 'vs', 'mr', 'mrs', 'prof', 'e.g', 'i.e', 'viz', 'cf',
-               'proc', 'b']
-    st._params.abbrev_types.update(abbrevs)
-
     with open(os.path.join(outdir, 'bing-download', fname + '.pdf')) as pdf:
         try:
             text = ' '.join(slate.PDF(pdf)).decode('utf8')
@@ -758,6 +745,8 @@ def export_tutorial(tutorial):
     d.url = url
     d.authors = []
     d.book = ''
+
+    st = SentTokenizer()
     d.sections = [{'text': st.tokenize(text)}]
 
     with io.open(os.path.join(outdir, fname + '.json'), 'w',

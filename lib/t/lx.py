@@ -5,6 +5,8 @@ from __future__ import unicode_literals
 
 import sys
 import os
+import nltk
+
 
 # Path to data files.
 try:
@@ -35,3 +37,18 @@ class StopLexicon(Lexicon):
     def __init__(self):
         """Read a stoplist from disk."""
         Lexicon.__init__(self, listname=os.path.join(DATA_DIR, 'stop.txt'))
+
+
+####
+
+
+class SentTokenizer:
+    abbrevs = ['dr', 'vs', 'mr', 'mrs', 'prof', 'e.g', 'i.e', 'viz', 'cf',
+               'proc', 'b']
+
+    def __init__(self):
+        self.tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
+        self.tokenizer._params.abbrev_types.update(self.abbrevs)
+
+    def tokenize(self, text):
+        return self.tokenizer.tokenize(text, realign_boundaries=True)
