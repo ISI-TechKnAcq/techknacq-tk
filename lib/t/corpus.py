@@ -26,6 +26,14 @@ class Corpus:
     def add(self, doc):
         self.docs.add(doc)
 
+    def __ior__(self, other):
+        self.docs |= other.docs
+        return self
+
+    def __iter__(self):
+        for x in self.docs:
+            yield x
+
     def export(self, outdir, format='json'):
         for d in self.docs:
             if format == 'json':
