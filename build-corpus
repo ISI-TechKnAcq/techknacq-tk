@@ -397,6 +397,11 @@ def get_sd_docs(ids):
         d = Document()
         d.id = 'sd-' + pii.lower()
         d.authors = [x.string.strip() for x in soup('creator')]
+
+        if not d.authors and soup.editor:
+            d.authors = [x.get_text() + ' (ed.)' for x in
+                         soup.editor('authors')]
+
         if soup.title:
             d.title = soup.title.string.strip()
         if soup.publicationname:
@@ -420,13 +425,16 @@ def get_sd_docs(ids):
 
         if len(d.sections) <= 1:
             sec = {'text': []}
-            if soup.sections:
-                for p in soup.sections.find_all(['para', 'simple-para']):
-                    sec['text'] += st.tokenize(p.get_text())
+            for p in soup.find_all(['para', 'simple-para']):
+                sec['text'] += st.tokenize(p.get_text())
             d.sections.append(sec)
 
         if soup.rawtext and len(d.sections) < 3:
             d.sections.append({'text': st.tokenize(soup.rawtext.get_text())})
+
+        if len(d.text()) < 200:
+            print ' ! Skip:', d.title, d.id, '. Missing text.'
+            continue
 
         sd_corpus.add(d)
 
@@ -723,11 +731,11 @@ if __name__ == '__main__':
     doc_ids = filter_sd(docs_by_book, terms)
     c |= get_sd_docs(doc_ids)
 
-    articles = search_wiki(terms)
-    c |= get_wiki_docs(articles)
+#    articles = search_wiki(terms)
+#    c |= get_wiki_docs(articles)
 
-    tutorials = search_bing(terms[:5])
-    download_bing(tutorials)
-    c |= get_bing_docs(tutorials)
+#    tutorials = search_bing(terms[:5])
+#    download_bing(tutorials)
+#    c |= get_bing_docs(tutorials)
 
     c.export(outdir)
