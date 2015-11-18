@@ -301,6 +301,9 @@ def download_sd(docs_by_book):
 
     pool.map(download_sd_doc, doc_ids)
 
+    curried = partial(download_sd_doc, view='ref')
+    pool.map(curried, doc_ids)
+
 
 def download_sd_doc(pii, view='full'):
     """Download the ScienceDirect document with the specified PII unless
@@ -308,7 +311,7 @@ def download_sd_doc(pii, view='full'):
 
     file_path = os.path.join(outdir, 'sd-download', pii+'-'+view+'.xml')
     if not os.path.exists(file_path):
-        print '   Download:', pii + '-full.xml'
+        print '   Download:', pii + '-' + view + '.xml'
 
         url = 'http://api.elsevier.com/content/article/pii:' + pii
         vals = {'view': view,
@@ -435,6 +438,12 @@ def get_sd_docs(ids):
         if len(d.text()) < 200:
             print ' ! Skip:', d.title, d.id, '. Missing text.'
             continue
+
+        f = os.path.join(outdir, 'sd-download', pii + '-ref.xml')
+        if os.path.exists(f):
+            reftext = io.open(f, 'r', encoding='utf8').read()
+            d.references = list(set([x.replace('PII:', 'sd-') for x in
+                                     re.findall('PII:[^<]+', reftext)]))
 
         sd_corpus.add(d)
 
