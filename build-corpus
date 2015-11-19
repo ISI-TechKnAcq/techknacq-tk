@@ -237,11 +237,6 @@ def score_ngrams(ngram_docs, citations, pc=0.9):
 def search_sd(terms):
     """Search ScienceDirect for documents containing specified terms."""
 
-    def chunks(l, n):
-        """Yield successive n-sized chunks from l."""
-        for i in xrange(0, len(l), n):
-            yield l[i:i+n]
-
     print '-- Search ScienceDirect:', len(terms), 'terms.'
 
     books = defaultdict(set)
@@ -598,60 +593,67 @@ def export_wiki_article(article):
 def search_bing(terms):
     print '-- Searching bing for', len(terms), 'terms.'
 
+    titles = {}
     tutorials = Counter()
-    for results in pool.imap(search_bing_term, terms):
-        for result in results:
-            title, url = result
-            tutorials[result] += 1
+    for results in pool.imap(search_bing_term, chunks(terms, 20)):
+        for (url, title) in results:
+            tutorials[url] += 1
+            titles[url] = title
 
-    multimatch = set([x for x in tutorials if tutorials[x] > 1])
-    print '--', len(multimatch), 'multiple matches.'
-
-    by_site = defaultdict(set)
-    for (title, url) in multimatch:
-        site = re.sub('^https?://(www.)?', '', url)
-        site = re.sub('\.edu/.+', '.edu', site)
-        by_site[site].add((title, url))
-    print '--', len(by_site), 'sites.'
+    # Remove singletons.
+    tutorials -= Counter(dict([(x, 1) for x in list(tutorials)]))
 
     choices = set()
-    for site in sorted(by_site, key=lambda x: len(by_site[x]), reverse=True):
-        if len(choices) >= .65 * len(multimatch):
+    for (t, count) in tutorials.most_common():
+        if len(choices) >= .65 * len(tutorials):
             break
-        choices |= by_site[site]
-        for result in by_site[site]:
-            print ' -', title.encode('utf8')
-            print '  ', url.encode('utf8')[:70]
+        choices.add((t, titles[t]))
+        print ' -', titles[t].encode('utf8')
+        print '  ', t.encode('utf8')[:70]
 
     print '--', len(choices), 'choices.'
 
     return choices
 
 
-def search_bing_term(term):
+def search_bing_term(terms):
+    titles = {}
     tutorials = set()
     try:
         bing = PyBingSearch(BING_API_KEY)
 
-        # The package uses an outdated URL.
-        bing.QUERY_URL = 'https://api.datamarket.azure.com/Bing/Search/v1/Web' \
-                     + '?Query={}&$top={}&$skip={}&$format={}'
+# If using an API key for the general Bing Search API, instead of the
+# Web-only one:
+#        bing.QUERY_URL = 'https://api.datamarket.azure.com/Bing/Search/v1/Web' \
+#                     + '?Query={}&$top={}&$skip={}&$format={}'
 
-        query = 'domain:edu & tutorial & "' + term.encode('utf8') + '" & filetype:pdf -vitae -cv -syllabus -intitle:references -url:acl -resume -programme -dissertation -thesis -phd'
-        results, _ = bing.search(query, limit=10)
+        joined_terms = '("' + '" | "'.join(terms) + '")'
+        query = 'domain:edu & filetype:pdf & ' + \
+                '("this tutorial" | "tutorial on" | "tutorial workbook") & ' + \
+                joined_terms + ' ' + \
+                '-vitae -cv -syllabus -intitle:references -url:acl ' + \
+                '-intitle:resume -programme -dissertation -thesis -phd ' + \
+                '-schedule -"intelligent tutoring" -intitle:chapter ' + \
+                '-"table of contents"'
+        results, _ = bing.search(query, limit=100)
         for result in results:
             if re.search('[a-z][0-9][0-9]-[0-9][0-9][0-9][0-9]\.pdf',
                          result.url.lower()):
                 # Looks like an ACL paper.
                 continue
+            if not 'pdf' in result.url.lower():
+                continue
+            if not 'edu' in result.url.lower():
+                continue
             if 'acl' in result.url.lower():
                 continue
-            tutorials.add((result.title, result.url))
+            tutorials.add(result.url)
+            titles[result.url] = result.title
     except:
         print >> sys.stderr, 'Unexpected error:', sys.exc_info()[0]
         pass
 
-    return tutorials
+    return set([(x, titles[x]) for x in tutorials])
 
 
 def download_bing(tutorials):
@@ -661,7 +663,7 @@ def download_bing(tutorials):
 
 
 def download_tutorial(tutorial):
-    title, url = tutorial
+    url, title = tutorial
 
     fname = 'bing-' + re.sub('[ :/()]', '_', title[:40].lower())
     fname = fname.replace('_...', '')
@@ -688,7 +690,7 @@ def get_bing_docs(tutorials):
 
 
 def export_tutorial(tutorial):
-    title, url = tutorial
+    url, title = tutorial
 
     fname = 'bing-' + re.sub('[ :/()]', '_', title[:40].lower())
     fname = fname.replace('_...', '')
@@ -698,13 +700,16 @@ def export_tutorial(tutorial):
         print >> sys.stderr, ' ! Missing download:', fname.encode('utf8')
         return
 
-    with open(os.path.join(outdir, 'bing-download', fname + '.pdf')) as pdf:
+    with open(os.path.join(outdir, 'bing-download', fname+'.pdf'), 'rb') as pdf:
         try:
-            text = ' '.join(slate.PDF(pdf)).decode('utf8')
-        except:
+            text = ' '.join([x.decode('utf8') for x in slate.PDF(pdf)])
+        except Exception as e:
+            print >> sys.stderr, ' ! Failed to get text:', fname.encode('utf8')
+            print >> sys.stderr, e
             return
 
     if len(text) < 400 or not ' the ' in text:
+        print >> sys.stderr, ' ! Not enough good text:', fname.encode('utf8')
         return
 
     d = Document()
@@ -717,6 +722,13 @@ def export_tutorial(tutorial):
 
     return d
 
+
+###
+
+def chunks(l, n):
+    """Yield successive n-sized chunks from l."""
+    for i in xrange(0, len(l), n):
+        yield l[i:i+n]
 
 ###
 
@@ -740,11 +752,11 @@ if __name__ == '__main__':
     doc_ids = filter_sd(docs_by_book, terms)
     c |= get_sd_docs(doc_ids)
 
-#    articles = search_wiki(terms)
-#    c |= get_wiki_docs(articles)
+    articles = search_wiki(terms)
+    c |= get_wiki_docs(articles)
 
-#    tutorials = search_bing(terms[:5])
-#    download_bing(tutorials)
-#    c |= get_bing_docs(tutorials)
+    tutorials = search_bing(terms[:1000])
+    download_bing(tutorials)
+    c |= get_bing_docs(tutorials)
 
     c.export(outdir)
