@@ -11,7 +11,7 @@ import re
 import json
 import requests
 import nltk
-import slate
+import subprocess
 import multiprocessing as mp
 
 from math import log
@@ -694,20 +694,28 @@ def export_tutorial(tutorial):
     fname = 'bing-' + re.sub('[ :/()]', '_', title[:40].lower())
     fname = fname.replace('_...', '')
     fname = re.sub('_+', '_', fname)
+    fname = ''.join(filter(lambda x: x in string.printable, fname))
 
-    if not os.path.exists(os.path.join(outdir, 'bing-download', fname+'.pdf')):
+    print('- Export:', fname + '.json')
+
+    pdfpath = os.path.join(outdir, 'bing-download', fname + '.pdf')
+
+    if not os.path.exists(pdfpath):
         print(' ! Missing download:', fname, file=sys.stderr)
         return
 
-    with open(os.path.join(outdir, 'bing-download', fname+'.pdf'), 'rb') as pdf:
-        try:
-            text = ' '.join([x.decode('utf8') for x in slate.PDF(pdf)])
-        except Exception as e:
-            print(' ! Failed to get text:', fname, file=sys.stderr)
-            print(e, file=sys.stderr)
-            return
+    try:
+        text = subprocess.check_output(['pdftotext', pdfpath, '-'], timeout=10)
+    except:
+        text = None
 
-    if len(text) < 400 or not ' the ' in text:
+    if not text:
+        print(' ! Failed to get text:', fname, file=sys.stderr)
+        return
+
+    text = text.decode('utf8')
+    text = re.sub('\n+', ' ', text)
+    if len(text) < 800 or not ' the ' in text:
         print(' ! Not enough good text:', fname, file=sys.stderr)
         return
 
@@ -722,11 +730,12 @@ def export_tutorial(tutorial):
     return d
 
 
+
 ###
 
 def chunks(l, n):
     """Yield successive n-sized chunks from l."""
-    for i in xrange(0, len(l), n):
+    for i in range(0, len(l), n):
         yield l[i:i+n]
 
 ###
