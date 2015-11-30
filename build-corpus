@@ -1,10 +1,7 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python3
 
 # T: Build Corpus
 # Jonathan Gordon
-
-from __future__ import unicode_literals
 
 import sys
 import os
@@ -237,7 +234,7 @@ def score_ngrams(ngram_docs, citations, pc=0.9):
 def search_sd(terms):
     """Search ScienceDirect for documents containing specified terms."""
 
-    print '-- Search ScienceDirect:', len(terms), 'terms.'
+    print('-- Search ScienceDirect:', len(terms), 'terms.')
 
     books = defaultdict(set)
     for result in pool.imap(search_sd_helper, chunks(terms, 200)):
@@ -292,7 +289,7 @@ def download_sd(docs_by_book):
         for pii, _ in docs_by_book[book]:
             doc_ids.add(pii)
 
-    print '-- Download ScienceDirect:', len(doc_ids), 'documents.'
+    print('-- Download ScienceDirect:', len(doc_ids), 'documents.')
 
     pool.map(download_sd_doc, doc_ids)
 
@@ -306,7 +303,7 @@ def download_sd_doc(pii, view='full'):
 
     file_path = os.path.join(outdir, 'sd-download', pii+'-'+view+'.xml')
     if not os.path.exists(file_path):
-        print '   Download:', pii + '-' + view + '.xml'
+        print('   Download:', pii + '-' + view + '.xml')
 
         url = 'http://api.elsevier.com/content/article/pii:' + pii
         vals = {'view': view,
@@ -314,8 +311,9 @@ def download_sd_doc(pii, view='full'):
         r = requests.get(url, params=vals)
 
         if r.status_code != requests.codes.ok:
-            print >> sys.stderr, '!! ScienceDirect server error:', r.status_code
-            print >> sys.stderr, r.text
+            print('!! ScienceDirect server error:', r.status_code,
+                  file=sys.stderr)
+            print(r.text, file=sys.stderr)
             return
 
         with io.open(file_path, 'w', encoding='utf8') as out:
@@ -328,7 +326,7 @@ def filter_sd(docs_by_book, terms):
     matching documents in the entire book."""
 
     num_docs = sum([len(docs_by_book[book]) for book in docs_by_book])
-    print '-- Filter ScienceDirect:', num_docs, 'documents.'
+    print('-- Filter ScienceDirect:', num_docs, 'documents.')
 
     books = Counter()
     docs_high = set()
@@ -344,7 +342,7 @@ def filter_sd(docs_by_book, terms):
             if count >= 4 and unique >= 2:
                 docs_low.add(pii)
 
-    print '-- Potential ScienceDirect:', len(docs_low), 'documents.'
+    print('-- Potential ScienceDirect:', len(docs_low), 'documents.')
 
     filtered = set()
     for (book, _) in books.most_common():
@@ -352,15 +350,15 @@ def filter_sd(docs_by_book, terms):
         if len(filtered) > .65 * len(docs_high):
             break
 
-        print
-        print ' -', book_title.encode('utf8')
+        print()
+        print(' -', book_title.encode('utf8'))
 
         for pii, doc_title in docs_by_book[book]:
             if pii in docs_low:
-                print '  ', doc_title.encode('utf8'), pii
+                print('  ', doc_title.encode('utf8'), pii)
                 filtered.add(pii)
 
-    print '-- ScienceDirect:', len(filtered), 'documents selected.'
+    print('-- ScienceDirect:', len(filtered), 'documents selected.')
 
     return filtered
 
@@ -431,7 +429,7 @@ def get_sd_docs(ids):
             d.sections.append({'text': st.tokenize(soup.rawtext.get_text())})
 
         if len(d.text()) < 200:
-            print ' ! Skip:', d.title, d.id, '. Missing text.'
+            print(' ! Skip:', d.title, d.id, '. Missing text.')
             continue
 
         f = os.path.join(outdir, 'sd-download', pii + '-ref.xml')
@@ -451,13 +449,13 @@ def get_sd_docs(ids):
 def search_wiki(terms):
     """Search Wikipedia for articles containing specified terms."""
 
-    print '-- Search Wikipedia:', len(terms), 'terms.'
+    print('-- Search Wikipedia:', len(terms), 'terms.')
 
     titles = set()
     for result in pool.imap(search_wiki_helper, terms):
         titles.update(result)
 
-    print '-- Download Wikipedia:', len(titles), 'articles.'
+    print('-- Download Wikipedia:', len(titles), 'articles.')
 
     categories = defaultdict(set)
     docs_high = []
@@ -476,8 +474,8 @@ def search_wiki(terms):
             if count >= 4 and unique >= 2:
                 docs_low.append(article)
             else:
-                print '   - Not enough terms:', article.title.encode('utf8')
-    print '-- Choosing categories.'
+                print('   - Not enough terms:', article.title.encode('utf8'))
+    print('-- Choosing categories.')
 
     covered = set()
     top_categories = set()
@@ -500,11 +498,12 @@ def search_wiki(terms):
             continue
         if len(top_categories) > .65 * len(categories):
             break
-        print '  - Selected category:', cat.encode('utf8'), len(categories[cat])
+        print('  - Selected category:', cat.encode('utf8'),
+              len(categories[cat]))
         top_categories.add(cat)
         covered |= categories[cat]
 
-    print '-- Choosing articles.'
+    print('-- Choosing articles.')
 
     good_articles = set()
     for article in docs_low:
@@ -515,9 +514,9 @@ def search_wiki(terms):
             continue
 
         if not top_categories.intersection(set(categories)):
-            print '   - Bad categories:', article.title.encode('utf8')
+            print('   - Bad categories:', article.title.encode('utf8'))
             continue
-        print '   + Good:', article.title.encode('utf8')
+        print('   + Good:', article.title.encode('utf8'))
         good_articles.add(article)
 
     return good_articles
@@ -591,7 +590,7 @@ def export_wiki_article(article):
 
 
 def search_bing(terms):
-    print '-- Searching bing for', len(terms), 'terms.'
+    print('-- Searching Bing for', len(terms), 'terms.')
 
     titles = {}
     tutorials = Counter()
@@ -608,10 +607,10 @@ def search_bing(terms):
         if len(choices) >= .65 * len(tutorials):
             break
         choices.add((t, titles[t]))
-        print ' -', titles[t].encode('utf8')
-        print '  ', t.encode('utf8')[:70]
+        print(' -', titles[t])
+        print('  ', t[:70])
 
-    print '--', len(choices), 'choices.'
+    print('--', len(choices), 'choices.')
 
     return choices
 
@@ -650,14 +649,14 @@ def search_bing_term(terms):
             tutorials.add(result.url)
             titles[result.url] = result.title
     except:
-        print >> sys.stderr, 'Unexpected error:', sys.exc_info()[0]
+        print('Unexpected error:', sys.exc_info()[0], file=sys.stderr)
         pass
 
     return set([(x, titles[x]) for x in tutorials])
 
 
 def download_bing(tutorials):
-    print '-- Downloading', len(tutorials), 'tutorials.'
+    print('-- Downloading', len(tutorials), 'tutorials.')
 
     pool.map(download_tutorial, tutorials)
 
@@ -676,7 +675,7 @@ def download_tutorial(tutorial):
             with open(file_path, 'wb') as out:
                 out.write(r.content)
         except:
-            print >> sys.stderr, ' ! Download failed.'
+            print(' ! Download failed.', file=sys.stderr)
             if os.path.exists(file_path):
                 os.remove(file_path)
 
@@ -697,19 +696,19 @@ def export_tutorial(tutorial):
     fname = re.sub('_+', '_', fname)
 
     if not os.path.exists(os.path.join(outdir, 'bing-download', fname+'.pdf')):
-        print >> sys.stderr, ' ! Missing download:', fname.encode('utf8')
+        print(' ! Missing download:', fname, file=sys.stderr)
         return
 
     with open(os.path.join(outdir, 'bing-download', fname+'.pdf'), 'rb') as pdf:
         try:
             text = ' '.join([x.decode('utf8') for x in slate.PDF(pdf)])
         except Exception as e:
-            print >> sys.stderr, ' ! Failed to get text:', fname.encode('utf8')
-            print >> sys.stderr, e
+            print(' ! Failed to get text:', fname, file=sys.stderr)
+            print(e, file=sys.stderr)
             return
 
     if len(text) < 400 or not ' the ' in text:
-        print >> sys.stderr, ' ! Not enough good text:', fname.encode('utf8')
+        print(' ! Not enough good text:', fname, file=sys.stderr)
         return
 
     d = Document()
@@ -735,7 +734,7 @@ def chunks(l, n):
 
 if __name__ == '__main__':
     if len(sys.argv) != 3:
-        print >> sys.stderr, 'Usage: build-corpus [indir] [outdir]'
+        print('Usage: build-corpus [indir] [outdir]', file=sys.stderr)
         sys.exit(1)
 
     indir, outdir = sys.argv[1:]
