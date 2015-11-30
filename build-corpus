@@ -595,10 +595,10 @@ def search_web(terms):
     print('-- Search Web for technical terms.')
 
     tutorials = Counter()
-    for results in pool.imap(search_web_term, chunks(terms, 10)):
+    for results in pool.imap(search_web_term, chunks(terms, 5)):
         for tutorial in results:
             tutorials[tutorial] += 1
-    for results in pool.imap(search_web_term, [[x] for x in terms[:200]]):
+    for results in pool.imap(search_web_term, [[x] for x in terms[:100]]):
         for tutorial in results:
             tutorials[tutorial] += 1
 
@@ -635,10 +635,11 @@ def search_web_term(terms):
         'schedule', 'session', 'slide', 'syllabus', 'table of contents',
         'tutorial dialog', 'tutorial section', 'tutorial system',
         'university', 'vitae', 'vitæ', 'vita', 'proceedings', 'transcript',
-        'conference', 'agenda', 'workshop', 'hello', 'abstracts'
+        'conference', 'agenda', 'workshop', 'hello', 'abstracts',
+        'instructor'
     ]
 
-    for result in w.search(query, limit=10):
+    for result in w.search(query, limit=5):
         if not result or not result.url or not result.title:
             continue
 
