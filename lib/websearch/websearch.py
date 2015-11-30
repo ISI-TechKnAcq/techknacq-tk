@@ -107,6 +107,9 @@ class WebPage:
             else:
                 print('WebPage has no title.', j, file=sys.stderr)
                 return None
+
+            if 'snippet' in j:
+                self.description = j['snippet']
         except:
             print('WebPage Error: Bad JSON:', file=sys.stderr)
             print(j, file=sys.stderr)

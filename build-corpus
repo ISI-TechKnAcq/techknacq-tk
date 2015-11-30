@@ -11,6 +11,7 @@ import re
 import json
 import requests
 import nltk
+import time
 import subprocess
 import multiprocessing as mp
 import wikipedia as wiki
@@ -22,7 +23,7 @@ from noaho import NoAho
 from bs4 import BeautifulSoup
 from nltk.util import ngrams
 
-from py_bing_search import PyBingSearch
+from websearch import WebSearch
 
 from t.corpus import Corpus, Document
 from t.lx import ScrabbleLexicon, StopLexicon, SentTokenizer
@@ -34,7 +35,7 @@ PROCESSES = int(.5 * mp.cpu_count())
 
 SD_API_KEY = open(os.path.expanduser('~/.t/sd.txt')).read().strip()
 BING_API_KEY = open(os.path.expanduser('~/.t/bing.txt')).read().strip()
-
+GOOGLE_API_KEY = open(os.path.expanduser('~/.t/google.txt')).read().strip()
 
 ###
 
@@ -590,85 +591,99 @@ def export_wiki_article(article):
 ###
 
 
-def search_bing(terms):
-    print('-- Searching Bing for', len(terms), 'terms.')
+def search_web(terms):
+    print('-- Search Web for technical terms.')
 
-    titles = {}
     tutorials = Counter()
-    for results in pool.imap(search_bing_term, chunks(terms, 20)):
-        for (url, title) in results:
-            tutorials[url] += 1
-            titles[url] = title
+    for results in pool.imap(search_web_term, chunks(terms, 10)):
+        for tutorial in results:
+            tutorials[tutorial] += 1
+    for results in pool.imap(search_web_term, [[x] for x in terms[:200]]):
+        for tutorial in results:
+            tutorials[tutorial] += 1
 
     # Remove singletons.
     tutorials -= Counter(dict([(x, 1) for x in list(tutorials)]))
 
-    choices = set()
-    for (t, count) in tutorials.most_common():
-        if len(choices) >= .65 * len(tutorials):
-            break
-        choices.add((t, titles[t]))
-        print(' -', titles[t])
-        print('  ', t[:70])
+    for t in tutorials:
+        print(' -', t[0])
+        print('  ', t[1][:70])
 
-    print('--', len(choices), 'choices.')
+    print('--', len(tutorials), 'matches.')
 
-    return choices
+    return tutorials
 
 
-def search_bing_term(terms):
+def search_web_term(terms):
+    # Slow down to avoid overloading the service.
+    time.sleep(.2)
+
+    w = WebSearch(key=GOOGLE_API_KEY, cx='014701580703549033938:zm7x9pkz36w')
+
     titles = {}
     tutorials = set()
-    try:
-        bing = PyBingSearch(BING_API_KEY)
 
-# If using an API key for the general Bing Search API, instead of the
-# Web-only one:
-#        bing.QUERY_URL = 'https://api.datamarket.azure.com/Bing/Search/v1/Web' \
-#                     + '?Query={}&$top={}&$skip={}&$format={}'
+    query = 'filetype:pdf "this tutorial" "' + \
+      '" OR "'.join(terms) + '"'
 
-        joined_terms = '("' + '" | "'.join(terms) + '")'
-        query = 'domain:edu & filetype:pdf & ' + \
-                '("this tutorial" | "tutorial on" | "tutorial workbook") & ' + \
-                joined_terms + ' ' + \
-                '-vitae -cv -syllabus -intitle:references -url:acl ' + \
-                '-intitle:resume -programme -dissertation -thesis -phd ' + \
-                '-schedule -"intelligent tutoring" -intitle:chapter ' + \
-                '-"table of contents"'
-        results, _ = bing.search(query, limit=100)
-        for result in results:
-            if re.search('[a-z][0-9][0-9]-[0-9][0-9][0-9][0-9]\.pdf',
-                         result.url.lower()):
-                # Looks like an ACL paper.
-                continue
-            if not 'pdf' in result.url.lower():
-                continue
-            if not 'edu' in result.url.lower():
-                continue
-            if 'acl' in result.url.lower():
-                continue
-            tutorials.add(result.url)
-            titles[result.url] = result.title
-    except:
-        print('Unexpected error:', sys.exc_info()[0], file=sys.stderr)
-        pass
+    exclude = [
+        'advisor', 'appendix', 'assignment', 'author', 'biographical',
+        'chapter', 'college', 'course', 'curriculum', 'cv', 'dissertation',
+        'doctor of philosophy', 'dr', 'enrollment', 'intelligent tutoring',
+        'lecture', 'ph. d', 'ph.d', 'phd', 'powerpoint', 'problem set',
+        'programme', 'references', 'research statement', 'resume',
+        'schedule', 'session', 'slide', 'syllabus', 'table of contents',
+        'tutorial dialog', 'tutorial section', 'tutorial system',
+        'university', 'vitae', 'vitæ', 'vita', 'proceedings', 'transcript',
+        'conference', 'agenda', 'workshop', 'hello', 'abstracts'
+    ]
 
-    return set([(x, titles[x]) for x in tutorials])
+    for result in w.search(query, limit=10):
+        if not result or not result.url or not result.title:
+            continue
+
+        # Does it look like an ACL paper?
+        if re.search('/[a-z][0-9][0-9]-[0-9][0-9][0-9][0-9]\.pdf',
+                     result.url.lower()):
+            continue
+
+        bad = False
+        for term in exclude:
+            if term in result.title.lower():
+                bad = True
+                break
+            if term in result.url.lower():
+                bad = True
+                break
+            if term in result.description.lower():
+                bad = True
+                break
+            if re.search('\bprogram\b', result.title.lower()):
+                bad = True
+                break
+        if bad:
+            continue
+
+        tutorials.add(result.url)
+        titles[result.url] = result.title
+
+    return set([(titles[x], x) for x in tutorials])
 
 
-def download_bing(tutorials):
+def download_web(tutorials):
     print('-- Downloading', len(tutorials), 'tutorials.')
 
     pool.map(download_tutorial, tutorials)
 
 
 def download_tutorial(tutorial):
-    url, title = tutorial
+    title, url = tutorial
 
-    fname = 'bing-' + re.sub('[ :/()]', '_', title[:40].lower())
+    fname = 'web-' + re.sub('[ :/()]', '_', title[:40].lower())
     fname = fname.replace('_...', '')
     fname = re.sub('_+', '_', fname)
-    file_path = os.path.join(outdir, 'bing-download', fname + '.pdf')
+    fname = ''.join(filter(lambda x: x in string.printable, fname))
+    file_path = os.path.join(outdir, 'web-download', fname + '.pdf')
 
     if not os.path.exists(file_path):
         try:
@@ -681,25 +696,25 @@ def download_tutorial(tutorial):
                 os.remove(file_path)
 
 
-def get_bing_docs(tutorials):
-    bing_corpus = Corpus()
+def get_web_docs(tutorials):
+    web_corpus = Corpus()
     for doc in pool.imap(export_tutorial, tutorials):
         if doc:
-            bing_corpus.add(doc)
-    return bing_corpus
+            web_corpus.add(doc)
+    return web_corpus
 
 
 def export_tutorial(tutorial):
-    url, title = tutorial
+    title, url = tutorial
 
-    fname = 'bing-' + re.sub('[ :/()]', '_', title[:40].lower())
+    fname = 'web-' + re.sub('[ :/()]', '_', title[:40].lower())
     fname = fname.replace('_...', '')
     fname = re.sub('_+', '_', fname)
     fname = ''.join(filter(lambda x: x in string.printable, fname))
 
     print('- Export:', fname + '.json')
 
-    pdfpath = os.path.join(outdir, 'bing-download', fname + '.pdf')
+    pdfpath = os.path.join(outdir, 'web-download', fname + '.pdf')
 
     if not os.path.exists(pdfpath):
         print(' ! Missing download:', fname, file=sys.stderr)
@@ -731,7 +746,6 @@ def export_tutorial(tutorial):
     return d
 
 
-
 ###
 
 def chunks(l, n):
@@ -756,16 +770,16 @@ if __name__ == '__main__':
 
     terms = get_terms(c)
 
-    docs_by_book = search_sd(terms)
-    download_sd(docs_by_book)
-    doc_ids = filter_sd(docs_by_book, terms)
-    c |= get_sd_docs(doc_ids)
+#    docs_by_book = search_sd(terms)
+#    download_sd(docs_by_book)
+#    doc_ids = filter_sd(docs_by_book, terms)
+#    c |= get_sd_docs(doc_ids)
 
-    articles = search_wiki(terms)
-    c |= get_wiki_docs(articles)
+#    articles = search_wiki(terms)
+#    c |= get_wiki_docs(articles)
 
-    tutorials = search_bing(terms[:1000])
-    download_bing(tutorials)
-    c |= get_bing_docs(tutorials)
+    tutorials = search_web(terms)
+    download_web(tutorials)
+    c |= get_web_docs(tutorials)
 
     c.export(outdir)
