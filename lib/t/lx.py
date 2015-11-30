@@ -1,8 +1,6 @@
 # T: Lx
 # Jonathan Gordon
 
-from __future__ import unicode_literals
-
 import sys
 import os
 import nltk
