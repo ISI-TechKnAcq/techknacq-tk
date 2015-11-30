@@ -22,28 +22,21 @@ Tools:
 
 Libraries:
 - *t*:
-  All functionality shared by more than one tool.
-
+  Core project functionality.
+- *websearch*:
+  Interface for searching the Web with Google or Bing.
 
 ## Requirements
 
-T runs on Linux and OS X.
+T runs in Python 3 on Linux and OS X.
 
-Required Python packages:
-- NLTK: Natural language processing.
-- Wikipedia: Interface to Wikipedia API.
-- NoAho: Efficient trie-based text search.
-- BeautifulSoup4: XML processing.
-- py-bing-search: Web search API.
-- slate: Extract text from PDF files.
+Install pip3 (Debian/Ubuntu: python3-pip). Use it to install the
+required Python packages:
 
-All required Python packages should be installed with 'pip'.
+    pip3 install --upgrade beautifulsoup4 nltk noaho wikipedia
 
-Slate depends on pdfminer. To deal with version incompatibility:
-
-    sudo pip install --upgrade --ignore-installed slate==0.3 pdfminer==20110515
-
-See https://github.com/timClicks/slate/issues/5 for updates.
+Install required external tools:
+- pdftotext (Ubuntu: poppler-utils)
 
 
 ## Configuration
