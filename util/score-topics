@@ -1,0 +1,147 @@
+#!/usr/bin/env python3
+
+# Given a Mallet topic model file, score the coherence of each topic
+# based on cosine similarity in a Word2Vec model.
+# Jonathan Gordon, 2016-01-21
+
+import sys
+import os
+import argparse
+import re
+import numpy
+import itertools
+import random
+
+from math import sqrt
+from gensim.models.word2vec import Word2Vec
+from nltk.stem.wordnet import WordNetLemmatizer
+
+
+class TopicModel:
+    # A list of (word, weight) pairs for each topic.
+    topic_words = []
+
+    def read_unweighted(self, fname):
+        for line in open(fname, 'r').readlines():
+            self.topic_words.append([])
+            line = line.strip().replace('#', '')
+            tokens = re.split('[ \t]', line)[2:]
+            for word in tokens:
+                # Second number would be the weight for a weighted
+                # topic model. Currently this is a random number
+                # because it's better to keep these unique if
+                # a word is repeated.
+                self.topic_words[-1].append((word, 1))
+
+    def read_weighted(self, fname):
+        for line in open(fname, 'r').readlines():
+            self.topic_words.append([])
+            line = line.strip().replace('#', '')
+            tokens = re.split('[ \t]', line)[1:]
+            total = sum([float(x) for x in tokens[1::2]])
+            for (word, weight) in zip(tokens[::2], tokens[1::2]):
+                self.topic_words[-1].append((word, float(weight)/total))
+
+class Evaluation:
+    def __init__(self):
+        self.lmtzr = WordNetLemmatizer()
+
+    def read_word2vec(self, fname):
+        self.model = Word2Vec.load_word2vec_format(fname, binary=True,
+                                                   unicode_errors='ignore')
+
+
+    def read_word2vec_linhong(self, words_file, vectors_file):
+        # Put Linhong's files into the word2vec format to be read by gensim.
+        all_words = open(words_file).readlines()
+        all_vectors = open(vectors_file).readlines()
+        with open('tmp.txt', 'w') as out:
+            print(len(all_words), len(all_vectors[0].split()), file=out)
+            for (word, vector) in zip(all_words, all_vectors):
+                print(word.strip().replace(' ', '_'),
+                      vector.strip().replace('\t', ' '),
+                      file=out)
+        self.model = Word2Vec.load_word2vec_format('tmp.txt', binary=False)
+        os.remove('tmp.txt')
+
+
+    def get_words(self, word):
+        if word in self.model:
+            return [word]
+
+        word = re.sub("[-']", '_', word)
+        if word in self.model:
+            return [word]
+
+        if self.lmtzr.lemmatize(word) in self.model:
+            return [self.lmtzr.lemmatize(word)]
+
+        ret = []
+        for w in word.split('_'):
+            if w in self.model:
+                ret.append(w)
+                continue
+            if self.lmtzr.lemmatize(w) in self.model:
+                ret.append(self.lmtzr.lemmatize(w))
+            if w + 's' in self.model:
+                ret.append(w + 's')
+            if w + 'es' in self.model:
+                ret.append(w + 'es')
+            if w + 'ed' in self.model:
+                ret.append(w + 'ed')
+            if w + 'ing' in self.model:
+                ret.append(w + 'ing')
+        return ret
+
+
+    def run(self, topic_model, weighted=False):
+        weight = 1
+        total_average = 0.0
+
+        for topic in topic_model.topic_words:
+            avgscore = 0.0
+            for pair1, pair2 in itertools.product(topic, repeat=2):
+                if pair1 is pair2:
+                    continue
+
+                if weighted:
+                    weight = pair1[1] * pair2[1]
+
+                words1 = self.get_words(pair1[0])
+                words2 = self.get_words(pair2[0])
+
+                if words1 and words2:
+                    avgscore += self.model.n_similarity(words1, words2) \
+                          * weight
+
+            avgscore /= (len(topic) * len(topic))
+            print(avgscore)
+            total_average += avgscore
+
+        total_average /= len(topic_model.topic_words)
+        print('Average', total_average)
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Score a topic model.')
+    parser.add_argument('-w', dest='weighted', action='store_true')
+    parser.add_argument('topic_model', type=argparse.FileType('r'))
+    args = parser.parse_args()
+
+    weighted = False
+    if args.weighted:
+        weighted = True
+
+    e = Evaluation()
+    # Read Linhong's adapted model
+    e.read_word2vec_linhong('ref/words.txt', 'ref/word2vec-6.txt')
+    # Read a Word2Vec binary model
+    #e.read_word2vec('word2vec-models/vectors.bin')
+
+    topic_model = TopicModel()
+    if weighted:
+        topic_model.read_weighted(sys.argv[1])
+    else:
+        topic_model.read_unweighted(sys.argv[1])
+
+    e.run(topic_model, weighted)
