@@ -1,0 +1,9 @@
+#!/usr/bin/env python3
+
+import sys
+
+from t.corpus import Corpus, Document
+
+c = Corpus()
+c.load(sys.argv[1])
+c.export(sys.argv[2], format='text')
