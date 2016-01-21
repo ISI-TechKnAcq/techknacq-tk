@@ -42,7 +42,8 @@ class StopLexicon(Lexicon):
 
 class SentTokenizer:
     abbrevs = ['dr', 'vs', 'mr', 'mrs', 'prof', 'e.g', 'i.e', 'viz', 'cf',
-               'proc', 'b', 'dept', 'p', 'pp']
+               'proc', 'b', 'dept', 'p', 'pp', 'ca', 'esp', 'eq', 'eqn',
+               'fig', 'al']
 
     def __init__(self):
         self.tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
