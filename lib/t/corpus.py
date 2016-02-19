@@ -6,6 +6,7 @@ import os
 import io
 import json
 import datetime
+import re
 
 from gensim import corpora, utils
 
@@ -82,11 +83,22 @@ class Document:
 
         self.id = j['info'].get('id', '')
         self.authors = [x.strip() for x in j['info'].get('authors', [])]
-        self.title = j['info'].get('title', '')
-        self.book = j['info'].get('book', '')
+        self.title = title_case(j['info'].get('title', ''))
+        self.book = title_case(j['info'].get('book', ''))
+        self.year = j['info'].get('year', '')
         self.url = j['info'].get('url', '')
         self.references = set(j.get('references', []))
         self.sections = j.get('sections', [])
+
+        # We can infer the year of ACL Anthology papers from their
+        # file names.
+        if self.year == '' and 'acl-' in file:
+            m = re.match('.*acl-[A-Z]([0-9][0-9])-', file)
+            lasttwo = int(m.group(1))
+            if lasttwo > 50:
+                self.year = str(1900 + lasttwo)
+            else:
+                self.year = str(2000 + lasttwo)
 
 
     def json(self):
@@ -96,6 +108,7 @@ class Document:
                 'id': self.id,
                 'authors': self.authors,
                 'title': self.title,
+                'year': self.year,
                 'book': self.book,
                 'url': self.url
             },
@@ -121,6 +134,7 @@ class Document:
         t += '<infon key="authors">'
         t += escape('; '.join(self.authors)) + '</infon>'
         t += '<infon key="title">' + escape(self.title) + '</infon>'
+        t += '<infon key="year">' + escape(self.year) + '</infon>'
         t += '<infon key="book">' + escape(self.book) + '</infon>'
         t += '<infon key="url">' + escape(self.url) + '</infon>'
         t += '<text>'
@@ -147,3 +161,9 @@ class Document:
 
 def filter_non_printable(s):
     return ''.join([c for c in s if ord(c) > 31 or ord(c) == 9 or c == '\n'])
+
+def title_case(s):
+    for word in ['And', 'The', 'Of', 'From', 'To', 'In', 'For', 'A', 'An',
+                 'On']:
+        s = re.sub('([A-Za-z]) ' + word + ' ', r'\1 ' + word.lower() + ' ', s)
+    return s
