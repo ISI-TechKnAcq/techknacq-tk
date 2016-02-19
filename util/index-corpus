@@ -20,6 +20,7 @@ for doc in c:
                  'author': '; '.join(doc.authors),
                  'year': doc.year,
                  'book': doc.book,
-                 'url': doc.url}
+                 'url': doc.url,
+                 'abstract': doc.get_abstract()}
 
 sys.stdout.write(json.dumps(j, ensure_ascii=False))

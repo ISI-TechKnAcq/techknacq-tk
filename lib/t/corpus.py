@@ -100,6 +100,14 @@ class Document:
             else:
                 self.year = str(2000 + lasttwo)
 
+    def get_abstract(self):
+        """Return the (probable) abstract for the document."""
+        if len(self.sections[0]['text']) > 2:
+            return self.sections[0]['text'][:10]
+        if len(self.sections) > 1:
+            return self.sections[1]['text'][:10]
+        return self.sections[0]['text'][:10]
+
 
     def json(self):
         """Return a JSON string representing the document."""
