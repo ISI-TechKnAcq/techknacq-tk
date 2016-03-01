@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-# Given a Mallet topic model file, score the coherence of each topic
-# based on cosine similarity in a Word2Vec model.
-# Jonathan Gordon, 2016-01-21
+# Score each topic in a Mallet topic model file based on cosine similarity
+# in a Word2Vec model.
+# Jonathan Gordon, 2016-03-01
 
 import sys
 import os
@@ -13,8 +13,13 @@ import itertools
 import random
 
 from math import sqrt
+from gensim import matutils
 from gensim.models.word2vec import Word2Vec
 from nltk.stem.wordnet import WordNetLemmatizer
+
+
+def cosine_similarity(u, v):
+    return numpy.dot(matutils.unitvec(u), matutils.unitvec(v))
 
 
 class TopicModel:
@@ -42,6 +47,7 @@ class TopicModel:
             for (word, weight) in zip(tokens[::2], tokens[1::2]):
                 self.topic_words[-1].append((word, float(weight)/total))
 
+
 class Evaluation:
     def __init__(self):
         self.lmtzr = WordNetLemmatizer()
@@ -52,7 +58,8 @@ class Evaluation:
 
 
     def read_word2vec_linhong(self, words_file, vectors_file):
-        # Put Linhong's files into the word2vec format to be read by gensim.
+        # Put Linhong's files into the Word2vec text format to be read by
+        # gensim.
         all_words = open(words_file).readlines()
         all_vectors = open(vectors_file).readlines()
         with open('tmp.txt', 'w') as out:
@@ -65,7 +72,7 @@ class Evaluation:
         os.remove('tmp.txt')
 
 
-    def get_words(self, word):
+    def get_words(self, word, fuzzy=False):
         if word in self.model:
             return [word]
 
@@ -81,20 +88,65 @@ class Evaluation:
             if w in self.model:
                 ret.append(w)
                 continue
+            if not fuzzy:
+                continue
+            combine = []
             if self.lmtzr.lemmatize(w) in self.model:
-                ret.append(self.lmtzr.lemmatize(w))
+                combine.append(self.lmtzr.lemmatize(w))
             if w + 's' in self.model:
-                ret.append(w + 's')
+                combine.append(w + 's')
             if w + 'es' in self.model:
-                ret.append(w + 'es')
+                combine.append(w + 'es')
+            if self.lmtzr.lemmatize(w) + 's' in self.model:
+                combine.append(self.lmtzr.lemmatize(w) + 's')
+            if self.lmtzr.lemmatize(w) + 'es' in self.model:
+                combine.append(self.lmtzr.lemmatize(w) + 'es')
             if w + 'ed' in self.model:
-                ret.append(w + 'ed')
+                combine.append(w + 'ed')
             if w + 'ing' in self.model:
-                ret.append(w + 'ing')
+                combine.append(w + 'ing')
+            if self.lmtzr.lemmatize(w) + 'ed' in self.model:
+                combine.append(self.lmtzr.lemmatize(w) + 'ed')
+            if self.lmtzr.lemmatize(w) + 'ing' in self.model:
+                combine.append(self.lmtzr.lemmatize(w) + 'ing')
+            if combine:
+                ret.append(combine)
         return ret
 
 
-    def run(self, topic_model, weighted=False):
+    def word2vec(self, words):
+        def avg_vectors(vectors):
+            result = vectors[0]
+            for vector in vectors[1:]:
+                for i in range(0, len(result)):
+                    result[i] += vector[i]
+            for i in range(0, len(result)):
+                result[i] /= len(vectors)
+            return result
+        res = []
+        for word in words:
+            # It's a sublist containing alternatives, e.g.,
+            #   ['models', 'modeling', 'modeled']
+            # when 'model' is not in the Word2vec model.
+            if isinstance(word, list):
+                comb = []
+                for w in word:
+                    try:
+                        comb.append(self.model[w])
+                    except:
+                        pass
+                if comb:
+                    res.append(avg_vectors(comb))
+                continue
+            try:
+                res.append(self.model[word])
+            except:
+                pass
+        res = avg_vectors(res)
+        return res
+
+
+    def run(self, topic_model, weighted=False, fuzzy=False):
         weight = 1
         total_average = 0.0
 
@@ -107,12 +159,19 @@ class Evaluation:
                 if weighted:
                     weight = pair1[1] * pair2[1]
 
-                words1 = self.get_words(pair1[0])
-                words2 = self.get_words(pair2[0])
+                words1 = self.get_words(pair1[0], fuzzy)
+                if words1:
+                    l1 = self.word2vec(words1)
+                else:
+                    continue
 
-                if words1 and words2:
-                    avgscore += self.model.n_similarity(words1, words2) \
-                          * weight
+                words2 = self.get_words(pair2[0], fuzzy)
+                if words2:
+                    l2 = self.word2vec(words2)
+                else:
+                    continue
+
+                avgscore += cosine_similarity(l1, l2) * weight
 
             avgscore /= (len(topic) * len(topic))
             print(avgscore)
@@ -125,23 +184,18 @@ class Evaluation:
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Score a topic model.')
     parser.add_argument('-w', dest='weighted', action='store_true')
+    parser.add_argument('-f', dest='fuzzy', action='store_true')
     parser.add_argument('topic_model', type=argparse.FileType('r'))
     args = parser.parse_args()
 
-    weighted = False
-    if args.weighted:
-        weighted = True
-
     e = Evaluation()
-    # Read Linhong's adapted model
-    e.read_word2vec_linhong('words.txt', 'word2vec.txt')
-    # Read a Word2Vec binary model
-    #e.read_word2vec('/Users/jgordon/Models/GoogleNews-vectors-negative300.bin')
+    #e.read_word2vec_linhong('News+ARC-words.txt', 'News+ARC-word2vec-6.txt')
+    e.read_word2vec('/Users/jgordon/Models/GoogleNews-vectors-negative300.bin')
 
     topic_model = TopicModel()
-    if weighted:
+    if args.weighted:
         topic_model.read_weighted(sys.argv[1])
     else:
         topic_model.read_unweighted(sys.argv[1])
 
-    e.run(topic_model, weighted)
+    e.run(topic_model, args.weighted, args.fuzzy)
