@@ -119,7 +119,7 @@ class Evaluation:
             total_average += avgscore
 
         total_average /= len(topic_model.topic_words)
-        print('Average', total_average)
+#        print('Average', total_average)
 
 
 if __name__ == '__main__':
@@ -134,9 +134,9 @@ if __name__ == '__main__':
 
     e = Evaluation()
     # Read Linhong's adapted model
-    e.read_word2vec_linhong('ref/words.txt', 'ref/word2vec-6.txt')
+    e.read_word2vec_linhong('words.txt', 'word2vec.txt')
     # Read a Word2Vec binary model
-    #e.read_word2vec('word2vec-models/vectors.bin')
+    #e.read_word2vec('/Users/jgordon/Models/GoogleNews-vectors-negative300.bin')
 
     topic_model = TopicModel()
     if weighted:
