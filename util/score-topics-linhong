@@ -1,0 +1,92 @@
+#!/usr/bin/env python3
+
+# This is a reimplementation of Linhong's scoring method.
+
+import sys
+import re
+import numpy
+from math import sqrt
+
+
+def cosine_similarity(u, v):
+    return (numpy.dot(u, v) / (sqrt(numpy.dot(u, u)) * sqrt(numpy.dot(v, v))))
+
+
+class TopicKey:
+    # A list of (word, weight) pairs for each topic.
+    topic_words = []
+
+    def __init__(self, fname):
+        with open(fname, 'r') as fin:
+            for strline in fin.readlines():
+                self.topic_words.append([])
+                tokens = re.split('[ \t]', strline.strip())[2:]
+                for tempword in tokens:
+                    # Second number would be the weight for a weighted
+                    # topic model.
+                    self.topic_words[-1].append((tempword, 1))
+
+
+class Evaluation:
+    words = []
+    wordvec = []
+
+    def read_word2vec(self, words_file, vectors_file):
+        with open(words_file, 'r') as fin:
+            self.words = [line.strip() for line in fin.readlines()]
+        with open(vectors_file, 'r') as fin:
+            for line in fin.readlines():
+                self.wordvec.append([float(x) for x in line.split('\t')])
+
+    def word2vec(self, word):
+        def addlist(target, source):
+            for i in range(0, len(target)):
+                target[i] = (target[i] + source[i])/2
+
+        word = word.replace('#', '')
+        try:
+            newindex = self.words.index(word)
+            return self.wordvec[newindex]
+        except: pass
+
+        if '_' in word:
+            res = []
+            for w in word.split('_'):
+                try:
+                    index = self.words.index(w)
+                    if not res:
+                        res = self.wordvec[index]
+                    else:
+                        addlist(res, self.wordvec[index])
+                except:
+                    pass
+            return res
+
+    def run(self, fname):
+        topic_model = TopicKey(fname)
+
+        totalavg = 0.0
+
+        for topic in topic_model.topic_words:
+            avgscore = 0.0
+            for j in range(0, len(topic)):
+                l1 = self.word2vec(topic[j][0])
+                if not l1:
+                    continue
+                for k in range(j+1, len(topic)):
+                    l2 = self.word2vec(topic[k][0])
+                    if not l2:
+                        continue
+                    avgscore += cosine_similarity(l1, l2)
+            avgscore /= len(topic)
+            # Normalize to be between 0 and 1.
+            avgscore /= (len(topic) - 1)
+            avgscore *= 2
+            print(avgscore)
+            totalavg += avgscore
+        #print('Avg', totalavg/len(topic_model.topic_words))
+
+if __name__ == '__main__':
+    e = Evaluation()
+    e.read_word2vec('News+ARC-words.txt', 'News+ARC-word2vec-6.txt')
+    e.run(sys.argv[1])
