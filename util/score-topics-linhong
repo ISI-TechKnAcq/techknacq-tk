@@ -88,5 +88,5 @@ class Evaluation:
 
 if __name__ == '__main__':
     e = Evaluation()
-    e.read_word2vec('News+ARC-words.txt', 'News+ARC-word2vec-6.txt')
+    e.read_word2vec('News+ACL-words.txt', 'News+ACL-word2vec-20.txt')
     e.run(sys.argv[1])

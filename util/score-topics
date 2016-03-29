@@ -32,10 +32,6 @@ class TopicModel:
             line = line.strip().replace('#', '')
             tokens = re.split('[ \t]', line)[2:]
             for word in tokens:
-                # Second number would be the weight for a weighted
-                # topic model. Currently this is a random number
-                # because it's better to keep these unique if
-                # a word is repeated.
                 self.topic_words[-1].append((word, 1))
 
     def read_weighted(self, fname):
@@ -53,9 +49,7 @@ class Evaluation:
         self.lmtzr = WordNetLemmatizer()
 
     def read_word2vec(self, fname):
-        self.model = Word2Vec.load_word2vec_format(fname, binary=True,
-                                                   unicode_errors='ignore')
-
+        self.model = Word2Vec.load_word2vec_format(fname, binary=True)
 
     def read_word2vec_linhong(self, words_file, vectors_file):
         # Put Linhong's files into the Word2vec text format to be read by
@@ -80,7 +74,7 @@ class Evaluation:
         if word in self.model:
             return [word]
 
-        if self.lmtzr.lemmatize(word) in self.model:
+        if fuzzy and self.lmtzr.lemmatize(word) in self.model:
             return [self.lmtzr.lemmatize(word)]
 
         ret = []
@@ -189,8 +183,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     e = Evaluation()
-    #e.read_word2vec_linhong('News+ARC-words.txt', 'News+ARC-word2vec-6.txt')
-    e.read_word2vec('/Users/jgordon/Models/GoogleNews-vectors-negative300.bin')
+    #e.read_word2vec_linhong('News+ACL-words.txt', 'News+ACL-word2vec-20.txt')
+    e.read_word2vec('/Users/jgordon/Models/News-300.bin')
 
     topic_model = TopicModel()
     if args.weighted:
