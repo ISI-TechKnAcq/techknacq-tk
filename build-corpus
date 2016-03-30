@@ -771,13 +771,13 @@ if __name__ == '__main__':
 
     terms = get_terms(c)
 
-#    docs_by_book = search_sd(terms)
-#    download_sd(docs_by_book)
-#    doc_ids = filter_sd(docs_by_book, terms)
-#    c |= get_sd_docs(doc_ids)
+    docs_by_book = search_sd(terms)
+    download_sd(docs_by_book)
+    doc_ids = filter_sd(docs_by_book, terms)
+    c |= get_sd_docs(doc_ids)
 
-#    articles = search_wiki(terms)
-#    c |= get_wiki_docs(articles)
+    articles = search_wiki(terms)
+    c |= get_wiki_docs(articles)
 
     tutorials = search_web(terms)
     download_web(tutorials)
