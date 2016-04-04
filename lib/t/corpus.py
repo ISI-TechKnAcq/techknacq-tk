@@ -97,16 +97,6 @@ class Document:
         self.references = set(j.get('references', []))
         self.sections = j.get('sections', [])
 
-        # We can infer the year of ACL Anthology papers from their
-        # file names.
-        if fname and self.year == '' and 'acl-' in fname:
-            m = re.match('.*acl-[A-Z]([0-9][0-9])-', fname)
-            lasttwo = int(m.group(1))
-            if lasttwo > 50:
-                self.year = str(1900 + lasttwo)
-            else:
-                self.year = str(2000 + lasttwo)
-
         if fname and format == 'sd':
             self.read_sd(file)
 
@@ -137,6 +127,9 @@ class Document:
             self.book = soup.publicationname.string.strip()
         self.url = 'http://www.sciencedirect.com/science/article/pii/' + pii
         self.authors = [x.string.strip() for x in soup('creator')]
+        if soup.coverdate:
+            # Dates are in format YYYY-MM-DD
+            self.year = int(re.sub('-.*', soup.coverdate.string))
 
         st = SentTokenizer()
         if soup.abstract:
