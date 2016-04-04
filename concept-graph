@@ -3,18 +3,36 @@
 # T: Concept Graph
 # Jonathan Gordon
 
-# http://rare-technologies.com/tutorial-on-mallet-in-python/
-# Note that the gensim Mallet wrapper can only handle unigram topic models.
+import sys
 
 from gensim.models.wrappers import LdaMallet
 
-from t.corpus import TextCorpus
+from t.corpus import GensimCorpus
 
-MALLET_PATH = 'ext/mallet-2.0.8RC3/bin/mallet'
+
+# Parameters
+
+MALLET_PATH = 'ext/mallet-2.0.8RC3'
+MALLET_BIN = MALLET_PATH + '/bin/mallet'
+
+TOPICS = 300
+
+###
 
 if __name__ == '__main__':
-    corpus = TextCorpus()
-    corpus.load('foo')
+    if len(sys.argv) != 2:
+        print('Usage: concept-graph [corpus dir.]', file=sys.stderr)
+        sys.exit(1)
 
-    model = LdaMallet(MALLET_PATH, corpus, num_topics=200,
+    corpus = GensimCorpus('bigram', stop=MALLET_PATH + '/stoplists/en.txt')
+    corpus.load(sys.argv[1])
+
+    # Print the bigrams in the corpus:
+#    for doc_bigrams in corpus:
+#        for (bigram, count) in doc_bigrams:
+#            print(corpus.dictionary[bigram])
+
+    model = LdaMallet(MALLET_BIN, corpus, num_topics=TOPICS,
                       id2word=corpus.dictionary)
+    model.print_topics()
+    print(model.fdoctopics())

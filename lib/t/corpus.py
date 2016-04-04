@@ -10,6 +10,7 @@ import re
 import multiprocessing as mp
 
 from gensim import corpora, utils
+from nltk import bigrams
 from xml.sax.saxutils import escape
 from bs4 import BeautifulSoup
 from pathlib import Path
@@ -56,17 +57,43 @@ class Corpus:
                     out.write(d.text() + '\n')
 
 
-class TextCorpus(Corpus):
-    """A corpus for use in gensim-based topic modeling."""
+class GensimCorpus(Corpus):
+    """A view of a corpus for use in Gensim-based topic modeling.
+    Gensim's Mallet wrapper can only handle unigrams, so any n-gram
+    preprocessing is done here."""
+
+    def __init__(self, n='unigram', stop=None):
+        Corpus.__init__(self)
+        if n in ['unigram', 'bigram']:
+            self.n = n
+        else:
+            print('Error: Unknown corpus type', n, file=sys.stderr)
+            sys.exit(1)
+
+        if stop:
+            self.stop_list = set([x.strip() for x in open(stop).readlines()])
+        else:
+            self.stop_list = set()
+
 
     def load(self, dirname):
         Corpus.load(self, dirname)
         self.dictionary = corpora.Dictionary(self.iter_docs())
-        self.dictionary.filter_extremes()
+
 
     def iter_docs(self):
+        def filtered_tokens(text):
+            for token in utils.simple_preprocess(text):
+                if token not in self.stop_list:
+                    yield token
+
         for doc in self.docs:
-            yield utils.simple_preprocess(doc.text())
+            if self.n == 'unigram':
+                yield filtered_tokens(doc.text())
+            elif self.n == 'bigram':
+                yield ['_'.join(x) for x in
+                       bigrams(filtered_tokens(doc.text()))]
+
 
     def __iter__(self):
         for tokens in self.iter_docs():
@@ -75,9 +102,9 @@ class TextCorpus(Corpus):
 
 class Document:
     def __init__(self, fname=None, format=None):
-        if not format and 'json' in fname:
+        if fname and not format and 'json' in fname:
             format = 'json'
-        if not format and 'xml' in fname:
+        if fname and not format and 'xml' in fname:
             format = 'sd'
 
         j = {'info': {}}
