@@ -7,10 +7,12 @@ import io
 import json
 import datetime
 import re
+import multiprocessing as mp
 
 from gensim import corpora, utils
 from xml.sax.saxutils import escape
 from bs4 import BeautifulSoup
+from pathlib import Path
 
 from t.lx import SentTokenizer
 
@@ -18,18 +20,14 @@ class Corpus:
     def __init__(self):
         self.docs = set()
 
-    def load(self, dirname):
-        for docname in os.listdir(dirname):
-            filepath = os.path.join(dirname, docname)
-            if os.path.isdir(filepath):
-                continue
-            try:
-                d = Document(file=filepath)
-            except Exception as e:
-                print('Error reading document:', filepath, file=sys.stderr)
-                print(e, file=sys.stderr)
-                continue
-            self.add(d)
+    def load(self, dirname, pool=None):
+        if not pool:
+            pool = mp.Pool(int(.5 * mp.cpu_count()))
+
+        docnames = (str(f) for f in Path(dirname).iterdir() if f.is_file())
+        for doc in pool.imap(Document, docnames):
+            if doc:
+                self.add(doc)
 
     def add(self, doc):
         self.docs.add(doc)
@@ -76,16 +74,19 @@ class TextCorpus(Corpus):
 
 
 class Document:
-    def __init__(self, file=None, format=None):
-        if not format and 'json' in file:
+    def __init__(self, fname=None, format=None):
+        if not format and 'json' in fname:
             format = 'json'
-        if not format and 'xml' in file:
+        if not format and 'xml' in fname:
             format = 'sd'
 
-        if file and format == 'json':
-            j = json.load(io.open(file, 'r', encoding='utf8'))
-        else:
-            j = {'info': {}}
+        j = {'info': {}}
+        if fname and format == 'json':
+            try:
+                j = json.load(io.open(fname, 'r', encoding='utf8'))
+            except Exception as e:
+                print('Error reading JSON document:', fname, file=sys.stderr)
+                print(e, file=sys.stderr)
 
         self.id = j['info'].get('id', '')
         self.authors = [x.strip() for x in j['info'].get('authors', [])]
@@ -98,15 +99,15 @@ class Document:
 
         # We can infer the year of ACL Anthology papers from their
         # file names.
-        if file and self.year == '' and 'acl-' in file:
-            m = re.match('.*acl-[A-Z]([0-9][0-9])-', file)
+        if fname and self.year == '' and 'acl-' in fname:
+            m = re.match('.*acl-[A-Z]([0-9][0-9])-', fname)
             lasttwo = int(m.group(1))
             if lasttwo > 50:
                 self.year = str(1900 + lasttwo)
             else:
                 self.year = str(2000 + lasttwo)
 
-        if file and format == 'sd':
+        if fname and format == 'sd':
             self.read_sd(file)
 
 

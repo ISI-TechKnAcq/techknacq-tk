@@ -713,10 +713,10 @@ if __name__ == '__main__':
 
     indir, outdir = sys.argv[1:]
 
-    c = Corpus()
-    c.load(indir)
-
     pool = mp.Pool(PROCESSES)
+
+    c = Corpus()
+    c.load(indir, pool)
 
     terms = get_terms(c)
 
