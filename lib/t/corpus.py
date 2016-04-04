@@ -98,7 +98,7 @@ class Document:
         self.sections = j.get('sections', [])
 
         if fname and format == 'sd':
-            self.read_sd(file)
+            self.read_sd(fname)
 
 
     def read_sd(self, f, fref=None):
@@ -129,7 +129,7 @@ class Document:
         self.authors = [x.string.strip() for x in soup('creator')]
         if soup.coverdate:
             # Dates are in format YYYY-MM-DD
-            self.year = int(re.sub('-.*', soup.coverdate.string))
+            self.year = int(re.sub('-.*', '', soup.coverdate.string))
 
         st = SentTokenizer()
         if soup.abstract:
