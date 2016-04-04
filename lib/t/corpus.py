@@ -9,9 +9,10 @@ import datetime
 import re
 
 from gensim import corpora, utils
-
 from xml.sax.saxutils import escape
+from bs4 import BeautifulSoup
 
+from t.lx import SentTokenizer
 
 class Corpus:
     def __init__(self):
@@ -75,8 +76,13 @@ class TextCorpus(Corpus):
 
 
 class Document:
-    def __init__(self, file=None):
-        if file and '.json' in file:
+    def __init__(self, file=None, format=None):
+        if not format and 'json' in file:
+            format = 'json'
+        if not format and 'xml' in file:
+            format = 'sd'
+
+        if file and format == 'json':
             j = json.load(io.open(file, 'r', encoding='utf8'))
         else:
             j = {'info': {}}
@@ -92,7 +98,7 @@ class Document:
 
         # We can infer the year of ACL Anthology papers from their
         # file names.
-        if self.year == '' and 'acl-' in file:
+        if file and self.year == '' and 'acl-' in file:
             m = re.match('.*acl-[A-Z]([0-9][0-9])-', file)
             lasttwo = int(m.group(1))
             if lasttwo > 50:
@@ -100,8 +106,74 @@ class Document:
             else:
                 self.year = str(2000 + lasttwo)
 
+        if file and format == 'sd':
+            self.read_sd(file)
+
+
+    def read_sd(self, f, fref=None):
+        """Read document contents from a ScienceDirect XML file."""
+
+        xml = io.open(f, 'r', encoding='utf8').read()
+        xml = re.sub("([</])(dc|prism|ce|sb|xocs):", r"\1", xml)
+        soup = BeautifulSoup(xml, 'lxml')
+
+        try:
+            pii = re.sub('[()-]', '', soup.find('pii').string)
+        except:
+            print('No PII found for', f)
+            return
+
+        self.id = 'sd-' + pii
+        self.authors = [x.string.strip() for x in soup('creator')]
+
+        if not self.authors and soup.editor:
+            self.authors = [x.get_text() + ' (ed.)' for x in
+                            soup.editor('authors')]
+
+        if soup.title:
+            self.title = soup.title.string.strip()
+        if soup.publicationname:
+            self.book = soup.publicationname.string.strip()
+        self.url = 'http://www.sciencedirect.com/science/article/pii/' + pii
+        self.authors = [x.string.strip() for x in soup('creator')]
+
+        st = SentTokenizer()
+        if soup.abstract:
+            sec = {'heading': 'Abstract',
+                   'text': st.tokenize(soup.find('abstract-sec').get_text())}
+            self.sections.append(sec)
+
+        for section in soup.find_all('section'):
+            sec = {'text': []}
+            heading = section.find('section-title')
+            if heading and heading.string:
+                sec['heading'] = heading.string.strip()
+            for p in section.find_all(['para', 'simple-para']):
+                sec['text'] += st.tokenize(p.get_text())
+            self.sections.append(sec)
+
+        if len(self.sections) <= 1:
+            sec = {'text': []}
+            for p in soup.find_all(['para', 'simple-para']):
+                sec['text'] += st.tokenize(p.get_text())
+            self.sections.append(sec)
+
+        if soup.rawtext and len(self.sections) < 3:
+            self.sections.append({'text': st.tokenize(soup.rawtext.get_text())})
+
+        if len(self.text()) < 200:
+            print(' ! Skip:', self.title, self.id + '. Missing text.')
+            return
+
+        if fref and os.path.exists(fref):
+            reftext = io.open(fref, 'r', encoding='utf8').read()
+            self.references = list(set([x.replace('PII:', 'sd-') for x in
+                                        re.findall('PII:[^<]+', reftext)]))
+
+
     def get_abstract(self):
         """Return the (probable) abstract for the document."""
+
         if len(self.sections[0]['text']) > 2:
             return self.sections[0]['text'][:10]
         if len(self.sections) > 1:
@@ -111,6 +183,7 @@ class Document:
 
     def json(self):
         """Return a JSON string representing the document."""
+
         doc = {
             'info': {
                 'id': self.id,

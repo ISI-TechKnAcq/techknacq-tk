@@ -384,62 +384,11 @@ def count_terms_in_doc(pii, terms):
 def get_sd_docs(ids):
     sd_corpus = Corpus()
 
-    st = SentTokenizer()
-
     for pii in ids:
         f = os.path.join(outdir, 'sd-download', pii + '-full.xml')
-        xml = io.open(f, 'r', encoding='utf8').read()
-        xml = re.sub("([</])(dc|prism|ce|sb|xocs):", r"\1", xml)
-        soup = BeautifulSoup(xml, 'lxml')
-
+        fxml = os.path.join(outdir, 'sd-download', pii + '-ref.xml')
         d = Document()
-        d.id = 'sd-' + pii.lower()
-        d.authors = [x.string.strip() for x in soup('creator')]
-
-        if not d.authors and soup.editor:
-            d.authors = [x.get_text() + ' (ed.)' for x in
-                         soup.editor('authors')]
-
-        if soup.title:
-            d.title = soup.title.string.strip()
-        if soup.publicationname:
-            d.book = soup.publicationname.string.strip()
-        d.url = 'http://www.sciencedirect.com/science/article/pii/' + pii
-        d.authors = [x.string.strip() for x in soup('creator')]
-
-        if soup.abstract:
-            sec = {'heading': 'Abstract',
-                   'text': st.tokenize(soup.find('abstract-sec').get_text())}
-            d.sections.append(sec)
-
-        for section in soup.find_all('section'):
-            sec = {'text': []}
-            heading = section.find('section-title')
-            if heading and heading.string:
-                sec['heading'] = heading.string.strip()
-            for p in section.find_all(['para', 'simple-para']):
-                sec['text'] += st.tokenize(p.get_text())
-            d.sections.append(sec)
-
-        if len(d.sections) <= 1:
-            sec = {'text': []}
-            for p in soup.find_all(['para', 'simple-para']):
-                sec['text'] += st.tokenize(p.get_text())
-            d.sections.append(sec)
-
-        if soup.rawtext and len(d.sections) < 3:
-            d.sections.append({'text': st.tokenize(soup.rawtext.get_text())})
-
-        if len(d.text()) < 200:
-            print(' ! Skip:', d.title, d.id, '. Missing text.')
-            continue
-
-        f = os.path.join(outdir, 'sd-download', pii + '-ref.xml')
-        if os.path.exists(f):
-            reftext = io.open(f, 'r', encoding='utf8').read()
-            d.references = list(set([x.replace('PII:', 'sd-') for x in
-                                     re.findall('PII:[^<]+', reftext)]))
-
+        d.read_sd(f, fxml)
         sd_corpus.add(d)
 
     return sd_corpus
@@ -771,16 +720,16 @@ if __name__ == '__main__':
 
     terms = get_terms(c)
 
-    docs_by_book = search_sd(terms)
-    download_sd(docs_by_book)
-    doc_ids = filter_sd(docs_by_book, terms)
-    c |= get_sd_docs(doc_ids)
+    # docs_by_book = search_sd(terms)
+    # download_sd(docs_by_book)
+    # doc_ids = filter_sd(docs_by_book, terms)
+    # c |= get_sd_docs(doc_ids)
 
-    articles = search_wiki(terms)
-    c |= get_wiki_docs(articles)
+    # articles = search_wiki(terms)
+    # c |= get_wiki_docs(articles)
 
-    tutorials = search_web(terms)
-    download_web(tutorials)
-    c |= get_web_docs(tutorials)
+    # tutorials = search_web(terms)
+    # download_web(tutorials)
+    # c |= get_web_docs(tutorials)
 
     c.export(outdir)
