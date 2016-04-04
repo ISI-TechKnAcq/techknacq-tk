@@ -20,7 +20,6 @@ from math import log
 from functools import partial
 from collections import defaultdict, Counter
 from noaho import NoAho
-from bs4 import BeautifulSoup
 from nltk.util import ngrams
 
 from websearch import WebSearch
@@ -63,11 +62,14 @@ def get_terms(corpus):
     ngram_counts = dict([(x, len(ngrams[x])) for x in ngrams])
     filtered = filter_subsumed(ngram_counts)
 
-    ngrams = score_ngrams(ngrams, citations)
-    ngrams = filter_subsumed(ngrams)
-
-    return [' '.join(x) for x in sorted(ngrams, key=lambda x: ngrams[x],
-                                        reverse=True) if x in filtered]
+    if citations:
+        ngrams = score_ngrams(ngrams, citations)
+        ngrams = filter_subsumed(ngrams)
+        return [' '.join(x) for x in sorted(ngrams, key=lambda x: ngrams[x],
+                                            reverse=True) if x in filtered][:2000]
+    else:
+        return [' '.join(x) for x in sorted(filtered, key=lambda x: filtered[x],
+                                            reverse=True)][:2000]
 
 
 def get_ngrams(l, min=1):
@@ -456,7 +458,7 @@ def search_wiki(terms):
 
     print('-- Choosing articles.')
 
-    good_articles = set()
+    good_articles = []
     for article in docs_low:
         try:
             categories = article.categories
@@ -468,7 +470,7 @@ def search_wiki(terms):
             print('   - Bad categories:', article.title.encode('utf8'))
             continue
         print('   + Good:', article.title.encode('utf8'))
-        good_articles.add(article)
+        good_articles.append(article)
 
     return good_articles
 
@@ -483,9 +485,9 @@ def get_wiki_article(title, terms):
     for term in terms:
        trie.add(term)
 
-    if title.startswith('Category:') or 'List of ' in title or 'Index of ' \
-       in title:
-        return (None, None, None)
+    for bad in ['Category:', 'List of ', 'Index of ']:
+        if bad in title:
+            return (None, None, None)
 
     try:
         article = wiki.page(title)
@@ -511,16 +513,16 @@ def get_wiki_docs(articles):
 
 def export_wiki_article(article):
     d = Document()
-    d.id = 'wiki-' + re.sub('[:/ ]', '_', article.title.lower())
-    d.authors = ['Wikipedia']
-    d.title = article.title
-    d.book = 'Wikipedia'
-
     try:
+        d.id = 'wiki-' + re.sub('[:/ ]', '_', article.title.lower())
+        d.authors = ['Wikipedia']
+        d.title = article.title
+        d.book = 'Wikipedia'
         d.url = article.url
         d.references = ['wiki-' + re.sub('[:/ ]', '_', x.lower())
                         for x in article.links]
     except:
+        print('Error processing article.')
         return None
 
     st = SentTokenizer()
@@ -725,8 +727,8 @@ if __name__ == '__main__':
     # doc_ids = filter_sd(docs_by_book, terms)
     # c |= get_sd_docs(doc_ids)
 
-    # articles = search_wiki(terms)
-    # c |= get_wiki_docs(articles)
+    articles = search_wiki(terms)
+    c |= get_wiki_docs(articles)
 
     # tutorials = search_web(terms)
     # download_web(tutorials)
