@@ -34,6 +34,7 @@ Install pip3 (Debian/Ubuntu: python3-pip). Use it to install the
 required Python packages:
 
     pip3 install --user --upgrade beautifulsoup4 nltk noaho wikipedia gensim
+                                  networkx
 
 Install required external tools:
 - pdftotext (Ubuntu: poppler-utils)
