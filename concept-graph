@@ -8,37 +8,34 @@ import sys
 from gensim.models.wrappers import LdaMallet
 
 from t.corpus import GensimCorpus
-
+from t.conceptgraph import ConceptGraph
 
 # Parameters
 
 MALLET_PATH = 'ext/mallet'
 MALLET_BIN = MALLET_PATH + '/bin/mallet'
 
-LDA_TOPICS = 30 #300
-LDA_ITERATIONS = 100 #1000
+LDA_TOPICS = 10 #300
+LDA_ITERATIONS = 10 #1000
 
 ###
+
+def topic_model(corpus):
+    return LdaMallet(MALLET_BIN, corpus, num_topics=LDA_TOPICS,
+                     id2word=corpus.dictionary, iterations=LDA_ITERATIONS)
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
         print('Usage: concept-graph [corpus dir.]', file=sys.stderr)
         sys.exit(1)
 
-    corpus = GensimCorpus('bigram', stop=MALLET_PATH + '/stoplists/en.txt')
+    cg = ConceptGraph()
+
+    corpus = GensimCorpus('bigram', stop=MALLET_PATH+'/stoplists/en.txt')
     corpus.load(sys.argv[1])
+    cg.add_docs(corpus)
 
-    # Print the bigrams in the corpus:
-#    for doc_bigrams in corpus:
-#        for (bigram, count) in doc_bigrams:
-#            print(corpus.dictionary[bigram])
-
-    model = LdaMallet(MALLET_BIN, corpus, num_topics=LDA_TOPICS,
-                      id2word=corpus.dictionary, iterations=LDA_ITERATIONS)
-
-    # Mallet output files:
-    print(model.fdoctopics())
-    print(model.finferencer())
-    print(model.fstate())
-    print(model.ftopickeys())
-    print(model.fwordweights())
+    model = topic_model(corpus)
+    cg.add_concepts(model)
+    for d in cg.docs():
+        print(d)
