@@ -38,11 +38,11 @@ class Corpus:
         return self
 
     def __iter__(self):
-        for x in self.docs:
-            yield x
+        for doc in self.docs:
+            yield doc
 
     def export(self, outdir, format='json'):
-        for d in self.docs:
+        for d in self:
             if format == 'json':
                 with io.open(os.path.join(outdir, d.id + '.json'), 'w',
                              encoding='utf8') as out:
