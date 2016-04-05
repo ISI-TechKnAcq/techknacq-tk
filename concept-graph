@@ -12,10 +12,11 @@ from t.corpus import GensimCorpus
 
 # Parameters
 
-MALLET_PATH = 'ext/mallet-2.0.8RC3'
+MALLET_PATH = 'ext/mallet'
 MALLET_BIN = MALLET_PATH + '/bin/mallet'
 
-TOPICS = 300
+LDA_TOPICS = 30 #300
+LDA_ITERATIONS = 100 #1000
 
 ###
 
@@ -32,7 +33,12 @@ if __name__ == '__main__':
 #        for (bigram, count) in doc_bigrams:
 #            print(corpus.dictionary[bigram])
 
-    model = LdaMallet(MALLET_BIN, corpus, num_topics=TOPICS,
-                      id2word=corpus.dictionary)
-    model.print_topics()
+    model = LdaMallet(MALLET_BIN, corpus, num_topics=LDA_TOPICS,
+                      id2word=corpus.dictionary, iterations=LDA_ITERATIONS)
+
+    # Mallet output files:
     print(model.fdoctopics())
+    print(model.finferencer())
+    print(model.fstate())
+    print(model.ftopickeys())
+    print(model.fwordweights())
