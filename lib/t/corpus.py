@@ -188,8 +188,8 @@ class Document:
 
         if fref and os.path.exists(fref):
             reftext = io.open(fref, 'r', encoding='utf8').read()
-            self.references = list(set([x.replace('PII:', 'sd-') for x in
-                                        re.findall('PII:[^<]+', reftext)]))
+            self.references = set([x.replace('PII:', 'sd-') for x in
+                                   re.findall('PII:[^<]+', reftext)])
 
 
     def get_abstract(self):
