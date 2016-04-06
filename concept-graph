@@ -4,6 +4,9 @@
 # Jonathan Gordon
 
 import sys
+import os
+import tempfile
+import random
 
 from gensim.models.wrappers import LdaMallet
 
@@ -20,9 +23,76 @@ LDA_ITERATIONS = 10 #1000
 
 ###
 
+class TopicDependency:
+    """Python wrapper class for Linhong's Java code for predicting dependencies
+    among LDA topics."""
+
+    jar = "ext/topic-dependency/topic-dependency.jar"
+
+    def __init__(self, corpus, model):
+        self.corpus = corpus
+        self.model = model
+
+        rand_prefix = hex(random.randint(0, 0xffffff))[2:] + '_'
+        self.prefix = os.path.join(tempfile.gettempdir(), rand_prefix)
+
+        topic_key_file = model.ftopickeys()
+        doc_comp_file = self.convert_comp_file()
+        citation_network_file = self.build_citation_network()
+        infomap_tree_file = "XXX"
+
+        cmd = 'java -jar %s %s %s %s %d %s' % (
+            self.jar, topic_key_file, infomap_tree_file, doc_comp_file,
+            LDA_TOPICS, citation_network_file)
+
+
+    def convert_comp_file(self):
+        """Convert Mallet composition file to the format needed by the
+        topic dependency code."""
+
+        fname = self.prefix + 'concept2doc.txt'
+
+        def pairwise(iterable):
+            """s -> (s0,s1), (s2,s3), (s4, s5), ..."""
+            a = iter(iterable)
+            return zip(a, a)
+
+        with open(fname, 'w') as fout:
+            for line in open(self.model.fdoctopics()):
+                if line[0] == '#':
+                    continue
+                elts = line.strip().split('\t')[1:]
+                fout.write(elts[0].replace('file:', ''))
+                for tid, pct in sorted(pairwise(elts[1:]),
+                                       key=lambda x: x[0]):
+                    fout.write('\ttopic' + tid + ':' + pct)
+                fout.write('\n')
+
+        return fname
+
+
+    def build_citation_network(self):
+        fname = self.prefix + 'cite.txt'
+
+        with open(fname, 'w') as fout:
+            for doc in self.corpus.docs:
+                for ref in doc.references:
+                    fout.write('%s ==> %s\n' % (doc.id, ref))
+
+        return fname
+
+###
+
 def topic_model(corpus):
-    return LdaMallet(MALLET_BIN, corpus, num_topics=LDA_TOPICS,
-                     id2word=corpus.dictionary, iterations=LDA_ITERATIONS)
+    model = LdaMallet(MALLET_BIN, corpus, num_topics=LDA_TOPICS,
+                      id2word=corpus.dictionary, iterations=LDA_ITERATIONS)
+    print('Mallet files:')
+    print(model.fdoctopics())
+    print(model.finferencer())
+    print(model.fstate())
+    print(model.ftopickeys())
+    print(model.fwordweights())
+    return model
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
@@ -37,5 +107,4 @@ if __name__ == '__main__':
 
     model = topic_model(corpus)
     cg.add_concepts(model)
-    for d in cg.docs():
-        print(d)
+    dep = TopicDependency(corpus, model)
