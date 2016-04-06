@@ -38,7 +38,10 @@ required Python packages:
 
 Install required external tools:
 - pdftotext (Ubuntu: poppler-utils)
-- MALLET. Download to ext/mallet (or change path in 'concept-graph' script).
+- MALLET 2.0.7. Download and rename the directory to ext/mallet (or change
+  the path in 'concept-graph' script). 2.0.8 changes file formats and is
+  not currently supported.
+
 
 ## Configuration
 
