@@ -18,6 +18,8 @@ class Lexicon:
     def __init__(self, listname):
         """Read a specified lexicon from disk."""
         self.words = set()
+        self.file = listname
+
         with open(listname) as f:
             for word in f.readlines():
                 self.words.add(word.strip())
