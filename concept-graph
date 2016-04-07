@@ -8,18 +8,16 @@ import os
 import tempfile
 import random
 
-from gensim.models.wrappers import LdaMallet
-
-from t.corpus import GensimCorpus
+from mallet import Mallet
+from t.corpus import Corpus
 from t.conceptgraph import ConceptGraph
 
 # Parameters
 
-MALLET_PATH = 'ext/mallet'
-MALLET_BIN = MALLET_PATH + '/bin/mallet'
+MALLET_PATH = 'ext/mallet/bin/mallet'
 
-LDA_TOPICS = 10 #300
-LDA_ITERATIONS = 10 #1000
+LDA_TOPICS = 300
+LDA_ITERATIONS = 1000
 
 ###
 
@@ -83,28 +81,34 @@ class TopicDependency:
 
 ###
 
-def topic_model(corpus):
-    model = LdaMallet(MALLET_BIN, corpus, num_topics=LDA_TOPICS,
-                      id2word=corpus.dictionary, iterations=LDA_ITERATIONS)
-    print('Mallet files:')
-    print(model.fdoctopics())
-    print(model.finferencer())
-    print(model.fstate())
-    print(model.ftopickeys())
-    print(model.fwordweights())
-    return model
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
         print('Usage: concept-graph [corpus dir.]', file=sys.stderr)
         sys.exit(1)
 
+    rand_prefix = hex(random.randint(0, 0xffffff))[2:] + '-'
+    prefix = os.path.join(tempfile.gettempdir(), rand_prefix)
+
     cg = ConceptGraph()
 
-    corpus = GensimCorpus('bigram', stop=MALLET_PATH+'/stoplists/en.txt')
+    corpus = Corpus()
     corpus.load(sys.argv[1])
+
     cg.add_docs(corpus)
 
-    model = topic_model(corpus)
-    cg.add_concepts(model)
-    dep = TopicDependency(corpus, model)
+    mallet_corpus = prefix + 'corpus'
+    os.makedirs(mallet_corpus)
+
+    corpus.export(mallet_corpus, format='text')
+    corpus.clear()
+
+    model = Mallet(MALLET_PATH, mallet_corpus, num_topics=LDA_TOPICS,
+                   bigrams=True, iters=LDA_ITERATIONS)
+
+    cg.add_concepts(model.topics)
+
+    for concept in cg.concepts():
+        print(concept)
+
+    #dep = TopicDependency(corpus, model)

@@ -3,8 +3,6 @@
 
 import networkx as nx
 
-from t.corpus import GensimCorpus
-
 # Parameters
 
 WORDS_PER_CONCEPT = 100
@@ -32,7 +30,7 @@ class ConceptGraph:
         """Add each document from the corpus as a node in the ConceptGraph
         and add edges for any citation information."""
 
-        for doc in corpus.docs:
+        for doc in corpus:
             self.g.add_node(doc.id, type='document', authors=doc.authors,
                             title=doc.title, book=doc.book, year=doc.year,
                             url=doc.url, abstract=doc.get_abstract())
@@ -40,15 +38,15 @@ class ConceptGraph:
                 self.g.add_edge(doc.id, ref, type='cite')
 
 
-    def add_concepts(self, model):
+    def add_concepts(self, topics):
         """Add each topic from the topic model as a node in the
         ConceptGraph."""
 
-        for i in range(model.num_topics):
+        for i, topic in enumerate(topics):
             concept_id = 'concept-' + str(i)
             self.g.add_node(concept_id, type='concept')
             self.g[concept_id]['words'] = []
-            for weight, word in model.show_topic(i, WORDS_PER_CONCEPT):
+            for word, weight in sorted(topic, key=lambda x: x[1], reverse=True):
                 self.g[concept_id]['words'].append((word, weight))
 
 

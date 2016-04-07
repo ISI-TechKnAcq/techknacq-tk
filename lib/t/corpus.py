@@ -9,11 +9,9 @@ import datetime
 import re
 import multiprocessing as mp
 
-from gensim import corpora, utils
-from nltk import bigrams
-from xml.sax.saxutils import escape
-from bs4 import BeautifulSoup
 from pathlib import Path
+from bs4 import BeautifulSoup
+from xml.sax.saxutils import escape
 
 from t.lx import SentTokenizer
 
@@ -30,6 +28,9 @@ class Corpus:
             if doc:
                 self.add(doc)
 
+    def clear(self):
+        self.docs = set()
+
     def add(self, doc):
         self.docs.add(doc)
 
@@ -41,63 +42,20 @@ class Corpus:
         for doc in self.docs:
             yield doc
 
-    def export(self, outdir, format='json'):
+    def export(self, dest, format='json'):
         for d in self:
             if format == 'json':
-                with io.open(os.path.join(outdir, d.id + '.json'), 'w',
+                with io.open(os.path.join(dest, d.id + '.json'), 'w',
                              encoding='utf8') as out:
                     out.write(d.json() + '\n')
             elif format == 'bioc':
-                with io.open(os.path.join(outdir, d.id + '.xml'), 'w',
+                with io.open(os.path.join(dest, d.id + '.xml'), 'w',
                              encoding='utf8') as out:
                     out.write(d.bioc() + '\n')
             elif format == 'text':
-                with io.open(os.path.join(outdir, d.id + '.txt'), 'w',
+                with io.open(os.path.join(dest, d.id + '.txt'), 'w',
                              encoding='utf8') as out:
                     out.write(d.text() + '\n')
-
-
-class GensimCorpus(Corpus):
-    """A view of a corpus for use in Gensim-based topic modeling.
-    Gensim's Mallet wrapper can only handle unigrams, so any n-gram
-    preprocessing is done here."""
-
-    def __init__(self, n='unigram', stop=None):
-        Corpus.__init__(self)
-        if n in ['unigram', 'bigram']:
-            self.n = n
-        else:
-            print('Error: Unknown corpus type', n, file=sys.stderr)
-            sys.exit(1)
-
-        if stop:
-            self.stop_list = set([x.strip() for x in open(stop).readlines()])
-        else:
-            self.stop_list = set()
-
-
-    def load(self, dirname):
-        Corpus.load(self, dirname)
-        self.dictionary = corpora.Dictionary(self.iter_docs())
-
-
-    def iter_docs(self):
-        def filtered_tokens(text):
-            for token in utils.simple_preprocess(text):
-                if token not in self.stop_list:
-                    yield token
-
-        for doc in self.docs:
-            if self.n == 'unigram':
-                yield filtered_tokens(doc.text())
-            elif self.n == 'bigram':
-                yield ['_'.join(x) for x in
-                       bigrams(filtered_tokens(doc.text()))]
-
-
-    def __iter__(self):
-        for tokens in self.iter_docs():
-            yield self.dictionary.doc2bow(tokens)
 
 
 class Document:
