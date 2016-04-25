@@ -13,7 +13,7 @@ from pathlib import Path
 from bs4 import BeautifulSoup
 from xml.sax.saxutils import escape
 
-from t.lx import SentTokenizer
+from t.lx import SentTokenizer, find_short_long_pairs
 
 class Corpus:
     def __init__(self, dirname=None, pool=None):
@@ -43,6 +43,10 @@ class Corpus:
     def __iter__(self):
         for doc in self.docs:
             yield doc
+
+    def expand_short_forms(self):
+        for doc in self.docs:
+            doc.expand_short_forms()
 
     def export(self, dest, format='json'):
         if format not in ['json', 'bioc', 'text']:
@@ -140,7 +144,8 @@ class Document:
         if len(self.sections) <= 1:
             sec = {'text': []}
             for p in soup.find_all(['para', 'simple-para']):
-                sec['text'] += st.tokenize(p.get_text())
+                sec['text'] += [re.sub(r'\s+', ' ', x) for x in
+                                st.tokenize(p.get_text())]
             self.sections.append(sec)
 
         if soup.rawtext and len(self.sections) < 3:
@@ -157,6 +162,40 @@ class Document:
             reftext = io.open(fref, 'r', encoding='utf8').read()
             self.references = set([x.replace('PII:', 'sd-') for x in
                                    re.findall('PII:[^<]+', reftext)])
+
+
+    def expand_short_forms(self):
+        """Expand short forms (acronyms or abbreviations) in the document's
+        text to the long forms found in the document."""
+
+        def make_entity(x):
+            return '#' + x.replace(' ', '_') + '#'
+
+        # Find substitutions
+        subs = {}
+        for sent in self.text().splitlines():
+            for s, l in find_short_long_pairs(sent.strip()):
+                if s not in subs or len(l) < len(subs[s]):
+                    subs[s] = l
+
+        if len(subs) == 0:
+            return
+
+        # Substitute in text.
+        rem_pat = re.compile(r'\((' + '|'.join(subs.keys()) + r')\)')
+        sub_pat = re.compile(r'\b(' + '|'.join(subs.keys()) + r')\b')
+        lon_pat = re.compile(r'\b(' + '|'.join(subs.values()) + r')\b')
+        for sect in self.sections:
+            if 'heading' in sect:
+                h = rem_pat.sub('', sect['heading'])
+                h = lon_pat.sub(lambda x: make_entity(x.group()), h)
+                h = sub_pat.sub(lambda x: make_entity(subs[x.group()]), h)
+                sect['heading'] = h
+            for i in range(len(sect['text'])):
+                s = rem_pat.sub('', sect['text'][i])
+                s = lon_pat.sub(lambda x: make_entity(x.group()), s)
+                s = sub_pat.sub(lambda x: make_entity(subs[x.group()]), s)
+                sect['text'][i] = re.sub(r'\s+', ' ', s)
 
 
     def get_abstract(self):
