@@ -546,10 +546,10 @@ def search_web(terms):
     print('-- Search Web for technical terms.')
 
     tutorials = Counter()
-    for results in pool.imap(search_web_term, chunks(terms, 5)):
+    for results in pool.imap(search_web_term, chunks(terms, 10)):
         for tutorial in results:
             tutorials[tutorial] += 1
-    for results in pool.imap(search_web_term, [[x] for x in terms[:100]]):
+    for results in pool.imap(search_web_term, [[x] for x in terms[:200]]):
         for tutorial in results:
             tutorials[tutorial] += 1
 
@@ -587,7 +587,7 @@ def search_web_term(terms):
         'tutorial dialog', 'tutorial section', 'tutorial system',
         'university', 'vitae', 'vitæ', 'vita', 'proceedings', 'transcript',
         'conference', 'agenda', 'workshop', 'hello', 'abstracts',
-        'instructor'
+        'instructor', 'manual'
     ]
 
     for result in w.search(query, limit=5):
@@ -657,6 +657,10 @@ def get_web_docs(tutorials):
 
 
 def export_tutorial(tutorial):
+    def count_pages(f):
+        r = re.compile(b"/Type\s*/Page([^s/]|$)", re.MULTILINE|re.DOTALL)
+        return len(r.findall(open(f, "rb").read()))
+
     title, url = tutorial
 
     fname = 'web-' + re.sub('[ :/()]', '_', title[:40].lower())
@@ -670,6 +674,11 @@ def export_tutorial(tutorial):
 
     if not os.path.exists(pdfpath):
         print(' ! Missing download:', fname, file=sys.stderr)
+        return
+
+    pages = count_pages(pdfpath)
+    if pages in [1, 2] or pages > 100:
+        print(' ! Inappropriate number of pages:', fname, file=sys.stderr)
         return
 
     try:
@@ -717,8 +726,7 @@ if __name__ == '__main__':
 
     pool = mp.Pool(PROCESSES)
 
-    c = Corpus()
-    c.load(indir, pool)
+    c = Corpus(indir, pool)
 
     terms = get_terms(c)
 
@@ -727,8 +735,8 @@ if __name__ == '__main__':
     # doc_ids = filter_sd(docs_by_book, terms)
     # c |= get_sd_docs(doc_ids)
 
-    articles = search_wiki(terms)
-    c |= get_wiki_docs(articles)
+    #articles = search_wiki(terms)
+    #c |= get_wiki_docs(articles)
 
     # tutorials = search_web(terms)
     # download_web(tutorials)
