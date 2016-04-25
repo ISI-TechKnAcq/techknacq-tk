@@ -8,10 +8,12 @@ import json
 import datetime
 import re
 import multiprocessing as mp
+import enchant
 
 from pathlib import Path
 from bs4 import BeautifulSoup
 from xml.sax.saxutils import escape
+from nltk import bigrams
 
 from t.lx import SentTokenizer, find_short_long_pairs
 
@@ -44,8 +46,9 @@ class Corpus:
         for doc in self.docs:
             yield doc
 
-    def expand_short_forms(self):
+    def fix_text(self):
         for doc in self.docs:
+            doc.dehyphenate()
             doc.expand_short_forms()
 
     def export(self, dest, format='json'):
@@ -162,6 +165,44 @@ class Document:
             reftext = io.open(fref, 'r', encoding='utf8').read()
             self.references = set([x.replace('PII:', 'sd-') for x in
                                    re.findall('PII:[^<]+', reftext)])
+
+
+    def dehyphenate(self):
+        """Fix words that were split with hyphens."""
+
+        def dehyphenate_sent(s):
+            words = s.split()
+            out = []
+            skip = False
+            for w1, w2 in bigrams(words):
+                if skip:
+                    skip = False
+                elif w1[-1] == '-':
+                    if d.check(w1[:-1] + w2):
+                        out.append(w1[:-1] + w2)
+                        skip = True
+                    elif w1[0].isalpha() and w2 != 'and':
+                        out.append(w1 + w2)
+                        skip = True
+                    else:
+                        out.append(w1)
+                else:
+                    out.append(w1)
+            if not skip:
+                out.append(words[-1])
+            return ' '.join(out)
+
+        # Learn the document-specific vocabulary:
+        d = enchant.Dict('en')
+        for word in re.split('\W+', self.text()):
+            if word and word[-1] != '-':
+                d.add_to_session(word)
+
+        for sect in self.sections:
+            if 'heading' in sect:
+                sect['heading'] = dehyphenate_sent(sect['heading'])
+            for i in range(len(sect['text'])):
+                sect['text'][i] = dehyphenate_sent(sect['text'][i])
 
 
     def expand_short_forms(self):

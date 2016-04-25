@@ -727,6 +727,8 @@ if __name__ == '__main__':
     pool = mp.Pool(PROCESSES)
 
     c = Corpus(indir, pool)
+    for doc in c:
+        c.dehyphenate()
 
     terms = get_terms(c)
 
