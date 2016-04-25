@@ -16,10 +16,12 @@ from xml.sax.saxutils import escape
 from t.lx import SentTokenizer
 
 class Corpus:
-    def __init__(self):
+    def __init__(self, dirname=None, pool=None):
         self.docs = set()
 
-    def load(self, dirname, pool=None):
+        if not dirname:
+            return
+
         if not pool:
             pool = mp.Pool(int(.5 * mp.cpu_count()))
 
@@ -43,6 +45,10 @@ class Corpus:
             yield doc
 
     def export(self, dest, format='json'):
+        if format not in ['json', 'bioc', 'text']:
+            print('Unrecognized format for export', format, file=sys.stderr)
+            sys.exit(1)
+
         for d in self:
             if format == 'json':
                 with io.open(os.path.join(dest, d.id + '.json'), 'w',
@@ -94,12 +100,12 @@ class Document:
         soup = BeautifulSoup(xml, 'lxml')
 
         try:
-            pii = re.sub('[()-]', '', soup.find('pii').string)
+            pii = re.sub('[()-.]', '', soup.find('pii').string)
         except:
             print('No PII found for', f)
             return
 
-        self.id = 'sd-' + pii
+        self.id = 'sd-' + pii.lower()
         self.authors = [x.string.strip() for x in soup('creator')]
 
         if not self.authors and soup.editor:
@@ -144,7 +150,10 @@ class Document:
             print(' ! Skip:', self.title, self.id + '. Missing text.')
             return
 
-        if fref and os.path.exists(fref):
+        if not fref:
+            fref = f.replace('-full.xml', '-ref.xml')
+
+        if os.path.exists(fref):
             reftext = io.open(fref, 'r', encoding='utf8').read()
             self.references = set([x.replace('PII:', 'sd-') for x in
                                    re.findall('PII:[^<]+', reftext)])

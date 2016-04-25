@@ -4,6 +4,5 @@ import sys
 
 from t.corpus import Corpus, Document
 
-c = Corpus()
-c.load(sys.argv[1])
+c = Corpus(sys.argv[1])
 c.export(sys.argv[2], format='text')
