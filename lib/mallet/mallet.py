@@ -32,6 +32,7 @@ class Mallet:
         self.omfile = self.prefix + 'model.mallet'
         self.tkfile = self.prefix + 'keys.txt'
         self.statefile = self.prefix + 'state.gz'
+        self.cofile = self.prefix + 'co-occur.txt'
 
         self.topics = [[] for i in range(num_topics)]
 
@@ -48,7 +49,7 @@ class Mallet:
                '--output', self.prefix + 'corpus.mallet',
                '--remove-stopwords',
                '--extra-stopwords', stop.file,
-               '--token-regex', '"[\p{L}\p{M}]+"']
+               '--token-regex', r'"[^ ]+"']
 
         if bigrams:
             cmd += ['--keep-sequence-bigrams', '--gram-sizes 2']
@@ -72,20 +73,10 @@ class Mallet:
                '--output-model', self.omfile,
                '--output-topic-keys', self.tkfile,
                '--output-state', self.statefile]
-        p = subprocess.Popen(cmd,
-                             stdout=subprocess.PIPE,
-                             stderr=subprocess.PIPE)
 
-        prog = re.compile(b'\<([^\)]+)\>')
-        while p.poll() is None:
-            line = p.stderr.readline()
-            try:
-                i = float(prog.match(line).groups()[0])
-                progress = int(100. * i/iters)
-                if progress % 10 == 0:
-                    print('LDA progress: {0}%.'.format(progress))
-            except AttributeError:
-                pass
+        if subprocess.call(cmd) != 0:
+            sys.stderr.write('Mallet train-topics failed.\n')
+            sys.exit(1)
 
     def load_wt(self):
         for line in open(self.wtfile):
