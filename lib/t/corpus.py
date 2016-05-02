@@ -15,7 +15,7 @@ from bs4 import BeautifulSoup
 from xml.sax.saxutils import escape
 from nltk import bigrams
 
-from t.lx import SentTokenizer, find_short_long_pairs
+from t.lx import SentTokenizer, StopLexicon, find_short_long_pairs
 
 class Corpus:
     def __init__(self, dirname=None, pool=None):
@@ -51,24 +51,31 @@ class Corpus:
             doc.dehyphenate()
             doc.expand_short_forms()
 
-    def export(self, dest, format='json'):
-        if format not in ['json', 'bioc', 'text']:
+    def export(self, dest, abstract=False, format='json'):
+        if format not in ['json', 'bioc', 'text', 'bigrams']:
             print('Unrecognized format for export', format, file=sys.stderr)
             sys.exit(1)
+
+        if format == 'bigrams':
+            stop = StopLexicon()
 
         for d in self:
             if format == 'json':
                 with io.open(os.path.join(dest, d.id + '.json'), 'w',
                              encoding='utf8') as out:
-                    out.write(d.json() + '\n')
+                    out.write(d.json(abstract) + '\n')
             elif format == 'bioc':
                 with io.open(os.path.join(dest, d.id + '.xml'), 'w',
                              encoding='utf8') as out:
-                    out.write(d.bioc() + '\n')
+                    out.write(d.bioc(abstract) + '\n')
             elif format == 'text':
                 with io.open(os.path.join(dest, d.id + '.txt'), 'w',
                              encoding='utf8') as out:
-                    out.write(d.text() + '\n')
+                    out.write(d.text(abstract) + '\n')
+            elif format == 'bigrams':
+                with io.open(os.path.join(dest, d.id + '.txt'), 'w',
+                             encoding='utf8') as out:
+                    out.write(d.bigrams(abstract, stop) + '\n')
 
 
 class Document:
@@ -223,19 +230,24 @@ class Document:
             return
 
         # Substitute in text.
-        rem_pat = re.compile(r'\((' + '|'.join(subs.keys()) + r')\)')
-        sub_pat = re.compile(r'\b(' + '|'.join(subs.keys()) + r')\b')
-        lon_pat = re.compile(r'\b(' + '|'.join(subs.values()) + r')\b')
+        rem_pat = re.compile(r'\((' + '|'.join([re.escape(x) for x in
+                                                subs.keys()]) + r')\)')
+        sub_pat = re.compile(r'\b(' + '|'.join([re.escape(x) for x in
+                                                subs.keys()]) + r')\b')
+        lon_pat = re.compile(r'\b(' + '|'.join([re.escape(x) for x in
+                                                subs.values()]) + r')\b')
         for sect in self.sections:
             if 'heading' in sect:
                 h = rem_pat.sub('', sect['heading'])
                 h = lon_pat.sub(lambda x: make_entity(x.group()), h)
-                h = sub_pat.sub(lambda x: make_entity(subs[x.group()]), h)
-                sect['heading'] = h
+                h = sub_pat.sub(lambda x: make_entity(subs.get(x.group(),
+                                                               x.group())), h)
+                sect['heading'] = re.sub('\s+', ' ', h)
             for i in range(len(sect['text'])):
                 s = rem_pat.sub('', sect['text'][i])
                 s = lon_pat.sub(lambda x: make_entity(x.group()), s)
-                s = sub_pat.sub(lambda x: make_entity(subs[x.group()]), s)
+                s = sub_pat.sub(lambda x: make_entity(subs.get(x.group(),
+                                                               x.group())), s)
                 sect['text'][i] = re.sub(r'\s+', ' ', s)
 
 
@@ -249,7 +261,7 @@ class Document:
         return self.sections[0]['text'][:10]
 
 
-    def json(self):
+    def json(self, abstract=False):
         """Return a JSON string representing the document."""
 
         doc = {
@@ -261,13 +273,17 @@ class Document:
                 'book': self.book,
                 'url': self.url
             },
-            'references': sorted(list(self.references)),
-            'sections': self.sections
+            'references': sorted(list(self.references))
         }
+        if abstract:
+            doc['sections'] = [self.sections[0]]
+        else:
+            doc['sections'] = self.sections
+
         return json.dumps(doc, indent=2, sort_keys=True, ensure_ascii=False)
 
 
-    def bioc(self):
+    def bioc(self, abstract=False):
         """Return a BioC XML string representing the document."""
 
         t = '''<?xml version="1.0" encoding="UTF-8"?>
@@ -293,19 +309,57 @@ class Document:
             t += escape(' '.join(s['text']))
             if s != self.sections[-1]:
                 t += ' '
+            if abstract:
+                break
         t += '</text>'
         t += '</passage></document></collection>'
         return filter_non_printable(t)
 
 
-    def text(self):
+    def text(self, abstract=False):
         """Return a plain-text string representing the document."""
         t = self.title + '\n\n'
+
         for s in self.sections:
             if 'heading' in s and s['heading']:
                 t += '\n\n' + s['heading'] + '\n\n'
+            if abstract:
+                t += self.abstract()
+                break
             t += '\n'.join(s['text'])
         return filter_non_printable(t)
+
+
+    def bigrams(self, abstract=False, stop=StopLexicon()):
+        def good_word(w):
+            return any(c.isalpha() for c in w)
+
+        def bigrams_from_sent(s):
+            ret = ''
+            words = []
+            for x in re.split(r'[^a-zA-Z0-9_#-]+', s):
+                if len(x) > 0 and not x in stop and not x.lower() in stop:
+                    words.append(x)
+            for w1, w2 in bigrams(words):
+                if good_word(w1) and good_word(w2):
+                    ret += w1.lower() + '_' + w2.lower() + ' '
+                if w1[0] == '#' and w1[-1] == '#' and good_word(w1):
+                    ret += w1 + ' '
+            if words and words[-1][0] == '#' and words[-1][-1] == '#' and \
+              good_word(words[-1]):
+                ret += words[-1] + ' '
+            return ret
+
+        out = bigrams_from_sent(self.title)
+        for sect in self.sections:
+            if 'heading' in sect and sect['heading']:
+                out += bigrams_from_sent(sect['heading'])
+            for sent in sect['text']:
+                out += bigrams_from_sent(sent)
+            if abstract:
+                break
+
+        return out
 
 
 def filter_non_printable(s):
