@@ -16,7 +16,7 @@ from t.conceptgraph import ConceptGraph
 
 MALLET_PATH = 'ext/mallet/bin/mallet'
 
-LDA_TOPICS = 300
+LDA_TOPICS = 400
 LDA_ITERATIONS = 1000
 
 ###
@@ -31,17 +31,18 @@ class TopicDependency:
         self.corpus = corpus
         self.model = model
 
-        rand_prefix = hex(random.randint(0, 0xffffff))[2:] + '_'
+        rand_prefix = hex(random.randint(0, 0xffffff))[2:] + '-'
         self.prefix = os.path.join(tempfile.gettempdir(), rand_prefix)
 
-        topic_key_file = model.ftopickeys()
+        topic_key_file = model.tkfile
         doc_comp_file = self.convert_comp_file()
         citation_network_file = self.build_citation_network()
-        infomap_tree_file = "XXX"
+        infomap_tree_file = self.get_infomap_tree()
 
         cmd = 'java -jar %s %s %s %s %d %s' % (
             self.jar, topic_key_file, infomap_tree_file, doc_comp_file,
             LDA_TOPICS, citation_network_file)
+        print(cmd)
 
 
     def convert_comp_file(self):
@@ -56,7 +57,7 @@ class TopicDependency:
             return zip(a, a)
 
         with open(fname, 'w') as fout:
-            for line in open(self.model.fdoctopics()):
+            for line in open(self.model.dtfile):
                 if line[0] == '#':
                     continue
                 elts = line.strip().split('\t')[1:]
@@ -66,6 +67,20 @@ class TopicDependency:
                     fout.write('\ttopic' + tid + ':' + pct)
                 fout.write('\n')
 
+        return fname
+
+
+    def get_infomap_tree(self):
+        fname = self.prefix + 'infomap-tree.txt'
+
+        cmd = ['java', '-jar', 'ext/topic-dependency/infomap-input.jar',
+               self.model.tkfile, self.model.cofile,
+               self.prefix + 'infomap.net']
+        # XXX: Run command then run infomap/Infomap --flow-network with
+        # self.prefix + 'infomap.net' as input:
+        #    $TOOLSDIR/infomap/Infomap --flow-network $IDENTIFIER.net .
+        # Delete the .net file. The output will be $IDENTIFIER.tree.
+        # Delete $IDENTIFIER.flow
         return fname
 
 
@@ -92,23 +107,19 @@ if __name__ == '__main__':
 
     cg = ConceptGraph()
 
-    corpus = Corpus()
-    corpus.load(sys.argv[1])
+    corpus = Corpus(sys.argv[1])
+    corpus.fix_text()
 
     cg.add_docs(corpus)
 
     mallet_corpus = prefix + 'corpus'
     os.makedirs(mallet_corpus)
-
-    corpus.export(mallet_corpus, format='text')
+    corpus.export(mallet_corpus, abstract=True, format='bigrams')
     corpus.clear()
 
     model = Mallet(MALLET_PATH, mallet_corpus, num_topics=LDA_TOPICS,
-                   bigrams=True, iters=LDA_ITERATIONS)
+                   iters=LDA_ITERATIONS)
 
-    cg.add_concepts(model.topics)
-
-    for concept in cg.concepts():
-        print(concept)
+    #cg.add_concepts(model.topics)
 
     #dep = TopicDependency(corpus, model)
