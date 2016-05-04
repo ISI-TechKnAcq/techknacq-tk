@@ -18,19 +18,24 @@ from nltk import bigrams
 from t.lx import SentTokenizer, StopLexicon, find_short_long_pairs
 
 class Corpus:
-    def __init__(self, dirname=None, pool=None):
+    def __init__(self, dirname=None, pool=None, fname=None):
         self.docs = set()
 
-        if not dirname:
-            return
-
-        if not pool:
-            pool = mp.Pool(int(.5 * mp.cpu_count()))
-
-        docnames = (str(f) for f in Path(dirname).iterdir() if f.is_file())
-        for doc in pool.imap(Document, docnames):
-            if doc:
+        if fname:
+            # Read a BioC corpus file.
+            j = json.load(open(fname))
+            for d in j['documents']:
+                doc = Document()
+                doc.read_bioc_json(d)
                 self.add(doc)
+        elif dirname:
+            if not pool:
+                pool = mp.Pool(int(.5 * mp.cpu_count()))
+
+            docnames = (str(f) for f in Path(dirname).iterdir() if f.is_file())
+            for doc in pool.imap(Document, docnames):
+                if doc:
+                    self.add(doc)
 
     def clear(self):
         self.docs = set()
@@ -106,8 +111,48 @@ class Document:
             self.read_sd(fname)
 
 
+    def read_bioc_json(self, j):
+        """Read a document from a string containing a JSON-formatted BioC
+        representation. Currently this is specific to the PubMed corpus it
+        was used on."""
+
+        self.id = 'pmc-' + j['id']
+        self.url = j['infons']['xref']
+
+        st = SentTokenizer()
+        for i, passage in enumerate(j['passages']):
+            if i == 0:
+                lines = passage['text'].splitlines()[:3]
+                # Guess that the author is the second line and the book
+                # title and year are the third line.
+                self.authors = lines[1].split(', ')
+                self.book = re.sub(r' \(.+', '', lines[2])
+                m = re.match(r'.*\(([0-9]+)\)', lines[2])
+                if m:
+                    self.year = int(m.group(1))
+            for annotation in passage['annotations']:
+                if annotation['infons']['value'] == 'article-title':
+                    a = annotation['locations'][0]['offset']
+                    b = a + annotation['locations'][0]['length']
+                    self.title = passage['text'][a:b-1]
+                elif annotation['infons']['value'] == 'abstract':
+                    a = annotation['locations'][0]['offset'] - 1
+                    b = a + annotation['locations'][0]['length']
+                    sec = {}
+                    sec['heading'] = 'Abstract'
+                    sec['text'] = st.tokenize(passage['text'][a:b])
+                    if sec['text'][0] != 'null':
+                        self.sections.append(sec)
+                else:
+                    sys.sterr.write('Unexpected infon value %s.\n' %
+                                    (anntoation['infons']['value']))
+
+
     def read_sd(self, f, fref=None):
         """Read document contents from a ScienceDirect XML file."""
+
+        if '-ref.xml' in f:
+            return
 
         xml = io.open(f, 'r', encoding='utf8').read()
         xml = re.sub("([</])(dc|prism|ce|sb|xocs):", r"\1", xml)
@@ -120,7 +165,10 @@ class Document:
             return
 
         self.id = 'sd-' + pii.lower()
-        self.authors = [x.string.strip() for x in soup('creator')]
+        try:
+            self.authors = [x.string.strip() for x in soup('creator')]
+        except:
+            self.authors = []
 
         if not self.authors and soup.editor:
             self.authors = [x.get_text() + ' (ed.)' for x in
@@ -131,7 +179,6 @@ class Document:
         if soup.publicationname:
             self.book = soup.publicationname.string.strip()
         self.url = 'http://www.sciencedirect.com/science/article/pii/' + pii
-        self.authors = [x.string.strip() for x in soup('creator')]
         if soup.coverdate:
             # Dates are in format YYYY-MM-DD
             self.year = int(re.sub('-.*', '', soup.coverdate.string))
