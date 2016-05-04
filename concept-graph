@@ -7,6 +7,7 @@ import sys
 import os
 import tempfile
 import random
+import subprocess
 
 from mallet import Mallet
 from t.corpus import Corpus
@@ -16,7 +17,7 @@ from t.conceptgraph import ConceptGraph
 
 MALLET_PATH = 'ext/mallet/bin/mallet'
 
-LDA_TOPICS = 400
+LDA_TOPICS = 200
 LDA_ITERATIONS = 1000
 
 ###
@@ -25,7 +26,7 @@ class TopicDependency:
     """Python wrapper class for Linhong's Java code for predicting dependencies
     among LDA topics."""
 
-    jar = "ext/topic-dependency/topic-dependency.jar"
+    jar = 'ext/topic-dependency/topic-dependency.jar'
 
     def __init__(self, corpus, model):
         self.corpus = corpus
@@ -39,10 +40,12 @@ class TopicDependency:
         citation_network_file = self.build_citation_network()
         infomap_tree_file = self.get_infomap_tree()
 
-        cmd = 'java -jar %s %s %s %s %d %s' % (
-            self.jar, topic_key_file, infomap_tree_file, doc_comp_file,
-            LDA_TOPICS, citation_network_file)
-        print(cmd)
+        cmd = ['java', '-jar', self.jar,
+               topic_key_file, infomap_tree_file, doc_comp_file,
+               str(LDA_TOPICS), citation_network_file]
+        if subprocess.call(cmd) != 0:
+            sys.stderr.write('Running topic-dependency code failed.\]n')
+            sys.exit(1)
 
 
     def convert_comp_file(self):
@@ -76,11 +79,20 @@ class TopicDependency:
         cmd = ['java', '-jar', 'ext/topic-dependency/infomap-input.jar',
                self.model.tkfile, self.model.cofile,
                self.prefix + 'infomap.net']
-        # XXX: Run command then run infomap/Infomap --flow-network with
-        # self.prefix + 'infomap.net' as input:
-        #    $TOOLSDIR/infomap/Infomap --flow-network $IDENTIFIER.net .
-        # Delete the .net file. The output will be $IDENTIFIER.tree.
-        # Delete $IDENTIFIER.flow
+        if subprocess.call(cmd) != 0:
+            sys.stderr.write('Formatting input for Infomap failed.\n')
+            sys.exit(1)
+
+        cmd = ['ext/topic-dependency/infomap/Infomap',
+               '--flow-network', self.prefix + 'infomap.net',
+               tempfile.gettempdir()]
+        if subprocess.call(cmd) != 0:
+            sys.stderr.write('Running Infomap failed.\]n')
+            sys.exit(1)
+
+        os.remove(self.prefix + 'infomap.net')
+        os.remove(self.prefix + 'infomap.flow')
+        os.rename(self.prefix + 'infomap.tree', fname)
         return fname
 
 
@@ -98,28 +110,30 @@ class TopicDependency:
 
 
 if __name__ == '__main__':
-    if len(sys.argv) != 2:
-        print('Usage: concept-graph [corpus dir.]', file=sys.stderr)
-        sys.exit(1)
+    #if len(sys.argv) != 2:
+    #    print('Usage: concept-graph [corpus dir.]', file=sys.stderr)
+    #    sys.exit(1)
 
-    rand_prefix = hex(random.randint(0, 0xffffff))[2:] + '-'
-    prefix = os.path.join(tempfile.gettempdir(), rand_prefix)
+    #rand_prefix = hex(random.randint(0, 0xffffff))[2:] + '-'
+    #prefix = os.path.join(tempfile.gettempdir(), rand_prefix)
 
     cg = ConceptGraph()
 
     corpus = Corpus(sys.argv[1])
-    corpus.fix_text()
+    #corpus.fix_text()
 
-    cg.add_docs(corpus)
+    #cg.add_docs(corpus)
 
-    mallet_corpus = prefix + 'corpus'
-    os.makedirs(mallet_corpus)
-    corpus.export(mallet_corpus, abstract=True, format='bigrams')
-    corpus.clear()
+    #mallet_corpus = prefix + 'corpus'
+    #os.makedirs(mallet_corpus)
+    #corpus.export(mallet_corpus, abstract=True, format='bigrams')
+    #corpus.clear()
 
-    model = Mallet(MALLET_PATH, mallet_corpus, num_topics=LDA_TOPICS,
-                   iters=LDA_ITERATIONS)
+    #model = Mallet(MALLET_PATH, mallet_corpus, num_topics=LDA_TOPICS,
+    #               iters=LDA_ITERATIONS)
 
     #cg.add_concepts(model.topics)
 
-    #dep = TopicDependency(corpus, model)
+    model = Mallet(MALLET_PATH, prefix=sys.argv[2])
+
+    dep = TopicDependency(corpus, model)
