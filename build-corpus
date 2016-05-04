@@ -39,7 +39,7 @@ GOOGLE_API_KEY = open(os.path.expanduser('~/.t/google.txt')).read().strip()
 ###
 
 
-def get_terms(corpus):
+def get_terms(corpus, n=4000):
     """Return an ordered list of technical terms or names of research
     topics, based on citation graph density."""
 
@@ -66,10 +66,10 @@ def get_terms(corpus):
         ngrams = score_ngrams(ngrams, citations)
         ngrams = filter_subsumed(ngrams)
         return [' '.join(x) for x in sorted(ngrams, key=lambda x: ngrams[x],
-                                            reverse=True) if x in filtered][:2000]
+                                            reverse=True) if x in filtered][:n]
     else:
         return [' '.join(x) for x in sorted(filtered, key=lambda x: filtered[x],
-                                            reverse=True)][:2000]
+                                            reverse=True)][:n]
 
 
 def get_ngrams(l, min=1):
@@ -271,7 +271,13 @@ def search_sd_helper(terms):
             'apikey': SD_API_KEY}
     r = requests.get(url, params=vals)
 
-    for entry in r.json()['search-results']['entry']:
+    try:
+        entries = r.json()['search-results']['entry']
+    except:
+        sys.stderr.write('Got bad response to search.\n')
+        return books
+
+    for entry in entries:
         try:
             pii = re.sub('[-().]', '', entry['pii'])
             doc_title = entry['dc:title']
@@ -529,9 +535,11 @@ def export_wiki_article(article):
     for line in article.content.split('\n'):
         if line.startswith('==') and line.endswith('=='):
             line = line.replace('Edit =', ' =')
-            heading = re.match('=+ (.+) =+$', line).group(1).strip()
-            d.sections.append({'heading': heading,
-                               'text': []})
+            try:
+                heading = re.match('=+ (.+) =+$', line).group(1).strip()
+                d.sections.append({'heading': heading,
+                                'text': []})
+            except: pass
         elif len(d.sections) == 0:
             d.sections.append({'text': st.tokenize(line)})
         else:
@@ -728,14 +736,14 @@ if __name__ == '__main__':
 
     c = Corpus(indir, pool)
     for doc in c:
-        c.dehyphenate()
+        doc.dehyphenate()
 
-    terms = get_terms(c)
+    terms = get_terms(c, 2000)
 
-    # docs_by_book = search_sd(terms)
-    # download_sd(docs_by_book)
-    # doc_ids = filter_sd(docs_by_book, terms)
-    # c |= get_sd_docs(doc_ids)
+    #docs_by_book = search_sd(terms)
+    #download_sd(docs_by_book)
+    #doc_ids = filter_sd(docs_by_book, terms)
+    #c |= get_sd_docs(doc_ids)
 
     #articles = search_wiki(terms)
     #c |= get_wiki_docs(articles)
