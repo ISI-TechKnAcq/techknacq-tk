@@ -1,0 +1,23 @@
+#!/usr/bin/env python3
+
+# covered = set()
+
+# def reading_list(graph, query):
+#   # Get topics containing the query, ordered by relevance.
+#   matches = graph.search(query)[:4]
+#   # Remove matches if they occur in the dependencies of another match.
+#   matches = remove_submatches(matches)
+#
+#   for m in matches:
+#       covered = set()
+#       topic_reading_list(m)
+
+# def topic_reading_list(t):
+#   if t in covered:
+#       return
+#   if all of t.depends() in covered:
+#       print(t.doc(type=INTRO))
+#   else:
+#       print(t.doc(type=OVERVIEW))
+#       map(topic_reading_list, t.depends())
+#       print(t.doc(type=ADVANCED))
