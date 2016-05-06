@@ -217,7 +217,7 @@ class Document:
 
         if os.path.exists(fref):
             reftext = io.open(fref, 'r', encoding='utf8').read()
-            self.references = set([x.replace('PII:', 'sd-') for x in
+            self.references = set([x.replace('PII:', 'sd-').lower() for x in
                                    re.findall('PII:[^<]+', reftext)])
 
 
