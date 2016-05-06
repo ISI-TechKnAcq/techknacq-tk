@@ -38,6 +38,7 @@ class Mallet:
         self.wtfile = self.prefix + 'word-topic-counts.txt'
         self.omfile = self.prefix + 'model.mallet'
         self.tkfile = self.prefix + 'keys.txt'
+        self.wtkfile = self.prefix + 'weighted-keys.txt'
         self.statefile = self.prefix + 'state.gz'
         self.cofile = self.prefix + 'co-occur.txt'
 
@@ -100,6 +101,13 @@ class Mallet:
             for c in tokens[2:]:
                 topic, count = c.split(':')
                 self.topics[int(topic)].append((word, float(count)))
+
+        with open(self.wtkfile, 'w') as out:
+            for topic in range(len(self.topics)):
+                out.write('\t'.join([str(topic)] +
+                                    [str(y) + '\t' + str(z) for (y, z) in
+                                     sorted(self.topics[topic], key=lambda x:
+                                            x[1], reverse=True)][:60]) + '\n')
 
 
     def load_dt(self):
