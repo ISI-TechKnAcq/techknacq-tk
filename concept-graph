@@ -6,8 +6,10 @@
 import sys
 import os
 import tempfile
+import glob
 import random
 import subprocess
+import re
 
 from mallet import Mallet
 from t.corpus import Corpus
@@ -26,7 +28,7 @@ class TopicDependency:
     """Python wrapper class for Linhong's Java code for predicting dependencies
     among LDA topics."""
 
-    jar = 'ext/topic-dependency/topic-dependency.jar'
+    jar = 'ext/techknacq-core/target/techknacq-core.jar'
 
     def __init__(self, corpus, model):
         self.corpus = corpus
@@ -35,17 +37,25 @@ class TopicDependency:
         rand_prefix = hex(random.randint(0, 0xffffff))[2:] + '-'
         self.prefix = os.path.join(tempfile.gettempdir(), rand_prefix)
 
-        topic_key_file = model.tkfile
         doc_comp_file = self.convert_comp_file()
         citation_network_file = self.build_citation_network()
-        infomap_tree_file = self.get_infomap_tree()
+        infomap_tree_file, infomap_flow_file = self.get_infomap()
 
-        cmd = ['java', '-jar', self.jar,
-               topic_key_file, infomap_tree_file, doc_comp_file,
-               str(LDA_TOPICS), citation_network_file]
+        deps = glob.glob('ext/techknacq-core/target/dependency/*.jar')
+
+        cmd = ['java', '-cp', ':'.join([self.jar] + deps),
+               'edu.isi.techknacq.topics.graph.Comparisononalledges',
+               model.wtkfile, infomap_tree_file, doc_comp_file,
+               str(len(model.topics)), citation_network_file,
+               infomap_flow_file]
+
         if subprocess.call(cmd) != 0:
-            sys.stderr.write('Running topic-dependency code failed.\]n')
+            sys.stderr.write('Running topic-dependency code failed.\n')
             sys.exit(1)
+
+        os.remove('entropy1.txt')
+        os.remove('entropy2.txt')
+        # Output is now in alledge.tsv.
 
 
     def convert_comp_file(self):
@@ -73,27 +83,50 @@ class TopicDependency:
         return fname
 
 
-    def get_infomap_tree(self):
-        fname = self.prefix + 'infomap-tree.txt'
+    def get_infomap(self):
+        treefname = self.prefix + 'infomap-tree.txt'
+        flowfname = self.prefix + 'infomap-flow.txt'
 
-        cmd = ['java', '-jar', 'ext/topic-dependency/infomap-input.jar',
-               self.model.tkfile, self.model.cofile,
-               self.prefix + 'infomap.net']
-        if subprocess.call(cmd) != 0:
-            sys.stderr.write('Formatting input for Infomap failed.\n')
-            sys.exit(1)
+        # Generate Linhong-style names for each topic.
+        keynames = []
+        for t in self.model.topics:
+            keynames.append('-'.join([x[0] for x in
+                                      sorted(t, key=lambda x: x[1],
+                                             reverse=True)[:5]]) + '-')
 
-        cmd = ['ext/topic-dependency/infomap/Infomap',
+        # Generate input file for Infomap.
+        with open(self.prefix + 'infomap.net', 'w') as fout:
+            fout.write('*Vertices %d\n' % (len(self.model.topics)))
+            for v in range(len(self.model.topics)):
+                fout.write('%d "%s"\n' % (v, keynames[v]))
+            out_text = ''
+            edge_count = 0
+            for i, line in enumerate(open(self.model.cofile)):
+                for j, count in enumerate(re.split('[^0-9]+', line.strip())):
+                    if int(count) > 0 and j > i:
+                        out_text += '%d %d %s\n' % (i, j, count)
+                        edge_count += 1
+            fout.write('*Edges %d\n' % (edge_count))
+            fout.write(out_text)
+
+        cmd = ['ext/infomap/Infomap', '-z',
                '--flow-network', self.prefix + 'infomap.net',
                tempfile.gettempdir()]
         if subprocess.call(cmd) != 0:
-            sys.stderr.write('Running Infomap failed.\]n')
+            sys.stderr.write('Running Infomap failed.\n')
             sys.exit(1)
 
-        os.remove(self.prefix + 'infomap.net')
-        os.remove(self.prefix + 'infomap.flow')
-        os.rename(self.prefix + 'infomap.tree', fname)
-        return fname
+        #os.remove(self.prefix + 'infomap.net')
+        os.rename(self.prefix + 'infomap.tree', treefname)
+        os.rename(self.prefix + 'infomap.flow', flowfname)
+
+        # Ugh. Hack because Linhong's code is broken: Remove the first line.
+        with open(treefname, 'r') as fin:
+            data = fin.read().splitlines()
+        with open(treefname, 'w') as fout:
+            fout.writelines(data[1:])
+
+        return treefname, flowfname
 
 
     def build_citation_network(self):
