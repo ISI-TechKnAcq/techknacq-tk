@@ -143,15 +143,9 @@ class TopicDependency:
             sys.stderr.write('Running Infomap failed.\n')
             sys.exit(1)
 
-        #os.remove(self.prefix + 'infomap.net')
+        os.remove(self.prefix + 'infomap.net')
         os.rename(self.prefix + 'infomap.tree', treefname)
         os.rename(self.prefix + 'infomap.flow', flowfname)
-
-        # Ugh. Hack because Linhong's code is broken: Remove the first line.
-        with open(treefname, 'r') as fin:
-            data = fin.read().splitlines()
-        with open(treefname, 'w') as fout:
-            fout.writelines(data[1:])
 
         return treefname, flowfname
 
