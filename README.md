@@ -26,9 +26,12 @@ Libraries:
 - *websearch*:
   Interface for searching the Web with Google or Bing.
 
+
 ## Requirements
 
 T runs in Python 3 on Linux and OS X.
+
+### Python Dependencies
 
 Install pip3 (Debian/Ubuntu: python3-pip). Use it to install the
 required Python packages:
@@ -39,11 +42,25 @@ required Python packages:
 Patch pyenchant:
   https://github.com/rfk/pyenchant/issues/45
 
-Install required external tools:
+### Precompiled third-party tools
+
 - pdftotext (Ubuntu: poppler-utils)
 - MALLET 2.0.7. Download and rename the directory to ext/mallet (or change
   the path in 'concept-graph' script). 2.0.8 changes file formats and is
   not currently supported.
+
+### Infomap
+
+Download to ext/infomap and compile.
+
+### TechKnAcq Core
+
+    cd ext
+    git clone git@github.com:ISI-TechknAcq/techknacq-core.git
+    cd techknacq-core
+    mvn package
+    cd target
+    ln -s *jar techknacq-core.jar
 
 
 ## Configuration
