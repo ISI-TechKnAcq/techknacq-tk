@@ -11,6 +11,8 @@ import random
 import subprocess
 import re
 
+from collections import defaultdict
+
 from mallet import Mallet
 from t.corpus import Corpus
 from t.conceptgraph import ConceptGraph
@@ -53,10 +55,35 @@ class TopicDependency:
             sys.stderr.write('Running topic-dependency code failed.\n')
             sys.exit(1)
 
+        self.generate_topicgraph()
+        os.remove('alledge.tsv')
         os.remove('entropy1.txt')
         os.remove('entropy2.txt')
-        # Output is now in alledge.tsv.
 
+    def generate_topicgraph(self):
+        """Read the alledge.tsv file generated from techknacq-core and
+        produce the topicgraph.txt file used by techknacq-server."""
+
+        edges = defaultdict(set)
+        for line in open('alledge.tsv'):
+            tokens = line.strip().split()
+
+            t1 = tokens[0]
+            if t1 == 'sid': continue
+
+            t2 = tokens[2]
+            ce = tokens[5]
+            edges[t1].add((t2, float(ce)))
+
+        with open('topicgraph.txt', 'w') as fout:
+            fout.write('%d\n' % (len(edges)))
+            for t1 in edges:
+                good_edges = sorted([y for y in edges[t1] if y[1] > 0.0],
+                                    key=lambda x: x[1], reverse=True)
+                fout.write('%s,%d' % (t1, len(good_edges)))
+                for t2, w in good_edges:
+                    fout.write(':%s,%s' % (t2, w))
+                fout.write('\n')
 
     def convert_comp_file(self):
         """Convert Mallet composition file to the format needed by the
