@@ -54,7 +54,7 @@ class Corpus:
     def fix_text(self):
         for doc in self.docs:
             doc.dehyphenate()
-            doc.expand_short_forms()
+            #doc.expand_short_forms()
 
     def export(self, dest, abstract=False, format='json'):
         if format not in ['json', 'bioc', 'text', 'bigrams']:
