@@ -39,47 +39,58 @@ class TopicDependency:
         rand_prefix = hex(random.randint(0, 0xffffff))[2:] + '-'
         self.prefix = os.path.join(tempfile.gettempdir(), rand_prefix)
 
-        doc_comp_file = self.convert_comp_file()
-        citation_network_file = self.build_citation_network()
-        infomap_tree_file, infomap_flow_file = self.get_infomap()
+        if os.path.exists('alledge.tsv'):
+            print('Using existing alledge.tsv file.')
+        else:
+            doc_comp_file = self.convert_comp_file()
+            citation_network_file = self.build_citation_network()
+            infomap_tree_file, infomap_flow_file = self.get_infomap()
 
-        deps = glob.glob('ext/techknacq-core/target/dependency/*.jar')
+            deps = glob.glob('ext/techknacq-core/target/dependency/*.jar')
 
-        cmd = ['java', '-cp', ':'.join([self.jar] + deps),
-               'edu.isi.techknacq.topics.graph.Comparisononalledges',
-               model.wtkfile, infomap_tree_file, doc_comp_file,
-               str(len(model.topics)), citation_network_file,
-               infomap_flow_file]
+            cmd = ['java', '-cp', ':'.join([self.jar] + deps),
+                   'edu.isi.techknacq.topics.graph.Comparisononalledges',
+                   model.wtkfile, infomap_tree_file, doc_comp_file,
+                   str(len(model.topics)), citation_network_file,
+                   infomap_flow_file]
 
-        if subprocess.call(cmd) != 0:
-            sys.stderr.write('Running topic-dependency code failed.\n')
-            sys.exit(1)
+            if subprocess.call(cmd) != 0:
+                sys.stderr.write('Running topic-dependency code failed.\n')
+                sys.exit(1)
 
-        self.generate_topicgraph()
-        os.remove('alledge.tsv')
-        os.remove('entropy1.txt')
-        os.remove('entropy2.txt')
+        self.read_alledges()
+
+        #self.generate_topicgraph()
+        #os.remove('alledge.tsv')
+        #os.remove('entropy1.txt')
+        #os.remove('entropy2.txt')
+
+
+    def read_alledges(self):
+        self.edges = defaultdict(set)
+        for line in open('alledge.tsv'):
+            try:
+                tokens = line.strip().split()
+
+                t1 = tokens[0]
+                if t1 == 'sid': continue
+
+                t2 = tokens[2]
+                ce = tokens[5]
+                self.edges[t1].add((t2, float(ce)))
+            except:
+                sys.stderr.write('Error processing alledges line:\n')
+                sys.stderr.write(line)
 
 
     def generate_topicgraph(self):
         """Read the alledge.tsv file generated from techknacq-core and
         produce the topicgraph.txt file used by techknacq-server."""
 
-        edges = defaultdict(set)
-        for line in open('alledge.tsv'):
-            tokens = line.strip().split()
-
-            t1 = tokens[0]
-            if t1 == 'sid': continue
-
-            t2 = tokens[2]
-            ce = tokens[5]
-            edges[t1].add((t2, float(ce)))
-
         with open('topicgraph.txt', 'w') as fout:
-            fout.write('%d\n' % (len(edges)))
-            for t1 in edges:
-                good_edges = sorted([y for y in edges[t1] if y[1] > 0.0],
+            fout.write('%d\n' % (len(self.edges)))
+            for t1 in self.edges:
+                good_edges = sorted([y for y in self.edges[t1] if y[1] > 0.0],
                                     key=lambda x: x[1], reverse=True)
                 fout.write('%s,%d' % (t1, len(good_edges)))
                 for t2, w in good_edges:
@@ -146,6 +157,7 @@ class TopicDependency:
             sys.exit(1)
 
         os.remove(self.prefix + 'infomap.net')
+
         os.rename(self.prefix + 'infomap.tree', treefname)
         os.rename(self.prefix + 'infomap.flow', flowfname)
 
@@ -168,7 +180,7 @@ class TopicDependency:
 if __name__ == '__main__':
     if len(sys.argv) != 2 and len(sys.argv) != 3:
         print('Usage: concept-graph [corpus dir.]', file=sys.stderr)
-        print('    or concept-graph [corpus dir.] [topic model]',
+        print('    or concept-graph [corpus dir.] [topic model path+prefix]',
               file=sys.stderr)
         sys.exit(1)
 
@@ -187,14 +199,15 @@ if __name__ == '__main__':
         mallet_corpus = prefix + 'corpus'
         os.makedirs(mallet_corpus)
         corpus.export(mallet_corpus, abstract=True, format='bigrams')
-        corpus.clear()
-
         model = Mallet(MALLET_PATH, mallet_corpus, num_topics=LDA_TOPICS,
                        iters=LDA_ITERATIONS)
     else:
         print('Loading topic model.')
         model = Mallet(MALLET_PATH, prefix=sys.argv[2])
 
-    cg.add_concepts(model.topics)
+    cg.add_concepts(model)
 
     dep = TopicDependency(corpus, model)
+    cg.add_dependencies(dep.edges)
+
+    cg.export()
