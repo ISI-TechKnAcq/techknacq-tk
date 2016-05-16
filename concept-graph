@@ -66,8 +66,10 @@ class TopicDependency:
         #os.remove('entropy2.txt')
 
 
-    def read_alledges(self):
-        self.edges = defaultdict(set)
+    def read_alledges(self, threshhold=0.007):
+        """Read the cross-entropy edges from the alledges.tsv output file."""
+
+        self.edges = defaultdict(dict)
         for line in open('alledge.tsv'):
             try:
                 tokens = line.strip().split()
@@ -76,8 +78,14 @@ class TopicDependency:
                 if t1 == 'sid': continue
 
                 t2 = tokens[2]
-                ce = tokens[5]
-                self.edges[t1].add((t2, float(ce)))
+                ce = float(tokens[7])
+
+                # Flip negative weights.
+                if ce < 0:
+                    ce = -1.0 * ce
+                    t1, t2 = t2, t1
+                if ce > threshhold:
+                    self.edges[t1][t2] = max(self.edges[t1].get(t2, 0.0), ce)
             except:
                 sys.stderr.write('Error processing alledges line:\n')
                 sys.stderr.write(line)
@@ -90,8 +98,10 @@ class TopicDependency:
         with open('topicgraph.txt', 'w') as fout:
             fout.write('%d\n' % (len(self.edges)))
             for t1 in self.edges:
-                good_edges = sorted([y for y in self.edges[t1] if y[1] > 0.0],
-                                    key=lambda x: x[1], reverse=True)
+                good_edges = sorted([(y, self.edges[t1][y])
+                                     for y in self.edges[t1]],
+                                    key=lambda x: self.edges[t1][x],
+                                    reverse=True)
                 fout.write('%s,%d' % (t1, len(good_edges)))
                 for t2, w in good_edges:
                     fout.write(':%s,%s' % (t2, w))

@@ -50,14 +50,15 @@ class ConceptGraph:
             for base, percent in model.topic_doc[topic_id]:
                 if percent == 0.0:
                     continue
-                self.g.add_edge('concept-' + str(topic_id), base, type='topic',
-                                weight=percent)
+                self.g.add_edge('concept-' + str(topic_id), base,
+                                type='topic', weight=percent)
 
 
     def add_dependencies(self, edges):
         for t1 in edges:
-            for (t2, weight) in edges[t1]:
-                self.g.add_edge(t1, t2, type='dependency', weight=weight)
+            for t2 in edges[t1]:
+                self.g.add_edge(t1, t2, type='dependency',
+                                weight=edges[t1][t2])
 
 
     def docs(self):
@@ -104,7 +105,7 @@ class ConceptGraph:
                          'featureWeights': [],
                          'docWeights': []}
 
-            for (word, weight) in self.g[c].get('words', []):
+            for (word, weight) in self.g.node[c].get('words', []):
                 j_concept['featureWeights'].append({'feature': word,
                                                     'count': int(weight)})
                 j_concept['mentionCount'] += weight
