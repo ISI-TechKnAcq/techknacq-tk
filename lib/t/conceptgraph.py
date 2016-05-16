@@ -1,6 +1,7 @@
 # T: Concept Graph
 # Jonathan Gordon
 
+import sys
 import networkx as nx
 import json
 import uuid
@@ -12,13 +13,16 @@ WORDS_PER_CONCEPT = 100
 ###
 
 class ConceptGraph:
-    def __init__(self):
+    def __init__(self, fname=None):
         self.id = str(uuid.uuid4())
         self.provenance = 'TechKnAcq'
         self.type = '1.0'
         # We export lists of (concept) nodes and edges, but we internally
         # store everything as a NetworkX graph.
         self.g = nx.DiGraph()
+
+        if fname:
+            self.load(fname)
 
 
     def add_docs(self, corpus):
@@ -40,10 +44,10 @@ class ConceptGraph:
         # Add a concept node for each topic in the model.
         for i, topic in enumerate(model.topics):
             concept_id = 'concept-' + str(i)
-            self.g.add_node(concept_id, type='concept')
-            self.g.node[concept_id]['words'] = []
+            self.g.add_node(concept_id, type='concept', words=[], mentions=0)
             for word, weight in sorted(topic, key=lambda x: x[1], reverse=True):
                 self.g.node[concept_id]['words'].append((word, weight))
+                self.g.node[concept_id]['mentions'] += weight
 
         # Link the concept nodes to documents.
         for topic_id in range(len(model.topic_doc)):
@@ -84,6 +88,37 @@ class ConceptGraph:
                 self.g.node[n].get('type', '') == 'concept')
 
 
+    def load(self, fname):
+        j = json.load(open(fname))
+
+        try:
+            self.id = j['id']
+            self.provenance = j['provenance']
+            self.type = j['type']
+
+            for c in j['nodes']:
+                self.g.add_node(c['id'], type='concept', words=[])
+                for f in c['featureWeights']:
+                    self.g.node[c['id']]['words'].append((f['feature'],
+                                                          f['count']))
+                self.g.node[c['id']]['words'].sort(key=lambda x: x[1],
+                                                   reverse=True)
+
+            for d in j['corpus']['docs']:
+                # XXX: Get authors in the internal format: a list of
+                # strings.
+                self.g.add_node(d['id'], type='document', authors=[],
+                                title=d['title'], book=d['book'],
+                                year=d['year'], url=d['url'],
+                                abstract=d['abstractText'])
+            # XXX: Load concept-concept edges
+            # XXX: Load document-concept edges
+
+        except:
+            sys.stderr.write('Error importing concept graph %s.\n' % (fname))
+            sys.exit(1)
+
+
     def export(self, file='concept-graph.json'):
         """Export the concept graph as a JSON file."""
 
@@ -101,14 +136,13 @@ class ConceptGraph:
         for c in self.concepts():
             j_concept = {'id': c,
                          'name': '',
-                         'mentionCount': 0,
+                         'mentionCount': self.g.node[c]['mentions'],
                          'featureWeights': [],
                          'docWeights': []}
 
             for (word, weight) in self.g.node[c].get('words', []):
                 j_concept['featureWeights'].append({'feature': word,
                                                     'count': int(weight)})
-                j_concept['mentionCount'] += weight
 
             for (doc, weight) in self.topic_docs(c):
                 j_concept['docWeights'].append({'document': doc,
@@ -134,4 +168,4 @@ class ConceptGraph:
                                'weight': data['weight'],
                                'type': 'dependency'})
 
-        json.dump(j, open(file, 'w'), indent=2)
+        json.dump(j, open(file, 'w'), indent=2, sort_keys=True)
