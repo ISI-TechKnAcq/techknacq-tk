@@ -1,23 +1,53 @@
 #!/usr/bin/env python3
 
-# covered = set()
+import sys
 
-# def reading_list(graph, query):
-#   # Get topics containing the query, ordered by relevance.
-#   matches = graph.search(query)[:4]
-#   # Remove matches if they occur in the dependencies of another match.
-#   matches = remove_submatches(matches)
-#
-#   for m in matches:
-#       covered = set()
-#       topic_reading_list(m)
+from collections import Counter
 
-# def topic_reading_list(t):
-#   if t in covered:
-#       return
-#   if all of t.depends() in covered:
-#       print(t.doc(type=INTRO))
-#   else:
-#       print(t.doc(type=OVERVIEW))
-#       map(topic_reading_list, t.depends())
-#       print(t.doc(type=ADVANCED))
+from t.conceptgraph import ConceptGraph
+
+
+def search(cg, query, max=None):
+    """Return (at most 'max') concept IDs ordered by their relevance to
+    the list of query terms, based on lexical overlap."""
+    query = set(query)
+    matches = Counter()
+    for c in cg.concepts():
+        mentions = cg.g.node[c]['mentions']
+        for word, weight in cg.g.node[c]['words']:
+            words = set(word.split('_'))
+            # A match is scored as the % of distinct words the query and the
+            # feature share * weight of the feature in the topic, e.g.,
+            # - for query 'knowledge' and
+            #   topic feature ('knowledge_base', 323),
+            #   return (1/2)) * (323 / topic_mentions).
+            # - for query 'knowledge base generation' and
+            #   topic feature ('knowledge', 323)
+            #   return (1/3) * (323 / topic_mentions).
+            # - for query 'knowledge base generation' and
+            #   topic feature ('data base', 323)
+            #   return (1/4) * (323 / topic_mentions).
+            all_words = query | words
+            common = query & words
+            matches[c] += (len(common)/len(all_words)) * (weight/mentions)
+    # Remove zero counts.
+    matches += Counter()
+    return matches.most_common()[:max]
+
+
+if __name__ == '__main__':
+    if len(sys.argv) < 3:
+        sys.stderr.write('Usage: reading-list [concept graph] [query terms]\n')
+        sys.exit(1)
+
+    cg = ConceptGraph(sys.argv[1])
+    # When we are loading and exporting perfectly, these will nearly match.
+    #cg.export('new.json')
+
+    query = sys.argv[2:]
+
+    for concept_id, weight in search(cg, query, 4):
+        print(concept_id, weight)
+        for w, ww in cg.g.node[concept_id]['words'][:4]:
+            print('  ', w, ww)
+        print()
