@@ -32,7 +32,7 @@ class TopicDependency:
 
     jar = 'ext/techknacq-core/target/techknacq-core.jar'
 
-    def __init__(self, corpus, model):
+    def __init__(self, corpus, model, method='ce'):
         self.corpus = corpus
         self.model = model
 
@@ -58,15 +58,15 @@ class TopicDependency:
                 sys.stderr.write('Running topic-dependency code failed.\n')
                 sys.exit(1)
 
-        self.read_alledges()
+        self.read_alledges(method)
 
         #self.generate_topicgraph()
         #os.remove('alledge.tsv')
-        #os.remove('entropy1.txt')
-        #os.remove('entropy2.txt')
+        os.remove('entropy1.txt')
+        os.remove('entropy2.txt')
 
 
-    def read_alledges(self, threshhold=0.007):
+    def read_alledges(self, method='ce', threshhold=0.007):
         """Read the cross-entropy edges from the alledges.tsv output file."""
 
         self.edges = defaultdict(dict)
@@ -78,14 +78,18 @@ class TopicDependency:
                 if t1 == 'sid': continue
 
                 t2 = tokens[2]
-                ce = float(tokens[7])
+                if method == 'simword':
+                    weight = float(tokens[5])
+                elif method == 'ce':
+                    weight = float(tokens[7])
 
                 # Flip negative weights.
-                if ce < 0:
-                    ce = -1.0 * ce
+                if weight < 0:
+                    weight = -1.0 * weight
                     t1, t2 = t2, t1
-                if ce > threshhold:
-                    self.edges[t1][t2] = max(self.edges[t1].get(t2, 0.0), ce)
+                if weight > threshhold:
+                    self.edges[t1][t2] = max(self.edges[t1].get(t2, 0.0),
+                                             weight)
             except:
                 sys.stderr.write('Error processing alledges line:\n')
                 sys.stderr.write(line)
@@ -217,7 +221,7 @@ if __name__ == '__main__':
 
     cg.add_concepts(model)
 
-    dep = TopicDependency(corpus, model)
+    dep = TopicDependency(corpus, model, method='ce')
     cg.add_dependencies(dep.edges)
 
-    cg.export()
+    cg.export(prefix + 'cg.json')
