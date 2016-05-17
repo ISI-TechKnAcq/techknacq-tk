@@ -42,6 +42,7 @@ class Mallet:
         self.wtkfile = self.prefix + 'weighted-keys.txt'
         self.statefile = self.prefix + 'state.gz'
         self.cofile = self.prefix + 'co-occur.txt'
+        self.namefile = self.prefix + 'names.csv'
 
         if os.path.exists(self.tkfile):
             num_topics = len(open(self.tkfile).readlines())
@@ -54,6 +55,10 @@ class Mallet:
             self.train(num_topics, iters)
         self.load_wt()
         self.load_dt()
+
+        self.names = [' '.join([x[0] for x in self.topics[i][:3]])
+                      for i in range(num_topics)]
+        self.load_names()
 
 
     def read(self, corpus, bigrams):
@@ -160,3 +165,15 @@ class Mallet:
                 for c in row:
                     out.write('%s ' % (c))
                 out.write('\n')
+
+
+    def load_names(self):
+        """Load topic names from disk, if they exist."""
+
+        if not os.path.exists(self.namefile):
+            return
+        for line in open(self.namefile):
+            topic, name = line.strip().split(',', 1)
+            if topic == 'Topic':
+                continue
+            self.names[int(topic)] = name
