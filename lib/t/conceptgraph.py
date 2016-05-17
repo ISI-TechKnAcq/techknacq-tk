@@ -44,7 +44,8 @@ class ConceptGraph:
         # Add a concept node for each topic in the model.
         for i, topic in enumerate(model.topics):
             concept_id = 'concept-' + str(i)
-            self.g.add_node(concept_id, type='concept', words=[], mentions=0)
+            self.g.add_node(concept_id, type='concept', words=[], mentions=0,
+                            name=model.names[i])
             for word, weight in sorted(topic, key=lambda x: x[1], reverse=True):
                 self.g.node[concept_id]['words'].append((word, weight))
                 self.g.node[concept_id]['mentions'] += weight
@@ -61,8 +62,8 @@ class ConceptGraph:
     def add_dependencies(self, edges):
         for t1 in edges:
             for t2 in edges[t1]:
-                self.g.add_edge(t1, t2, type='dependency',
-                                weight=edges[t1][t2])
+                self.g.add_edge('concept-' + t1, 'concept-' + t2,
+                                type='dependency', weight=edges[t1][t2])
 
 
     def docs(self):
@@ -76,11 +77,33 @@ class ConceptGraph:
         documents that are most relevant to the specified topic_id."""
 
         edges = []
-        for (topic, doc, weight) in self.g.edges([topic_id], data='weight'):
-            if self.g.node[doc].get('type', '') != 'document':
-                continue
-            edges.append((doc, weight))
+        for (_, doc, weight) in self.g.edges([topic_id], data='weight'):
+            if self.g.node[doc].get('type', '') == 'document':
+                edges.append((doc, weight))
         return sorted(edges, key=lambda x: x[1], reverse=True)
+
+
+    def topic_deps(self, topic_id):
+        """Return a sorted list of (topic_id, weight) pairs for the
+        topics that are most relevant to the specified topic_id."""
+
+        edges = []
+        for (_, t2, weight) in self.g.edges([topic_id], data='weight'):
+            if self.g.edge[topic_id][t2]['type'] == 'dependency':
+                edges.append((t2, weight))
+
+        return sorted(edges, key=lambda x: x[1], reverse=True)
+
+
+    def doc_cites(self, doc_id):
+        """Return a list of the document IDs for the documents
+        that are cited by the specified document."""
+
+        edges = []
+        for (_, d2) in self.g.edges([doc_id]):
+            if self.g.edge[doc_id][d2]['type'] == 'cite':
+                edges.append(d2)
+        return edges
 
 
     def concepts(self):
@@ -98,6 +121,8 @@ class ConceptGraph:
 
             for c in j['nodes']:
                 self.g.add_node(c['id'], type='concept', words=[])
+                self.g.node[c['id']]['name'] = c['name']
+                self.g.node[c['id']]['mentions'] = c['mentionCount']
                 for f in c['featureWeights']:
                     self.g.node[c['id']]['words'].append((f['feature'],
                                                           f['count']))
@@ -105,13 +130,18 @@ class ConceptGraph:
                                                    reverse=True)
 
             for d in j['corpus']['docs']:
-                # XXX: Get authors in the internal format: a list of
-                # strings.
-                self.g.add_node(d['id'], type='document', authors=[],
+                self.g.add_node(d['id'], type='document',
+                                authors=[x['fullName'] for x in d['authors']],
                                 title=d['title'], book=d['book'],
                                 year=d['year'], url=d['url'],
                                 abstract=d['abstractText'])
-            # XXX: Load concept-concept edges
+                for cited in d['cites']:
+                    self.g.add_edge(d['id'], cited, type='cite')
+
+            for e in j['edges']:
+                self.g.add_edge(e['source'], e['target'], type=e['type'],
+                                weight=e['weight'])
+
             # XXX: Load document-concept edges
 
         except:
@@ -128,14 +158,14 @@ class ConceptGraph:
              'nodes': [],
              'edges': [],
              'corpus': {'id': str(uuid.uuid4()),
-                        'name': '', # XXX
+                        'name': '',
                         'description': '',
                         'docs': []}}
 
         # Add concept nodes and their (topic model) features.
         for c in self.concepts():
             j_concept = {'id': c,
-                         'name': '',
+                         'name': self.g.node[c]['name'],
                          'mentionCount': self.g.node[c]['mentions'],
                          'featureWeights': [],
                          'docWeights': []}
@@ -153,12 +183,15 @@ class ConceptGraph:
             j_doc = {'id': doc_id,
                      'url': self.g.node[doc_id]['url'],
                      'title': self.g.node[doc_id]['title'],
-                     'authors': [],
+                     'authors': [{'id': x.lower().replace(' ', '_'),
+                                  'fullName': x}
+                                 for x in self.g.node[doc_id]['authors']],
                      'book': self.g.node[doc_id]['book'],
                      'year': self.g.node[doc_id]['year'],
-                     'abstractText': self.g.node[doc_id]['abstract']}
+                     'abstractText': self.g.node[doc_id]['abstract'],
+                     'cites': self.doc_cites(doc_id),
+                     'attributes': {}}
             j['corpus']['docs'].append(j_doc)
-        # XXX: Add Doc['authors']
 
         for (t1, t2, data) in self.g.edges(data=True):
             if data.get('type', '') != 'dependency':
