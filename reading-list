@@ -7,32 +7,65 @@ from collections import Counter
 from t.conceptgraph import ConceptGraph
 
 
-def search(cg, query, max=None):
+# Each match is scored as the % of distinct words the query and the feature
+# share * weight of the feature in the topic, e.g.,
+# - Query: 'knowledge'
+#   Topic feature: ('knowledge_base', 323)
+#   Return: (1/2)) * (323 / topic_mentions)
+# - Query: 'knowledge base generation'
+#   Topic feature: ('data base', 323)
+#   Return: (1/4) * (323 / topic_mentions)
+def search(cg, query, max=1000):
     """Return (at most 'max') concept IDs ordered by their relevance to
     the list of query terms, based on lexical overlap."""
     query = set(query)
     matches = Counter()
+
     for c in cg.concepts():
         mentions = cg.g.node[c]['mentions']
         for word, weight in cg.g.node[c]['words']:
             words = set(word.split('_'))
-            # A match is scored as the % of distinct words the query and the
-            # feature share * weight of the feature in the topic, e.g.,
-            # - for query 'knowledge' and
-            #   topic feature ('knowledge_base', 323),
-            #   return (1/2)) * (323 / topic_mentions).
-            # - for query 'knowledge base generation' and
-            #   topic feature ('knowledge', 323)
-            #   return (1/3) * (323 / topic_mentions).
-            # - for query 'knowledge base generation' and
-            #   topic feature ('data base', 323)
-            #   return (1/4) * (323 / topic_mentions).
             all_words = query | words
             common = query & words
             matches[c] += (len(common)/len(all_words)) * (weight/mentions)
+
     # Remove zero counts.
     matches += Counter()
+
     return matches.most_common()[:max]
+
+
+# Note: Not tested.
+def remove_submatches(cg, topics):
+    """Return the sorted list of topics without any that would be included as
+    a dependency for one of the other topics. When removing a topic, add its
+    relevance score to the topic it's a dependency of."""
+
+    matches = topics
+    for t, weight in topics:
+        # Just the IDs, not the weights.
+        deps = [x[0] for x in cg.topic_deps(t)]
+        for m in matches:
+            if m[0] in deps:
+                matches.remove(m)
+                # XXX: Add the match weight for m to t.
+    return matches
+
+
+def print_topic(cg, concept_id, depth=1):
+    print('   ' * depth, end='')
+    for w, _ in cg.g.node[concept_id]['words'][:3]:
+        print(w, end=' ')
+    print()
+
+
+def topic_reading_list(cg, concept_id):
+    print_topic(cg, concept_id)
+    depth = 2
+    for dep, weight in cg.topic_deps(concept_id):
+        print(' ' * depth + ' D: %s %.2f' % (dep, weight))
+        print_topic(cg, dep, depth=depth)
+    print()
 
 
 if __name__ == '__main__':
@@ -41,13 +74,19 @@ if __name__ == '__main__':
         sys.exit(1)
 
     cg = ConceptGraph(sys.argv[1])
+
     # When we are loading and exporting perfectly, these will nearly match.
     #cg.export('new.json')
 
     query = sys.argv[2:]
 
-    for concept_id, weight in search(cg, query, 4):
-        print(concept_id, weight)
-        for w, ww in cg.g.node[concept_id]['words'][:4]:
-            print('  ', w, ww)
-        print()
+    # Get (at most 4) topics containing the query, ordered by relevance.
+    # Relevance will be based on (partial) word matches in the topic word
+    # distribution.
+    matches = search(cg, query, 4)
+    # Remove matches if they occur in the dependencies of another match.
+    #matches = remove_submatches(cg, matches)
+
+    for concept_id, weight in matches:
+        sys.stdout.write('M: %s %.2f\n' % (concept_id, weight))
+        topic_reading_list(cg, concept_id)
