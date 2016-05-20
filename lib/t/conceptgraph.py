@@ -45,7 +45,7 @@ class ConceptGraph:
         for i, topic in enumerate(model.topics):
             concept_id = 'concept-' + str(i)
             self.g.add_node(concept_id, type='concept', words=[], mentions=0,
-                            name=model.names[i])
+                            name=model.names[i], score=model.scores[i])
             for word, weight in sorted(topic, key=lambda x: x[1], reverse=True):
                 self.g.node[concept_id]['words'].append((word, weight))
                 self.g.node[concept_id]['mentions'] += weight
@@ -106,6 +106,9 @@ class ConceptGraph:
         return edges
 
 
+    def name(self, c):
+        return self.g.node[c]['name']
+
     def concepts(self):
         return (n for n in self.g if
                 self.g.node[n].get('type', '') == 'concept')
@@ -135,7 +138,7 @@ class ConceptGraph:
                                 title=d['title'], book=d['book'],
                                 year=d['year'], url=d['url'],
                                 abstract=d['abstractText'])
-                for cited in d['cites']:
+                for cited in d.get('cites', []):
                     self.g.add_edge(d['id'], cited, type='cite')
 
             for e in j['edges']:
@@ -149,8 +152,19 @@ class ConceptGraph:
             sys.exit(1)
 
 
-    def export(self, file='concept-graph.json'):
+    def export(self, file='concept-graph.json', concept_threshhold=0.2):
         """Export the concept graph as a JSON file."""
+
+        def bad_topic(c):
+            if self.g.node[c]['score'] < concept_threshhold:
+                sys.stderr.write('Skipping topic %s due to score.\n' %
+                                 (self.g.node[c]['name']))
+                return True
+            if 'Miscellany' in self.g.node[c]['name']:
+                sys.stderr.write('Skipping topic %s due to name.\n' %
+                                 (self.g.node[c]['name']))
+                return True
+            return False
 
         j = {'id': self.id,
              'provenance': self.provenance,
@@ -164,6 +178,9 @@ class ConceptGraph:
 
         # Add concept nodes and their (topic model) features.
         for c in self.concepts():
+            if bad_topic(c):
+                continue
+
             j_concept = {'id': c,
                          'name': self.g.node[c]['name'],
                          'mentionCount': self.g.node[c]['mentions'],
@@ -179,26 +196,30 @@ class ConceptGraph:
                                                 'weight': weight})
             j['nodes'].append(j_concept)
 
+        # Add document nodes and their features.
         for doc_id in self.docs():
             j_doc = {'id': doc_id,
                      'url': self.g.node[doc_id]['url'],
                      'title': self.g.node[doc_id]['title'],
-                     'authors': [{'id': x.lower().replace(' ', '_'),
+                     'authors': [{#'id': x.lower().replace(' ', '_'),
                                   'fullName': x}
                                  for x in self.g.node[doc_id]['authors']],
                      'book': self.g.node[doc_id]['book'],
                      'year': self.g.node[doc_id]['year'],
                      'abstractText': self.g.node[doc_id]['abstract'],
-                     'cites': self.doc_cites(doc_id),
+                     'cites': [],#self.doc_cites(doc_id),
                      'attributes': {}}
             j['corpus']['docs'].append(j_doc)
 
         for (t1, t2, data) in self.g.edges(data=True):
             if data.get('type', '') != 'dependency':
                 continue
+            if bad_topic(t1) or bad_topic(t2):
+                continue
             j['edges'].append({'source': t1,
                                'target': t2,
                                'weight': data['weight'],
                                'type': 'dependency'})
 
-        json.dump(j, open(file, 'w'), indent=2, sort_keys=True)
+        json.dump(j, open(file, 'w', encoding='utf8'), indent=1,
+                  sort_keys=True, ensure_ascii=False)
