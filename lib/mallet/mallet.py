@@ -104,7 +104,7 @@ class Mallet:
 
 
     def infer_topics(self, corpus, iters=1000):
-        self.read(self, corpus)
+        self.read(corpus)
 
         # Don't overwrite original.
         self.dtfile += '-infer'
