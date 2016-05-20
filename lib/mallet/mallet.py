@@ -38,11 +38,14 @@ class Mallet:
         self.dtfile = self.prefix + 'composition.txt'
         self.wtfile = self.prefix + 'word-topic-counts.txt'
         self.omfile = self.prefix + 'model.mallet'
+        self.inffile = self.prefix + 'inferencer'
         self.tkfile = self.prefix + 'keys.txt'
         self.wtkfile = self.prefix + 'weighted-keys.txt'
         self.statefile = self.prefix + 'state.gz'
+
         self.cofile = self.prefix + 'co-occur.txt'
         self.namefile = self.prefix + 'names.csv'
+        self.scorefile = self.prefix + 'scores.txt'
 
         if os.path.exists(self.tkfile):
             num_topics = len(open(self.tkfile).readlines())
@@ -53,12 +56,12 @@ class Mallet:
         if not os.path.exists(self.wtfile) or not os.path.exists(self.dtfile):
             self.read(corpus, bigrams)
             self.train(num_topics, iters)
+
         self.load_wt()
         self.load_dt()
 
-        self.names = [' '.join([x[0] for x in self.topics[i][:3]])
-                      for i in range(num_topics)]
         self.load_names()
+        self.load_scores()
 
 
     def read(self, corpus, bigrams):
@@ -91,12 +94,31 @@ class Mallet:
                '--output-doc-topics', self.dtfile,
                '--word-topic-counts-file', self.wtfile,
                '--output-model', self.omfile,
+               '--inferencer-filename', self.inffile,
                '--output-topic-keys', self.tkfile,
                '--output-state', self.statefile]
 
         if subprocess.call(cmd) != 0:
             sys.stderr.write('Mallet train-topics failed.\n')
             sys.exit(1)
+
+
+    def infer_topics(self, corpus, iters=1000):
+        self.read(self, corpus)
+
+        # Don't overwrite original.
+        self.dtfile += '-infer'
+
+        cmd = [self.path, 'infer-topics',
+               '--inferencer', self.inffile,
+               '--input', self.corpus,
+               '--output-doc-topics', self.dtfile,
+               '--num-iterations', str(iters)]
+        if subprocess.call(cmd) != 0:
+            sys.stderr.write('Mallet infer-topics failed.\n')
+            sys.exit(1)
+
+        self.load_dt()
 
 
     def load_wt(self):
@@ -106,7 +128,7 @@ class Mallet:
             word = tokens[1]
             for c in tokens[2:]:
                 topic, count = c.split(':')
-                self.topics[int(topic)].append((word, float(count)))
+                self.topics[int(topic)].append((word, int(count)))
 
         with open(self.wtkfile, 'w') as out:
             for topic in range(len(self.topics)):
@@ -168,12 +190,34 @@ class Mallet:
 
 
     def load_names(self):
-        """Load topic names from disk, if they exist."""
+        """Load topic names from disk, if they exist. Otherwise, set
+        every topic's name to its first three elements."""
+
+        num_topics = len(self.topics)
 
         if not os.path.exists(self.namefile):
+            self.names = [' '.join([x[0] for x in self.topics[i][:3]])
+                          for i in range(num_topics)]
             return
+
+        self.names = [''] * num_topics
         for line in open(self.namefile):
             topic, name = line.strip().split(',', 1)
             if topic == 'Topic':
                 continue
             self.names[int(topic)] = name
+
+
+    def load_scores(self):
+        """Load the topic scores from disk, if they exist. Otherwise,
+        set every topic score to 1.0."""
+
+        if not os.path.exists(self.scorefile):
+            self.scores = [1.0 for x in self.topics]
+            return
+
+        self.scores = []
+        for line in open(self.scorefile):
+            if line.startswith('Average'):
+                continue
+            self.scores.append(float(line))

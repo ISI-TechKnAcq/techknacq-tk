@@ -61,9 +61,13 @@ class TopicDependency:
         self.read_alledges(method)
 
         #self.generate_topicgraph()
-        #os.remove('alledge.tsv')
-        os.remove('entropy1.txt')
-        os.remove('entropy2.txt')
+
+        try:
+            #os.remove('alledge.tsv')
+            os.remove('entropy1.txt')
+            os.remove('entropy2.txt')
+        except FileNotFoundError:
+            pass
 
 
     def read_alledges(self, method='ce', threshhold=0.007):
@@ -82,6 +86,8 @@ class TopicDependency:
                     weight = float(tokens[5])
                 elif method == 'ce':
                     weight = float(tokens[7])
+                elif method == 'avg':
+                    weight = (float(tokens[5]) + float(tokens[7]))/2.0
 
                 # Flip negative weights.
                 if weight < 0:
@@ -212,16 +218,25 @@ if __name__ == '__main__':
         print('Generating topic model.')
         mallet_corpus = prefix + 'corpus'
         os.makedirs(mallet_corpus)
-        corpus.export(mallet_corpus, abstract=True, format='bigrams')
+        corpus.export(mallet_corpus, abstract=True, format='text')
         model = Mallet(MALLET_PATH, mallet_corpus, num_topics=LDA_TOPICS,
-                       iters=LDA_ITERATIONS)
+                       iters=LDA_ITERATIONS, bigrams=True)
     else:
         print('Loading topic model.')
         model = Mallet(MALLET_PATH, prefix=sys.argv[2])
+        if len(model.topic_doc[0]) < len(corpus.docs):
+            print('Found more documents in the corpus (%d) than in the ' +
+                  'topic model (%d).' % (len(corpus.docs),
+                                         len(model.topic_doc[0])))
+            print('Inferring topics for corpus documents.')
+            mallet_corpus = prefix + 'corpus'
+            os.makedirs(mallet_corpus)
+            corpus.export(mallet_corpus, abstract=True, format='text')
+            model.infer_topics(mallet_corpus)
 
     cg.add_concepts(model)
 
-    dep = TopicDependency(corpus, model, method='ce')
+    dep = TopicDependency(corpus, model, method='avg')
     cg.add_dependencies(dep.edges)
 
     cg.export(prefix + 'cg.json')
