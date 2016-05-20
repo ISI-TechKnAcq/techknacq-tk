@@ -371,7 +371,7 @@ class Document:
             if 'heading' in s and s['heading']:
                 t += '\n\n' + s['heading'] + '\n\n'
             if abstract:
-                t += self.abstract()
+                t += '\n'.join(self.get_abstract())
                 break
             t += '\n'.join(s['text'])
         return filter_non_printable(t)
