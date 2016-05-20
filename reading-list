@@ -2,70 +2,112 @@
 
 import sys
 
-from collections import Counter
+from collections import defaultdict
 
 from t.conceptgraph import ConceptGraph
 
 
-# Each match is scored as the % of distinct words the query and the feature
-# share * weight of the feature in the topic, e.g.,
-# - Query: 'knowledge'
-#   Topic feature: ('knowledge_base', 323)
-#   Return: (1/2)) * (323 / topic_mentions)
-# - Query: 'knowledge base generation'
-#   Topic feature: ('data base', 323)
-#   Return: (1/4) * (323 / topic_mentions)
-def search(cg, query, max=1000):
-    """Return (at most 'max') concept IDs ordered by their relevance to
-    the list of query terms, based on lexical overlap."""
-    query = set(query)
-    matches = Counter()
+# Parameters
 
-    for c in cg.concepts():
-        mentions = cg.g.node[c]['mentions']
-        for word, weight in cg.g.node[c]['words']:
+THRESHOLD = 0.02
+MAX_MATCHES = 6
+
+
+# User model constants
+
+BEGINNER = 1
+INTERMEDIATE = 2
+ADVANCED = 3
+
+
+class ReadingList:
+    def __init__(self, cg, query, user_model):
+        self.query = set(query)
+        self.cg = cg
+        self.user_model = user_model
+        self.covered = set()
+        self.relevance = dict([(c, self.score_match(c))
+                               for c in cg.concepts()])
+
+        for c, score in sorted(self.relevance.items(), key=lambda x: x[1],
+                               reverse=True)[:MAX_MATCHES]:
+            self.traverse(c, score)
+
+
+    def traverse(self, c, score, depth=1):
+        if score < THRESHOLD or c in self.covered:
+            return
+
+        if depth == MAX_MATCHES:
+            return
+
+        self.covered.add(c)
+
+        print('  '*depth + '%s -- %.4f' % (self.cg.name(c), score))
+
+        for dep, dep_weight in self.cg.topic_deps(c)[:MAX_MATCHES]:
+            self.traverse(dep, score * dep_weight + self.relevance[dep],
+                          depth+1)
+
+
+    def score_match(self, c):
+        """Score the relevance of a concept to a query based on lexical
+        overlap."""
+
+        mentions = self.cg.g.node[c]['mentions']
+        score = 0.0
+        for word, weight in self.cg.g.node[c]['words']:
+            # Each match is scored as the % of distinct words the query
+            # and the feature share * weight of the feature in the topic, e.g.,
+            # - Query: 'knowledge'
+            #   Topic feature: ('knowledge_base', 323)
+            #   Return: (1/2) * (323 / topic_mentions)
+            # - Query: 'knowledge base generation'
+            #   Topic feature: ('data base', 323)
+            #   Return: (1/4) * (323 / topic_mentions)
             words = set(word.split('_'))
-            all_words = query | words
-            common = query & words
-            matches[c] += (len(common)/len(all_words)) * (weight/mentions)
-
-    # Remove zero counts.
-    matches += Counter()
-
-    return matches.most_common()[:max]
+            all_words = self.query | words
+            common = self.query & words
+            score += (len(common)/len(all_words)) * (weight/mentions)
+        return score
 
 
-# Note: Not tested.
-def remove_submatches(cg, topics):
-    """Return the sorted list of topics without any that would be included as
-    a dependency for one of the other topics. When removing a topic, add its
-    relevance score to the topic it's a dependency of."""
 
-    matches = topics
-    for t, weight in topics:
-        # Just the IDs, not the weights.
-        deps = [x[0] for x in cg.topic_deps(t)]
-        for m in matches:
-            if m[0] in deps:
-                matches.remove(m)
-                # XXX: Add the match weight for m to t.
-    return matches
+####
 
 
-def print_topic(cg, concept_id, depth=1):
-    print('   ' * depth, end='')
-    for w, _ in cg.g.node[concept_id]['words'][:3]:
-        print(w, end=' ')
-    print()
+# def score_concept(cg, query, c, visited=set()):
+#     s = score_match(cg, query, c)
+#     if c in visited:
+#         return s
+#     visited.add(c)
+#     for d, d_score in cg.topic_deps(c):
+#         if d_score > 0.1:
+#             # Using 'set' to pass a copy instead of a pointer.
+#             s += d_score * score_concept(cg, query, d, set(visited))
+#     return s
 
 
-def topic_reading_list(cg, concept_id):
-    print_topic(cg, concept_id)
-    depth = 2
-    for dep, weight in cg.topic_deps(concept_id):
-        print(' ' * depth + ' D: %s %.2f' % (dep, weight))
-        print_topic(cg, dep, depth=depth)
-    print()
+# def topic_reading_list(cg, concept_id, concept_weight, depth=0):
+#     """Print a reading list for the topic and its dependencies."""
+
+#     global covered
+
+#     # Have we previously covered this topic, e.g., it was a dependency of
+#     # an earlier topic?
+#     if concept_id in covered:
+#         return
+
+#     # If we've passed the threshold of relevance, don't continue.
+#     if concept_weight < 0.01:
+#         return
+
+#     print(' ' * depth + ' - %s (%s) %.4f' %
+#           (cg.g.node[concept_id]['name'], concept_id, concept_weight))
+#     covered.add(concept_id)
+
+#     for dep, weight in cg.topic_deps(concept_id):
+#         topic_reading_list(cg, dep, concept_weight * weight, depth+1)
 
 
 if __name__ == '__main__':
@@ -75,18 +117,10 @@ if __name__ == '__main__':
 
     cg = ConceptGraph(sys.argv[1])
 
-    # When we are loading and exporting perfectly, these will nearly match.
-    #cg.export('new.json')
-
     query = sys.argv[2:]
 
-    # Get (at most 4) topics containing the query, ordered by relevance.
-    # Relevance will be based on (partial) word matches in the topic word
-    # distribution.
-    matches = search(cg, query, 4)
-    # Remove matches if they occur in the dependencies of another match.
-    #matches = remove_submatches(cg, matches)
+    beginner_model = {}
+    for c in cg.concepts():
+        beginner_model[c] = BEGINNER
 
-    for concept_id, weight in matches:
-        sys.stdout.write('M: %s %.2f\n' % (concept_id, weight))
-        topic_reading_list(cg, concept_id)
+    r = ReadingList(cg, query, beginner_model)
