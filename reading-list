@@ -7,6 +7,15 @@ from collections import defaultdict
 from t.conceptgraph import ConceptGraph
 
 
+# Available role annotations:
+# - 'Empirical results'
+# - 'Reference work'
+# - 'Resource'
+# - 'Software manual' (rare)
+# - 'Survey'
+# - 'Tutorial'
+
+
 # Parameters
 
 THRESHOLD = 0.02
@@ -25,7 +34,9 @@ class ReadingList:
         self.query = set(query)
         self.cg = cg
         self.user_model = user_model
-        self.covered = set()
+        self.covered_concepts = set()
+        self.covered_documents = set()
+        self.covered_titles = set()
         self.relevance = dict([(c, self.score_match(c))
                                for c in cg.concepts()])
         self.rl = []
@@ -40,13 +51,13 @@ class ReadingList:
 
 
     def traverse(self, c, score, depth=1):
-        if score < THRESHOLD or c in self.covered:
+        if score < THRESHOLD or c in self.covered_concepts:
             return
 
         if depth == MAX_MATCHES:
             return
 
-        self.covered.add(c)
+        self.covered_concepts.add(c)
 
         entry = {'id': c,
                  'name': self.cg.name(c),
@@ -57,37 +68,79 @@ class ReadingList:
 
         # First compute any dependencies we'll include in the reading list
         # so we know which documents we want to include at this level.
-        for dep, dep_weight in self.cg.topic_deps(c)[:MAX_MATCHES]:
-            dep_entry = self.traverse(dep, score*dep_weight +
-                                      self.relevance[dep], depth+1)
-            if dep_entry:
-                entry['subconcepts'].append(dep_entry)
+        if self.user_model[c] != ADVANCED:
+            for dep, dep_weight in self.cg.topic_deps(c)[:MAX_MATCHES]:
+                dep_entry = self.traverse(dep, score*dep_weight +
+                                          self.relevance[dep], depth+1)
+                if dep_entry:
+                    entry['subconcepts'].append(dep_entry)
+
+        related_docs = self.cg.topic_docs(c)
 
         # Documents to print before the dependencies.
-        doc_id, doc_weight = self.cg.topic_docs(c)[0]
-        entry['documents1'].append(
-            {'id': doc_id,
-             'score': doc_weight,
-             'type': 'unknown',
-             'title': self.cg.g.node[doc_id]['title'],
-             'authors': self.cg.g.node[doc_id]['authors'],
-             'book': self.cg.g.node[doc_id]['book'],
-             'year': self.cg.g.node[doc_id]['year']})
+        for doc_id, doc_weight in related_docs:
+            if doc_id in self.covered_documents or \
+               self.cg.g.node[doc_id]['title'] in self.covered_titles:
+                continue
+
+            roles = self.cg.g.node[doc_id]['roles']
+            if (self.user_model[c] != ADVANCED or entry['subconcepts']) and \
+               ('Survey' in roles or 'Reference work' in roles):
+                entry['documents1'].append(self.doc_entry(doc_id, doc_weight))
+                self.covered_documents.add(doc_id)
+                self.covered_titles.add(self.cg.g.node[doc_id]['title'])
+                break
+
+            if self.user_model[c] == ADVANCED and 'Survey' in roles:
+                entry['documents1'].append(self.doc_entry(doc_id, doc_weight))
+                self.covered_documents.add(doc_id)
+                self.covered_titles.add(self.cg.g.node[doc_id]['title'])
+                break
+
 
         # Documents to print after the dependencies, if there were any.
+        doc2_count = 0
         if entry['subconcepts']:
-            # Bookend dependencies.
-            doc_id, doc_weight = self.cg.topic_docs(c)[1]
-            entry['documents2'].append(
-                {'id': doc_id,
-                 'score': doc_weight,
-                 'type': 'unknown',
-                 'title': self.cg.g.node[doc_id]['title'],
-                 'authors': self.cg.g.node[doc_id]['authors'],
-                 'book': self.cg.g.node[doc_id]['book'],
-                 'year': self.cg.g.node[doc_id]['year']})
+            for doc_id, doc_weight in self.cg.topic_docs(c):
+                if doc_id in self.covered_documents or \
+                  self.cg.g.node[doc_id]['title'] in self.covered_titles:
+                    continue
+
+                roles = self.cg.g.node[doc_id]['roles']
+                if 'Empirical results' or 'Tutorial' in roles:
+                    entry['documents2'].append(self.doc_entry(doc_id,
+                                                              doc_weight))
+                    self.covered_documents.add(doc_id)
+                    self.covered_titles.add(self.cg.g.node[doc_id]['title'])
+                    break
+        elif self.user_model[c] == ADVANCED:
+            for doc_id, doc_weight in self.cg.topic_docs(c):
+                if doc_id in self.covered_documents or \
+                  self.cg.g.node[doc_id]['title'] in self.covered_titles:
+                    continue
+
+                roles = self.cg.g.node[doc_id]['roles']
+                if 'Empirical results' not in roles:
+                    continue
+
+                entry['documents2'].append(self.doc_entry(doc_id, doc_weight))
+                self.covered_documents.add(doc_id)
+                self.covered_titles.add(self.cg.g.node[doc_id]['title'])
+                doc2_count += 1
+                if doc2_count == 2:
+                    break
 
         return entry
+
+
+    def doc_entry(self, doc_id, doc_weight):
+        return {'id': doc_id,
+                'score': doc_weight,
+                'type': 'unknown',
+                'title': self.cg.g.node[doc_id]['title'],
+                'authors': self.cg.g.node[doc_id]['authors'],
+                'book': self.cg.g.node[doc_id]['book'],
+                'year': self.cg.g.node[doc_id]['year']}
 
 
     def print(self, rl, depth=1):
@@ -99,10 +152,11 @@ class ReadingList:
                 self.print_doc(doc['id'], depth)
 
             self.print(entry['subconcepts'], depth + 1)
+            if entry['subconcepts']:
+                print()
 
             for doc in entry['documents2']:
                 self.print_doc(doc['id'], depth)
-        print()
 
 
     def print_doc(self, doc_id, depth):
@@ -157,4 +211,13 @@ if __name__ == '__main__':
     for c in cg.concepts():
         beginner_model[c] = BEGINNER
 
+    advanced_model = {}
+    for c in cg.concepts():
+        advanced_model[c] = ADVANCED
+
+    print('Beginner:')
     r = ReadingList(cg, query, beginner_model)
+
+    print()
+    print('Advanced:')
+    r = ReadingList(cg, query, advanced_model)
