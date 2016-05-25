@@ -47,11 +47,13 @@ class Mallet:
         self.namefile = self.prefix + 'names.csv'
         self.scorefile = self.prefix + 'scores.txt'
 
+        self.mallet_corpus = self.prefix + 'corpus.mallet'
+
         if os.path.exists(self.tkfile):
             num_topics = len(open(self.tkfile).readlines())
             print('Found model with', num_topics, 'topics.')
 
-        self.topics = [[] for i in range(num_topics)]
+        self.topics = [{} for i in range(num_topics)]
 
         if not os.path.exists(self.wtfile) or not os.path.exists(self.dtfile):
             self.read(corpus, bigrams)
@@ -64,12 +66,12 @@ class Mallet:
         self.load_scores()
 
 
-    def read(self, corpus, bigrams):
+    def read(self, corpus, bigrams=False):
         stop = StopLexicon()
 
         cmd = [self.path, 'import-dir',
                '--input', corpus,
-               '--output', self.prefix + 'corpus.mallet',
+               '--output', self.mallet_corpus,
                '--remove-stopwords',
                '--extra-stopwords', stop.file,
                '--token-regex', '[^\\s]+']
@@ -111,7 +113,7 @@ class Mallet:
 
         cmd = [self.path, 'infer-topics',
                '--inferencer', self.inffile,
-               '--input', self.corpus,
+               '--input', self.mallet_corpus,
                '--output-doc-topics', self.dtfile,
                '--num-iterations', str(iters)]
         if subprocess.call(cmd) != 0:
@@ -128,14 +130,13 @@ class Mallet:
             word = tokens[1]
             for c in tokens[2:]:
                 topic, count = c.split(':')
-                self.topics[int(topic)].append((word, int(count)))
+                self.topics[int(topic)][word] = int(count)
 
         with open(self.wtkfile, 'w') as out:
             for topic in range(len(self.topics)):
                 out.write('\t'.join([str(topic)] +
                                     [str(y) + '\t' + str(z) for (y, z) in
-                                     sorted(self.topics[topic], key=lambda x:
-                                            x[1], reverse=True)][:60]) + '\n')
+                                     self.topic_pairs(topic)[:100]]) + '\n')
 
 
     def load_dt(self):
@@ -155,7 +156,7 @@ class Mallet:
         thresh = max((290.0 - num_topics)/900.0, 0.01)
 
         for line in open(self.dtfile):
-            row = line.split('\t')
+            row = line.strip().split()
             if row[0][0] == '#':
                 continue
             if len(row) < 2:
@@ -196,7 +197,9 @@ class Mallet:
         num_topics = len(self.topics)
 
         if not os.path.exists(self.namefile):
-            self.names = [' '.join([x[0] for x in self.topics[i][:3]])
+            self.names = [' '.join([x[0] for x in sorted(self.topics[i],
+                                                         key=lambda z: z[1],
+                                                         reverse=True)[:3]])
                           for i in range(num_topics)]
             return
 
@@ -221,3 +224,7 @@ class Mallet:
             if line.startswith('Average'):
                 continue
             self.scores.append(float(line))
+
+    def topic_pairs(self, topic):
+        return sorted(self.topics[topic].items(),
+                      key=lambda x: x[1], reverse=True)
