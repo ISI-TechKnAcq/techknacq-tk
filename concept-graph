@@ -133,7 +133,7 @@ class TopicDependency:
             for line in open(self.model.dtfile):
                 if line[0] == '#':
                     continue
-                elts = line.strip().split('\t')[1:]
+                elts = line.strip().split()[1:]
                 fout.write(elts[0].replace('file:', ''))
                 for tid, pct in sorted(pairwise(elts[1:]),
                                        key=lambda x: x[0]):
@@ -149,10 +149,9 @@ class TopicDependency:
 
         # Generate Linhong-style names for each topic.
         keynames = []
-        for t in self.model.topics:
+        for t in range(len(self.model.topics)):
             keynames.append('-'.join([x[0] for x in
-                                      sorted(t, key=lambda x: x[1],
-                                             reverse=True)[:5]]) + '-')
+                                      self.model.topic_pairs(t)[:5]]) + '-')
 
         # Generate input file for Infomap.
         with open(self.prefix + 'infomap.net', 'w') as fout:
@@ -194,6 +193,36 @@ class TopicDependency:
 
         return fname
 
+
+def alt_dt(model, corpus):
+    """Produce an alternative document-topic matrix giving the importance of
+    a document to the topic rather than vice versa, which we compute by
+    summing (and then normalizing) the weight of each document word in the
+    topic."""
+
+    print('Computing alternative document-topic composition matrix.')
+    num_topics = len(model.topics)
+    scores = [{} for i in range(num_topics)]
+
+    for topic in range(num_topics):
+        if topic % 50 == 0:
+            print('Topic', topic)
+        max_score = 0.0
+        for doc in corpus:
+            scores[topic][doc.id] = 0.0
+            for word in doc.bigrams(abstract=False).split():
+                scores[topic][doc.id] += model.topics[topic].get(word, 0.0)
+            if scores[topic][doc.id] > max_score:
+                max_score = scores[topic][doc.id]
+        if max_score == 0.0:
+            continue
+        for doc in corpus:
+            scores[topic][doc.id] /= max_score
+
+    # Convert scores to topic_doc format.
+    return [scores[i].items() for i in range(num_topics)]
+
+
 ###
 
 
@@ -233,6 +262,19 @@ if __name__ == '__main__':
             os.makedirs(mallet_corpus)
             corpus.export(mallet_corpus, abstract=False, format='text')
             model.infer_topics(mallet_corpus)
+
+    # model.doc_topics = alt_dt(model, corpus)
+
+    # try:
+    #     print('Recording alt topic scores.')
+    #     with open('alt-dt.txt', 'w') as fout:
+    #         for i, topic in enumerate(model.doc_topics):
+    #             fout.write('%d' % (i))
+    #             for doc, weight in topic:
+    #                 fout.write('\t%s:%f' % (doc, weight))
+    #             fout.write('\n')
+    # except:
+    #     pass
 
     cg.add_concepts(model)
 
