@@ -32,7 +32,8 @@ class ConceptGraph:
         for doc in corpus:
             self.g.add_node(doc.id, type='document', authors=doc.authors,
                             title=doc.title, book=doc.book, year=doc.year,
-                            url=doc.url, abstract=doc.get_abstract())
+                            url=doc.url, abstract=doc.get_abstract(),
+                            roles=doc.roles)
             for ref in doc.references:
                 self.g.add_edge(doc.id, ref, type='cite')
 
@@ -141,7 +142,8 @@ class ConceptGraph:
                                 authors=[x['fullName'] for x in d['authors']],
                                 title=d['title'], book=d['book'],
                                 year=d['year'], url=d['url'],
-                                abstract=d['abstractText'])
+                                abstract=d['abstractText'],
+                                roles=set(d.get('roles', set())))
                 for cited in d.get('cites', []):
                     self.g.add_edge(d['id'], cited, type='cite')
 
@@ -150,8 +152,9 @@ class ConceptGraph:
                                 weight=e['weight'])
 
 
-        except:
+        except Exception as e:
             sys.stderr.write('Error importing concept graph %s.\n' % (fname))
+            print(e, file=sys.stderr)
             sys.exit(1)
 
 
@@ -165,8 +168,8 @@ class ConceptGraph:
                 return True
             if 'Miscellany' in self.g.node[c]['name'] or \
               self.g.node[c]['name'] == 'Bad':
-                sys.stderr.write('Skipping topic %s due to name.\n' %
-                                 (self.g.node[c]['name']))
+                #sys.stderr.write('Skipping topic %s due to name.\n' %
+                #                 (self.g.node[c]['name']))
                 return True
             return False
 
@@ -212,7 +215,7 @@ class ConceptGraph:
                      'year': self.g.node[doc_id]['year'],
                      'abstractText': self.g.node[doc_id]['abstract'],
                      'cites': [],#self.doc_cites(doc_id),
-                     'attributes': {}}
+                     'roles': list(self.g.node[doc_id].get('roles', set()))}
             j['corpus']['docs'].append(j_doc)
 
         for (t1, t2, data) in self.g.edges(data=True):

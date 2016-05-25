@@ -9,6 +9,7 @@ import datetime
 import re
 import multiprocessing as mp
 import enchant
+import ast
 
 from pathlib import Path
 from bs4 import BeautifulSoup
@@ -36,6 +37,10 @@ class Corpus:
             for doc in pool.imap(Document, docnames):
                 if doc:
                     self.add(doc)
+
+        if os.path.exists('pedagogical-roles.txt'):
+            print('Found pedagogical role file; loading.')
+            self.read_roles('pedagogical-roles.txt')
 
     def clear(self):
         self.docs = set()
@@ -83,6 +88,28 @@ class Corpus:
                     out.write(d.bigrams(abstract, stop) + '\n')
 
 
+    def read_roles(self, fname):
+        role_annotations = {}
+        for line in open(fname):
+            _, doc_id, labels = line.strip().split(' ', 2)
+            labels = ast.literal_eval(labels)
+            role_annotations[doc_id.lower()] = labels
+        for doc in self.docs:
+            short_id = doc.id.lower()
+            short_id = short_id.replace('acl-', '')
+            short_id = short_id.replace('wiki-', '')
+            short_id = short_id.replace('sd-', '')
+            short_id = short_id.replace('web-', '')
+            if short_id in role_annotations:
+                doc.roles = set(role_annotations[short_id])
+                doc.roles.discard('None')
+            else:
+                sys.stderr.write('Failed to find role annotation for %s.\n'
+                                 % (doc.id))
+            if 'wiki-' in doc.id:
+                doc.roles.add('Reference work')
+
+
 class Document:
     def __init__(self, fname=None, format=None):
         if fname and not format and 'json' in fname:
@@ -106,6 +133,7 @@ class Document:
         self.url = j['info'].get('url', '')
         self.references = set(j.get('references', []))
         self.sections = j.get('sections', [])
+        self.roles = set()
 
         if fname and format == 'sd':
             self.read_sd(fname)
@@ -393,7 +421,7 @@ class Document:
                 if w1[0] == '#' and w1[-1] == '#' and good_word(w1):
                     ret += w1 + ' '
             if words and words[-1][0] == '#' and words[-1][-1] == '#' and \
-              good_word(words[-1]):
+               good_word(words[-1]):
                 ret += words[-1] + ' '
             return ret
 
