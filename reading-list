@@ -28,10 +28,15 @@ class ReadingList:
         self.covered = set()
         self.relevance = dict([(c, self.score_match(c))
                                for c in cg.concepts()])
+        self.rl = []
 
         for c, score in sorted(self.relevance.items(), key=lambda x: x[1],
                                reverse=True)[:MAX_MATCHES]:
-            self.traverse(c, score)
+            entry = self.traverse(c, score)
+            if entry:
+                self.rl.append(entry)
+
+        self.print(self.rl)
 
 
     def traverse(self, c, score, depth=1):
@@ -43,11 +48,78 @@ class ReadingList:
 
         self.covered.add(c)
 
-        print('  '*depth + '%s -- %.4f' % (self.cg.name(c), score))
+        entry = {'id': c,
+                 'name': self.cg.name(c),
+                 'score': score,
+                 'documents1': [],
+                 'subconcepts': [],
+                 'documents2': []}
 
+        # First compute any dependencies we'll include in the reading list
+        # so we know which documents we want to include at this level.
         for dep, dep_weight in self.cg.topic_deps(c)[:MAX_MATCHES]:
-            self.traverse(dep, score * dep_weight + self.relevance[dep],
-                          depth+1)
+            dep_entry = self.traverse(dep, score*dep_weight +
+                                      self.relevance[dep], depth+1)
+            if dep_entry:
+                entry['subconcepts'].append(dep_entry)
+
+        # Documents to print before the dependencies.
+        doc_id, doc_weight = self.cg.topic_docs(c)[0]
+        entry['documents1'].append(
+            {'id': doc_id,
+             'score': doc_weight,
+             'type': 'unknown',
+             'title': self.cg.g.node[doc_id]['title'],
+             'authors': self.cg.g.node[doc_id]['authors'],
+             'book': self.cg.g.node[doc_id]['book'],
+             'year': self.cg.g.node[doc_id]['year']})
+
+        # Documents to print after the dependencies, if there were any.
+        if entry['subconcepts']:
+            # Bookend dependencies.
+            doc_id, doc_weight = self.cg.topic_docs(c)[1]
+            entry['documents2'].append(
+                {'id': doc_id,
+                 'score': doc_weight,
+                 'type': 'unknown',
+                 'title': self.cg.g.node[doc_id]['title'],
+                 'authors': self.cg.g.node[doc_id]['authors'],
+                 'book': self.cg.g.node[doc_id]['book'],
+                 'year': self.cg.g.node[doc_id]['year']})
+
+        return entry
+
+
+    def print(self, rl, depth=1):
+        for entry in rl:
+            print()
+            print('  '*depth + '%s -- %.4f' % (entry['name'], entry['score']))
+
+            for doc in entry['documents1']:
+                self.print_doc(doc['id'], depth)
+
+            self.print(entry['subconcepts'], depth + 1)
+
+            for doc in entry['documents2']:
+                self.print_doc(doc['id'], depth)
+        print()
+
+
+    def print_doc(self, doc_id, depth):
+        if len(self.cg.g.node[doc_id]['authors']) > 3:
+            print('  '*depth + '- ' +
+                  self.cg.g.node[doc_id]['authors'][0] + ' et al.:')
+        elif self.cg.g.node[doc_id]['authors']:
+            print('  '*depth + '- ' +
+                  '; '.join(self.cg.g.node[doc_id]['authors']) + ':')
+        else:
+            print('  '*depth + '- Unknown:')
+
+        if len(self.cg.g.node[doc_id]['title']) > 70:
+            print('  '*depth + '  ' + self.cg.g.node[doc_id]['title'][:70] +
+                  '...')
+        else:
+            print('  '*depth + '  ' + self.cg.g.node[doc_id]['title'])
 
 
     def score_match(self, c):
@@ -70,44 +142,6 @@ class ReadingList:
             common = self.query & words
             score += (len(common)/len(all_words)) * (weight/mentions)
         return score
-
-
-
-####
-
-
-# def score_concept(cg, query, c, visited=set()):
-#     s = score_match(cg, query, c)
-#     if c in visited:
-#         return s
-#     visited.add(c)
-#     for d, d_score in cg.topic_deps(c):
-#         if d_score > 0.1:
-#             # Using 'set' to pass a copy instead of a pointer.
-#             s += d_score * score_concept(cg, query, d, set(visited))
-#     return s
-
-
-# def topic_reading_list(cg, concept_id, concept_weight, depth=0):
-#     """Print a reading list for the topic and its dependencies."""
-
-#     global covered
-
-#     # Have we previously covered this topic, e.g., it was a dependency of
-#     # an earlier topic?
-#     if concept_id in covered:
-#         return
-
-#     # If we've passed the threshold of relevance, don't continue.
-#     if concept_weight < 0.01:
-#         return
-
-#     print(' ' * depth + ' - %s (%s) %.4f' %
-#           (cg.g.node[concept_id]['name'], concept_id, concept_weight))
-#     covered.add(concept_id)
-
-#     for dep, weight in cg.topic_deps(concept_id):
-#         topic_reading_list(cg, dep, concept_weight * weight, depth+1)
 
 
 if __name__ == '__main__':
