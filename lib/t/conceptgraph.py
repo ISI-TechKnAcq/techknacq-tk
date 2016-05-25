@@ -42,20 +42,20 @@ class ConceptGraph:
         ConceptGraph."""
 
         # Add a concept node for each topic in the model.
-        for i, topic in enumerate(model.topics):
-            concept_id = 'concept-' + str(i)
+        for topic in range(len(model.topics)):
+            concept_id = 'concept-' + str(topic)
             self.g.add_node(concept_id, type='concept', words=[], mentions=0,
-                            name=model.names[i], score=model.scores[i])
-            for word, weight in sorted(topic, key=lambda x: x[1], reverse=True):
+                            name=model.names[topic], score=model.scores[topic])
+            for word, weight in model.topic_pairs(topic):
                 self.g.node[concept_id]['words'].append((word, weight))
                 self.g.node[concept_id]['mentions'] += weight
 
         # Link the concept nodes to documents.
-        for topic_id in range(len(model.topic_doc)):
-            for base, percent in model.topic_doc[topic_id]:
+        for topic in range(len(model.topic_doc)):
+            for base, percent in model.topic_doc[topic]:
                 if percent == 0.0:
                     continue
-                self.g.add_edge('concept-' + str(topic_id), base,
+                self.g.add_edge('concept-' + str(topic), base,
                                 type='topic', weight=percent)
 
 
@@ -131,6 +131,10 @@ class ConceptGraph:
                                                           f['count']))
                 self.g.node[c['id']]['words'].sort(key=lambda x: x[1],
                                                    reverse=True)
+                for doc_edge in c['docWeights']:
+                    self.g.add_edge(c['id'], doc_edge['document'],
+                                    weight=doc_edge['weight'],
+                                    type='composition')
 
             for d in j['corpus']['docs']:
                 self.g.add_node(d['id'], type='document',
@@ -145,7 +149,6 @@ class ConceptGraph:
                 self.g.add_edge(e['source'], e['target'], type=e['type'],
                                 weight=e['weight'])
 
-            # XXX: Load document-concept edges
 
         except:
             sys.stderr.write('Error importing concept graph %s.\n' % (fname))
@@ -160,7 +163,8 @@ class ConceptGraph:
                 sys.stderr.write('Skipping topic %s due to score.\n' %
                                  (self.g.node[c]['name']))
                 return True
-            if 'Miscellany' in self.g.node[c]['name']:
+            if 'Miscellany' in self.g.node[c]['name'] or \
+              self.g.node[c]['name'] == 'Bad':
                 sys.stderr.write('Skipping topic %s due to name.\n' %
                                  (self.g.node[c]['name']))
                 return True
