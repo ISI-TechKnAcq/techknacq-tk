@@ -113,6 +113,11 @@ manual. These files should have the same prefix as the topic model but end in
 corresponding to the topics. The names.csv file has lines of format
 Topicnum,Name.
 
+The computation of pedagogical roles for documents is not part of this
+pipeline, but if a file of these annotations exists with the name
+'pedagogical-roles.txt', it will be read by `Corpus.read_roles()` and marked
+in the concept graph.
+
 
 ### Reading List
 
