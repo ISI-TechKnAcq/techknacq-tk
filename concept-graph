@@ -194,35 +194,6 @@ class TopicDependency:
         return fname
 
 
-def alt_dt(model, corpus):
-    """Produce an alternative document-topic matrix giving the importance of
-    a document to the topic rather than vice versa, which we compute by
-    summing (and then normalizing) the weight of each document word in the
-    topic."""
-
-    print('Computing alternative document-topic composition matrix.')
-    num_topics = len(model.topics)
-    scores = [{} for i in range(num_topics)]
-
-    for topic in range(num_topics):
-        if topic % 50 == 0:
-            print('Topic', topic)
-        max_score = 0.0
-        for doc in corpus:
-            scores[topic][doc.id] = 0.0
-            for word in doc.bigrams(abstract=False).split():
-                scores[topic][doc.id] += model.topics[topic].get(word, 0.0)
-            if scores[topic][doc.id] > max_score:
-                max_score = scores[topic][doc.id]
-        if max_score == 0.0:
-            continue
-        for doc in corpus:
-            scores[topic][doc.id] /= max_score
-
-    # Convert scores to topic_doc format.
-    return [scores[i].items() for i in range(num_topics)]
-
-
 ###
 
 
@@ -263,18 +234,24 @@ if __name__ == '__main__':
             corpus.export(mallet_corpus, abstract=False, format='text')
             model.infer_topics(mallet_corpus)
 
-    # model.doc_topics = alt_dt(model, corpus)
+    if os.path.exists('alt-dt.txt'):
+        print('Loading alternate doc-topic composition.')
+        new_dt = [{} for n in range(len(model.topics))]
+        for line in open('alt-dt.txt'):
+            elts = line.strip().split('\t')
+            tnum = int(elts[0])
+            for e in elts[1:]:
+                doc, weight = e.split(':')
+                new_dt[tnum][doc] = float(weight)
 
-    # try:
-    #     print('Recording alt topic scores.')
-    #     with open('alt-dt.txt', 'w') as fout:
-    #         for i, topic in enumerate(model.doc_topics):
-    #             fout.write('%d' % (i))
-    #             for doc, weight in topic:
-    #                 fout.write('\t%s:%f' % (doc, weight))
-    #             fout.write('\n')
-    # except:
-    #     pass
+        for i in range(len(model.topics)):
+            vals = dict(model.topic_doc[i])
+            for v in set(vals.keys()) | set(new_dt[i].keys()):
+                if v in vals and v in new_dt[i]:
+                    vals[v] = (vals[v] + new_dt[i][v]) / 2.0
+                elif v in new_dt[i]:
+                    vals[v] = new_dt[i][v]
+            model.topic_doc[i] = sorted(vals.items(), key=lambda x: x[1], reverse=True)
 
     cg.add_concepts(model)
 
@@ -282,3 +259,4 @@ if __name__ == '__main__':
     cg.add_dependencies(dep.edges)
 
     cg.export(prefix + 'cg.json')
+    print('Concept graph:', prefix + 'cg.json')
