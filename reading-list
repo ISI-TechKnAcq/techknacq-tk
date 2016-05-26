@@ -134,6 +134,8 @@ class ReadingList:
 
 
     def doc_entry(self, doc_id, doc_weight):
+        """Return the reading list entry for the specified document, which
+        was selected with the specified weight."""
         return {'id': doc_id,
                 'score': doc_weight,
                 'type': 'unknown',
@@ -207,17 +209,16 @@ if __name__ == '__main__':
 
     query = sys.argv[2:]
 
+    print('Beginner:')
     beginner_model = {}
     for c in cg.concepts():
         beginner_model[c] = BEGINNER
-
-    advanced_model = {}
-    for c in cg.concepts():
-        advanced_model[c] = ADVANCED
-
-    print('Beginner:')
     r = ReadingList(cg, query, beginner_model)
 
     print()
+
     print('Advanced:')
+    advanced_model = {}
+    for c in cg.concepts():
+        advanced_model[c] = ADVANCED
     r = ReadingList(cg, query, advanced_model)
