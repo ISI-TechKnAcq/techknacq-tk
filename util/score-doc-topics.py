@@ -27,6 +27,7 @@ def alt_dt(model, corpus, fout):
             scores[topic][doc] = 0.0
             for word in corpus[doc]:
                 scores[topic][doc] += model.topics[topic].get(word, 0.0)
+            scores[topic][doc] /= len(corpus[doc])
             if scores[topic][doc] > max_score:
                 max_score = scores[topic][doc]
         if max_score == 0.0:
