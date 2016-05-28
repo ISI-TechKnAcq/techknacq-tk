@@ -20,7 +20,6 @@ from math import log
 from functools import partial
 from collections import defaultdict, Counter
 from noaho import NoAho
-from nltk.util import ngrams
 
 from websearch import WebSearch
 
@@ -59,7 +58,7 @@ def get_terms(corpus, n=4000):
 
     ngrams = filter_plurals(ngrams)
 
-    ngram_counts = dict([(x, len(ngrams[x])) for x in ngrams])
+    ngram_counts = {x: len(ngrams[x]) for x in ngrams}
     filtered = filter_subsumed(ngram_counts)
 
     if citations:
@@ -80,7 +79,7 @@ def get_ngrams(l, min=1):
         """Return all possible n-grams generated from a sequence of items,
         as an iterator."""
         for n in range(1, len(seq) + 1):
-            for ng in ngrams(seq, n):
+            for ng in nltk.util.ngrams(seq, n):
                 yield ng
 
     counts = defaultdict(int)
@@ -100,7 +99,7 @@ def get_ngrams(l, min=1):
         for ngram in everygrams(tokens):
             counts[ngram] += 1
 
-    return dict([(x, counts[x]) for x in counts if counts[x] >= min])
+    return {x: counts[x] for x in counts if counts[x] >= min}
 
 
 def good_ngram(ng, scrabble, stop):
@@ -489,7 +488,7 @@ def get_wiki_article(title, terms):
     # We can't pass the trie as an argument when using multiprocessing.
     trie = NoAho()
     for term in terms:
-       trie.add(term)
+        trie.add(term)
 
     for bad in ['Category:', 'List of ', 'Index of ']:
         if bad in title:
@@ -538,7 +537,7 @@ def export_wiki_article(article):
             try:
                 heading = re.match('=+ (.+) =+$', line).group(1).strip()
                 d.sections.append({'heading': heading,
-                                'text': []})
+                                   'text': []})
             except: pass
         elif len(d.sections) == 0:
             d.sections.append({'text': st.tokenize(line)})
@@ -562,7 +561,7 @@ def search_web(terms):
             tutorials[tutorial] += 1
 
     # Remove singletons.
-    tutorials -= Counter(dict([(x, 1) for x in list(tutorials)]))
+    tutorials -= Counter({x: 1 for x in list(tutorials)})
 
     for t in tutorials:
         print(' -', t[0])
@@ -603,7 +602,7 @@ def search_web_term(terms):
             continue
 
         # Does it look like an ACL paper?
-        if re.search('/[a-z][0-9][0-9]-[0-9][0-9][0-9][0-9]\.pdf',
+        if re.search(r'/[a-z][0-9][0-9]-[0-9][0-9][0-9][0-9]\.pdf',
                      result.url.lower()):
             continue
 
@@ -666,7 +665,7 @@ def get_web_docs(tutorials):
 
 def export_tutorial(tutorial):
     def count_pages(f):
-        r = re.compile(b"/Type\s*/Page([^s/]|$)", re.MULTILINE|re.DOTALL)
+        r = re.compile(r"/Type\s*/Page([^s/]|$)", re.MULTILINE|re.DOTALL)
         return len(r.findall(open(f, "rb").read()))
 
     title, url = tutorial

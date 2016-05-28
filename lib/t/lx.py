@@ -29,10 +29,12 @@ class Lexicon:
         """Check if the given word is in the lexicon."""
         return word in self.words
 
+
 class ScrabbleLexicon(Lexicon):
     def __init__(self):
         """Read a Scrabble dictionary from disk."""
         Lexicon.__init__(self, listname=os.path.join(DATA_DIR, 'scrabble.txt'))
+
 
 class StopLexicon(Lexicon):
     def __init__(self):
@@ -109,7 +111,7 @@ def find_short_long_pairs(sent):
     def extract_long(s, sent):
         """Given a short form and the sentence it occurs in, find the
         long form."""
-        before = re.sub(' \(' + re.escape(s) + '\).*', '', sent)
+        before = re.sub(r' \(' + re.escape(s) + r'\).*', '', sent)
         before = re.sub('.*[,;]', '', before)
 
         l = find_best_long(s, before)
@@ -133,7 +135,7 @@ def find_short_long_pairs(sent):
         return l
 
     ret = set()
-    for s in re.findall(' \(([^()]+)\)', sent):
+    for s in re.findall(r' \(([^()]+)\)', sent):
         if check_short(s):
             l = extract_long(s, sent)
             if l:

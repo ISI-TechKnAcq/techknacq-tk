@@ -110,6 +110,7 @@ class ConceptGraph:
     def name(self, c):
         return self.g.node[c]['name']
 
+
     def concepts(self):
         return (n for n in self.g if
                 self.g.node[n].get('type', '') == 'concept')

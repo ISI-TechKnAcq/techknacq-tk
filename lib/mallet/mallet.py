@@ -162,7 +162,7 @@ class Mallet:
             if len(row) < 2:
                 print('Error with composition row', row, file=sys.stderr)
                 continue
-            m = re.search('([^/]+)\.(xml|txt)$', row[1])
+            m = re.search(r'([^/]+)\.(xml|txt)$', row[1])
             if not m:
                 continue
             base = m.group(1)
