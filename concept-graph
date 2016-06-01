@@ -248,9 +248,10 @@ if __name__ == '__main__':
             vals = dict(model.topic_doc[i])
             for v in set(vals.keys()) | set(new_dt[i].keys()):
                 if v in vals and v in new_dt[i]:
-                    vals[v] = (vals[v] + new_dt[i][v]) / 2.0
-                elif v in new_dt[i]:
-                    vals[v] = new_dt[i][v]
+                    #vals[v] = (vals[v] + new_dt[i][v]) / 2.0
+                    vals[v] *= new_dt[i][v]
+                else:
+                    vals[v] = 0.0
             model.topic_doc[i] = sorted(vals.items(), key=lambda x: x[1], reverse=True)
 
     cg.add_concepts(model)
