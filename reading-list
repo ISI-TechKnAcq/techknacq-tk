@@ -2,8 +2,6 @@
 
 import sys
 
-from collections import defaultdict
-
 from t.conceptgraph import ConceptGraph
 
 
@@ -18,7 +16,7 @@ from t.conceptgraph import ConceptGraph
 
 # Parameters
 
-THRESHOLD = 0.02
+THRESHOLD = 0.01
 MAX_MATCHES = 6
 
 
@@ -37,8 +35,7 @@ class ReadingList:
         self.covered_concepts = set()
         self.covered_documents = set()
         self.covered_titles = set()
-        self.relevance = dict([(c, self.score_match(c))
-                               for c in cg.concepts()])
+        self.relevance = {c: self.score_match(c) for c in cg.concepts()}
         self.rl = []
 
         for c, score in sorted(self.relevance.items(), key=lambda x: x[1],
@@ -69,7 +66,10 @@ class ReadingList:
         # First compute any dependencies we'll include in the reading list
         # so we know which documents we want to include at this level.
         if self.user_model[c] != ADVANCED:
-            for dep, dep_weight in self.cg.topic_deps(c)[:MAX_MATCHES]:
+            for dep, dep_weight in sorted(self.cg.topic_deps(c),
+                                          key=lambda x:
+                                          score*x[1] + self.relevance[x[0]],
+                                          reverse=True)[:MAX_MATCHES]:
                 dep_entry = self.traverse(dep, score*dep_weight +
                                           self.relevance[dep], depth+1)
                 if dep_entry:
@@ -116,7 +116,7 @@ class ReadingList:
         elif self.user_model[c] == ADVANCED:
             for doc_id, doc_weight in self.cg.topic_docs(c):
                 if doc_id in self.covered_documents or \
-                  self.cg.g.node[doc_id]['title'] in self.covered_titles:
+                   self.cg.g.node[doc_id]['title'] in self.covered_titles:
                     continue
 
                 roles = self.cg.g.node[doc_id]['roles']
