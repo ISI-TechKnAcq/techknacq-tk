@@ -329,6 +329,12 @@ class Document:
     def get_abstract(self):
         """Return the (probable) abstract for the document."""
 
+        if self.sections[0].get('heading', '') == 'Abstract':
+            return self.sections[0]['text'][:10]
+        if len(self.sections) > 1 and \
+           self.sections[1].get('heading', '') == 'Abstract':
+            return self.sections[1]['text'][:10]
+
         if len(self.sections[0]['text']) > 2:
             return self.sections[0]['text'][:10]
         if len(self.sections) > 1:
