@@ -53,8 +53,6 @@ class ReadingList:
             if entry:
                 self.rl.append(entry)
 
-        self.print(self.rl)
-
 
     def traverse(self, c, score, depth=1):
         if score < THRESHOLD or c in self.covered_concepts:
@@ -157,37 +155,75 @@ class ReadingList:
                 'year': self.cg.g.node[doc_id]['year']}
 
 
-    def print(self, rl, depth=1):
+    def print(self, rl=None, depth=1, format='text'):
+        if rl is None:
+            rl = self.rl
+
+        if format == 'html':
+            print('<dl>')
+
         for entry in rl:
-            print()
-            print('  '*depth + '%s -- %.4f' % (entry['name'], entry['score']))
+            if format == 'html':
+                print('<dt>%s &ndash; %.4f</dt>' % (entry['name'],
+                                                    entry['score']))
+                print('<dd>')
+            else:
+                print()
+                print('  '*depth + '%s -- %.4f' % (entry['name'],
+                                                   entry['score']))
 
+            if format == 'html':
+                print('<ul>')
             for doc in entry['documents1']:
-                self.print_doc(doc['id'], depth)
+                self.print_doc(doc['id'], depth, format=format)
+            if format == 'html':
+                print('</ul>')
 
-            self.print(entry['subconcepts'], depth + 1)
+            self.print(entry['subconcepts'], depth + 1, format=format)
             if entry['subconcepts']:
                 print()
 
+            if format == 'html':
+                print('<ul>')
             for doc in entry['documents2']:
-                self.print_doc(doc['id'], depth)
+                self.print_doc(doc['id'], depth, format=format)
+            if format == 'html':
+                print('</ul>')
+                print('</dd>')
 
+        if format == 'html':
+            print('</dl>')
 
-    def print_doc(self, doc_id, depth):
+    def print_doc(self, doc_id, depth, format='text'):
+        if format == 'html':
+            print('<li>')
+
+        if format == 'html':
+            pass
+        else:
+            print('  '*depth + '-', end=' ')
+
         if len(self.cg.g.node[doc_id]['authors']) > 3:
-            print('  '*depth + '- ' +
-                  self.cg.g.node[doc_id]['authors'][0] + ' et al.:')
+            print(self.cg.g.node[doc_id]['authors'][0] + ' et al.:')
         elif self.cg.g.node[doc_id]['authors']:
-            print('  '*depth + '- ' +
-                  '; '.join(self.cg.g.node[doc_id]['authors']) + ':')
+            print('; '.join(self.cg.g.node[doc_id]['authors']) + ':')
         else:
             print('  '*depth + '- Unknown:')
+
+        if format == 'html':
+            print('<a href="' + self.cg.g.node[doc_id]['url'] + '">')
 
         if len(self.cg.g.node[doc_id]['title']) > 70:
             print('  '*depth + '  ' + self.cg.g.node[doc_id]['title'][:70] +
                   '...')
         else:
             print('  '*depth + '  ' + self.cg.g.node[doc_id]['title'])
+
+        if format == 'html':
+            print('</a>')
+
+        if format == 'html':
+            print('</li>')
 
 
     def score_match(self, c, fuzzy=False):
@@ -224,20 +260,64 @@ if __name__ == '__main__':
         sys.stderr.write('Usage: reading-list [concept graph] [query terms]\n')
         sys.exit(1)
 
+    output_format = 'html'
+
     cg = ConceptGraph(sys.argv[1])
 
     query = sys.argv[2:]
 
-    print('Beginner:')
+    if output_format == 'html':
+        print("""
+<html>
+<head>
+<title>Reading List</title>
+<style type="text/css">
+body {
+  font: 12pt 'Univers LT Std', 'Helvetica Neue', Helvetica, sans-serif;
+  max-width: 600pt;
+  margin: 4pc auto;
+}
+dl, dt, dd, ul, li { margin: 0; padding: 0; }
+dt {
+  margin-top: 12pt;
+  font-weight: bold;
+}
+dd {
+  margin-top: 6pt;
+  margin-left: 1pt;
+  border-left: 6pt solid #ccc;
+  padding-left: 12pt;
+}
+li {
+  list-style-type: none;
+  margin-bottom: 6pt;
+}
+</style>
+</head>
+<body>
+<h1>Reading List</h1>""")
+
+    if output_format == 'html':
+        print('<h2>Beginner</h2>')
+    else:
+        print('Beginner:')
     beginner_model = {}
     for c in cg.concepts():
         beginner_model[c] = BEGINNER
     r = ReadingList(cg, query, beginner_model)
+    r.print(format=output_format)
 
     print()
 
-    print('Advanced:')
+    if output_format == 'html':
+        print('<h2>Advanced</h2>')
+    else:
+        print('Advanced:')
     advanced_model = {}
     for c in cg.concepts():
         advanced_model[c] = ADVANCED
     r = ReadingList(cg, query, advanced_model)
+    r.print(format=output_format)
+
+    if format == 'html':
+        print('</body></html>')
