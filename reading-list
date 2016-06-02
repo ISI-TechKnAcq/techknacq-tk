@@ -2,6 +2,8 @@
 
 import sys
 
+from nltk.stem import WordNetLemmatizer
+
 from t.conceptgraph import ConceptGraph
 
 
@@ -28,8 +30,13 @@ ADVANCED = 3
 
 
 class ReadingList:
-    def __init__(self, cg, query, user_model):
+    def __init__(self, cg, query, user_model, docs=True):
         self.query = set(query)
+
+        self.lemmatizer = WordNetLemmatizer()
+        self.query_lemmas = set([self.lemmatizer.lemmatize(x)
+                                 for x in self.query])
+
         self.cg = cg
         self.user_model = user_model
         self.covered_concepts = set()
@@ -37,6 +44,8 @@ class ReadingList:
         self.covered_titles = set()
         self.relevance = {c: self.score_match(c) for c in cg.concepts()}
         self.rl = []
+
+        self.docs = docs
 
         for c, score in sorted(self.relevance.items(), key=lambda x: x[1],
                                reverse=True)[:MAX_MATCHES]:
@@ -74,6 +83,9 @@ class ReadingList:
                                           self.relevance[dep], depth+1)
                 if dep_entry:
                     entry['subconcepts'].append(dep_entry)
+
+        if not self.docs:
+            return entry
 
         related_docs = self.cg.topic_docs(c)
 
@@ -178,9 +190,10 @@ class ReadingList:
             print('  '*depth + '  ' + self.cg.g.node[doc_id]['title'])
 
 
-    def score_match(self, c):
+    def score_match(self, c, fuzzy=False):
         """Score the relevance of a concept to a query based on lexical
-        overlap."""
+        overlap. If `fuzzy` is False, use strict matching rather than
+        lemmatizing."""
 
         mentions = self.cg.g.node[c]['mentions']
         score = 0.0
@@ -197,6 +210,12 @@ class ReadingList:
             all_words = self.query | words
             common = self.query & words
             score += (len(common)/len(all_words)) * (weight/mentions)
+            if fuzzy:
+                words_lemmas = set([self.lemmatizer.lemmatize(x)
+                                    for x in words])
+                all_words = self.query_lemmas | words_lemmas
+                common = self.query_lemmas & words_lemmas
+                score += .75 * (len(common)/len(all_words)) * (weight/mentions)
         return score
 
 
