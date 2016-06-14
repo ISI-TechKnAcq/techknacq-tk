@@ -222,21 +222,24 @@ class Document:
                    'text': st.tokenize(soup.find('abstract-sec').get_text())}
             self.sections.append(sec)
 
-        for section in soup.find_all('section'):
-            sec = {'text': []}
-            heading = section.find('section-title')
-            if heading and heading.string:
-                sec['heading'] = heading.string.strip()
-            for p in section.find_all(['para', 'simple-para']):
-                sec['text'] += st.tokenize(p.get_text())
-            self.sections.append(sec)
-
-        if len(self.sections) <= 1:
-            sec = {'text': []}
-            for p in soup.find_all(['para', 'simple-para']):
-                sec['text'] += [re.sub(r'\s+', ' ', x) for x in
-                                st.tokenize(p.get_text())]
-            self.sections.append(sec)
+        sec_id = ''
+        sec = {'text': []}
+        for p in soup.find_all(['para', 'simple-para']):
+            if p.parent.name in ['section', 'biography']:
+                p_sec_id = p.parent.get('id', '')
+                if p_sec_id != sec_id:
+                    if sec_id and sec['text']:
+                        self.sections.append(sec)
+                    sec = {'text': []}
+                    sec_id = p_sec_id
+                    heading = p.parent.find('section-title')
+                    if heading and heading.string:
+                        sec['heading'] = heading.string.strip()
+                    elif p.parent.name == 'biography':
+                        sec['heading'] = 'Biography'
+            sec['text'] += [re.sub(r'\s+', ' ', x) for x in
+                            st.tokenize(p.get_text())]
+        self.sections.append(sec)
 
         if soup.rawtext and len(self.sections) < 3:
             self.sections.append({'text': st.tokenize(soup.rawtext.get_text())})
