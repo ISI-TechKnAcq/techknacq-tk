@@ -10,6 +10,7 @@ import re
 import multiprocessing as mp
 import enchant
 import ast
+import ftfy
 
 from pathlib import Path
 from bs4 import BeautifulSoup
@@ -72,19 +73,19 @@ class Corpus:
         for d in self:
             if format == 'json':
                 with io.open(os.path.join(dest, d.id + '.json'), 'w',
-                             encoding='utf8') as out:
+                             encoding='utf-8') as out:
                     out.write(d.json(abstract) + '\n')
             elif format == 'bioc':
                 with io.open(os.path.join(dest, d.id + '.xml'), 'w',
-                             encoding='utf8') as out:
+                             encoding='utf-8') as out:
                     out.write(d.bioc(abstract) + '\n')
             elif format == 'text':
                 with io.open(os.path.join(dest, d.id + '.txt'), 'w',
-                             encoding='utf8') as out:
+                             encoding='utf-8') as out:
                     out.write(d.text(abstract) + '\n')
             elif format == 'bigrams':
                 with io.open(os.path.join(dest, d.id + '.txt'), 'w',
-                             encoding='utf8') as out:
+                             encoding='utf-8') as out:
                     out.write(d.bigrams(abstract, stop) + '\n')
 
 
@@ -120,7 +121,7 @@ class Document:
         j = {'info': {}}
         if fname and format == 'json':
             try:
-                j = json.load(io.open(fname, 'r', encoding='utf8'))
+                j = json.load(io.open(fname, 'r', encoding='utf-8'))
             except Exception as e:
                 print('Error reading JSON document:', fname, file=sys.stderr)
                 print(e, file=sys.stderr)
@@ -182,7 +183,9 @@ class Document:
         if '-ref.xml' in f:
             return
 
-        xml = io.open(f, 'r', encoding='utf8').read()
+        xml = io.open(f, 'r', encoding='utf-8').read()
+        xml = ftfy.fix_text(xml, uncurl_quotes=False,
+                            fix_entities=False)
         xml = re.sub("([</])(dc|prism|ce|sb|xocs):", r"\1", xml)
         soup = BeautifulSoup(xml, 'lxml')
 
