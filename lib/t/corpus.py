@@ -228,7 +228,7 @@ class Document:
             if p.parent.name in ['section', 'biography']:
                 p_sec_id = p.parent.get('id', '')
                 if p_sec_id != sec_id:
-                    if sec_id and sec['text']:
+                    if sec['text']:
                         self.sections.append(sec)
                     sec = {'text': []}
                     sec_id = p_sec_id
