@@ -197,7 +197,9 @@ class Document:
 
         self.id = 'sd-' + pii.lower()
         try:
-            self.authors = [x.string.strip() for x in soup('creator')]
+            self.authors = [' '.join([re.sub('^.*, ', '', x.string.strip()),
+                                      re.sub(',.*$', '', x.string.strip())])
+                            for x in soup('creator')]
         except:
             self.authors = []
 
