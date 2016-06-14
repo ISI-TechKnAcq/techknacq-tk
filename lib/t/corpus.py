@@ -249,7 +249,7 @@ class Document:
             fref = f.replace('-full.xml', '-ref.xml')
 
         if os.path.exists(fref):
-            reftext = io.open(fref, 'r', encoding='utf8').read()
+            reftext = io.open(fref, 'r', encoding='utf-8').read()
             self.references = set([x.replace('PII:', 'sd-').lower() for x in
                                    re.findall('PII:[^<]+', reftext)])
 
@@ -418,6 +418,8 @@ class Document:
 
     def bigrams(self, abstract=False, stop=StopLexicon()):
         def good_word(w):
+            if '_' in w and not '#' in w:
+                return False
             return any(c.isalpha() for c in w)
 
         def bigrams_from_sent(s):
