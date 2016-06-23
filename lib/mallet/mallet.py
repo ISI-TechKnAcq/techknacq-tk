@@ -107,14 +107,22 @@ class Mallet:
 
 
     def infer_topics(self, corpus, iters=1000):
-        self.read(corpus)
+        # Read corpus using the original corpus file as a pipe to ensure
+        # compatability.
+        cmd = [self.path, 'import-dir',
+               '--input', corpus,
+               '--output', self.mallet_corpus + '-infer',
+               '--use-pipe-from', self.mallet_corpus]
+        if subprocess.call(cmd) != 0:
+            sys.stderr.write('Mallet import-dir failed.\n')
+            sys.exit(1)
 
         # Don't overwrite original.
         self.dtfile += '-infer'
 
         cmd = [self.path, 'infer-topics',
                '--inferencer', self.inffile,
-               '--input', self.mallet_corpus,
+               '--input', self.mallet_corpus + '-infer',
                '--output-doc-topics', self.dtfile,
                '--num-iterations', str(iters)]
         if subprocess.call(cmd) != 0:
