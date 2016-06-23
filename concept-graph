@@ -21,7 +21,7 @@ from t.conceptgraph import ConceptGraph
 
 MALLET_PATH = 'ext/mallet/bin/mallet'
 
-LDA_TOPICS = 200
+LDA_TOPICS = 300
 LDA_ITERATIONS = 1000
 
 ###
@@ -144,6 +144,13 @@ class TopicDependency:
 
 
     def get_infomap(self):
+        # If there's saved Infomap output in the current directory,
+        # use it.
+        if os.path.exists('infomap-tree.txt') and \
+           os.path.exists('infomap-flow.txt'):
+            print('Using saved infomap output.')
+            return 'infomap-tree.txt', 'infomap-flow.txt'
+
         treefname = self.prefix + 'infomap-tree.txt'
         flowfname = self.prefix + 'infomap-flow.txt'
 
@@ -185,6 +192,11 @@ class TopicDependency:
 
     def build_citation_network(self):
         fname = self.prefix + 'cite.txt'
+
+        # Use a pre-existing citation network.
+        if os.path.exists('cite.txt'):
+            print('Using saved citation network.')
+            return 'cite.txt'
 
         with open(fname, 'w') as fout:
             for doc in self.corpus.docs:
