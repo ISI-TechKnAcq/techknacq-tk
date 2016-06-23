@@ -151,6 +151,8 @@ class Mallet:
     def load_dt(self):
         print('Loading document-topic composition file.')
 
+        file_format = None
+
         num_topics = len(self.topics)
         self.topic_doc = [[] for i in range(num_topics)]
         self.co_occur = zeros((num_topics, num_topics), int)
@@ -171,13 +173,22 @@ class Mallet:
             if len(row) < 2:
                 print('Error with composition row', row, file=sys.stderr)
                 continue
-            m = re.search(r'([^/]+)\.(xml|txt)$', row[1])
-            if not m:
+            try:
+                base = re.search(r'([^/]+)\.(xml|txt)$', row[1]).group(1)
+            except:
                 continue
-            base = m.group(1)
 
-            topics = [(int(a), float(b)) for (a, b) in
-                      zip(row[2::2], row[3::2])]
+            try:
+                # Mallet's old format: Topic ID, weight pairs sorted
+                # by weight.
+                topics = [(int(a), float(b)) for (a, b) in
+                          zip(row[2::2], row[3::2])]
+            except:
+                # Mallet's new format: The weight for each topic,
+                # ordered by topic ID.
+                topics = [(a, float(b)) for (a, b) in
+                          enumerate(row[2:])]
+                file_format = 'new'
 
             # Read into document topic breakdown information.
             for topic_id, percent in topics:
@@ -197,6 +208,20 @@ class Mallet:
                 for c in row:
                     out.write('%s ' % (c))
                 out.write('\n')
+
+        if file_format == 'new':
+            # This could be done more efficiently using the copy already
+            # loaded in memory, but I consider this a temporary
+            # step to give Linhong's Java code the format it expects.
+            with open(self.dtfile + '-old-format', 'w') as out:
+                for line in open(self.dtfile):
+                    if line[0] == '#': continue
+                    elts = line.strip().split()
+                    out.write('%s\t%s' % (elts[0], elts[1]))
+                    for i, e in enumerate(elts[2:]):
+                        out.write('\t%d\t%s' % (i, e))
+                    out.write('\n')
+            self.dtfile += '-old-format'
 
 
     def load_names(self):
