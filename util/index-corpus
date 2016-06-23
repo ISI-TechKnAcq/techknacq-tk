@@ -22,4 +22,4 @@ for doc in c:
                  'url': doc.url,
                  'abstract': doc.get_abstract()}
 
-sys.stdout.write(json.dumps(j, ensure_ascii=False))
+sys.stdout.write(json.dumps(j, ensure_ascii=False, indent=2, sort_keys=True))
