@@ -5,5 +5,5 @@ import sys
 from t.corpus import Corpus, Document
 
 c = Corpus(sys.argv[1])
-c.fix_text()
-c.export(sys.argv[2])
+#c.fix_text()
+c.export(sys.argv[2], format='text')
