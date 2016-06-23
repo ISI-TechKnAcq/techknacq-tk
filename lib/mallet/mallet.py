@@ -98,7 +98,8 @@ class Mallet:
                '--output-model', self.omfile,
                '--inferencer-filename', self.inffile,
                '--output-topic-keys', self.tkfile,
-               '--output-state', self.statefile]
+               '--output-state', self.statefile,
+               '--beta', '0.00386']
 
         if subprocess.call(cmd) != 0:
             sys.stderr.write('Mallet train-topics failed.\n')
@@ -136,7 +137,7 @@ class Mallet:
             for topic in range(len(self.topics)):
                 out.write('\t'.join([str(topic)] +
                                     [str(y) + '\t' + str(z) for (y, z) in
-                                     self.topic_pairs(topic)[:40]]) + '\n')
+                                     self.topic_pairs(topic)[:20]]) + '\n')
 
 
     def load_dt(self):
