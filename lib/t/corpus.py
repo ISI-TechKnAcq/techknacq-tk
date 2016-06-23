@@ -180,6 +180,21 @@ class Document:
     def read_sd(self, f, fref=None):
         """Read document contents from a ScienceDirect XML file."""
 
+        def get_para_sents(p):
+            if p.find('list'):
+                # Really this needs to be split into the paragraph text
+                # before and after the list, but BeautifulSoup is a pain, and
+                # this is good enough.
+                l = p.find('list').replace_with(' ... ')
+                sents = [re.sub(r'\s+', ' ', x) for x in
+                         st.tokenize(p.get_text())]
+                for para in l.find_all(['para', 'simple_para']):
+                    sents.extend([re.sub(r'\s+', ' ', x) for x in
+                                  st.tokenize(para.get_text())])
+                return sents
+            return [re.sub(r'\s+', ' ', x) for x in
+                    st.tokenize(p.get_text())]
+
         if '-ref.xml' in f:
             return
 
@@ -224,7 +239,19 @@ class Document:
 
         sec_id = ''
         sec = {'text': []}
+        sec_last = {'text': []}
         for p in soup.find_all(['para', 'simple-para']):
+            if p.find_parents('outline'):
+                continue
+            elif p.find('list') and p.find('list').find('section-title'):
+                continue
+            elif p.find_parents('para'):
+                continue
+            elif p.find_parents('floats'):
+                # Lest these show up at the start and be treated as an
+                # abstract.
+                sec_last['text'] += get_para_sents(p)
+                continue
             if p.parent.name in ['section', 'biography']:
                 p_sec_id = p.parent.get('id', '')
                 if p_sec_id != sec_id:
@@ -237,9 +264,11 @@ class Document:
                         sec['heading'] = heading.string.strip()
                     elif p.parent.name == 'biography':
                         sec['heading'] = 'Biography'
-            sec['text'] += [re.sub(r'\s+', ' ', x) for x in
-                            st.tokenize(p.get_text())]
-        self.sections.append(sec)
+            sec['text'] += get_para_sents(p)
+        if sec['text']:
+            self.sections.append(sec)
+        if sec_last['text']:
+            self.sections.append(sec_last)
 
         if soup.rawtext and len(self.sections) < 3:
             self.sections.append({'text': st.tokenize(soup.rawtext.get_text())})
