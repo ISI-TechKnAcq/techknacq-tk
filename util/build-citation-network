@@ -1,0 +1,13 @@
+#!/usr/bin/env python3
+
+# Given a JSON corpus, output a citation network in the same format as the
+# ACL Anthology Network.
+
+import sys
+from t.corpus import Corpus
+
+c = Corpus(sys.argv[1])
+with open('cite.txt', 'w') as fout:
+    for doc in c.docs:
+        for ref in doc.references:
+            fout.write('%s ==> %s\n' % (doc.id, ref))
