@@ -47,9 +47,8 @@ Patch pyenchant:
 ### Precompiled third-party tools
 
 - pdftotext (Ubuntu: poppler-utils)
-- MALLET 2.0.7. Download and rename the directory to ext/mallet (or change
-  the path in 'concept-graph' script). 2.0.8 changes file formats and is
-  not currently supported.
+- MALLET 2.0.7 or 2.0.8. Download and rename the directory to ext/mallet
+  (or change the path in 'concept-graph' script).
 
 ### Infomap
 
