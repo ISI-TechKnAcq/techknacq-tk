@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+import os
 from pathlib import Path
 
 from mallet import Mallet
@@ -36,7 +37,8 @@ def alt_dt(model, corpus, fout):
             scores[topic][doc] /= max_score
 
         for doc, weight in scores[topic].items():
-            fout.write('\t%s:%f' % (doc, weight))
+            if weight != 0.0:
+                fout.write('\t%s:%f' % (doc, weight))
         fout.write('\n')
 
     # Convert scores to topic_doc format.
@@ -48,7 +50,10 @@ if __name__ == '__main__':
 
     corpus = {}
     for doc in (str(f) for f in Path(sys.argv[1]).iterdir() if f.is_file()):
-        corpus[doc] = open(doc).read().split()
+        doc_id = os.path.basename(doc).replace('.txt', '')
+        corpus[doc_id] = open(doc).read().split()
+
+    print('Read corpus of size', len(corpus))
 
     model = Mallet(MALLET_PATH, prefix=sys.argv[2])
 
