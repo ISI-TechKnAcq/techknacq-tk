@@ -16,9 +16,11 @@ Tools:
   Analyze a JSON corpus to return a JSON graph of concepts and documents
   with the features and links needed to find documents for a reading
   list.
-- *reading-lists*:
+- *reading-list*:
+  Given a concept graph, return a reading list for a query.
+- *server*:
   Given a concept graph, run a simple Flask web service to return reading
-  lists for queries. This will include a simple interface and a JSON API.
+  lists for queries.
 
 Libraries:
 - *t*:
@@ -39,7 +41,7 @@ Install pip3 (Debian/Ubuntu: python3-pip). Use it to install the
 required Python packages:
 
     pip3 install --user --upgrade beautifulsoup4 nltk noaho wikipedia gensim
-                                  networkx pyenchant ftfy
+                                  networkx pyenchant ftfy flask flask-cors
 
 Patch pyenchant:
   https://github.com/rfk/pyenchant/issues/45
