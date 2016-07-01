@@ -1,0 +1,68 @@
+#!/usr/bin/env python3
+
+import sys
+
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+
+from t.conceptgraph import ConceptGraph
+from t.readinglist import ReadingList
+
+
+app = Flask(__name__)
+CORS(app)
+
+@app.route('/readingList', methods=['GET'])
+def handle_request():
+    try:
+        q = request.args.get('query')
+        # We ignore the `d` and `t` parameters specifying the number of
+        # documents or dependent topics to return, for now.
+    except:
+        return {'Error': 'Bad request.'}
+
+    print('Generating reading list for', q + ':', end=' ')
+    r = ReadingList(cg, q)
+    print('done.')
+
+    r.print()
+
+    resp = {'keyword': q,
+            'baseLineDocuments': [],
+            'graphResponse': {
+              'edges': [],
+              'nodes': []
+            },
+            'matchTopics': [
+              {'index': 0,
+               'topicName': 'Foo',
+               'dependentTopics': [],
+               'documents': [
+                 {'abstractText': '',
+                  'author': 'Bob',
+                  'authorScore': 0.0,
+                  'id': 'acl-W05-0909',
+                  'index': 0,
+                  'pageRankScore': 0.0,
+                  'pedagogicalRole': None,
+                  'readabilityScore': 0.0,
+                  'relevanceScore': 0.0,
+                  'relevantTopics': [],
+                  'title': 'Test Doc',
+                  'url': 'http://isi.edu',
+                  'year': 2016
+                 }
+               ]}]}
+    return jsonify(resp)
+
+
+if __name__ == '__main__':
+    if len(sys.argv) < 2:
+        sys.stderr.write('Usage: server [concept graph]\n')
+        sys.exit(1)
+
+    print('Reading concept graph:', end=' ')
+    cg = ConceptGraph(sys.argv[1])
+    print('done.')
+
+    app.run(debug=True, host='colo-vm17.isi.edu', port=9898)
