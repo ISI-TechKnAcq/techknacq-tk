@@ -73,15 +73,21 @@ class ConceptGraph:
                 self.g.node[n].get('type', '') == 'document')
 
 
-    def topic_docs(self, topic_id):
+    def topic_docs(self, topic_id, min=20, max=400, threshold=0.8):
         """Return a sorted list of (document_id, weight) pairs for the
-        documents that are most relevant to the specified topic_id."""
+        documents that are most relevant to the specified topic_id,
+        including the top `min` most relevant, and all others above
+        `threshold`, up to `max` many."""
 
         edges = []
-        for (_, doc, weight) in self.g.edges([topic_id], data='weight'):
+        for (_, doc, weight) in sorted(self.g.edges([topic_id], data='weight'),
+                                       key=lambda x: x[2], reverse=True):
             if self.g.node[doc].get('type', '') == 'document':
-                edges.append((doc, weight))
-        return sorted(edges, key=lambda x: x[1], reverse=True)
+                if len(edges) < min:
+                    edges.append((doc, weight))
+                elif weight >= threshold:
+                    edges.append((doc, weight))
+        return edges[:max]
 
 
     def topic_deps(self, topic_id):
@@ -144,7 +150,7 @@ class ConceptGraph:
                                 title=d['title'], book=d['book'],
                                 year=d['year'], url=d['url'],
                                 abstract=d['abstractText'],
-                                roles=set(d.get('roles', set())))
+                                roles=d.get('roles', {}))
                 for cited in d.get('cites', []):
                     self.g.add_edge(d['id'], cited, type='cite')
 
@@ -215,8 +221,8 @@ class ConceptGraph:
                      'book': self.g.node[doc_id]['book'],
                      'year': self.g.node[doc_id]['year'],
                      'abstractText': self.g.node[doc_id]['abstract'],
-                     'cites': [],#self.doc_cites(doc_id),
-                     'roles': list(self.g.node[doc_id].get('roles', set()))}
+                     'cites': self.doc_cites(doc_id),
+                     'roles': self.g.node[doc_id].get('roles', {})}
             j['corpus']['docs'].append(j_doc)
 
         for (t1, t2, data) in self.g.edges(data=True):
