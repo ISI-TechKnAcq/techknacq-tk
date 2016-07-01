@@ -191,12 +191,12 @@ class TopicDependency:
 
 
     def build_citation_network(self):
-        fname = self.prefix + 'cite.txt'
-
         # Use a pre-existing citation network.
         if os.path.exists('cite.txt'):
             print('Using saved citation network.')
             return 'cite.txt'
+
+        fname = self.prefix + 'cite.txt'
 
         with open(fname, 'w') as fout:
             for doc in self.corpus.docs:
@@ -260,7 +260,6 @@ if __name__ == '__main__':
             vals = dict(model.topic_doc[i])
             for v in set(vals.keys()) | set(new_dt[i].keys()):
                 if v in vals and v in new_dt[i]:
-                    #vals[v] = (vals[v] + new_dt[i][v]) / 2.0
                     vals[v] *= new_dt[i][v]
                 else:
                     vals[v] = 0.0
