@@ -92,9 +92,18 @@ class Corpus:
     def read_roles(self, fname):
         role_annotations = {}
         for line in open(fname):
-            _, doc_id, labels = line.strip().split(' ', 2)
-            labels = ast.literal_eval(labels)
-            role_annotations[doc_id.lower()] = labels
+            if line.startswith('doc_id'):
+                continue
+            vals = line.strip().split('\t')
+            doc_id = vals[0]
+            role_annotations[doc_id.lower()] = \
+              {'survey': float(vals[1]),
+               'tutorial': float(vals[2]),
+               'resource': float(vals[3]),
+               'reference': float(vals[4]),
+               'empirical': float(vals[5]),
+               'manual': float(vals[6]),
+               'other': float(vals[7])}
         for doc in self.docs:
             short_id = doc.id.lower()
             short_id = short_id.replace('acl-', '')
@@ -102,13 +111,18 @@ class Corpus:
             short_id = short_id.replace('sd-', '')
             short_id = short_id.replace('web-', '')
             if short_id in role_annotations:
-                doc.roles = set(role_annotations[short_id])
-                doc.roles.discard('None')
+                doc.roles = role_annotations[short_id]
             else:
                 sys.stderr.write('Failed to find role annotation for %s.\n'
                                  % (doc.id))
             if 'wiki-' in doc.id:
-                doc.roles.add('Reference work')
+                doc.roles = {'survey': 0.0,
+                             'tutorial': 0.0,
+                             'resource': 0.0,
+                             'reference': 1.0,
+                             'empirical': 0.0,
+                             'manual': 0.0,
+                             'other': 0.0}
 
 
 class Document:
@@ -134,7 +148,7 @@ class Document:
         self.url = j['info'].get('url', '')
         self.references = set(j.get('references', []))
         self.sections = j.get('sections', [])
-        self.roles = set()
+        self.roles = {}
 
         if fname and format == 'sd':
             self.read_sd(fname)
