@@ -8,8 +8,8 @@ from t.conceptgraph import ConceptGraph
 
 # Parameters
 
-THRESHOLD = 0.01
-MAX_MATCHES = 6
+THRESHOLD = 0.002
+MAX_MATCHES = 5
 
 
 # User model constants
@@ -161,7 +161,9 @@ class ReadingList:
                 'title': self.cg.g.node[doc_id]['title'],
                 'authors': self.cg.g.node[doc_id]['authors'],
                 'book': self.cg.g.node[doc_id]['book'],
-                'year': self.cg.g.node[doc_id]['year']}
+                'year': self.cg.g.node[doc_id]['year'],
+                'url': self.cg.g.node[doc_id]['url'],
+                'abstract': self.cg.g.node[doc_id]['abstract']}
 
 
     def print(self, rl=None, depth=1, format='text'):
@@ -202,6 +204,7 @@ class ReadingList:
 
         if format == 'html':
             print('</dl>')
+
 
     def print_doc(self, doc_id, depth, format='text'):
         if format == 'html':
