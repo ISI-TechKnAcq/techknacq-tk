@@ -201,7 +201,9 @@ class ConceptGraph:
                          'featureWeights': [],
                          'docWeights': []}
 
-            for (word, weight) in self.g.node[c].get('words', []):
+            for (word, weight) in self.g.node[c].get('words', [])[:40]:
+                if weight < 1:
+                    continue
                 j_concept['featureWeights'].append({'feature': word,
                                                     'count': int(weight)})
 
@@ -221,7 +223,7 @@ class ConceptGraph:
                      'book': self.g.node[doc_id]['book'],
                      'year': self.g.node[doc_id]['year'],
                      'abstractText': self.g.node[doc_id]['abstract'],
-                     'cites': self.doc_cites(doc_id),
+                     'cites': [], #self.doc_cites(doc_id),
                      'roles': self.g.node[doc_id].get('roles', {})}
             j['corpus']['docs'].append(j_doc)
 
