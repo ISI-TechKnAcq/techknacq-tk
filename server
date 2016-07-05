@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+import time
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -8,9 +9,15 @@ from flask_cors import CORS
 from t.conceptgraph import ConceptGraph
 from t.readinglist import ReadingList
 
-
 app = Flask(__name__)
 CORS(app)
+
+# This has fewer limitations than `timeit`.
+def timed(f):
+    start = time.time()
+    ret = f()
+    elapsed = time.time() - start
+    return ret, elapsed
 
 @app.route('/readingList', methods=['GET'])
 def handle_request():
@@ -22,10 +29,40 @@ def handle_request():
         return {'Error': 'Bad request.'}
 
     print('Generating reading list for', q + ':', end=' ')
-    r = ReadingList(cg, q)
-    print('done.')
+    r, elapsed = timed(lambda: ReadingList(cg, q.strip().split()))
+    print('%.4f seconds.' % (elapsed))
 
-    r.print()
+    def topic_entry(topic):
+        nonlocal doc_index
+        entry = {'index': topic['id'],
+                 'topicName': topic['name'],
+                 'dependentTopics': [],
+                 'documents': []}
+        for doc in topic['documents1']:
+            entry['documents'].append(doc_entry(doc))
+            doc_index += 1
+        for subtopic in topic['subconcepts']:
+            entry['dependentTopics'].append(topic_entry(subtopic))
+        for doc in topic['documents2']:
+            entry['documents'].append(doc_entry(doc))
+            doc_index += 1
+        return entry
+
+    def doc_entry(doc):
+        nonlocal doc_index
+        return {'index': doc_index,
+                'id': doc['id'],
+                'author': '; '.join(doc['authors']),
+                'authorScore': 0.0,
+                'title': doc['title'],
+                'year': doc['year'],
+                'relevanceScore': 0.0,
+                'readabilityScore': 0.0,
+                'pageRankScore': 0.0,
+                'pedagogicalRole': None,
+                'relevantTopics': [],
+                'url': doc['url'],
+                'abstractText': ' '.join(doc['abstract'])}
 
     resp = {'keyword': q,
             'baseLineDocuments': [],
@@ -33,26 +70,14 @@ def handle_request():
               'edges': [],
               'nodes': []
             },
-            'matchTopics': [
-              {'index': 0,
-               'topicName': 'Foo',
-               'dependentTopics': [],
-               'documents': [
-                 {'abstractText': '',
-                  'author': 'Bob',
-                  'authorScore': 0.0,
-                  'id': 'acl-W05-0909',
-                  'index': 0,
-                  'pageRankScore': 0.0,
-                  'pedagogicalRole': None,
-                  'readabilityScore': 0.0,
-                  'relevanceScore': 0.0,
-                  'relevantTopics': [],
-                  'title': 'Test Doc',
-                  'url': 'http://isi.edu',
-                  'year': 2016
-                 }
-               ]}]}
+            'matchTopics': []}
+
+    doc_index = 0
+    for topic in r.rl:
+        resp['matchTopics'].append(topic_entry(topic))
+
+    #r.print()
+
     return jsonify(resp)
 
 
