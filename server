@@ -33,7 +33,13 @@ def handle_request():
     print('%.4f seconds.' % (elapsed))
 
     def topic_entry(topic):
-        nonlocal doc_index
+        nonlocal doc_index, resp
+
+        node = {'id': topic['id'],
+                'label': topic['name'],
+                'matched': False}
+        resp['graphResponse']['nodes'].append(node)
+
         entry = {'index': topic['id'],
                  'topicName': topic['name'],
                  'dependentTopics': [],
@@ -68,13 +74,22 @@ def handle_request():
             'baseLineDocuments': [],
             'graphResponse': {
               'edges': [],
-              'nodes': []
-            },
+              'nodes': []},
             'matchTopics': []}
 
     doc_index = 0
     for topic in r.rl:
         resp['matchTopics'].append(topic_entry(topic))
+    # Add dependency edges to the graph in the response for all topic nodes
+    # we added.
+    topics = set([x['id'] for x in resp['graphResponse']['nodes']])
+    for topic in topics:
+        for dep_id, dep_weight in cg.topic_deps(topic):
+            if dep_id in topics:
+                edge = {'from': topic,
+                        'to': dep_id,
+                        'value': dep_weight}
+                resp['graphResponse']['edges'].append(edge)
 
     #r.print()
 
