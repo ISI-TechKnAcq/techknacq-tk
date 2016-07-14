@@ -54,11 +54,13 @@ class Mallet:
             print('Found model with', num_topics, 'topics.')
 
         self.topics = [{} for i in range(num_topics)]
+        self.params = [0 for i in range(num_topics)]
 
         if not os.path.exists(self.wtfile) or not os.path.exists(self.dtfile):
             self.read(corpus, bigrams)
             self.train(num_topics, iters)
 
+        self.load_keys()
         self.load_wt()
         self.load_dt()
 
@@ -130,6 +132,16 @@ class Mallet:
             sys.exit(1)
 
         self.load_dt()
+
+
+    def load_keys(self):
+        """Read the Dirichlet parameters from the topic key file."""
+        print('Loading key file.')
+        for line in open(self.tkfile):
+            fields = line.split()
+            topic_num = int(fields[0])
+            parameter = float(fields[1])
+            self.params[topic_num] = parameter
 
 
     def load_wt(self):
