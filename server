@@ -23,13 +23,21 @@ def timed(f):
 def handle_request():
     try:
         q = request.args.get('query')
-        # We ignore the `d` and `t` parameters specifying the number of
-        # documents or dependent topics to return, for now.
     except:
         return {'Error': 'Bad request.'}
 
+    # I ignore the 'd' parameter specifying the number of docs to return.
+    # I use the values for 't' to decide the user model.
+    try:
+        level = int(request.args.get('t'))
+    except:
+        level = 5
+
     print('Generating reading list for', q + ':', end=' ')
-    r, elapsed = timed(lambda: ReadingList(cg, q.strip().split()))
+    user_model = {}
+    for c in cg.concepts():
+        user_model[c] = level
+    r, elapsed = timed(lambda: ReadingList(cg, q.strip().split(), user_model))
     print('%.4f seconds.' % (elapsed))
 
     def topic_entry(topic):
