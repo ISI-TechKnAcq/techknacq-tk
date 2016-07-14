@@ -10,12 +10,13 @@ from t.conceptgraph import ConceptGraph
 
 THRESHOLD = 0.002
 MAX_MATCHES = 5
-
+MAX_DEPTH = 5
 
 # User model constants
+# The values are for interfacing with techknacq-server.
 
-BEGINNER = 1
-INTERMEDIATE = 2
+BEGINNER = 5
+INTERMEDIATE = 4
 ADVANCED = 3
 
 
@@ -48,6 +49,7 @@ class ReadingList:
             entry = self.traverse(c, score)
             if entry:
                 self.rl.append(entry)
+                break
 
 
     def best_docs(self, c, roles=None):
@@ -74,7 +76,7 @@ class ReadingList:
                 score += (1.0 - i*.15) * doc_roles[role]
             return score
 
-        docs.sort(key=lambda x: ped_role_score(x[0], roles))
+        docs.sort(key=lambda x: ped_role_score(x[0], roles), reverse=True)
 
 
         return docs
@@ -84,7 +86,7 @@ class ReadingList:
         if score < THRESHOLD or c in self.covered_concepts:
             return
 
-        if depth == MAX_MATCHES:
+        if depth == MAX_DEPTH:
             return
 
         self.covered_concepts.add(c)
@@ -98,15 +100,19 @@ class ReadingList:
 
         # First compute any dependencies we'll include in the reading list
         # so we know which documents we want to include at this level.
-        if self.user_model[c] != ADVANCED:
-            for dep, dep_weight in sorted(self.cg.topic_deps(c),
-                                          key=lambda x:
-                                          score*x[1] + self.relevance[x[0]],
-                                          reverse=True)[:MAX_MATCHES]:
-                dep_entry = self.traverse(dep, score*dep_weight +
-                                          self.relevance[dep], depth+1)
-                if dep_entry:
-                    entry['subconcepts'].append(dep_entry)
+        for dep, dep_weight in sorted(self.cg.topic_deps(c),
+                                      key=lambda x:
+                                      score*x[1] + self.relevance[x[0]],
+                                     reverse=True)[:MAX_MATCHES]:
+            dep_discount = 1
+            if self.user_model[c] == INTERMEDIATE:
+                dep_discount = 2
+            elif self.user_model[c] == ADVANCED:
+                dep_discount = 10
+            dep_entry = self.traverse(dep, score*dep_weight/dep_discount +
+                                      self.relevance[dep], depth+1)
+            if dep_entry:
+                entry['subconcepts'].append(dep_entry)
 
         if not self.docs:
             return entry
