@@ -30,6 +30,8 @@ class ConceptGraph:
         and add edges for any citation information."""
 
         for doc in corpus:
+            if len(doc.text().split()) < 300:
+                continue
             self.g.add_node(doc.id, type='document', authors=doc.authors,
                             title=doc.title, book=doc.book, year=doc.year,
                             url=doc.url, abstract=doc.get_abstract(),
@@ -55,6 +57,8 @@ class ConceptGraph:
         for topic in range(len(model.topic_doc)):
             for base, percent in model.topic_doc[topic]:
                 if percent == 0.0:
+                    continue
+                if not base in self.g:
                     continue
                 self.g.add_edge('concept-' + str(topic), base,
                                 type='topic', weight=percent)
