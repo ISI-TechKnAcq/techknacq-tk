@@ -4,7 +4,7 @@
 # ACL Anthology Network.
 
 import sys
-from t.corpus import Corpus
+from techknacq.corpus import Corpus
 
 c = Corpus(sys.argv[1])
 with open('cite.txt', 'w') as fout:

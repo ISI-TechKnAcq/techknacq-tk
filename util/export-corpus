@@ -2,7 +2,7 @@
 
 import sys
 
-from t.corpus import Corpus, Document
+from techknacq.corpus import Corpus, Document
 
 c = Corpus(sys.argv[1])
 #c.fix_text()

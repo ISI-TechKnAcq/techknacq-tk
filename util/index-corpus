@@ -6,7 +6,7 @@
 import sys
 import json
 
-from t.corpus import Corpus, Document
+from techknacq.corpus import Corpus, Document
 
 # It's 2016 and writing Unicode is still a hack.
 sys.stdout = open(sys.stdout.fileno(), mode='w', encoding='utf8', buffering=1)

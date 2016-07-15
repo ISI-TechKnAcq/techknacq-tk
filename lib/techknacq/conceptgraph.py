@@ -1,4 +1,4 @@
-# T: Concept Graph
+# TechKnAcq: Concept Graph
 # Jonathan Gordon
 
 import sys

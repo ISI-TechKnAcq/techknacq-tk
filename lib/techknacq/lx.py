@@ -1,4 +1,4 @@
-# T: Lx
+# TechKnAcq: Lx
 # Jonathan Gordon
 
 import sys

@@ -1,9 +1,9 @@
-# T: Reading List
+# TechKnAcq: Reading List
 # Jonathan Gordon
 
 from nltk.stem import WordNetLemmatizer
 
-from t.conceptgraph import ConceptGraph
+from techknacq.conceptgraph import ConceptGraph
 
 
 # Parameters

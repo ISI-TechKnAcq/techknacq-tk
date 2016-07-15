@@ -1,4 +1,4 @@
-# T: Corpus
+# TechKnAcq: Corpus
 # Jonathan Gordon
 
 import sys
@@ -17,7 +17,7 @@ from bs4 import BeautifulSoup
 from xml.sax.saxutils import escape
 from nltk import bigrams
 
-from t.lx import SentTokenizer, StopLexicon, find_short_long_pairs
+from techknacq.lx import SentTokenizer, StopLexicon, find_short_long_pairs
 
 class Corpus:
     def __init__(self, dirname=None, pool=None, fname=None):

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# T: Build Corpus
+# TechKnAcq: Build Corpus
 # Jonathan Gordon
 
 import sys
@@ -23,8 +23,8 @@ from noaho import NoAho
 
 from websearch import WebSearch
 
-from t.corpus import Corpus, Document
-from t.lx import ScrabbleLexicon, StopLexicon, SentTokenizer
+from techknacq.corpus import Corpus, Document
+from techknacq.lx import ScrabbleLexicon, StopLexicon, SentTokenizer
 
 
 # Parameters

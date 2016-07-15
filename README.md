@@ -1,6 +1,6 @@
-# T
+# TechKnAcq Toolkit
 
-T is a minimal implementation of the TechKnAcq system for generating
+This is a minimal implementation of the TechKnAcq system for generating
 reading lists.
 
 
@@ -23,7 +23,7 @@ Tools:
   lists for queries.
 
 Libraries:
-- *t*:
+- *techknacq*:
   Core project functionality.
 - *mallet*:
   A wrapper for the Mallet Java package, which is used for LDA topic modeling.
@@ -33,7 +33,7 @@ Libraries:
 
 ## Requirements
 
-T runs in Python 3 on Linux and OS X.
+The TechKnAcq toolkit runs in Python 3 on Linux and OS X.
 
 ### Python Dependencies
 
