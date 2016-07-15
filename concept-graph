@@ -51,7 +51,7 @@ class TopicDependency:
             cmd = ['java', '-cp', ':'.join([self.jar] + deps),
                    'edu.isi.techknacq.topics.graph.Comparisononalledges',
                    model.wtkfile, infomap_tree_file, doc_comp_file,
-                   str(len(model.topics)), citation_network_file,
+                   str(len(model.topics)//2), citation_network_file,
                    infomap_flow_file]
 
             if subprocess.call(cmd) != 0:
