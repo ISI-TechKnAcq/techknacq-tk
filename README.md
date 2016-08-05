@@ -126,3 +126,15 @@ in the concept graph.
 
 The concept graph should be a JSON file produced by the concept-graph script
 above.
+
+
+## Acknowledgments
+
+This research is based upon work supported in part by the Office of the
+Director of National Intelligence (ODNI), Intelligence Advanced Research
+Projects Activity (IARPA), via Air Force Research Laboratory (AFRL). The views
+and conclusions contained herein are those of the authors and should not be
+interpreted as necessarily representing the official policies or endorsements,
+either expressed or implied, of ODNI, IARPA, AFRL, or the U.S. Government. The
+U.S. Government is authorized to reproduce and distribute reprints for
+Governmental purposes notwithstanding any copyright annotation thereon.
