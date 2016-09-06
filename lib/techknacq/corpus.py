@@ -127,10 +127,13 @@ class Corpus:
 
 class Document:
     def __init__(self, fname=None, format=None):
-        if fname and not format and 'json' in fname:
-            format = 'json'
-        if fname and not format and 'xml' in fname:
-            format = 'sd'
+        if fname and not format:
+            if 'json' in fname:
+                format = 'json'
+            elif 'xml' in fname:
+                format = 'sd'
+            elif 'txt' in fname:
+                format = 'text'
 
         j = {'info': {}}
         if fname and format == 'json':
@@ -150,7 +153,10 @@ class Document:
         self.sections = j.get('sections', [])
         self.roles = {}
 
-        if fname and format == 'sd':
+        if fname and format == 'text':
+            st = SentTokenizer()
+            self.sections = [{'text': st.tokenize(open(fname).read())}]
+        elif fname and format == 'sd':
             self.read_sd(fname)
 
 
@@ -388,7 +394,7 @@ class Document:
 
         if len(self.sections[0]['text']) > 2:
             return self.sections[0]['text'][:10]
-        if len(self.sections) > 1:
+        if len(self.sections) > 1 and len(self.sections[1]['text']) > 2:
             return self.sections[1]['text'][:10]
         return self.sections[0]['text'][:10]
 
