@@ -721,6 +721,14 @@ def chunks(l, n):
     for i in range(0, len(l), n):
         yield l[i:i+n]
 
+def ensure_directory(path):
+    """Ensure that the desired path exists."""
+    try:
+        os.makedirs(path)
+    except OSError as exception:
+        if exception.errno != errno.EEXIST:
+            raise
+
 ###
 
 
@@ -730,6 +738,9 @@ if __name__ == '__main__':
         sys.exit(1)
 
     indir, outdir = sys.argv[1:]
+
+    ensure_directory(outdir + '/sd-download')
+    ensure_directory(outdir + '/web-download')
 
     pool = mp.Pool(PROCESSES)
 
