@@ -112,17 +112,38 @@ class Corpus:
             short_id = short_id.replace('web-', '')
             if short_id in role_annotations:
                 doc.roles = role_annotations[short_id]
-            else:
-                sys.stderr.write('Failed to find role annotation for %s.\n'
-                                 % (doc.id))
-            if 'wiki-' in doc.id:
-                doc.roles = {'survey': 0.0,
+            elif 'wiki-' in doc.id:
+                doc.roles = {'survey': 0.3,
                              'tutorial': 0.0,
                              'resource': 0.0,
-                             'reference': 1.0,
+                             'reference': 0.7,
                              'empirical': 0.0,
                              'manual': 0.0,
                              'other': 0.0}
+            elif 'acl-' in doc.id:
+                doc.roles = {'survey': 0.0,
+                             'tutorial': 0.0,
+                             'resource': 0.1,
+                             'reference': 0.0,
+                             'empirical': 0.8,
+                             'manual': 0.0,
+                             'other': 0.1}
+            elif 'sd-' in doc.id:
+                doc.roles = {'survey': 0.1,
+                             'tutorial': 0.1,
+                             'resource': 0.0,
+                             'reference': 0.7,
+                             'empirical': 0.0,
+                             'manual': 0.0,
+                             'other': 0.1}
+            elif 'web-' in doc.id:
+                doc.roles = {'survey': 0.1,
+                             'tutorial': 0.6,
+                             'resource': 0.0,
+                             'reference': 0.0,
+                             'empirical': 0.0,
+                             'manual': 0.2,
+                             'other': 0.1}
 
 
 class Document:
