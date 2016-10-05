@@ -39,9 +39,9 @@ class Corpus:
                 if doc:
                     self.add(doc)
 
-        if os.path.exists('pedagogical-roles.txt'):
+        if os.path.exists('data/pedagogical-roles.txt'):
             print('Found pedagogical role file; loading.')
-            self.read_roles('pedagogical-roles.txt')
+            self.read_roles('data/pedagogical-roles.txt')
 
     def clear(self):
         self.docs = set()

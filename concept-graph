@@ -39,7 +39,7 @@ class TopicDependency:
         rand_prefix = hex(random.randint(0, 0xffffff))[2:] + '-'
         self.prefix = os.path.join(tempfile.gettempdir(), rand_prefix)
 
-        if os.path.exists('alledge.tsv'):
+        if os.path.exists('data/alledge.tsv'):
             print('Using existing alledge.tsv file.')
         else:
             doc_comp_file = self.convert_comp_file()
@@ -58,12 +58,14 @@ class TopicDependency:
                 sys.stderr.write('Running topic-dependency code failed.\n')
                 sys.exit(1)
 
+            os.rename('alledge.tsv', 'data/alledge.tsv')
+
         self.read_alledges(method)
 
         #self.generate_topicgraph()
 
         try:
-            #os.remove('alledge.tsv')
+            os.remove('data/alledge.tsv')
             os.remove('entropy1.txt')
             os.remove('entropy2.txt')
         except FileNotFoundError:
@@ -74,7 +76,7 @@ class TopicDependency:
         """Read the cross-entropy edges from the alledges.tsv output file."""
 
         self.edges = defaultdict(dict)
-        for line in open('alledge.tsv'):
+        for line in open('data/alledge.tsv'):
             try:
                 tokens = line.strip().split()
 
@@ -246,10 +248,10 @@ if __name__ == '__main__':
             corpus.export(mallet_corpus, abstract=False, format='text')
             model.infer_topics(mallet_corpus)
 
-    if os.path.exists('alt-dt.txt'):
+    if os.path.exists('data/alt-dt.txt'):
         print('Loading alternate doc-topic composition.')
         new_dt = [{} for n in range(len(model.topics))]
-        for line in open('alt-dt.txt'):
+        for line in open('data/alt-dt.txt'):
             elts = line.strip().split('\t')
             tnum = int(elts[0])
             for e in elts[1:]:
