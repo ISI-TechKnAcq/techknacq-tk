@@ -6,7 +6,7 @@ from pathlib import Path
 
 from mallet import Mallet
 
-MALLET_PATH = 'ext/mallet/bin/mallet'
+MALLET_PATH = '../ext/mallet/bin/mallet'
 
 
 def alt_dt(model, corpus, fout):
@@ -46,8 +46,6 @@ def alt_dt(model, corpus, fout):
 
 
 if __name__ == '__main__':
-    model = Mallet(MALLET_PATH, prefix=sys.argv[2])
-
     corpus = {}
     for doc in (str(f) for f in Path(sys.argv[1]).iterdir() if f.is_file()):
         doc_id = os.path.basename(doc).replace('.txt', '')
