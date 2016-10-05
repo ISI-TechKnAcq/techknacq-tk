@@ -665,7 +665,7 @@ def get_web_docs(tutorials):
 
 def export_tutorial(tutorial):
     def count_pages(f):
-        r = re.compile(r"/Type\s*/Page([^s/]|$)", re.MULTILINE|re.DOTALL)
+        r = re.compile(b"/Type\s*/Page([^s/]|$)", re.MULTILINE|re.DOTALL)
         return len(r.findall(open(f, "rb").read()))
 
     title, url = tutorial
