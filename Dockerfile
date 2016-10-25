@@ -28,3 +28,12 @@ RUN echo 'export PATH=/opt/conda/bin:$PATH' > /etc/profile.d/conda.sh && \
 ENV PATH /opt/conda/bin:$PATH
 
 RUN conda update -y conda
+
+
+## Add TechKnAcq code.
+
+ADD lib /t/lib
+ADD build-corpus /t
+ADD concept-graph /t
+ADD reading-list /t
+ADD server /t
