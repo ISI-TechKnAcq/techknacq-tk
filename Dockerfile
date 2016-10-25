@@ -41,20 +41,32 @@ ENV PATH /opt/conda/bin:$PATH
 RUN conda update -y conda
 
 
-## Check out and compile TechKnAcq Core.
+# Install Mallet.
 
 RUN mkdir -p /t/ext && \
     cd /t/ext && \
-    git clone https://github.com/ISI-TechknAcq/techknacq-core.git && \
+    wget http://mallet.cs.umass.edu/dist/mallet-2.0.8RC3.tar.gz --quiet && \
+    tar xvf mallet-2.0.8RC3.tar.gz && \
+    mv mallet-2.0.8RC3 mallet && \
+    rm mallet-2.0.8RC3.tar.gz
+
+
+# Check out and compile TechKnAcq Core.
+
+RUN git clone https://github.com/ISI-TechknAcq/techknacq-core.git && \
     cd techknacq-core && \
     mvn package && \
     cd target && \
     ln -s *jar techknacq-core.jar
 
-## Add TechKnAcq code.
+# Add TechKnAcq code.
 
 ADD lib /t/lib
 ADD build-corpus /t
 ADD concept-graph /t
 ADD reading-list /t
 ADD server /t
+
+# Run TechKnAcq.
+
+WORKDIR /t
