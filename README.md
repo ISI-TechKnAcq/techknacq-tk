@@ -31,9 +31,11 @@ Libraries:
   Interface for searching the Web with Google or Bing.
 
 
-## Requirements
+## Installation & Requirements
 
-The TechKnAcq toolkit runs in Python 3 on Linux and OS X.
+The TechKnAcq toolkit runs in Python 3 on Linux and OS X. We are in the
+process of creating a Dockerfile to allow a portable, self-contained
+environment for running TechKnAcq.
 
 ### Python Dependencies
 
