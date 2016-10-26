@@ -16,7 +16,7 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886
 RUN apt-get update -q -y --fix-missing
 RUN apt-get upgrade -q -y --fix-missing
 
-RUN apt-get install -q -y --fix-missing wget bzip2 git
+RUN apt-get install -q -y --fix-missing wget bzip2 git g++ make
 
 RUN echo debconf shared/accepted-oracle-license-v1-1 select true | \
     debconf-set-selections && \
@@ -41,14 +41,28 @@ ENV PATH /opt/conda/bin:$PATH
 RUN conda update -y conda
 
 
+# Install external tools.
+
+RUN mkdir -p /t/ext
+
+WORKDIR /t/ext
+
+
 # Install Mallet.
 
-RUN mkdir -p /t/ext && \
-    cd /t/ext && \
-    wget http://mallet.cs.umass.edu/dist/mallet-2.0.8RC3.tar.gz --quiet && \
+RUN wget http://mallet.cs.umass.edu/dist/mallet-2.0.8RC3.tar.gz --quiet && \
     tar xvf mallet-2.0.8RC3.tar.gz && \
     mv mallet-2.0.8RC3 mallet && \
     rm mallet-2.0.8RC3.tar.gz
+
+
+# Install Infomap.
+
+RUN wget http://www.mapequation.org/downloads/Infomap.zip --quiet && \
+    unzip Infomap.zip -d infomap && \
+    rm Infomap.zip && \
+    cd infomap && \
+    make
 
 
 # Check out and compile TechKnAcq Core.
@@ -59,6 +73,7 @@ RUN git clone https://github.com/ISI-TechknAcq/techknacq-core.git && \
     cd target && \
     ln -s *jar techknacq-core.jar
 
+
 # Add TechKnAcq code.
 
 ADD lib /t/lib
@@ -66,6 +81,7 @@ ADD build-corpus /t
 ADD concept-graph /t
 ADD reading-list /t
 ADD server /t
+
 
 # Run TechKnAcq.
 
