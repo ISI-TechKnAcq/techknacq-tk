@@ -16,7 +16,7 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886
 RUN apt-get update -q -y --fix-missing
 RUN apt-get upgrade -q -y --fix-missing
 
-RUN apt-get install -q -y --fix-missing wget bzip2 git g++ make
+RUN apt-get install -q -y --fix-missing wget bzip2 git g++ make enchant
 
 RUN echo debconf shared/accepted-oracle-license-v1-1 select true | \
     debconf-set-selections && \
@@ -30,8 +30,7 @@ RUN rm -rf /var/cache/oracle-jdk8-installer
 
 # Install Miniconda.
 
-RUN echo 'export PATH=/opt/conda/bin:$PATH' > /etc/profile.d/conda.sh && \
-    wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh \
+RUN wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh \
          -O ~/miniconda.sh --quiet && \
     bash ~/miniconda.sh -b -p /opt/conda && \
     rm ~/miniconda.sh
@@ -39,6 +38,9 @@ RUN echo 'export PATH=/opt/conda/bin:$PATH' > /etc/profile.d/conda.sh && \
 ENV PATH /opt/conda/bin:$PATH
 
 RUN conda update -y conda
+
+RUN conda install numpy nltk beautifulsoup4 networkx
+RUN pip install pyenchant ftfy
 
 
 # Install external tools.
@@ -74,13 +76,15 @@ RUN git clone https://github.com/ISI-TechknAcq/techknacq-core.git && \
     ln -s *jar techknacq-core.jar
 
 
-# Add TechKnAcq code.
+# Add TechKnAcq Toolkit.
 
 ADD lib /t/lib
 ADD build-corpus /t
 ADD concept-graph /t
 ADD reading-list /t
 ADD server /t
+
+ENV PYTHONPATH /t/lib:$PYTHONPATH
 
 
 # Run TechKnAcq.
