@@ -79,8 +79,26 @@ Change the file permissions to keep these keys private.
 
 ## Run
 
+### Docker
 
-### Build Corpus:
+TechKnAcq is meant to be run from a Docker virtual machine, running on Linux
+or macOS. First build it:
+
+    ./build
+
+Then run it:
+
+    ./run
+
+If you have a local directory (e.g., a corpus) that needs to be available in
+Docker, map it:
+
+    ./run -v ~/working/corpus:/tmp/corpus
+
+You are now operating in the Docker virtual machine as root.
+
+
+### Build Corpus
 
     ./build-corpus [input dir] [output dir]
 
