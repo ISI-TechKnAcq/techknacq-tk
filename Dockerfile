@@ -40,7 +40,7 @@ ENV PATH /opt/conda/bin:$PATH
 RUN conda update -y conda
 
 RUN conda install numpy nltk beautifulsoup4 networkx
-RUN pip install pyenchant ftfy
+RUN pip install pyenchant ftfy noaho wikipedia
 
 
 # Install external tools.
@@ -72,8 +72,7 @@ RUN wget http://www.mapequation.org/downloads/Infomap.zip --quiet && \
 RUN git clone https://github.com/ISI-TechknAcq/techknacq-core.git && \
     cd techknacq-core && \
     mvn package && \
-    cd target && \
-    ln -s *jar techknacq-core.jar
+    cd target
 
 
 # Add TechKnAcq Toolkit.
