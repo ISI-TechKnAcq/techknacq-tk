@@ -33,17 +33,17 @@ Libraries:
 
 ## Installation & Requirements
 
-The TechKnAcq toolkit runs in Python 3 on Linux and OS X. We are in the
-process of creating a Dockerfile to allow a portable, self-contained
-environment for running TechKnAcq.
+The TechKnAcq toolkit runs in Python 3 on Linux and OS X. We recommend running
+it in a Docker virtual machine, as described below. If you want to run it
+natively, you will need to install dependencies, including the following.
 
 ### Python Dependencies
 
 Install pip3 (Debian/Ubuntu: python3-pip). Use it to install the
 required Python packages:
 
-    pip3 install --user --upgrade beautifulsoup4 nltk noaho wikipedia gensim
-                                  networkx pyenchant ftfy flask flask-cors
+    pip3 install beautifulsoup4 nltk noaho wikipedia gensim
+                 networkx pyenchant ftfy flask flask-cors
 
 Patch pyenchant:
   https://github.com/rfk/pyenchant/issues/45
@@ -70,11 +70,13 @@ Download to ext/infomap and compile.
 
 ## Configuration
 
-Put your ScienceDirect API key in ~/.t/sd.txt.
+Running corpus expansion requires several API keys:
+- Put your ScienceDirect API key in ~/.t/sd.txt.
+- Put your Bing API key in ~/.t/bing.txt.
 
-Put your Bing API key in ~/.t/bing.txt.
-
-Change the file permissions to keep these keys private.
+Change the file permissions to keep these keys private. They will be mapped
+into the Docker virtual machine at runtime, so ~/.t must exist on the machine
+you run on.
 
 
 ## Run
