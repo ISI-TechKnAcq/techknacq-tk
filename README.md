@@ -102,19 +102,28 @@ You are now operating in the Docker virtual machine as root.
 
 ### Build Corpus
 
-    ./build-corpus [input dir] [output dir]
+To expand a corpus in ~/corpus, saving the result in ~/expanded, run:
 
-The input directory argument can be in various formats -- ScienceDirect XML
-files, BioC XML files, plain text, or the JSON corpus format used for this
-project. The output directory will be populated with JSON files.
+    ./run -v ~/corpus:/tmp/corpus -v ~/expanded:/tmp/expanded
+    ./build-corpus /tmp/corpus /tmp/expanded
+
+The files in the input directory can be in various formats -- ScienceDirect
+XML files, BioC XML files, plain text, or the JSON corpus format used for this
+project. The output directory will be populated with JSON files that can be
+used for generating a concept graph.
 
 The various corpus expansion methods can be commented or uncommented in the
-'main' section at the bottom of the script.
+'main' section at the bottom of the script, depending on what's appropriate
+for your corpus.
 
 
 ### Concept Graph
 
-    ./concept-graph [corpus dir]
+To generate a concept graph from a (possibly expanded) corpus in ~/corpus,
+run:
+
+    ./run -v ~/corpus:/tmp/corpus
+    ./concept-graph /tmp/corpus
 
 The corpus directory specified should contain JSON files like those produced
 by build-corpus. If you have an existing Mallet LDA topic model you'd like
