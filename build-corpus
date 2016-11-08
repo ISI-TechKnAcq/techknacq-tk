@@ -724,10 +724,9 @@ def chunks(l, n):
 def ensure_directory(path):
     """Ensure that the desired path exists."""
     try:
-        os.makedirs(path)
-    except OSError as exception:
-        if exception.errno != errno.EEXIST:
-            raise
+        os.makedirs(path, exist_ok=True)
+    except:
+        raise
 
 ###
 
@@ -750,16 +749,24 @@ if __name__ == '__main__':
 
     terms = get_terms(c, 2000)
 
-    #docs_by_book = search_sd(terms)
-    #download_sd(docs_by_book)
-    #doc_ids = filter_sd(docs_by_book, terms)
-    #c |= get_sd_docs(doc_ids)
+    # Write terms to disk to review.
+    # with open('terms.txt', 'w') as tout:
+    #     for term in terms:
+    #         tout.write(term + '\n')
 
-    #articles = search_wiki(terms)
-    #c |= get_wiki_docs(articles)
+    # Download book chapters from ScienceDirect.
+    docs_by_book = search_sd(terms)
+    download_sd(docs_by_book)
+    doc_ids = filter_sd(docs_by_book, terms)
+    c |= get_sd_docs(doc_ids)
 
-    # tutorials = search_web(terms)
-    # download_web(tutorials)
-    # c |= get_web_docs(tutorials)
+    # Download Wikipedia articles.
+    articles = search_wiki(terms)
+    c |= get_wiki_docs(articles)
+
+    # Download tutorial PDFs from the Web.
+    tutorials = search_web(terms)
+    download_web(tutorials)
+    c |= get_web_docs(tutorials)
 
     c.export(outdir)
