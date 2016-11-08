@@ -102,18 +102,22 @@ def handle_request():
                         'value': dep_weight}
                 resp['graphResponse']['edges'].append(edge)
 
-    #r.print()
+    #print(resp)
 
     return jsonify(resp)
 
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        sys.stderr.write('Usage: server [concept graph]\n')
+        sys.stderr.write('Usage: server [concept graph] ([port])\n')
         sys.exit(1)
 
     print('Reading concept graph:', end=' ')
     cg = ConceptGraph(sys.argv[1])
     print('done.')
 
-    app.run(debug=True, host='colo-vm17.isi.edu', port=9898)
+    port = 9898
+    if len(sys.argv) == 3:
+        port = int(sys.argv[2])
+
+    app.run(debug=True, host='colo-vm17.isi.edu', port=port)

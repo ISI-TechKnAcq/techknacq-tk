@@ -159,6 +159,14 @@ The concept graph should be a JSON file produced by the concept-graph script
 above.
 
 
+### Server
+
+The techknacq-tk server is a backend that can be used with the web application
+in the techknacq-server repository. It is run as:
+
+    ./server [concept graph] ([port])
+
+
 ## Acknowledgments
 
 This research is based upon work supported in part by the Office of the
