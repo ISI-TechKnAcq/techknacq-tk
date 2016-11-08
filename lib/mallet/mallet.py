@@ -44,7 +44,7 @@ class Mallet:
         self.statefile = self.prefix + 'state.gz'
 
         self.cofile = self.prefix + 'co-occur.txt'
-        self.namefile = self.prefix + 'names.csv'
+        self.namefile = self.prefix + 'names.tsv'
         self.scorefile = self.prefix + 'scores.txt'
 
         self.mallet_corpus = self.prefix + 'corpus.mallet'
@@ -251,7 +251,7 @@ class Mallet:
 
         self.names = [''] * num_topics
         for line in open(self.namefile):
-            topic, name = line.strip().split(',', 1)
+            topic, name = line.strip().split('\t', 1)
             if topic == 'Topic':
                 continue
             self.names[int(topic)] = name
