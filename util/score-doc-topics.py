@@ -46,6 +46,11 @@ def alt_dt(model, corpus, fout):
 
 
 if __name__ == '__main__':
+    if len(sys.argv) != 3:
+        sys.stderr.write('Usage: score-doc-topics.py [text corpus dir] ' +
+                         '[topic model prefix]\n')
+        sys.exit(1)
+
     corpus = {}
     for doc in (str(f) for f in Path(sys.argv[1]).iterdir() if f.is_file()):
         doc_id = os.path.basename(doc).replace('.txt', '')
