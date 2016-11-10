@@ -39,8 +39,14 @@ ENV PATH /opt/conda/bin:$PATH
 
 RUN conda update -y conda
 
-RUN conda install numpy nltk beautifulsoup4 networkx
+RUN conda install numpy nltk beautifulsoup4 lxml networkx
 RUN pip install pyenchant ftfy noaho wikipedia
+
+
+# Install NLTK data.
+
+RUN mkdir -p /usr/share/nltk_data && \
+    python -m nltk.downloader -d /usr/share/nltk_data punkt
 
 
 # Install external tools.
