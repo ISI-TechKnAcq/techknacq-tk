@@ -112,14 +112,14 @@ class Corpus:
             short_id = short_id.replace('web-', '')
             if short_id in role_annotations:
                 doc.roles = role_annotations[short_id]
-            elif 'wiki-' in doc.id:
-                doc.roles = {'survey': 0.3,
-                             'tutorial': 0.0,
-                             'resource': 0.0,
-                             'reference': 0.7,
-                             'empirical': 0.0,
-                             'manual': 0.0,
-                             'other': 0.0}
+                if 'wiki' in doc.id:
+                    doc.roles = {'survey': 0.2,
+                                 'tutorial': 0.0,
+                                 'resource': 0.0,
+                                 'reference': 0.8,
+                                 'empirical': 0.0,
+                                 'manual': 0.0,
+                                 'other': 0.0}
             elif 'acl-' in doc.id:
                 doc.roles = {'survey': 0.0,
                              'tutorial': 0.0,
@@ -479,6 +479,11 @@ class Document:
         """Return a plain-text string representing the document."""
         t = self.title + '\n\n'
 
+        for author in self.authors:
+            t += author + '\n\n'
+
+        t += self.book + '\n' + str(self.year) + '\n\n'
+
         for s in self.sections:
             if 'heading' in s and s['heading']:
                 t += '\n\n' + s['heading'] + '\n\n'
@@ -512,6 +517,9 @@ class Document:
             return ret
 
         out = bigrams_from_sent(self.title)
+        for author in self.authors:
+            out += bigrams_from_sent(author)
+        out += bigrams_from_sent(self.book)
         for sect in self.sections:
             if 'heading' in sect and sect['heading']:
                 out += bigrams_from_sent(sect['heading'])
