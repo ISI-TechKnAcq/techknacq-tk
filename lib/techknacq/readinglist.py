@@ -73,7 +73,7 @@ class ReadingList:
             doc_roles = self.cg.g.node[doc]['roles']
             score = 0.0
             for i, role in enumerate(role_order):
-                score += (1.0 - i*.15) * doc_roles[role]
+                score += (1.0 - i*.15) * doc_roles.get(role, 0)
             return score
 
         docs.sort(key=lambda x: ped_role_score(x[0], roles), reverse=True)
@@ -171,6 +171,12 @@ class ReadingList:
                 'url': self.cg.g.node[doc_id]['url'],
                 'abstract': self.cg.g.node[doc_id]['abstract']}
 
+    def all_concepts(self, l=None):
+        if l == None:
+            l = self.rl
+        for concept in l:
+            yield concept
+            yield from self.all_concepts(concept['subconcepts'])
 
     def print(self, rl=None, depth=1, format='text'):
         if rl is None:

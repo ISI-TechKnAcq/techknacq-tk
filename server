@@ -66,20 +66,30 @@ def handle_request():
         return entry
 
     def doc_entry(doc):
-        nonlocal doc_index
-        return {'index': doc_index,
-                'id': doc['id'],
-                'author': '; '.join(doc['authors']),
-                'authorScore': 0.0,
-                'title': doc['title'],
-                'year': doc['year'],
-                'relevanceScore': 0.0,
-                'readabilityScore': 0.0,
-                'pageRankScore': 0.0,
-                'pedagogicalRole': None,
-                'relevantTopics': [],
-                'url': doc['url'],
-                'abstractText': ' '.join(doc['abstract'])}
+        nonlocal doc_index, r
+        entry = {'index': doc_index,
+                 'id': doc['id'],
+                 'author': '; '.join(doc['authors']),
+                 'authorScore': 0.0,
+                 'title': doc['title'],
+                 'year': doc['year'],
+                 'relevanceScore': 0.0,
+                 'readabilityScore': 0.0,
+                 'pageRankScore': 0.0,
+                 'pedagogicalRole': None,
+                 'relevantTopics': [],
+                 'url': doc['url'],
+                 'abstractText': ' '.join(doc['abstract'])}
+        for topic in r.all_concepts():
+            try:
+                topic_json = {
+                    'topicName': topic['name'],
+                    'strength': cg.doc_topic_strength(doc['id'], topic['id'])
+                }
+                entry['relevantTopics'].append(topic_json)
+            except:
+                continue
+        return entry
 
     resp = {'keyword': q,
             'baseLineDocuments': [],

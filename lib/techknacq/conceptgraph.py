@@ -106,6 +106,12 @@ class ConceptGraph:
         return sorted(edges, key=lambda x: x[1], reverse=True)
 
 
+    def doc_topic_strength(self, doc_id, topic_id):
+        """Return the strength of association between a specified document
+        and topic."""
+        return self.g.edge[topic_id][doc_id]['weight']
+
+
     def doc_cites(self, doc_id):
         """Return a list of the document IDs for the documents
         that are cited by the specified document."""
