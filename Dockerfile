@@ -73,6 +73,16 @@ RUN wget http://www.mapequation.org/downloads/Infomap.zip --quiet && \
     make
 
 
+# Install Elasticsearch.
+
+ENV ES_PKG_NAME elasticsearch-1.5.0
+
+RUN wget https://download.elasticsearch.org/elasticsearch/elasticsearch/$ES_PKG_NAME.tar.gz --quiet && \
+    tar xvzf $ES_PKG_NAME.tar.gz && \
+    rm -f $ES_PKG_NAME.tar.gz && \
+    mv $ES_PKG_NAME elasticsearch
+
+
 # Check out and compile TechKnAcq Core.
 
 RUN git clone https://github.com/ISI-TechknAcq/techknacq-core.git && \
@@ -88,6 +98,7 @@ ADD build-corpus /t
 ADD concept-graph /t
 ADD reading-list /t
 ADD server /t
+ADD start-server /t
 
 ENV PYTHONPATH /t/lib:$PYTHONPATH
 
@@ -95,3 +106,9 @@ ENV PYTHONPATH /t/lib:$PYTHONPATH
 # Run TechKnAcq.
 
 WORKDIR /t
+
+
+# Elasticsearch HTTP
+EXPOSE 9200
+# Elasticsearch transport
+EXPOSE 9300
