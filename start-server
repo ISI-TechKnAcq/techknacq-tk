@@ -1,15 +1,36 @@
 #!/bin/bash
 
+echo
+echo Starting Elasticsearch.
+echo
+
 /t/ext/elasticsearch/bin/elasticsearch -Xmx4g -Xms4g \
     -Des.config=/t/data/elasticsearch/elasticsearch.yml \
-    >/dev/null 2>/dev/null &
+    >/dev/null &
 
 # If this is the first run, add the 'test' user and index documents. After
 # this, Elasticsearch will have made a data directory.
 
 if [ ! -d /t/data/elasticsearch/data/techknacq ]; then
-    pushd /t/ext/techknacq-server && \
+    echo
+    echo Initializing Elasticsearch.
+    echo
+    pushd /t/ext/techknacq-server >/dev/null && \
     ./add-user test test && \
     ./index-documents && \
-    popd
+    popd >/dev/null
 fi
+
+echo
+echo Starting TechKnAcq Server.
+echo
+
+pushd /t/ext/techknacq-server >/dev/null
+./techknacq-server >/dev/null &
+popd >/dev/null
+
+echo
+echo Starting TechKnAcq-tk Backend.
+echo
+
+./server data/server/concept-graph.json 9797 &
