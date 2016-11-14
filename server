@@ -103,7 +103,7 @@ def handle_request():
         resp['matchTopics'].append(topic_entry(topic))
     # Add dependency edges to the graph in the response for all topic nodes
     # we added.
-    topics = set([x['id'] for x in resp['graphResponse']['nodes']])
+    topics = set(['concept-' + x['id'] for x in resp['graphResponse']['nodes']])
     for topic in topics:
         for dep_id, dep_weight in cg.topic_deps(topic):
             if dep_id in topics:
