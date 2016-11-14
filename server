@@ -46,12 +46,12 @@ def handle_request():
     def topic_entry(topic):
         nonlocal doc_index, resp
 
-        node = {'id': topic['id'],
+        node = {'id': topic['id'].replace('concept-', ''),
                 'label': topic['name'],
                 'matched': False}
         resp['graphResponse']['nodes'].append(node)
 
-        entry = {'index': topic['id'],
+        entry = {'index': topic['id'].replace('concept-', ''),
                  'topicName': topic['name'],
                  'dependentTopics': [],
                  'documents': []}
@@ -107,8 +107,8 @@ def handle_request():
     for topic in topics:
         for dep_id, dep_weight in cg.topic_deps(topic):
             if dep_id in topics:
-                edge = {'from': topic,
-                        'to': dep_id,
+                edge = {'from': topic.replace('concept-', ''),
+                        'to': dep_id.replace('concept-', ''),
                         'value': dep_weight}
                 resp['graphResponse']['edges'].append(edge)
 
