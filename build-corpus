@@ -12,6 +12,7 @@ import json
 import requests
 import nltk
 import time
+import random
 import subprocess
 import multiprocessing as mp
 import wikipedia as wiki
@@ -20,6 +21,7 @@ from math import log
 from functools import partial
 from collections import defaultdict, Counter
 from noaho import NoAho
+from nltk.util import ngrams
 
 from websearch import WebSearch
 
@@ -79,7 +81,7 @@ def get_ngrams(l, min=1):
         """Return all possible n-grams generated from a sequence of items,
         as an iterator."""
         for n in range(1, len(seq) + 1):
-            for ng in nltk.util.ngrams(seq, n):
+            for ng in ngrams(seq, n):
                 yield ng
 
     counts = defaultdict(int)
@@ -240,7 +242,7 @@ def search_sd(terms):
     print('-- Search ScienceDirect:', len(terms), 'terms.')
 
     books = defaultdict(set)
-    for result in pool.imap(search_sd_helper, chunks(terms, 200)):
+    for result in pool.imap(search_sd_helper, chunks(terms, 100)):
         for book in result:
             books[book] |= result[book]
 
@@ -266,7 +268,7 @@ def search_sd_helper(terms):
             'subscribed': True,
             'oa': True,
             'content': 'nonserial',
-            'count': 200,
+            'count': 100,
             'apikey': SD_API_KEY}
     r = requests.get(url, params=vals)
 
@@ -274,11 +276,15 @@ def search_sd_helper(terms):
         entries = r.json()['search-results']['entry']
     except:
         sys.stderr.write('Got bad response to search.\n')
+        print('Search parameters:')
+        print(vals)
+        print('Reply:', r.status_code)
+        print(r.text)
         return books
 
     for entry in entries:
         try:
-            pii = re.sub('[-().]', '', entry['pii'])
+            pii = re.sub('[-()./]', '', entry['pii'])
             doc_title = entry['dc:title']
             isbn = entry['prism:isbn']
             pub_title = entry['prism:publicationName']
@@ -345,7 +351,7 @@ def filter_sd(docs_by_book, terms):
         curried = partial(count_terms_in_doc, terms=terms)
         doc_ids = [pii for (pii, doc_title) in docs_by_book[book]]
         for pii, count, unique in pool.imap(curried, doc_ids):
-            if count >= 20 and unique >= 10:
+            if count >= 15 and unique >= 5:
                 docs_high.add(pii)
                 books[book] += 1
             if count >= 4 and unique >= 2:
@@ -356,7 +362,7 @@ def filter_sd(docs_by_book, terms):
     filtered = set()
     for (book, _) in books.most_common():
         _, book_title = book
-        if len(filtered) > .65 * len(docs_high):
+        if len(filtered) > .75 * len(docs_high):
             break
 
         print()
@@ -422,7 +428,7 @@ def search_wiki(terms):
     curried = partial(get_wiki_article, terms=terms)
     for article, count, unique in pool.imap(curried, titles):
         if article:
-            if count >= 15 and unique >= 5:
+            if count >= 10 and unique >= 5:
                 docs_high.append(article)
                 try:
                     for c in article.categories:
@@ -432,14 +438,14 @@ def search_wiki(terms):
             if count >= 4 and unique >= 2:
                 docs_low.append(article)
             else:
-                print('   - Not enough terms:', article.title.encode('utf8'))
+                print('   - Not enough terms:', article.title)
     print('-- Choosing categories.')
 
     covered = set()
     top_categories = set()
     for cat in sorted(categories, key=lambda x: len(categories[x]),
                       reverse=True):
-        if len(covered) >= .6 * len(docs_high):
+        if len(covered) >= .75 * len(docs_high):
             break
         if len(categories[cat]) == 1:
             break
@@ -454,7 +460,7 @@ def search_wiki(terms):
            'EngvarB' in cat or 'ambiguous time' in cat or \
            'needing confirmation' in cat:
             continue
-        if len(top_categories) > .65 * len(categories):
+        if len(top_categories) > .75 * len(categories):
             break
         print('  - Selected category:', cat.encode('utf8'),
               len(categories[cat]))
@@ -472,9 +478,9 @@ def search_wiki(terms):
             continue
 
         if not top_categories.intersection(set(categories)):
-            print('   - Bad categories:', article.title.encode('utf8'))
+            print('   - Bad categories:', article.title.decode('utf8'))
             continue
-        print('   + Good:', article.title.encode('utf8'))
+        print('   + Good:', article.title.decode('utf8'))
         good_articles.append(article)
 
     return good_articles
@@ -744,15 +750,22 @@ if __name__ == '__main__':
     pool = mp.Pool(PROCESSES)
 
     c = Corpus(indir, pool)
-    for doc in c:
-        doc.dehyphenate()
 
     terms = get_terms(c, 2000)
 
     # Write terms to disk to review.
-    # with open('terms.txt', 'w') as tout:
-    #     for term in terms:
-    #         tout.write(term + '\n')
+    #with open('terms.txt', 'w') as tout:
+    #    for term in terms:
+    #        tout.write(term + '\n')
+
+    # If you want to load saved terms, just do c = Corpus() above and
+    # uncomment this:
+    #terms =  []
+    #for line in open(outdir + '/terms.txt', 'r'):
+    #    terms.append(line.strip())
+    #print('Loaded', len(terms), 'terms.')
+
+    random.shuffle(terms)
 
     # Download book chapters from ScienceDirect.
     docs_by_book = search_sd(terms)
