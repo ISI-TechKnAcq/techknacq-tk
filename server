@@ -130,4 +130,4 @@ if __name__ == '__main__':
     if len(sys.argv) == 3:
         port = int(sys.argv[2])
 
-    app.run(debug=True, host='colo-vm17.isi.edu', port=port)
+    app.run(debug=True, host='0.0.0.0', port=port)
