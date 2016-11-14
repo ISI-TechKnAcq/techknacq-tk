@@ -5,5 +5,5 @@ docker run -it \
        -v $PWD/data/elasticsearch:/t/data/elasticsearch \
        -v $PWD/data/server:/t/data/server \
        $* \
-       -p 9200:9200 -p 9300:9300 \
+       -p 9200:9200 -p 9300:9300 -p 9797:9797 -p 9999:9999 \
        --rm --name techknacq techknacq
