@@ -102,6 +102,8 @@ RUN git clone -b techknacq-tk-integration \
     cd techknacq-server && \
     mvn package
 
+RUN ln -s /t/data/server/application.properties \
+          /t/ext/techknacq-server/application-production.properties
 
 # Add TechKnAcq Toolkit.
 
@@ -116,6 +118,8 @@ ENV PYTHONPATH /t/lib:$PYTHONPATH
 
 
 # Run TechKnAcq.
+
+ENV MAVEN_OPTS "-Xms1024m -Xmx4096m"
 
 WORKDIR /t
 

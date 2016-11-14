@@ -1,4 +1,10 @@
 #!/bin/bash
 
-/t/ext/elasticsearch/bin/elasticsearch \
-    -Des.config=/t/data/elasticsearch/elasticsearch.yml &
+/t/ext/elasticsearch/bin/elasticsearch -Xmx4g -Xms4g \
+    -Des.config=/t/data/elasticsearch/elasticsearch.yml \
+    >/dev/null 2>/dev/null &
+
+pushd /t/ext/techknacq-server && \
+./add-user test test && \
+./index-documents && \
+popd
