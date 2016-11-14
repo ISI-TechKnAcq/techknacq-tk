@@ -85,10 +85,22 @@ RUN wget https://download.elasticsearch.org/elasticsearch/elasticsearch/$ES_PKG_
 
 # Check out and compile TechKnAcq Core.
 
-RUN git clone https://github.com/ISI-TechknAcq/techknacq-core.git && \
+RUN git clone https://github.com/ISI-TechKnAcq/techknacq-core.git && \
     cd techknacq-core && \
-    mvn package && \
-    cd target
+    mvn package
+
+
+# Check out and compile TechKnAcq Server.
+
+# Copy ssh keys so you can check out the private repository.
+ADD repo-key /t/repo-key
+RUN echo "IdentityFile /t/repo-key" >> /etc/ssh/ssh_config && \
+    echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
+
+RUN git clone -b techknacq-tk-integration \
+        git@github.com:ISI-TechKnAcq/techknacq-server.git && \
+    cd techknacq-server && \
+    mvn package
 
 
 # Add TechKnAcq Toolkit.
