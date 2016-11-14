@@ -39,14 +39,14 @@ ENV PATH /opt/conda/bin:$PATH
 
 RUN conda update -y conda
 
-RUN conda install numpy nltk beautifulsoup4 lxml networkx
+RUN conda install numpy nltk beautifulsoup4 lxml networkx flask flask-cors
 RUN pip install pyenchant ftfy noaho wikipedia
 
 
 # Install NLTK data.
 
 RUN mkdir -p /usr/share/nltk_data && \
-    python -m nltk.downloader -d /usr/share/nltk_data punkt
+    python -m nltk.downloader -d /usr/share/nltk_data punkt wordnet
 
 
 # Install external tools.
@@ -128,3 +128,7 @@ WORKDIR /t
 EXPOSE 9200
 # Elasticsearch transport
 EXPOSE 9300
+# TechKnAcq-tk Server
+EXPOSE 9797
+# TechKnAcq Server
+EXPOSE 9999
