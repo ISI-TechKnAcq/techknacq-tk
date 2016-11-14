@@ -51,11 +51,12 @@ class TopicDependency:
             cmd = ['java', '-cp', ':'.join([self.jar] + deps),
                    'edu.isi.techknacq.topics.graph.Comparisononalledges',
                    model.wtkfile, infomap_tree_file, doc_comp_file,
-                   str(len(model.topics)//2), citation_network_file,
+                   str(len(model.topics)), citation_network_file,
                    infomap_flow_file]
 
             if subprocess.call(cmd) != 0:
                 sys.stderr.write('Running topic-dependency code failed.\n')
+                sys.stderr.write(' '.join(cmd) + '\n')
                 sys.exit(1)
 
             os.rename('alledge.tsv', 'data/alledge.tsv')
@@ -64,15 +65,8 @@ class TopicDependency:
 
         #self.generate_topicgraph()
 
-        try:
-            os.remove('data/alledge.tsv')
-            os.remove('entropy1.txt')
-            os.remove('entropy2.txt')
-        except FileNotFoundError:
-            pass
 
-
-    def read_alledges(self, method='ce', threshhold=0.007):
+    def read_alledges(self, method='ce', threshhold=0.05):
         """Read the cross-entropy edges from the alledges.tsv output file."""
 
         self.edges = defaultdict(dict)
@@ -98,21 +92,24 @@ class TopicDependency:
                 if weight > threshhold:
                     self.edges[t1][t2] = max(self.edges[t1].get(t2, 0.0),
                                              weight)
+                    if t1 in self.edges[t2] and self.edges[t2][t1] > weight:
+                        self.edges[t1][t2] = 0.0
+                    elif t1 in self.edges[t2]:
+                        self.edges[t1][t2] = 0.0
             except:
                 sys.stderr.write('Error processing alledges line:\n')
                 sys.stderr.write(line)
 
 
     def generate_topicgraph(self):
-        """Read the alledge.tsv file generated from techknacq-core and
-        produce the topicgraph.txt file used by techknacq-server."""
+        """Produce the topicgraph.txt file used by techknacq-server."""
 
         with open('topicgraph.txt', 'w') as fout:
             fout.write('%d\n' % (len(self.edges)))
             for t1 in self.edges:
                 good_edges = sorted([(y, self.edges[t1][y])
                                      for y in self.edges[t1]],
-                                    key=lambda x: self.edges[t1][x],
+                                    key=lambda x: self.edges[t1].get(x, 0),
                                     reverse=True)
                 fout.write('%s,%d' % (t1, len(good_edges)))
                 for t2, w in good_edges:
@@ -148,10 +145,10 @@ class TopicDependency:
     def get_infomap(self):
         # If there's saved Infomap output in the current directory,
         # use it.
-        if os.path.exists('infomap-tree.txt') and \
-           os.path.exists('infomap-flow.txt'):
+        if os.path.exists('data/infomap-tree.txt') and \
+           os.path.exists('data/infomap-flow.txt'):
             print('Using saved infomap output.')
-            return 'infomap-tree.txt', 'infomap-flow.txt'
+            return 'data/infomap-tree.txt', 'data/infomap-flow.txt'
 
         treefname = self.prefix + 'infomap-tree.txt'
         flowfname = self.prefix + 'infomap-flow.txt'
@@ -265,7 +262,8 @@ if __name__ == '__main__':
                     vals[v] *= new_dt[i][v]
                 else:
                     vals[v] = 0.0
-            model.topic_doc[i] = sorted(vals.items(), key=lambda x: x[1], reverse=True)
+            model.topic_doc[i] = sorted(vals.items(), key=lambda x: x[1],
+                                        reverse=True)
 
     cg.add_concepts(model)
 
