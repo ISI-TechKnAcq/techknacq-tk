@@ -242,6 +242,7 @@ class Document:
         xml = io.open(f, 'r', encoding='utf-8').read()
         xml = ftfy.fix_text(xml, uncurl_quotes=False,
                             fix_entities=False)
+        xml = strtr(xml, {'e´': 'é', 'e`': 'è'})
         xml = re.sub("([</])(dc|prism|ce|sb|xocs):", r"\1", xml)
         soup = BeautifulSoup(xml, 'lxml')
 
@@ -252,12 +253,14 @@ class Document:
             return
 
         self.id = 'sd-' + pii.lower()
+        self.authors = []
         try:
-            self.authors = [' '.join([re.sub('^.*, ', '', x.string.strip()),
-                                      re.sub(',.*$', '', x.string.strip())])
-                            for x in soup('creator')]
+            for author in soup('creator'):
+                x = author.string.strip()
+                name = re.sub('^.*, ', '', x) + ' ' + re.sub(',.*$', '', x)
+                self.authors.append(name)
         except:
-            self.authors = []
+            pass
 
         if not self.authors and soup.editor:
             self.authors = [x.get_text() + ' (ed.)' for x in
@@ -539,3 +542,8 @@ def title_case(s):
                  'On']:
         s = re.sub('([A-Za-z]) ' + word + ' ', r'\1 ' + word.lower() + ' ', s)
     return s
+
+def strtr(text, dic):
+    """Replace the keys of dic with values of dic in text."""
+    pat = '(%s)' % '|'.join(map(re.escape, dic.keys()))
+    return re.sub(pat, lambda m:dic[m.group()], text)
