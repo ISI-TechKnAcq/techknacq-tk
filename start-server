@@ -4,7 +4,12 @@
     -Des.config=/t/data/elasticsearch/elasticsearch.yml \
     >/dev/null 2>/dev/null &
 
-pushd /t/ext/techknacq-server && \
-./add-user test test && \
-./index-documents && \
-popd
+# If this is the first run, add the 'test' user and index documents. After
+# this, Elasticsearch will have made a data directory.
+
+if [ ! -d /t/data/elasticsearch/data/techknacq ]; then
+    pushd /t/ext/techknacq-server && \
+    ./add-user test test && \
+    ./index-documents && \
+    popd
+fi
