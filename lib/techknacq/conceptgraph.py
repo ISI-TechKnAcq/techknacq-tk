@@ -67,6 +67,8 @@ class ConceptGraph:
     def add_dependencies(self, edges):
         for t1 in edges:
             for t2 in edges[t1]:
+                if edges[t1][t2] <= 0.0:
+                    continue
                 self.g.add_edge('concept-' + t1, 'concept-' + t2,
                                 type='dependency', weight=edges[t1][t2])
 
@@ -175,11 +177,12 @@ class ConceptGraph:
             sys.exit(1)
 
 
-    def export(self, file='concept-graph.json', concept_threshhold=0.2):
+    def export(self, file='concept-graph.json', concept_threshold=0.2,
+               provenance=''):
         """Export the concept graph as a JSON file."""
 
         def bad_topic(c):
-            if self.g.node[c]['score'] < concept_threshhold:
+            if self.g.node[c]['score'] < concept_threshold:
                 sys.stderr.write('Skipping topic %s due to score.\n' %
                                  (self.g.node[c]['name']))
                 return True
@@ -191,7 +194,7 @@ class ConceptGraph:
             return False
 
         j = {'id': self.id,
-             'provenance': self.provenance,
+             'provenance': ' '.join([self.provenance, provenance]),
              'type': self.type,
              'nodes': [],
              'edges': [],
