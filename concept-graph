@@ -32,7 +32,7 @@ class TopicDependency:
 
     jar = 'ext/techknacq-core/target/techknacq-core.jar'
 
-    def __init__(self, corpus, model, method='ce'):
+    def __init__(self, corpus, model, method='ce', threshold=0.05):
         self.corpus = corpus
         self.model = model
 
@@ -61,12 +61,12 @@ class TopicDependency:
 
             os.rename('alledge.tsv', 'data/alledge.tsv')
 
-        self.read_alledges(method)
+        self.read_alledges(method, threshold)
 
         #self.generate_topicgraph()
 
 
-    def read_alledges(self, method='ce', threshhold=0.05):
+    def read_alledges(self, method, threshold):
         """Read the cross-entropy edges from the alledges.tsv output file."""
 
         self.edges = defaultdict(dict)
@@ -89,7 +89,7 @@ class TopicDependency:
                 if weight < 0:
                     weight = -1.0 * weight
                     t1, t2 = t2, t1
-                if weight > threshhold:
+                if weight > threshold:
                     self.edges[t1][t2] = max(self.edges[t1].get(t2, 0.0),
                                              weight)
                     if t1 in self.edges[t2] and self.edges[t2][t1] > weight:
@@ -267,8 +267,12 @@ if __name__ == '__main__':
 
     cg.add_concepts(model)
 
-    dep = TopicDependency(corpus, model, method='avg')
+    method = 'avg'
+    threshold = 0.0005
+
+    dep = TopicDependency(corpus, model, method=method, threshold=threshold)
     cg.add_dependencies(dep.edges)
 
     cg.export(prefix + 'cg.json')
-    print('Concept graph:', prefix + 'cg.json')
+    print('Concept graph:', prefix + 'cg.json',
+          provenance='%s %d'.format(method, threshold))
