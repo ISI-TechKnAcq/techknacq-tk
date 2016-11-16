@@ -94,6 +94,7 @@ RUN git clone https://github.com/ISI-TechKnAcq/techknacq-core.git && \
 
 # Copy ssh keys so you can check out the private repository.
 ADD repo-key /t/repo-key
+RUN chmod 0400 /t/repo-key
 RUN echo "IdentityFile /t/repo-key" >> /etc/ssh/ssh_config && \
     echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
 
