@@ -182,19 +182,18 @@ class ConceptGraph:
         """Export the concept graph as a JSON file."""
 
         def bad_topic(c):
-            if self.g.node[c]['score'] < concept_threshold:
+            if 'score' in self.g.node[c] and \
+               self.g.node[c]['score'] < concept_threshold:
                 sys.stderr.write('Skipping topic %s due to score.\n' %
                                  (self.g.node[c]['name']))
                 return True
             if 'Miscellany' in self.g.node[c]['name'] or \
-              self.g.node[c]['name'] == 'Bad':
-                #sys.stderr.write('Skipping topic %s due to name.\n' %
-                #                 (self.g.node[c]['name']))
+               self.g.node[c]['name'] == 'Bad':
                 return True
             return False
 
         j = {'id': self.id,
-             'provenance': ' '.join([self.provenance, provenance]),
+             'provenance': ' '.join([self.provenance, provenance]).strip(),
              'type': self.type,
              'nodes': [],
              'edges': [],
@@ -225,6 +224,8 @@ class ConceptGraph:
                                                 'weight': weight})
             j['nodes'].append(j_concept)
 
+        j['nodes'].sort(key=lambda x: x['id'])
+
         # Add document nodes and their features.
         for doc_id in self.docs():
             j_doc = {'id': doc_id,
@@ -240,6 +241,8 @@ class ConceptGraph:
                      'roles': self.g.node[doc_id].get('roles', {})}
             j['corpus']['docs'].append(j_doc)
 
+        j['corpus']['docs'].sort(key=lambda x: x['id'])
+
         for (t1, t2, data) in self.g.edges(data=True):
             if data.get('type', '') != 'dependency':
                 continue
@@ -249,6 +252,7 @@ class ConceptGraph:
                                'target': t2,
                                'weight': data['weight'],
                                'type': 'dependency'})
+        j['edges'].sort(key=lambda x: x['source'] + x['target'])
 
         json.dump(j, open(file, 'w', encoding='utf8'), indent=1,
                   sort_keys=True, ensure_ascii=False)
