@@ -273,6 +273,6 @@ if __name__ == '__main__':
     dep = TopicDependency(corpus, model, method=method, threshold=threshold)
     cg.add_dependencies(dep.edges)
 
-    cg.export(prefix + 'cg.json')
-    print('Concept graph:', prefix + 'cg.json',
-          provenance='%s %d'.format(method, threshold))
+    cg.export(prefix + 'cg.json',
+             provenance='%s %d'.format(method, threshold))
+    print('Concept graph:', prefix + 'cg.json')
