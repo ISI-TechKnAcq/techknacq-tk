@@ -149,8 +149,8 @@ class ConceptGraph:
                 for f in c['featureWeights']:
                     self.g.node[c['id']]['words'].append((f['feature'],
                                                           f['count']))
-                self.g.node[c['id']]['words'].sort(key=lambda x: x[1],
-                                                   reverse=True)
+                self.g.node[c['id']]['words'].sort(key=lambda x:
+                                                   (-1.0 * x[1], x[0]))
                 for doc_edge in c['docWeights']:
                     self.g.add_edge(c['id'], doc_edge['document'],
                                     weight=doc_edge['weight'],

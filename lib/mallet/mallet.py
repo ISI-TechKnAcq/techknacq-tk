@@ -273,4 +273,4 @@ class Mallet:
 
     def topic_pairs(self, topic):
         return sorted(self.topics[topic].items(),
-                      key=lambda x: x[1], reverse=True)
+                      key=lambda x: (-1.0 * x[1], x[0]))
