@@ -73,17 +73,20 @@ class TopicDependency:
         for line in open('data/alledge.tsv'):
             try:
                 tokens = line.strip().split()
+                if tokens[0] == 'sid':
+                    continue
 
                 t1 = tokens[0]
-                if t1 == 'sid': continue
-
                 t2 = tokens[2]
+
                 if method == 'simword':
                     weight = float(tokens[5])
                 elif method == 'ce':
                     weight = float(tokens[7])
                 elif method == 'avg':
                     weight = (float(tokens[5]) + float(tokens[7]))/2.0
+                elif method == 'sum':
+                    weight = float(tokens[5]) + float(tokens[7])
 
                 # Flip negative weights.
                 if weight < 0:
@@ -92,10 +95,13 @@ class TopicDependency:
                 if weight > threshold:
                     self.edges[t1][t2] = max(self.edges[t1].get(t2, 0.0),
                                              weight)
-                    if t1 in self.edges[t2] and self.edges[t2][t1] > weight:
-                        self.edges[t1][t2] = 0.0
-                    elif t1 in self.edges[t2]:
-                        self.edges[t1][t2] = 0.0
+                    # Only keep the strongest edge direction; don't allow
+                    # bidirectional edges.
+                    #if t1 in self.edges[t2]:
+                    #    if self.edges[t2][t1] > self.edges[t1][t2]:
+                    #        self.edges[t1][t2] = 0.0
+                    #    else:
+                    #        self.edges[t2][t1] = 0.0
             except:
                 sys.stderr.write('Error processing alledges line:\n')
                 sys.stderr.write(line)
@@ -274,5 +280,5 @@ if __name__ == '__main__':
     cg.add_dependencies(dep.edges)
 
     cg.export(prefix + 'cg.json',
-             provenance='%s %d'.format(method, threshold))
+              provenance=method + ' ' + str(threshold))
     print('Concept graph:', prefix + 'cg.json')
