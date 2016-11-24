@@ -6,6 +6,7 @@ import urllib
 import requests
 import json
 
+
 class WebSearch:
     def __init__(self, site='google', key=None, cx=None):
         self.site = site

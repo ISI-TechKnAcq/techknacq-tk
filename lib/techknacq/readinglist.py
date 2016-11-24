@@ -66,8 +66,8 @@ class ReadingList:
         docs = self.cg.topic_docs(c)
 
         # 2. Stable sort documents by pedagogical role preference:
-        #    ped_score = 1.0 * role1 + 0.85 * role2 + 0.7 * role3 + 0.55 * role4
-        #                + 0.4 * role5 + 0.25 * role4
+        #    ped_score = 1.0 * role1 + 0.85 * role2 + 0.7 * role3 +
+        #                0.55 * role4 + 0.4 * role5 + 0.25 * role4
 
         def ped_role_score(doc, role_order):
             doc_roles = self.cg.g.node[doc]['roles']
@@ -103,7 +103,7 @@ class ReadingList:
         for dep, dep_weight in sorted(self.cg.topic_deps(c),
                                       key=lambda x:
                                       score*x[1] + self.relevance[x[0]],
-                                     reverse=True)[:MAX_MATCHES]:
+                                      reverse=True)[:MAX_MATCHES]:
             dep_discount = 1
             if self.user_model[c] == INTERMEDIATE:
                 dep_discount = 2
@@ -122,8 +122,9 @@ class ReadingList:
         #
 
         if self.user_model[c] != ADVANCED or entry['subconcepts']:
-            sorted_docs = self.best_docs(c, ['survey', 'reference', 'tutorial',
-                                             'resource', 'manual', 'empirical'])
+            sorted_docs = self.best_docs(c, ['survey', 'reference',
+                                             'tutorial', 'resource',
+                                             'manual', 'empirical'])
             for doc_id, doc_weight in sorted_docs:
                 if doc_id in self.covered_documents or \
                    self.cg.g.node[doc_id]['title'] in self.covered_titles:
@@ -172,7 +173,7 @@ class ReadingList:
                 'abstract': self.cg.g.node[doc_id]['abstract']}
 
     def all_concepts(self, l=None):
-        if l == None:
+        if l is None:
             l = self.rl
         for concept in l:
             yield concept

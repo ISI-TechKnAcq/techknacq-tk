@@ -74,70 +74,67 @@ def find_short_long_pairs(sent):
             return False
         return any(c.isupper() for c in s)
 
-    def find_best_long(s, l):
-        if len(l) < len(s):
+    def find_best_long(sh, lo):
+        if len(lo) < len(sh):
             return
-        s_index = len(s) - 1
-        l_index = len(l) - 1
+        sh_index = len(sh) - 1
+        lo_index = len(lo) - 1
         while True:
-            s_char = s[s_index].lower()
+            sh_char = sh[sh_index].lower()
             try:
-                l_char = l[l_index].lower()
+                lo_char = lo[lo_index].lower()
             except:
                 return
-            if not s_char.isalnum():
-                s_index -= 1
-            if s_index == 0:
-                if s_char == l_char:
-                    if l_index <= 0 or not l[l_index-1].isalnum():
+            if not sh_char.isalnum():
+                sh_index -= 1
+            if sh_index == 0:
+                if sh_char == lo_char:
+                    if lo_index <= 0 or not lo[lo_index-1].isalnum():
                         break
-            elif s_char == l_char:
-                s_index -= 1
-            l_index -= 1
-        if l_index < 0:
+            elif sh_char == lo_char:
+                sh_index -= 1
+            lo_index -= 1
+        if lo_index < 0:
             return
 
-        l = l[l_index:]
-        words = l.split()
-        s_chars = len(s)
-        if len(words) > min([s_chars+5, s_chars*2]):
+        lo = lo[lo_index:]
+        words = lo.split()
+        sh_chars = len(sh)
+        if len(words) > min([sh_chars+5, sh_chars*2]):
             return
         if words[0] in ['in', 'of', 'from']:
             return
-        if '(' in l or ')' in l:
+        if '(' in lo or ')' in lo:
             return
-        return re.sub(' +', ' ', l).strip()
+        return re.sub(' +', ' ', lo).strip()
 
-    def extract_long(s, sent):
+    def extract_long(sh, sent):
         """Given a short form and the sentence it occurs in, find the
         long form."""
         before = re.sub(r' \(' + re.escape(s) + r'\).*', '', sent)
         before = re.sub('.*[,;]', '', before)
 
-        l = find_best_long(s, before)
-        if not l:
+        lo = find_best_long(sh, before)
+        if not lo:
             return
 
-        tokens = re.split(r'[\t\n\r\f- ]', l)
+        tokens = re.split(r'[\t\n\r\f- ]', lo)
         long_size = len(tokens)
-        short_size = len(s)
+        short_size = len(sh)
 
-        for c in s:
+        for c in sh:
             if not c.isalnum():
                 short_size -= 1
-            if (len(l) < len(s) or
-                s in tokens or
-                l.endswith(s) or
-                long_size > short_size*2 or
-                long_size > short_size + 5 or
-                short_size > 10):
+            if len(lo) < len(sh) or sh in tokens or lo.endswith(sh) or \
+               long_size > short_size*2 or long_size > short_size + 5 or \
+               short_size > 10:
                 return
-        return l
+        return lo
 
     ret = set()
-    for s in re.findall(r' \(([^()]+)\)', sent):
-        if check_short(s):
-            l = extract_long(s, sent)
-            if l:
-                ret.add((s, l))
+    for sh in re.findall(r' \(([^()]+)\)', sent):
+        if check_short(sh):
+            lo = extract_long(sh, sent)
+            if lo:
+                ret.add((sh, lo))
     return ret

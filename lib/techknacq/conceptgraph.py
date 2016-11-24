@@ -10,7 +10,6 @@ import uuid
 
 WORDS_PER_CONCEPT = 100
 
-###
 
 class ConceptGraph:
     def __init__(self, fname=None):
@@ -58,7 +57,7 @@ class ConceptGraph:
             for base, percent in model.topic_doc[topic]:
                 if percent == 0.0:
                     continue
-                if not base in self.g:
+                if base not in self.g:
                     continue
                 self.g.add_edge('concept-' + str(topic), base,
                                 type='topic', weight=percent)
@@ -231,13 +230,12 @@ class ConceptGraph:
             j_doc = {'id': doc_id,
                      'url': self.g.node[doc_id]['url'],
                      'title': self.g.node[doc_id]['title'],
-                     'authors': [{#'id': x.lower().replace(' ', '_'),
-                                  'fullName': x}
+                     'authors': [{'fullName': x}
                                  for x in self.g.node[doc_id]['authors']],
                      'book': self.g.node[doc_id]['book'],
                      'year': self.g.node[doc_id]['year'],
                      'abstractText': self.g.node[doc_id]['abstract'],
-                     'cites': [], #self.doc_cites(doc_id),
+                     'cites': [],  # self.doc_cites(doc_id),
                      'roles': self.g.node[doc_id].get('roles', {})}
             j['corpus']['docs'].append(j_doc)
 

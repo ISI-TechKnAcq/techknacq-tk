@@ -15,12 +15,14 @@ from techknacq.readinglist import ReadingList
 app = Flask(__name__)
 CORS(app)
 
+
 # This has fewer limitations than `timeit`.
 def timed(f):
     start = time.time()
     ret = f()
     elapsed = time.time() - start
     return ret, elapsed
+
 
 @app.route('/readingList', methods=['GET'])
 def handle_request():
@@ -103,7 +105,8 @@ def handle_request():
         resp['matchTopics'].append(topic_entry(topic))
     # Add dependency edges to the graph in the response for all topic nodes
     # we added.
-    topics = set(['concept-' + x['id'] for x in resp['graphResponse']['nodes']])
+    topics = set(['concept-' + x['id'] for x in
+                  resp['graphResponse']['nodes']])
     for topic in topics:
         for dep_id, dep_weight in cg.topic_deps(topic):
             if dep_id in topics:
@@ -112,7 +115,7 @@ def handle_request():
                         'value': dep_weight}
                 resp['graphResponse']['edges'].append(edge)
 
-    #print(resp)
+    # print(resp)
 
     return jsonify(resp)
 

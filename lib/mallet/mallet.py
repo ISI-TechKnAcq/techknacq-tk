@@ -17,12 +17,11 @@ from techknacq.lx import StopLexicon
 
 # Parameters
 
-#PROCESSES = int(.5 * mp.cpu_count())
+# PROCESSES = int(.5 * mp.cpu_count())
 PROCESSES = 1
 
 OPTIMIZE_INTERVAL = 10
 
-###
 
 class Mallet:
     def __init__(self, path, corpus=None, num_topics=200, bigrams=False,
@@ -227,7 +226,8 @@ class Mallet:
             # step to give Linhong's Java code the format it expects.
             with open(self.dtfile + '-old-format', 'w') as out:
                 for line in open(self.dtfile):
-                    if line[0] == '#': continue
+                    if line[0] == '#':
+                        continue
                     elts = line.strip().split()
                     out.write('%s\t%s' % (elts[0], elts[1]))
                     for i, e in enumerate(elts[2:]):

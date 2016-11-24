@@ -24,7 +24,6 @@ MALLET_PATH = 'ext/mallet/bin/mallet'
 LDA_TOPICS = 300
 LDA_ITERATIONS = 1000
 
-###
 
 class TopicDependency:
     """Python wrapper class for Linhong's Java code for predicting dependencies
@@ -63,7 +62,7 @@ class TopicDependency:
 
         self.read_alledges(method, threshold)
 
-        #self.generate_topicgraph()
+        # self.generate_topicgraph()
 
 
     def read_alledges(self, method, threshold):
@@ -97,11 +96,11 @@ class TopicDependency:
                                              weight)
                     # Only keep the strongest edge direction; don't allow
                     # bidirectional edges.
-                    #if t1 in self.edges[t2]:
-                    #    if self.edges[t2][t1] > self.edges[t1][t2]:
-                    #        self.edges[t1][t2] = 0.0
-                    #    else:
-                    #        self.edges[t2][t1] = 0.0
+                    # if t1 in self.edges[t2]:
+                    #     if self.edges[t2][t1] > self.edges[t1][t2]:
+                    #         self.edges[t1][t2] = 0.0
+                    #     else:
+                    #         self.edges[t2][t1] = 0.0
             except:
                 sys.stderr.write('Error processing alledges line:\n')
                 sys.stderr.write(line)
@@ -227,7 +226,7 @@ if __name__ == '__main__':
     cg = ConceptGraph()
 
     corpus = Corpus(sys.argv[1])
-    #corpus.fix_text()
+    # corpus.fix_text()
 
     cg.add_docs(corpus)
 
