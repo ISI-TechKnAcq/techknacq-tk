@@ -749,21 +749,21 @@ if __name__ == '__main__':
 
     pool = mp.Pool(PROCESSES)
 
+    # If you're loading saved terms and want quicker results, change this to
+    # c = Corpus(), but your output corpus won't include the original files.
     c = Corpus(indir, pool)
 
-    terms = get_terms(c, 2000)
-
-    # Write terms to disk to review.
-    #with open('terms.txt', 'w') as tout:
-    #    for term in terms:
-    #        tout.write(term + '\n')
-
-    # If you want to load saved terms, just do c = Corpus() above and
-    # uncomment this:
-    #terms =  []
-    #for line in open(outdir + '/terms.txt', 'r'):
-    #    terms.append(line.strip())
-    #print('Loaded', len(terms), 'terms.')
+    terms = []
+    if os.path.exists('data/terms.txt'):
+        for line in open('data/terms.txt', 'r'):
+            terms.append(line.strip())
+        print('Loaded', len(terms), 'terms from data/terms.txt.')
+    else:
+        terms = get_terms(c, 2000)
+        print('Writing terms to data/terms.txt.')
+        with open('data/terms.txt', 'w') as tout:
+            for term in terms:
+                tout.write(term + '\n')
 
     random.shuffle(terms)
 
