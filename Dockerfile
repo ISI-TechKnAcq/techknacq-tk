@@ -4,7 +4,6 @@ MAINTAINER Jonathan Gordon <jgordon@isi.edu>
 
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 
-
 # Install system dependencies.
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -16,7 +15,8 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886
 RUN apt-get update -q -y --fix-missing
 RUN apt-get upgrade -q -y --fix-missing
 
-RUN apt-get install -q -y --fix-missing wget bzip2 git g++ make enchant
+RUN apt-get install -q -y --fix-missing wget bzip2 git g++ make enchant \
+        poppler-utils
 
 RUN echo debconf shared/accepted-oracle-license-v1-1 select true | \
     debconf-set-selections && \
