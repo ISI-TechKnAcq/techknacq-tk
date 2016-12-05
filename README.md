@@ -105,16 +105,16 @@ You are now operating in the Docker virtual machine as root.
 To expand a corpus in ~/corpus, saving the result in ~/expanded, run:
 
     ./run -v ~/corpus:/tmp/corpus -v ~/expanded:/tmp/expanded
-    ./build-corpus /tmp/corpus /tmp/expanded
+    ./build-corpus --wiki /tmp/corpus /tmp/expanded
 
 The files in the input directory can be in various formats -- ScienceDirect
 XML files, BioC XML files, plain text, or the JSON corpus format used for this
 project. The output directory will be populated with JSON files that can be
 used for generating a concept graph.
 
-The various corpus expansion methods can be commented or uncommented in the
-'main' section at the bottom of the script, depending on what's appropriate
-for your corpus.
+The various corpus expansion methods (e.g., '--wiki' above) can be
+specified on the command line. Run `./build-corpus --help` to see a full
+list.
 
 
 ### Concept Graph

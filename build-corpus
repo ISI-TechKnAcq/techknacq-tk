@@ -7,6 +7,7 @@ import sys
 import os
 import io
 import string
+import click
 import re
 import json
 import requests
@@ -242,7 +243,7 @@ def search_sd(terms):
     print('-- Search ScienceDirect:', len(terms), 'terms.')
 
     books = defaultdict(set)
-    for result in pool.imap(search_sd_helper, chunks(terms, 100)):
+    for result in pool.imap(search_sd_helper, chunks(terms, 50)):
         for book in result:
             books[book] |= result[book]
 
@@ -316,7 +317,7 @@ def download_sd_doc(pii, view='full'):
     """Download the ScienceDirect document with the specified PII unless
     it has previously been downloaded."""
 
-    file_path = os.path.join(outdir, 'sd-download', pii+'-'+view+'.xml')
+    file_path = os.path.join(outputdir, 'sd-download', pii+'-'+view+'.xml')
     if not os.path.exists(file_path):
         print('   Download:', pii + '-' + view + '.xml')
 
@@ -387,7 +388,7 @@ def count_terms_in_doc(pii, terms):
     for term in terms:
         trie.add(term)
 
-    file_path = os.path.join(outdir, 'sd-download', pii + '-full.xml')
+    file_path = os.path.join(outputdir, 'sd-download', pii + '-full.xml')
     text = io.open(file_path, 'r', encoding='utf8').read().lower()
     matches = [text[x[0]:x[1]] for x in trie.findall_long(text)]
 
@@ -398,8 +399,8 @@ def get_sd_docs(ids):
     sd_corpus = Corpus()
 
     for pii in ids:
-        f = os.path.join(outdir, 'sd-download', pii + '-full.xml')
-        fxml = os.path.join(outdir, 'sd-download', pii + '-ref.xml')
+        f = os.path.join(outputdir, 'sd-download', pii + '-full.xml')
+        fxml = os.path.join(outputdir, 'sd-download', pii + '-ref.xml')
         d = Document()
         d.read_sd(f, fxml)
         sd_corpus.add(d)
@@ -462,7 +463,7 @@ def search_wiki(terms):
             continue
         if len(top_categories) > .75 * len(categories):
             break
-        print('  - Selected category:', cat.encode('utf8'),
+        print('  - Selected category:', cat,
               len(categories[cat]))
         top_categories.add(cat)
         covered |= categories[cat]
@@ -478,9 +479,9 @@ def search_wiki(terms):
             continue
 
         if not top_categories.intersection(set(categories)):
-            print('   - Bad categories:', article.title.decode('utf8'))
+            print('   - Bad categories:', article.title)
             continue
-        print('   + Good:', article.title.decode('utf8'))
+        print('   + Good:', article.title)
         good_articles.append(article)
 
     return good_articles
@@ -648,7 +649,7 @@ def download_tutorial(tutorial):
     fname = fname.replace('_...', '')
     fname = re.sub('_+', '_', fname)
     fname = ''.join(filter(lambda x: x in string.printable, fname))
-    file_path = os.path.join(outdir, 'web-download', fname + '.pdf')
+    file_path = os.path.join(outputdir, 'web-download', fname + '.pdf')
 
     if not os.path.exists(file_path):
         try:
@@ -683,7 +684,7 @@ def export_tutorial(tutorial):
 
     print('- Export:', fname + '.json')
 
-    pdfpath = os.path.join(outdir, 'web-download', fname + '.pdf')
+    pdfpath = os.path.join(outputdir, 'web-download', fname + '.pdf')
 
     if not os.path.exists(pdfpath):
         print(' ! Missing download:', fname, file=sys.stderr)
@@ -736,17 +737,19 @@ def ensure_directory(path):
 
 ###
 
+@click.command()
+@click.option('--sd', is_flag=True, help='Use ScienceDirect.')
+@click.option('--wiki', is_flag=True, help='Use Wikipedia.')
+@click.option('--web', is_flag=True, help='Use tutorials from the Web.')
+@click.argument('indir', type=click.Path(exists=True))
+@click.argument('outdir', type=click.Path())
+def main(indir, outdir, sd, wiki, web):
+    global outputdir
+    outputdir = outdir
+    ensure_directory(outputdir + '/sd-download')
+    ensure_directory(outputdir + '/web-download')
 
-if __name__ == '__main__':
-    if len(sys.argv) != 3:
-        print('Usage: build-corpus [indir] [outdir]', file=sys.stderr)
-        sys.exit(1)
-
-    indir, outdir = sys.argv[1:]
-
-    ensure_directory(outdir + '/sd-download')
-    ensure_directory(outdir + '/web-download')
-
+    global pool
     pool = mp.Pool(PROCESSES)
 
     # If you're loading saved terms and want quicker results, change this to
@@ -767,19 +770,32 @@ if __name__ == '__main__':
 
     random.shuffle(terms)
 
+    if len(terms) == 0:
+        sys.stderr.write('Error: No terms to use.\n')
+        sys.exit(1)
+
     # Download book chapters from ScienceDirect.
-    docs_by_book = search_sd(terms)
-    download_sd(docs_by_book)
-    doc_ids = filter_sd(docs_by_book, terms)
-    c |= get_sd_docs(doc_ids)
+    if sd:
+        docs_by_book = search_sd(terms)
+        download_sd(docs_by_book)
+        doc_ids = filter_sd(docs_by_book, terms)
+        c |= get_sd_docs(doc_ids)
 
     # Download Wikipedia articles.
-    articles = search_wiki(terms)
-    c |= get_wiki_docs(articles)
+    if wiki:
+        articles = search_wiki(terms)
+        c |= get_wiki_docs(articles)
 
     # Download tutorial PDFs from the Web.
-    tutorials = search_web(terms)
-    download_web(tutorials)
-    c |= get_web_docs(tutorials)
+    if web:
+        tutorials = search_web(terms)
+        download_web(tutorials)
+        c |= get_web_docs(tutorials)
 
-    c.export(outdir)
+    c.export(outputdir)
+
+
+if __name__ == '__main__':
+    pool = None
+    outputdir = None
+    main()
