@@ -9,6 +9,7 @@ import tempfile
 import glob
 import random
 import subprocess
+import click
 import re
 
 from collections import defaultdict
@@ -209,37 +210,37 @@ class TopicDependency:
 
         return fname
 
-
 ###
 
-
-if __name__ == '__main__':
-    if len(sys.argv) != 2 and len(sys.argv) != 3:
-        print('Usage: concept-graph [corpus dir.]', file=sys.stderr)
-        print('    or concept-graph [corpus dir.] [topic model path+prefix]',
-              file=sys.stderr)
-        sys.exit(1)
-
+@click.command()
+@click.option('--method', default='avg',
+              type=click.Choice(['ce', 'simword', 'avg', 'sum']),
+              help='Method for computing concept dependencies.')
+@click.option('--threshold', default=0.0005)
+@click.option('--num-topics', default=LDA_TOPICS)
+@click.argument('corpusdir', type=click.Path(exists=True))
+@click.argument('topic_prefix', required=False)
+def main(corpusdir, topic_prefix, method, threshold, num_topics):
     rand_prefix = hex(random.randint(0, 0xffffff))[2:] + '-'
     prefix = os.path.join(tempfile.gettempdir(), rand_prefix)
 
     cg = ConceptGraph()
 
-    corpus = Corpus(sys.argv[1])
+    corpus = Corpus(corpusdir)
     # corpus.fix_text()
 
     cg.add_docs(corpus)
 
-    if len(sys.argv) == 2:
+    if not topic_prefix:
         print('Generating topic model.')
         mallet_corpus = prefix + 'corpus'
         os.makedirs(mallet_corpus)
         corpus.export(mallet_corpus, abstract=False, format='text')
-        model = Mallet(MALLET_PATH, mallet_corpus, num_topics=LDA_TOPICS,
+        model = Mallet(MALLET_PATH, mallet_corpus, num_topics=num_topics,
                        iters=LDA_ITERATIONS, bigrams=True)
     else:
         print('Loading topic model.')
-        model = Mallet(MALLET_PATH, prefix=sys.argv[2])
+        model = Mallet(MALLET_PATH, prefix=topic_prefix)
         if len(model.topic_doc[0]) < len(corpus.docs):
             print('Found more documents in the corpus (%d)' %
                   (len(corpus.docs)), end=' ')
@@ -272,12 +273,14 @@ if __name__ == '__main__':
 
     cg.add_concepts(model)
 
-    method = 'avg'
-    threshold = 0.0005
-
     dep = TopicDependency(corpus, model, method=method, threshold=threshold)
     cg.add_dependencies(dep.edges)
 
     cg.export(prefix + 'cg.json',
               provenance=method + ' ' + str(threshold))
     print('Concept graph:', prefix + 'cg.json')
+
+
+
+if __name__ == '__main__':
+    main()

@@ -150,6 +150,9 @@ pipeline, but if a file of these annotations exists with the name
 'pedagogical-roles.txt', it will be read by `Corpus.read_roles()` and marked
 in the concept graph.
 
+You can try different methods and thresholds for computing concept
+dependencies using the '--method' and '--threshold' options.
+
 
 ### Reading List
 
