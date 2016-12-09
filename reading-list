@@ -4,6 +4,7 @@
 # Jonathan Gordon
 
 import sys
+import click
 
 from techknacq.conceptgraph import ConceptGraph
 from techknacq.readinglist import ReadingList
@@ -15,17 +16,13 @@ BEGINNER = 1
 INTERMEDIATE = 2
 ADVANCED = 3
 
-
-if __name__ == '__main__':
-    if len(sys.argv) < 3:
-        sys.stderr.write('Usage: reading-list [concept graph] [query terms]\n')
-        sys.exit(1)
-
+@click.command()
+@click.argument('concept_graph', type=click.Path(exists=True))
+@click.argument('query', nargs=-1)
+def main(concept_graph, query):
     output_format = 'text'
 
-    cg = ConceptGraph(sys.argv[1])
-
-    query = sys.argv[2:]
+    cg = ConceptGraph(click.format_filename(concept_graph))
 
     if output_format == 'html':
         print("""
@@ -82,3 +79,7 @@ li {
 
     if format == 'html':
         print('</body></html>')
+
+
+if __name__ == '__main__':
+    main()
