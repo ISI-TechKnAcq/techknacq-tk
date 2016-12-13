@@ -4,7 +4,10 @@
 # Jonathan Gordon
 
 import sys
+import os
 import time
+import ssl
+import click
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -15,6 +18,7 @@ from techknacq.readinglist import ReadingList
 app = Flask(__name__)
 CORS(app)
 
+cg = ConceptGraph()
 
 # This has fewer limitations than `timeit`.
 def timed(f):
@@ -119,18 +123,22 @@ def handle_request():
 
     return jsonify(resp)
 
-
-if __name__ == '__main__':
-    if len(sys.argv) < 2:
-        sys.stderr.write('Usage: server [concept graph] ([port])\n')
-        sys.exit(1)
+@click.command()
+@click.argument('concept_graph', type=click.Path(exists=True))
+@click.argument('port', default=9898)
+def main(concept_graph, port):
+    global cg
 
     print('Reading concept graph:', end=' ')
-    cg = ConceptGraph(sys.argv[1])
+    cg = ConceptGraph(click.format_filename(concept_graph))
     print('done.')
 
-    port = 9898
-    if len(sys.argv) == 3:
-        port = int(sys.argv[2])
+    if os.path.exists('server.crt') and os.path.exists('server.key'):
+        context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+        context.load_cert_chain('server.crt', 'server.key')
+        app.run(debug=True, host='0.0.0.0', port=port, ssl_context=context)
+    else:
+        app.run(debug=True, host='0.0.0.0', port=port)
 
-    app.run(debug=True, host='0.0.0.0', port=port)
+if __name__ == '__main__':
+    main()
