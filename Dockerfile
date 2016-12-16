@@ -12,14 +12,13 @@ RUN echo deb http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main \
     | tee /etc/apt/sources.list.d/webupd8team-java.list
 RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886
 
-RUN apt-get update -q -y --fix-missing
-RUN apt-get upgrade -q -y --fix-missing
-
-RUN apt-get install -q -y --fix-missing wget bzip2 git g++ make enchant \
-        poppler-utils
-
-RUN echo debconf shared/accepted-oracle-license-v1-1 select true | \
-    debconf-set-selections && \
+# This is all one command to avoid cache issues.
+RUN apt-get update -q -y --fix-missing && \
+    apt-get upgrade -q -y --fix-missing && \
+    apt-get install -q -y --fix-missing wget bzip2 git g++ make enchant \
+        poppler-utils && \
+    echo debconf shared/accepted-oracle-license-v1-1 select true | \
+        debconf-set-selections && \
     apt-get install -q -y --fix-missing oracle-java8-installer \
         oracle-java8-set-default maven
 
