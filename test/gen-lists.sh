@@ -48,3 +48,67 @@ echo
 ../reading-list $1 machine learning
 
 echo
+echo
+
+echo "# Concept-to-Text Generation"
+echo
+
+../reading-list $1 concept-to-text generation
+
+echo
+echo
+
+echo "# Distributional Semantics"
+echo
+
+../reading-list $1 distributional semantics
+
+echo
+echo
+
+echo "# Domain Adaptation"
+echo
+
+../reading-list $1 domain adaptation
+
+echo
+echo
+
+echo "# Information Extraction"
+echo
+
+../reading-list $1 information extraction
+
+echo
+echo
+
+echo "# Lexical Semantics"
+echo
+
+../reading-list $1 lexical semantics
+
+echo
+echo
+
+echo "# Parser Evaluation"
+echo
+
+../reading-list $1 parser evaluation
+
+echo
+echo
+
+echo "# Statistical Machine Translation Models"
+echo
+
+../reading-list $1 statistical machine translation models
+
+echo
+echo
+
+echo "# Statistical Parsing"
+echo
+
+../reading-list $1 statistical parsing
+
+echo
