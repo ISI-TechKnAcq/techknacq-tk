@@ -55,10 +55,10 @@ li {
 <body>
 <h1>Reading List</h1>""")
 
-    if output_format == 'html':
-        print('<h2>Beginner</h2>')
-    else:
-        print('Beginner:')
+#    if output_format == 'html':
+#        print('<h2>Beginner</h2>')
+#    else:
+#        print('Beginner:')
     beginner_model = {}
     for c in cg.concepts():
         beginner_model[c] = BEGINNER
@@ -67,15 +67,15 @@ li {
 
     print()
 
-    if output_format == 'html':
-        print('<h2>Advanced</h2>')
-    else:
-        print('Advanced:')
-    advanced_model = {}
-    for c in cg.concepts():
-        advanced_model[c] = ADVANCED
-    r = ReadingList(cg, query, advanced_model)
-    r.print(format=output_format)
+#    if output_format == 'html':
+#        print('<h2>Advanced</h2>')
+#    else:
+#        print('Advanced:')
+#    advanced_model = {}
+#    for c in cg.concepts():
+#        advanced_model[c] = ADVANCED
+#    r = ReadingList(cg, query, advanced_model)
+#    r.print(format=output_format)
 
     if format == 'html':
         print('</body></html>')
