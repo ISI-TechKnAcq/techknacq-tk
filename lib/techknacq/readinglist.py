@@ -1,16 +1,17 @@
 # TechKnAcq: Reading List
 # Jonathan Gordon
 
-from nltk.stem import WordNetLemmatizer
+from collections import defaultdict
+from nltk.stem.lancaster import LancasterStemmer
 
 from techknacq.conceptgraph import ConceptGraph
 
 
 # Parameters
 
-THRESHOLD = 0.002
-MAX_MATCHES = 5
-MAX_DEPTH = 5
+THRESHOLD = .5
+MAX_MATCHES = 6
+MAX_DEPTH = 4
 
 # User model constants
 # The values are for interfacing with techknacq-server.
@@ -24,7 +25,7 @@ class ReadingList:
     def __init__(self, cg, query, user_model=None, docs=True):
         self.cg = cg
 
-        self.query = set(query)
+        self.query = ' '.join(query).lower().split()
 
         self.user_model = user_model
         if self.user_model is None:
@@ -32,9 +33,9 @@ class ReadingList:
             for c in cg.concepts():
                 self.user_model[c] = BEGINNER
 
-        self.lemmatizer = WordNetLemmatizer()
-        self.query_lemmas = set([self.lemmatizer.lemmatize(x)
-                                 for x in self.query])
+        self.stemmer = LancasterStemmer()
+        self.query_words = [(x, self.stemmer.stem(x))
+                            for x in self.query]
 
         self.covered_concepts = set()
         self.covered_documents = set()
@@ -101,18 +102,19 @@ class ReadingList:
         # First compute any dependencies we'll include in the reading list
         # so we know which documents we want to include at this level.
         for dep, dep_weight in sorted(self.cg.topic_deps(c),
-                                      key=lambda x:
-                                      score*x[1] + self.relevance[x[0]],
-                                      reverse=True)[:MAX_MATCHES]:
+                                      key=lambda x: x[1],
+                                      reverse=True)[:50]:
             dep_discount = 1
             if self.user_model[c] == INTERMEDIATE:
                 dep_discount = 2
             elif self.user_model[c] == ADVANCED:
                 dep_discount = 10
-            dep_entry = self.traverse(dep, score*dep_weight/dep_discount +
+            dep_entry = self.traverse(dep, score * dep_weight/dep_discount +
                                       self.relevance[dep], depth+1)
             if dep_entry:
                 entry['subconcepts'].append(dep_entry)
+            if len(entry['subconcepts']) >= MAX_MATCHES:
+                break
 
         if not self.docs:
             return entry
@@ -140,7 +142,8 @@ class ReadingList:
         #
 
         doc2_count = 0
-        if entry['subconcepts'] or self.user_model[c] == ADVANCED:
+        if entry['subconcepts'] or depth == 1 or \
+           self.user_model[c] == ADVANCED:
             sorted_docs = self.best_docs(c, ['empirical', 'tutorial',
                                              'resource', 'manual', 'survey',
                                              'reference'])
@@ -153,7 +156,9 @@ class ReadingList:
                 self.covered_documents.add(doc_id)
                 self.covered_titles.add(self.cg.g.node[doc_id]['title'])
                 doc2_count += 1
-                if self.user_model[c] != ADVANCED or doc2_count == 2:
+                if ((depth > 1 or entry['subconcepts']) and
+                    self.user_model[c] != ADVANCED) or \
+                   doc2_count == 2:
                     break
 
         return entry
@@ -238,8 +243,9 @@ class ReadingList:
         if format == 'html':
             print('<a href="' + self.cg.g.node[doc_id]['url'] + '">')
 
-        if len(self.cg.g.node[doc_id]['title']) > 70:
-            print('  '*depth + '  ' + self.cg.g.node[doc_id]['title'][:70] +
+        if len(self.cg.g.node[doc_id]['title']) > 70 - 2 * depth:
+            print('  '*depth + '  ' +
+                  self.cg.g.node[doc_id]['title'][:70 - 2 * depth].strip() +
                   '...')
         else:
             print('  '*depth + '  ' + self.cg.g.node[doc_id]['title'])
@@ -251,30 +257,42 @@ class ReadingList:
             print('</li>')
 
 
-    def score_match(self, c, fuzzy=False):
+    def score_match(self, c):
         """Score the relevance of a concept to a query based on lexical
-        overlap. If `fuzzy` is False, use strict matching rather than
-        lemmatizing."""
+        overlap."""
 
-        mentions = self.cg.g.node[c]['mentions']
-        score = 0.0
-        for word, weight in self.cg.g.node[c]['words']:
-            # Each match is scored as the % of distinct words the query
-            # and the feature share * weight of the feature in the topic, e.g.,
-            # - Query: 'knowledge'
-            #   Topic feature: ('knowledge_base', 323)
-            #   Return: (1/2) * (323 / topic_mentions)
-            # - Query: 'knowledge base generation'
-            #   Topic feature: ('data base', 323)
-            #   Return: (1/4) * (323 / topic_mentions)
-            words = set(word.split('_'))
-            all_words = self.query | words
-            common = self.query & words
-            score += (len(common)/len(all_words)) * (weight/mentions)
-            if fuzzy:
-                words_lemmas = set([self.lemmatizer.lemmatize(x)
-                                    for x in words])
-                all_words = self.query_lemmas | words_lemmas
-                common = self.query_lemmas & words_lemmas
-                score += .75 * (len(common)/len(all_words)) * (weight/mentions)
-        return score
+        concept_words = [([(x, self.stemmer.stem(x)) for x in
+                           ngram.split('_')],
+                          ngram_count/self.cg.g.node[c]['mentions'])
+                         for ngram, ngram_count in self.cg.g.node[c]['words']]
+
+        matches = defaultdict(float)
+        bonus = 0.0
+
+        for ngram, weight in concept_words:
+            for query_word, query_lemma in self.query_words:
+                if query_word in [x[0] for x in ngram]:
+                    matches[query_word] += weight
+                elif set([query_word, query_lemma]) & set(ngram[0] + ngram[1]):
+                    matches[query_word] += 0.75 * weight
+            # If the ngram in the concept model is a subset of the query,
+            # e.g., 'hidden markov' in 'hidden markov model', apply a bonus.
+            if ' '.join([x[0] for x in ngram]) in \
+               ' '.join([x[0] for x in self.query_words]):
+                bonus += weight
+
+        # If the query is part of the name a human annotator gave to the
+        # topic, give it a bonus.
+        if ' '.join([x[0] for x in self.query_words]) in \
+           self.cg.g.node[c].get('name', '').lower():
+            bonus += .75
+        else:
+            lemma_overlap = \
+                set([x[1] for x in self.query_words]) & \
+                set([self.stemmer.stem(x) for x in
+                     self.cg.g.node[c].get('name', '').lower().split()])
+            # Partial credit
+            bonus += .5 * len(lemma_overlap)
+
+        return sum(matches.values()) * len(matches)/len(self.query_words) + \
+               bonus
