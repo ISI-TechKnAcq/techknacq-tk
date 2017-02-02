@@ -123,6 +123,11 @@ class ReadingList:
         # Documents to print before any dependencies:
         #
 
+        doc1_to_print = 4 - depth
+        if entry['subconcepts']:
+            doc1_to_print -= 1
+        doc1_to_print = max(doc1_to_print, 1)
+
         if self.user_model[c] != ADVANCED or entry['subconcepts']:
             sorted_docs = self.best_docs(c, ['survey', 'reference',
                                              'tutorial', 'resource',
@@ -135,13 +140,21 @@ class ReadingList:
                 entry['documents1'].append(self.doc_entry(doc_id, doc_weight))
                 self.covered_documents.add(doc_id)
                 self.covered_titles.add(self.cg.g.node[doc_id]['title'])
-                break
+                if len(entry['documents1']) == doc1_to_print:
+                    break
 
         #
         # Documents to print after any dependencies:
         #
 
-        doc2_count = 0
+        doc2_to_print = 4 - depth
+        if self.user_model[c] == BEGINNER:
+            doc2_to_print -= 1
+        if entry['subconcepts'] or self.user_model[c] == ADVANCED:
+            doc2_to_print = max(doc2_to_print, 1)
+        else:
+            doc2_to_print = max(doc2_to_print, 0)
+
         if entry['subconcepts'] or depth == 1 or \
            self.user_model[c] == ADVANCED:
             sorted_docs = self.best_docs(c, ['empirical', 'tutorial',
@@ -155,10 +168,7 @@ class ReadingList:
                 entry['documents2'].append(self.doc_entry(doc_id, doc_weight))
                 self.covered_documents.add(doc_id)
                 self.covered_titles.add(self.cg.g.node[doc_id]['title'])
-                doc2_count += 1
-                if ((depth > 1 or entry['subconcepts']) and
-                    self.user_model[c] != ADVANCED) or \
-                   doc2_count == 2:
+                if len(entry['documents2']) == doc2_to_print:
                     break
 
         return entry
