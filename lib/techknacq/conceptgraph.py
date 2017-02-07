@@ -29,12 +29,13 @@ class ConceptGraph:
         and add edges for any citation information."""
 
         for doc in corpus:
-            if len(doc.text().split()) < 300:
+            doc_length = len(doc.text().split())
+            if doc_length < 300:
                 continue
             self.g.add_node(doc.id, type='document', authors=doc.authors,
                             title=doc.title, book=doc.book, year=doc.year,
                             url=doc.url, abstract=doc.get_abstract(),
-                            roles=doc.roles)
+                            length=doc_length, roles=doc.roles)
             for ref in doc.references:
                 self.g.add_edge(doc.id, ref, type='cite')
 
@@ -78,7 +79,7 @@ class ConceptGraph:
                 self.g.node[n].get('type', '') == 'document')
 
 
-    def topic_docs(self, topic_id, min=20, max=400, threshold=0.8):
+    def topic_docs(self, topic_id, min=25, max=200, threshold=0.8):
         """Return a sorted list of (document_id, weight) pairs for the
         documents that are most relevant to the specified topic_id,
         including the top `min` most relevant, and all others above
@@ -161,6 +162,7 @@ class ConceptGraph:
                                 title=d['title'], book=d['book'],
                                 year=d['year'], url=d['url'],
                                 abstract=d['abstractText'],
+                                length=d.get('length', 0),
                                 roles=d.get('roles', {}))
                 for cited in d.get('cites', []):
                     self.g.add_edge(d['id'], cited, type='cite')
@@ -236,6 +238,7 @@ class ConceptGraph:
                      'year': self.g.node[doc_id]['year'],
                      'abstractText': self.g.node[doc_id]['abstract'],
                      'cites': [],  # self.doc_cites(doc_id),
+                     'length': self.g.node[doc_id].get('length', 0),
                      'roles': self.g.node[doc_id].get('roles', {})}
             j['corpus']['docs'].append(j_doc)
 

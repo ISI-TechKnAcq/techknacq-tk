@@ -1,6 +1,8 @@
 # TechKnAcq: Reading List
 # Jonathan Gordon
 
+import math
+
 from collections import defaultdict
 from nltk.stem.lancaster import LancasterStemmer
 
@@ -61,8 +63,7 @@ class ReadingList:
             roles = ['reference', 'survey', 'tutorial', 'resource',
                      'empirical', 'manual']
 
-        # 1. Find the 20 most relevant documents for the topic, and expand
-        #    with any additional documents whose relevance is > 0.8.
+        # 1. Find the most relevant documents for the topic.
 
         docs = self.cg.topic_docs(c)
 
@@ -75,10 +76,11 @@ class ReadingList:
             score = 0.0
             for i, role in enumerate(role_order):
                 score += (1.0 - i*.15) * doc_roles.get(role, 0)
-            return score
+            if self.cg.g.node[doc].get('length', 0) == 0:
+                return score
+            return score * math.log(self.cg.g.node[doc]['length'])
 
         docs.sort(key=lambda x: ped_role_score(x[0], roles), reverse=True)
-
 
         return docs
 
