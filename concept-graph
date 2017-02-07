@@ -252,7 +252,7 @@ def main(corpusdir, topic_prefix, method, threshold, num_topics):
             model.infer_topics(mallet_corpus)
 
     if os.path.exists('data/alt-dt.txt'):
-        print('Loading alternate doc-topic composition.')
+        print('Loading alternative document-topic composition.')
         new_dt = [{} for n in range(len(model.topics))]
         for line in open('data/alt-dt.txt'):
             elts = line.strip().split('\t')
@@ -265,9 +265,7 @@ def main(corpusdir, topic_prefix, method, threshold, num_topics):
             vals = dict(model.topic_doc[i])
             for v in set(vals.keys()) | set(new_dt[i].keys()):
                 if v in vals and v in new_dt[i]:
-                    vals[v] *= new_dt[i][v]
-                else:
-                    vals[v] = 0.0
+                    vals[v] = (vals[v] + new_dt[i][v])/2.0
             model.topic_doc[i] = sorted(vals.items(), key=lambda x: x[1],
                                         reverse=True)
 
