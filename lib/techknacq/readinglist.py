@@ -1,6 +1,7 @@
 # TechKnAcq: Reading List
 # Jonathan Gordon
 
+import sys
 import math
 
 from collections import defaultdict
@@ -208,7 +209,7 @@ class ReadingList:
                 print('<dt>%s &ndash; %.4f</dt>' % (entry['name'],
                                                     entry['score']))
                 print('<dd>')
-            else:
+            elif format == 'text':
                 print()
                 print('  '*depth + '%s -- %.4f' % (entry['name'],
                                                    entry['score']))
@@ -221,7 +222,7 @@ class ReadingList:
                 print('</ul>')
 
             self.print(entry['subconcepts'], depth + 1, format=format)
-            if entry['subconcepts']:
+            if entry['subconcepts'] and format == 'text':
                 print()
 
             if format == 'html':
@@ -242,28 +243,39 @@ class ReadingList:
 
         if format == 'html':
             pass
-        else:
+        elif format == 'text':
             print('  '*depth + '-', end=' ')
 
+        authors = ''
         if len(self.cg.g.node[doc_id]['authors']) > 3:
-            print(self.cg.g.node[doc_id]['authors'][0] + ' et al.:')
+            authors = self.cg.g.node[doc_id]['authors'][0] + ' et al.'
         elif self.cg.g.node[doc_id]['authors']:
-            print('; '.join(self.cg.g.node[doc_id]['authors']) + ':')
+            authors = '; '.join(self.cg.g.node[doc_id]['authors'])
         else:
-            print('  '*depth + '- Unknown:')
+            authors = 'Unknown'
 
+        title = ''
         if format == 'html':
-            print('<a href="' + self.cg.g.node[doc_id]['url'] + '">')
+            title = '<a href="' + self.cg.g.node[doc_id]['url'] + '">'
 
         if len(self.cg.g.node[doc_id]['title']) > 70 - 2 * depth:
-            print('  '*depth + '  ' +
-                  self.cg.g.node[doc_id]['title'][:70 - 2 * depth].strip() +
-                  '...')
+            title += '  '*depth + '  ' + \
+                  self.cg.g.node[doc_id]['title'][:70 - 2 * depth].strip() + \
+                  '...'
         else:
-            print('  '*depth + '  ' + self.cg.g.node[doc_id]['title'])
+            title += '  '*depth + '  ' + self.cg.g.node[doc_id]['title']
 
         if format == 'html':
-            print('</a>')
+            title += '</a>'
+
+        if format == 'tsv':
+            print(doc_id + '\t' + title + '\t' + authors + '\t' +
+                  str(self.cg.g.node[doc_id]['year']) + '\t' +
+                  self.cg.g.node[doc_id]['book'] + '\t' +
+                  self.cg.g.node[doc_id]['url'])
+        else:
+            print(authors + ':')
+            print(title)
 
         if format == 'html':
             print('</li>')
