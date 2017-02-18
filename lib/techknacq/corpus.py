@@ -15,6 +15,7 @@ import ftfy
 from pathlib import Path
 from bs4 import BeautifulSoup
 from xml.sax.saxutils import escape
+from unidecode import unidecode
 from nltk import bigrams
 
 from techknacq.lx import SentTokenizer, StopLexicon, find_short_long_pairs
@@ -163,6 +164,7 @@ class Document:
             except Exception as e:
                 print('Error reading JSON document:', fname, file=sys.stderr)
                 print(e, file=sys.stderr)
+                sys.exit(1)
 
         self.id = j['info'].get('id', '')
         self.authors = [x.strip() for x in j['info'].get('authors', [])]
@@ -494,7 +496,7 @@ class Document:
                 t += '\n'.join(self.get_abstract())
                 break
             t += '\n'.join(s['text'])
-        return filter_non_printable(t)
+        return filter_non_printable(unidecode(t))
 
 
     def bigrams(self, abstract=False, stop=StopLexicon()):
@@ -504,19 +506,21 @@ class Document:
             return any(c.isalpha() for c in w)
 
         def bigrams_from_sent(s):
+            s = unidecode(s)
             ret = ''
             words = []
             for x in re.split(r'[^a-zA-Z0-9_#-]+', s):
-                if len(x) > 0 and not x in stop and not x.lower() in stop:
+                if len(x) > 0 and not x in stop and not x.lower() in stop \
+                   and re.search('[a-zA-Z0-9]', x):
                     words.append(x)
             for w1, w2 in bigrams(words):
                 if good_word(w1) and good_word(w2):
-                    ret += w1.lower() + '_' + w2.lower() + ' '
+                    ret += w1.lower() + '_' + w2.lower() + '\n'
                 if w1[0] == '#' and w1[-1] == '#' and good_word(w1):
-                    ret += w1 + ' '
+                    ret += w1 + '\n'
             if words and words[-1][0] == '#' and words[-1][-1] == '#' and \
                good_word(words[-1]):
-                ret += words[-1] + ' '
+                ret += words[-1] + '\n'
             return ret
 
         out = bigrams_from_sent(self.title)
@@ -539,7 +543,7 @@ def filter_non_printable(s):
 
 def title_case(s):
     for word in ['And', 'The', 'Of', 'From', 'To', 'In', 'For', 'A', 'An',
-                 'On']:
+                 'On', 'Is', 'As']:
         s = re.sub('([A-Za-z]) ' + word + ' ', r'\1 ' + word.lower() + ' ', s)
     return s
 

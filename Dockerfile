@@ -40,7 +40,7 @@ RUN conda update -y conda
 
 RUN conda install numpy nltk beautifulsoup4 lxml networkx flask flask-cors \
                   click
-RUN pip install pyenchant ftfy noaho wikipedia
+RUN pip install pyenchant ftfy noaho wikipedia unidecode
 
 
 # Install NLTK data.
