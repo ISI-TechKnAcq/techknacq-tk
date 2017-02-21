@@ -2,6 +2,7 @@
 
 import sys
 import os
+
 from pathlib import Path
 
 from mallet import Mallet
@@ -25,6 +26,8 @@ def alt_dt(model, corpus, fout):
             print('Topic', topic)
         max_score = 0.0
         for doc in corpus:
+            if len(corpus[doc]) == 0:
+                continue
             scores[topic][doc] = 0.0
             for word in corpus[doc]:
                 scores[topic][doc] += model.topics[topic].get(word, 0.0)
@@ -54,7 +57,8 @@ if __name__ == '__main__':
     corpus = {}
     for doc in (str(f) for f in Path(sys.argv[1]).iterdir() if f.is_file()):
         doc_id = os.path.basename(doc).replace('.txt', '')
-        corpus[doc_id] = open(doc).read().split()
+        if doc_id and doc_id != ' ':
+            corpus[doc_id] = open(doc).read().split()
 
     print('Read corpus of size', len(corpus))
 
