@@ -22,7 +22,7 @@ from techknacq.lx import SentTokenizer, StopLexicon, find_short_long_pairs
 
 class Corpus:
     def __init__(self, dirname=None, pool=None, fname=None):
-        self.docs = set()
+        self.docs = {}
 
         if fname:
             # Read a BioC corpus file.
@@ -45,21 +45,32 @@ class Corpus:
             self.read_roles('data/pedagogical-roles.txt')
 
     def clear(self):
-        self.docs = set()
+        self.docs = {}
 
     def add(self, doc):
-        self.docs.add(doc)
+        doc.corpus = self
+        self.docs[doc.id] = doc
 
     def __ior__(self, other):
-        self.docs |= other.docs
+        for doc in other:
+            self.add(doc)
         return self
 
     def __iter__(self):
-        for doc in self.docs:
-            yield doc
+        for doc_id in self.docs:
+            yield self.docs[doc_id]
+
+    def __getitem__(self, key):
+        return self.docs[key]
+
+    def __setitem__(self, key, item):
+        self.docs[key] = item
+
+    def __contains__(self, key):
+        return key in self.docs
 
     def fix_text(self):
-        for doc in self.docs:
+        for doc in self:
             doc.dehyphenate()
             #doc.expand_short_forms()
 
@@ -105,7 +116,7 @@ class Corpus:
                'empirical': float(vals[5]),
                'manual': float(vals[6]),
                'other': float(vals[7])}
-        for doc in self.docs:
+        for doc in self:
             short_id = doc.id.lower()
             short_id = short_id.replace('acl-', '')
             short_id = short_id.replace('wiki-', '')
@@ -121,6 +132,15 @@ class Corpus:
                                  'empirical': 0.0,
                                  'manual': 0.0,
                                  'other': 0.0}
+            elif 'web-' in doc.id or \
+                 'Tutorials' in doc.book:
+                doc.roles = {'survey': 0.1,
+                             'tutorial': 0.6,
+                             'resource': 0.0,
+                             'reference': 0.0,
+                             'empirical': 0.0,
+                             'manual': 0.2,
+                             'other': 0.1}
             elif 'acl-' in doc.id:
                 doc.roles = {'survey': 0.0,
                              'tutorial': 0.0,
@@ -136,14 +156,6 @@ class Corpus:
                              'reference': 0.7,
                              'empirical': 0.0,
                              'manual': 0.0,
-                             'other': 0.1}
-            elif 'web-' in doc.id:
-                doc.roles = {'survey': 0.1,
-                             'tutorial': 0.6,
-                             'resource': 0.0,
-                             'reference': 0.0,
-                             'empirical': 0.0,
-                             'manual': 0.2,
                              'other': 0.1}
 
 
@@ -175,6 +187,7 @@ class Document:
         self.references = set(j.get('references', []))
         self.sections = j.get('sections', [])
         self.roles = {}
+        self.corpus = None
 
         if fname and format == 'text':
             st = SentTokenizer()
@@ -482,21 +495,34 @@ class Document:
 
     def text(self, abstract=False):
         """Return a plain-text string representing the document."""
-        t = self.title + '\n\n'
+        out = self.title + '.\n'
+        out += self.title + '.\n'
 
         for author in self.authors:
-            t += author + '\n\n'
+            if author == 'Wikipedia':
+                continue
+            out += author + '.\n'
 
-        t += self.book + '\n' + str(self.year) + '\n\n'
+        out += self.book + '\n' + str(self.year) + '\n\n'
 
-        for s in self.sections:
-            if 'heading' in s and s['heading']:
-                t += '\n\n' + s['heading'] + '\n\n'
-            if abstract:
-                t += '\n'.join(self.get_abstract())
-                break
-            t += '\n'.join(s['text'])
-        return filter_non_printable(unidecode(t))
+        if abstract:
+            out += '\n'.join(self.get_abstract())
+        else:
+            for sect in self.sections:
+                if 'heading' in sect and sect['heading']:
+                    out += '\n\n' + sect['heading'] + '\n\n'
+                out += '\n'.join(sect['text']) + '\n'
+
+        for ref_id in sorted(list(self.references)):
+            if not ref_id in self.corpus:
+                continue
+            out += '\n'
+            for author in self.corpus[ref_id].authors:
+                if author == 'Wikipedia':
+                    continue
+                out += author + '.\n'
+            out += self.corpus[ref_id].title + '.\n'
+        return filter_non_printable(unidecode(out))
 
 
     def bigrams(self, abstract=False, stop=StopLexicon()):
@@ -524,16 +550,32 @@ class Document:
             return ret
 
         out = bigrams_from_sent(self.title)
+        out += bigrams_from_sent(self.title)
+
         for author in self.authors:
+            if author == 'Wikipedia':
+                continue
             out += bigrams_from_sent(author)
+
         out += bigrams_from_sent(self.book)
-        for sect in self.sections:
-            if 'heading' in sect and sect['heading']:
-                out += bigrams_from_sent(sect['heading'])
-            for sent in sect['text']:
-                out += bigrams_from_sent(sent)
-            if abstract:
-                break
+
+        if abstract:
+            out += bigrams_from_sent(sent)
+        else:
+            for sect in self.sections:
+                if 'heading' in sect and sect['heading']:
+                    out += bigrams_from_sent(sect['heading'])
+                for sent in sect['text']:
+                    out += bigrams_from_sent(sent)
+
+        for ref_id in sorted(list(self.references)):
+            if not ref_id in self.corpus:
+                continue
+            for author in self.corpus[ref_id].authors:
+                if author == 'Wikipedia':
+                    continue
+                out += bigrams_from_sent(author)
+            out += bigrams_from_sent(self.corpus[ref_id].title)
 
         return out
 
@@ -543,7 +585,7 @@ def filter_non_printable(s):
 
 def title_case(s):
     for word in ['And', 'The', 'Of', 'From', 'To', 'In', 'For', 'A', 'An',
-                 'On', 'Is', 'As']:
+                 'On', 'Is', 'As', 'At']:
         s = re.sub('([A-Za-z]) ' + word + ' ', r'\1 ' + word.lower() + ' ', s)
     return s
 
