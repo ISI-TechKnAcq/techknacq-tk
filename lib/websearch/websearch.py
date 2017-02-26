@@ -92,25 +92,21 @@ class WebPage:
         self.url = None
         self.title = None
 
-        try:
-            if 'link' in j:
-                self.url = j['link']
-            elif 'Url' in j:
-                self.url = j['Url']
-            else:
-                print('WebPage has no URL.', j, file=sys.stderr)
-                return None
+        if 'link' in j:
+            self.url = j['link']
+        elif 'Url' in j:
+            self.url = j['Url']
+        else:
+            print('WebPage has no URL.', j, file=sys.stderr)
+            return None
 
-            if 'title' in j:
-                self.title = j['title']
-            elif 'Title' in j:
-                self.title = j['Title']
-            else:
-                print('WebPage has no title.', j, file=sys.stderr)
-                return None
+        if 'title' in j:
+            self.title = j['title']
+        elif 'Title' in j:
+            self.title = j['Title']
+        else:
+            print('WebPage has no title.', j, file=sys.stderr)
+            return None
 
-            if 'snippet' in j:
-                self.description = j['snippet']
-        except:
-            print('WebPage Error: Bad JSON:', file=sys.stderr)
-            print(j, file=sys.stderr)
+        if 'snippet' in j:
+            self.description = j['snippet']

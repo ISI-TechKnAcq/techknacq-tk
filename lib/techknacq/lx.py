@@ -83,7 +83,7 @@ def find_short_long_pairs(sent):
             sh_char = sh[sh_index].lower()
             try:
                 lo_char = lo[lo_index].lower()
-            except:
+            except IndexError:
                 return
             if not sh_char.isalnum():
                 sh_index -= 1
