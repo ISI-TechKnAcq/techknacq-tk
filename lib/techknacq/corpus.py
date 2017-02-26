@@ -560,7 +560,8 @@ class Document:
         out += bigrams_from_sent(self.book)
 
         if abstract:
-            out += bigrams_from_sent(sent)
+            for sent in self.get_abstract():
+                out += bigrams_from_sent(sent)
         else:
             for sect in self.sections:
                 if 'heading' in sect and sect['heading']:
