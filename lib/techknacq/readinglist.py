@@ -1,13 +1,10 @@
 # TechKnAcq: Reading List
 # Jonathan Gordon
 
-import sys
 import math
 
 from collections import defaultdict
 from nltk.stem.lancaster import LancasterStemmer
-
-from techknacq.conceptgraph import ConceptGraph
 
 
 # Parameters
@@ -134,7 +131,7 @@ class ReadingList:
         if self.user_model[c] != ADVANCED or entry['subconcepts']:
             sorted_docs = self.best_docs(c, ['survey', 'reference',
                                              'tutorial', 'resource',
-                                             'manual', 'empirical'])
+                                             'manual', 'empirical', 'other'])
             for doc_id, doc_weight in sorted_docs:
                 if doc_id in self.covered_documents or \
                    self.cg.g.node[doc_id]['title'] in self.covered_titles:
@@ -162,7 +159,7 @@ class ReadingList:
            self.user_model[c] == ADVANCED:
             sorted_docs = self.best_docs(c, ['empirical', 'tutorial',
                                              'resource', 'manual', 'survey',
-                                             'reference'])
+                                             'reference', 'other'])
             for doc_id, doc_weight in sorted_docs:
                 if doc_id in self.covered_documents or \
                    self.cg.g.node[doc_id]['title'] in self.covered_titles:
@@ -197,53 +194,53 @@ class ReadingList:
             yield concept
             yield from self.all_concepts(concept['subconcepts'])
 
-    def print(self, rl=None, depth=1, format='text'):
+    def print(self, rl=None, depth=1, form='text'):
         if rl is None:
             rl = self.rl
 
-        if format == 'html':
+        if form == 'html':
             print('<dl>')
 
         for entry in rl:
-            if format == 'html':
+            if form == 'html':
                 print('<dt>%s &ndash; %.4f</dt>' % (entry['name'],
                                                     entry['score']))
                 print('<dd>')
-            elif format == 'text':
+            elif form == 'text':
                 print()
                 print('  '*depth + '%s -- %.4f' % (entry['name'],
                                                    entry['score']))
 
-            if format == 'html':
+            if form == 'html':
                 print('<ul>')
             for doc in entry['documents1']:
-                self.print_doc(doc['id'], depth, format=format)
-            if format == 'html':
+                self.print_doc(doc['id'], depth, form=form)
+            if form == 'html':
                 print('</ul>')
 
-            self.print(entry['subconcepts'], depth + 1, format=format)
-            if entry['subconcepts'] and format == 'text':
+            self.print(entry['subconcepts'], depth + 1, form=form)
+            if entry['subconcepts'] and form == 'text':
                 print()
 
-            if format == 'html':
+            if form == 'html':
                 print('<ul>')
             for doc in entry['documents2']:
-                self.print_doc(doc['id'], depth, format=format)
-            if format == 'html':
+                self.print_doc(doc['id'], depth, form=form)
+            if form == 'html':
                 print('</ul>')
                 print('</dd>')
 
-        if format == 'html':
+        if form == 'html':
             print('</dl>')
 
 
-    def print_doc(self, doc_id, depth, format='text'):
-        if format == 'html':
+    def print_doc(self, doc_id, depth, form='text'):
+        if form == 'html':
             print('<li>')
 
-        if format == 'html':
+        if form == 'html':
             pass
-        elif format == 'text':
+        elif form == 'text':
             print('  '*depth + '-', end=' ')
 
         authors = ''
@@ -255,7 +252,7 @@ class ReadingList:
             authors = 'Unknown'
 
         title = ''
-        if format == 'html':
+        if form == 'html':
             title = '<a href="' + self.cg.g.node[doc_id]['url'] + '">'
 
         if len(self.cg.g.node[doc_id]['title']) > 70 - 2 * depth:
@@ -265,10 +262,10 @@ class ReadingList:
         else:
             title += '  '*depth + '  ' + self.cg.g.node[doc_id]['title']
 
-        if format == 'html':
+        if form == 'html':
             title += '</a>'
 
-        if format == 'tsv':
+        if form == 'tsv':
             print(doc_id + '\t' + title + '\t' + authors + '\t' +
                   str(self.cg.g.node[doc_id]['year']) + '\t' +
                   self.cg.g.node[doc_id]['book'] + '\t' +
@@ -277,7 +274,7 @@ class ReadingList:
             print(authors + ':')
             print(title)
 
-        if format == 'html':
+        if form == 'html':
             print('</li>')
 
 

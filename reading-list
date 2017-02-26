@@ -17,14 +17,14 @@ INTERMEDIATE = 2
 ADVANCED = 3
 
 @click.command()
-@click.option('--format', default='text',
+@click.option('--form', default='text',
               type=click.Choice(['text', 'html', 'tsv']))
 @click.argument('concept_graph', type=click.Path(exists=True))
 @click.argument('query', nargs=-1)
-def main(concept_graph, query, format):
+def main(concept_graph, query, form):
     cg = ConceptGraph(click.format_filename(concept_graph))
 
-    if format == 'html':
+    if form == 'html':
         print("""
 <html>
 <head>
@@ -55,7 +55,7 @@ li {
 <body>
 <h1>Reading List</h1>""")
 
-#    if format == 'html':
+#    if form == 'html':
 #        print('<h2>Beginner</h2>')
 #    else:
 #        print('Beginner:')
@@ -63,11 +63,11 @@ li {
     for c in cg.concepts():
         beginner_model[c] = BEGINNER
     r = ReadingList(cg, query, beginner_model)
-    r.print(format=format)
+    r.print(form=form)
 
     print()
 
-#    if format == 'html':
+#    if form == 'html':
 #        print('<h2>Advanced</h2>')
 #    else:
 #        print('Advanced:')
@@ -75,9 +75,9 @@ li {
 #    for c in cg.concepts():
 #        advanced_model[c] = ADVANCED
 #    r = ReadingList(cg, query, advanced_model)
-#    r.print(format=format)
+#    r.print(form=form)
 
-    if format == 'html':
+    if form == 'html':
         print('</body></html>')
 
 
