@@ -9,7 +9,6 @@ import datetime
 import re
 import multiprocessing as mp
 import enchant
-import ast
 import ftfy
 
 from pathlib import Path
@@ -74,28 +73,28 @@ class Corpus:
             doc.dehyphenate()
             #doc.expand_short_forms()
 
-    def export(self, dest, abstract=False, format='json'):
-        if format not in ['json', 'bioc', 'text', 'bigrams']:
-            print('Unrecognized format for export', format, file=sys.stderr)
+    def export(self, dest, abstract=False, form='json'):
+        if form not in ['json', 'bioc', 'text', 'bigrams']:
+            print('Unrecognized form for export', form, file=sys.stderr)
             sys.exit(1)
 
-        if format == 'bigrams':
+        if form == 'bigrams':
             stop = StopLexicon()
 
         for d in self:
-            if format == 'json':
+            if form == 'json':
                 with io.open(os.path.join(dest, d.id + '.json'), 'w',
                              encoding='utf-8') as out:
                     out.write(d.json(abstract) + '\n')
-            elif format == 'bioc':
+            elif form == 'bioc':
                 with io.open(os.path.join(dest, d.id + '.xml'), 'w',
                              encoding='utf-8') as out:
                     out.write(d.bioc(abstract) + '\n')
-            elif format == 'text':
+            elif form == 'text':
                 with io.open(os.path.join(dest, d.id + '.txt'), 'w',
                              encoding='utf-8') as out:
                     out.write(d.text(abstract) + '\n')
-            elif format == 'bigrams':
+            elif form == 'bigrams':
                 with io.open(os.path.join(dest, d.id + '.txt'), 'w',
                              encoding='utf-8') as out:
                     out.write(d.bigrams(abstract, stop) + '\n')
@@ -160,17 +159,17 @@ class Corpus:
 
 
 class Document:
-    def __init__(self, fname=None, format=None):
-        if fname and not format:
+    def __init__(self, fname=None, form=None):
+        if fname and not form:
             if 'json' in fname:
-                format = 'json'
+                form = 'json'
             elif 'xml' in fname:
-                format = 'sd'
+                form = 'sd'
             elif 'txt' in fname:
-                format = 'text'
+                form = 'text'
 
         j = {'info': {}}
-        if fname and format == 'json':
+        if fname and form == 'json':
             try:
                 j = json.load(io.open(fname, 'r', encoding='utf-8'))
             except Exception as e:
@@ -189,10 +188,10 @@ class Document:
         self.roles = {}
         self.corpus = None
 
-        if fname and format == 'text':
+        if fname and form == 'text':
             st = SentTokenizer()
             self.sections = [{'text': st.tokenize(open(fname).read())}]
-        elif fname and format == 'sd':
+        elif fname and form == 'sd':
             self.read_sd(fname)
 
 

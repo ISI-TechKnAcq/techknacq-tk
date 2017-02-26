@@ -5,4 +5,4 @@ import sys
 from techknacq.corpus import Corpus, Document
 
 c = Corpus(sys.argv[1])
-c.export(sys.argv[2], format='bigrams')
+c.export(sys.argv[2], form='bigrams')

@@ -235,7 +235,7 @@ def main(corpusdir, topic_prefix, method, threshold, num_topics):
         print('Generating topic model.')
         mallet_corpus = prefix + 'corpus'
         os.makedirs(mallet_corpus)
-        corpus.export(mallet_corpus, abstract=False, format='text')
+        corpus.export(mallet_corpus, abstract=False, form='text')
         model = Mallet(MALLET_PATH, mallet_corpus, num_topics=num_topics,
                        iters=LDA_ITERATIONS, bigrams=True)
     else:
@@ -248,7 +248,7 @@ def main(corpusdir, topic_prefix, method, threshold, num_topics):
             print('Inferring topics for corpus documents.')
             mallet_corpus = prefix + 'corpus'
             os.makedirs(mallet_corpus)
-            corpus.export(mallet_corpus, abstract=False, format='text')
+            corpus.export(mallet_corpus, abstract=False, form='text')
             model.infer_topics(mallet_corpus)
 
     if os.path.exists('data/alt-dt.txt'):
