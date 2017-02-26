@@ -15,12 +15,12 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886
 # This is all one command to avoid cache issues.
 RUN apt-get update -q -y --fix-missing && \
     apt-get upgrade -q -y --fix-missing && \
-    apt-get install -q -y --fix-missing wget bzip2 git g++ make enchant \
-        poppler-utils && \
+    apt-get install -q -y --fix-missing --no-install-recommends \
+        wget bzip2 git g++ make enchant poppler-utils && \
     echo debconf shared/accepted-oracle-license-v1-1 select true | \
         debconf-set-selections && \
-    apt-get install -q -y --fix-missing oracle-java8-installer \
-        oracle-java8-set-default maven
+    apt-get install -q -y --fix-missing --no-install-recommends \
+        oracle-java8-installer oracle-java8-set-default maven
 
 RUN apt-get clean -q
 
@@ -93,7 +93,7 @@ RUN git clone https://github.com/ISI-TechKnAcq/techknacq-core.git && \
 # Check out and compile TechKnAcq Server.
 
 # Copy ssh keys so you can check out the private repository.
-ADD repo-key /t/repo-key
+COPY repo-key /t/repo-key
 RUN chmod 0400 /t/repo-key
 RUN echo "IdentityFile /t/repo-key" >> /etc/ssh/ssh_config && \
     echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
@@ -108,12 +108,12 @@ RUN ln -s /t/data/server/application.properties \
 
 # Add TechKnAcq Toolkit.
 
-ADD lib /t/lib
-ADD build-corpus /t
-ADD concept-graph /t
-ADD reading-list /t
-ADD server /t
-ADD start-server /t
+COPY lib /t/lib
+COPY build-corpus /t
+COPY concept-graph /t
+COPY reading-list /t
+COPY server /t
+COPY start-server /t
 
 ENV PYTHONPATH /t/lib:$PYTHONPATH
 
