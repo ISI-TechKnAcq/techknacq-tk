@@ -17,8 +17,8 @@ from techknacq.lx import StopLexicon
 
 # Parameters
 
-# PROCESSES = int(.5 * mp.cpu_count())
-PROCESSES = 1
+PROCESSES = int(.5 * mp.cpu_count())
+#PROCESSES = 1
 
 OPTIMIZE_INTERVAL = 10
 
