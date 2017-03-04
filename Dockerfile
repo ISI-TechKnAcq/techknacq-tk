@@ -1,4 +1,4 @@
-FROM debian:latest
+FROM debian:8.6
 
 MAINTAINER Jonathan Gordon <jgordon@isi.edu>
 
@@ -14,15 +14,13 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886
 
 # This is all one command to avoid cache issues.
 RUN apt-get update -q -y --fix-missing && \
-    apt-get upgrade -q -y --fix-missing && \
     apt-get install -q -y --fix-missing --no-install-recommends \
         wget bzip2 git g++ make enchant poppler-utils && \
     echo debconf shared/accepted-oracle-license-v1-1 select true | \
         debconf-set-selections && \
     apt-get install -q -y --fix-missing --no-install-recommends \
-        oracle-java8-installer oracle-java8-set-default maven
-
-RUN apt-get clean -q
+        oracle-java8-installer oracle-java8-set-default maven && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN rm -rf /var/cache/oracle-jdk8-installer
 
