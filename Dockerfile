@@ -15,7 +15,7 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886
 # This is all one command to avoid cache issues.
 RUN apt-get update -q -y --fix-missing && \
     apt-get install -q -y --fix-missing --no-install-recommends \
-        wget bzip2 git g++ make enchant poppler-utils && \
+        bzip2 ca-certificates enchant git g++ make poppler-utils ssh wget && \
     echo debconf shared/accepted-oracle-license-v1-1 select true | \
         debconf-set-selections && \
     apt-get install -q -y --fix-missing --no-install-recommends \
@@ -27,10 +27,10 @@ RUN rm -rf /var/cache/oracle-jdk8-installer
 
 # Install Miniconda.
 
-RUN wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh \
-         -O ~/miniconda.sh --quiet && \
-    bash ~/miniconda.sh -b -p /opt/conda && \
-    rm ~/miniconda.sh
+RUN wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh \
+         -O /tmp/miniconda.sh -q && \
+    bash /tmp/miniconda.sh -b -p /opt/conda && \
+    rm /tmp/miniconda.sh
 
 ENV PATH /opt/conda/bin:$PATH
 
