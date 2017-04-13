@@ -9,6 +9,8 @@ import time
 import ssl
 import click
 
+from collections import defaultdict
+
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
@@ -107,19 +109,58 @@ def handle_request():
     doc_index = 0
     for topic in r.rl:
         resp['matchTopics'].append(topic_entry(topic))
+
     # Add dependency edges to the graph in the response for all topic nodes
     # we added.
     topics = set(['concept-' + x['id'] for x in
                   resp['graphResponse']['nodes']])
+
+    edges = defaultdict(dict)
     for topic in topics:
         for dep_id, dep_weight in cg.topic_deps(topic):
             if dep_id in topics:
-                edge = {'from': topic.replace('concept-', ''),
-                        'to': dep_id.replace('concept-', ''),
-                        'value': dep_weight}
-                resp['graphResponse']['edges'].append(edge)
+                node_from = topic.replace('concept-', '')
+                node_to = dep_id.replace('concept-', '')
+                edges[node_from][node_to] = dep_weight
 
-    # print(resp)
+    # Make graph edges unidirectional.
+    new_edges = defaultdict(dict)
+    for node_from in edges:
+        for node_to in edges[node_from]:
+            if node_to in edges and node_from in edges[node_to] and \
+               edges[node_to][node_from] > edges[node_from][node_to]:
+                new_edges[node_to][node_from] = edges[node_to][node_from]
+            else:
+                new_edges[node_from][node_to] = edges[node_from][node_to]
+    edges = dict(new_edges)
+
+    # Perform transitive reduction.
+    remove = []
+    for e1_n1 in edges:
+        for e1_n2 in edges[e1_n1]:
+            for e2_n2 in edges[e1_n1]:
+                if e2_n2 == e1_n2:
+                    continue
+                if e1_n2 in edges.get(e2_n2, []):
+                    remove.append((e1_n1, e1_n2))
+    # Don't disconnect a node.
+    for n1, n2 in remove:
+        edges_to_n2 = 0
+        edges_from_n1 = len(edges[n1])
+        for e in edges:
+            if n2 in edges[e]:
+                edges_to_n2 += 1
+        if edges_to_n2 > 1 and edges_from_n1 > 1:
+            del edges[n1][n2]
+
+    for node_from in edges:
+        for node_to in edges[node_from]:
+            edge = {'from': node_from,
+                    'to': node_to,
+                    'value': edges[node_from][node_to]}
+            resp['graphResponse']['edges'].append(edge)
+
+    #print(resp)
 
     return jsonify(resp)
 
