@@ -84,6 +84,7 @@ class Mallet:
 
         if subprocess.call(cmd) != 0:
             sys.stderr.write('Mallet import-dir failed.\n')
+            print(cmd, file=sys.stderr)
             sys.exit(1)
 
 
