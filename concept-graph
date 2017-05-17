@@ -27,8 +27,8 @@ LDA_ITERATIONS = 1000
 
 
 class TopicDependency:
-    """Python wrapper class for Linhong's Java code for predicting dependencies
-    among LDA topics."""
+    """Python wrapper class for TechKnAcq-Core Java code for predicting
+    dependencies among LDA topics."""
 
     jar = 'ext/techknacq-core/target/techknacq-core.jar'
 
@@ -45,6 +45,8 @@ class TopicDependency:
             doc_comp_file = self.convert_comp_file()
             citation_network_file = self.build_citation_network()
             infomap_tree_file, infomap_flow_file = self.get_infomap()
+
+            print('Computing concept dependencies.')
 
             deps = glob.glob('ext/techknacq-core/target/dependency/*.jar')
 
@@ -127,6 +129,8 @@ class TopicDependency:
         """Convert Mallet composition file to the format needed by the
         topic dependency code."""
 
+        print('Converting Mallet document-topic composition file.')
+
         fname = self.prefix + 'concept2doc.txt'
 
         def pairwise(iterable):
@@ -156,6 +160,7 @@ class TopicDependency:
             print('Using saved infomap output.')
             return 'data/infomap-tree.txt', 'data/infomap-flow.txt'
 
+        print('Building Infomap graphs.')
         treefname = self.prefix + 'infomap-tree.txt'
         flowfname = self.prefix + 'infomap-flow.txt'
 
@@ -201,12 +206,16 @@ class TopicDependency:
             print('Using saved citation network.')
             return 'cite.txt'
 
+        print('Building citation network.')
         fname = self.prefix + 'cite.txt'
 
         with open(fname, 'w') as fout:
-            for doc in self.corpus.docs:
-                for ref in doc.references:
-                    fout.write('%s ==> %s\n' % (doc.id, ref))
+            for doc in self.corpus:
+                try:
+                    for ref in doc.references:
+                        fout.write('%s ==> %s\n' % (doc.id, ref))
+                except:
+                    print('Error with doc', doc)
 
         return fname
 
