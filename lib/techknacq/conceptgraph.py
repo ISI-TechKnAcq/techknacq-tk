@@ -28,6 +28,8 @@ class ConceptGraph:
         """Add each document from the corpus as a node in the ConceptGraph
         and add edges for any citation information."""
 
+        print('Adding documents to concept graph.')
+
         for doc in corpus:
             doc_length = len(doc.text().split())
             if doc_length < 300:
@@ -43,6 +45,8 @@ class ConceptGraph:
     def add_concepts(self, model):
         """Add each topic from the topic model as a node in the
         ConceptGraph."""
+
+        print('Adding concepts to concept graph.')
 
         # Add a concept node for each topic in the model.
         for topic in range(len(model.topics)):
@@ -65,6 +69,7 @@ class ConceptGraph:
 
 
     def add_dependencies(self, edges):
+        print('Adding dependencies to concept graph.')
         for t1 in edges:
             for t2 in edges[t1]:
                 if edges[t1][t2] <= 0.0:
