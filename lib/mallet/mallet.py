@@ -50,7 +50,7 @@ class Mallet:
 
         if os.path.exists(self.tkfile):
             num_topics = len(open(self.tkfile).readlines())
-            print('Found model with', num_topics, 'topics.')
+            print('Read', num_topics, 'topics.')
 
         self.topics = [{} for i in range(num_topics)]
         self.params = [0 for i in range(num_topics)]
@@ -250,6 +250,8 @@ class Mallet:
                           for i in range(num_topics)]
             return
 
+        print('Loading topic names.')
+
         self.names = [''] * num_topics
         for line in open(self.namefile):
             topic, name = line.strip().split('\t', 1)
@@ -266,11 +268,14 @@ class Mallet:
             self.scores = [1.0 for x in self.topics]
             return
 
+        print('Loading topic scores.')
+
         self.scores = []
         for line in open(self.scorefile):
             if line.startswith('Average'):
                 continue
             self.scores.append(float(line))
+
 
     def topic_pairs(self, topic):
         return sorted(self.topics[topic].items(),
