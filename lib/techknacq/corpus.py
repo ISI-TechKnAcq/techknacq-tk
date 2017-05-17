@@ -20,33 +20,35 @@ from nltk import bigrams
 from techknacq.lx import SentTokenizer, StopLexicon, find_short_long_pairs
 
 class Corpus:
-    def __init__(self, dirname=None, pool=None, fname=None):
+    def __init__(self, path=None, pool=None):
         self.docs = {}
 
-        if fname:
+        if os.path.isfile(path):
             # Read a BioC corpus file.
-            j = json.load(open(fname))
+            j = json.load(open(path))
             for d in j['documents']:
                 doc = Document()
                 doc.read_bioc_json(d)
                 self.add(doc)
-        elif dirname:
+        else:
             if not pool:
                 pool = mp.Pool(int(.5 * mp.cpu_count()))
 
-            docnames = (str(f) for f in Path(dirname).iterdir() if f.is_file())
+            docnames = (str(f) for f in Path(path).iterdir() if f.is_file())
             for doc in pool.imap(Document, docnames):
                 if doc:
                     self.add(doc)
+            print('Read %d documents.' % len(self.docs))
 
         if os.path.exists('data/pedagogical-roles.txt'):
-            print('Found pedagogical role file; loading.')
+            print('Loading pedagogical roles.')
             self.read_roles('data/pedagogical-roles.txt')
 
     def clear(self):
         self.docs = {}
 
     def add(self, doc):
+        assert(type(doc) == Document)
         doc.corpus = self
         self.docs[doc.id] = doc
 
@@ -196,9 +198,8 @@ class Document:
 
 
     def read_bioc_json(self, j):
-        """Read a document from a string containing a JSON-formatted BioC
-        representation. Currently this is specific to the PubMed corpus it
-        was used on."""
+        """Read a document from a JSON-formatted BioC representation.
+        Currently this is specific to the PubMed corpus it was used on."""
 
         self.id = 'pmc-' + j['id']
         self.url = j['infons']['xref']
