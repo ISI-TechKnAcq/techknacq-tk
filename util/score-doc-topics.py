@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 
-import sys
 import os
-
 from pathlib import Path
+import click
 
 from mallet import Mallet
 
@@ -48,21 +47,24 @@ def alt_dt(model, corpus, fout):
     return [scores[i].items() for i in range(num_topics)]
 
 
-if __name__ == '__main__':
-    if len(sys.argv) != 3:
-        sys.stderr.write('Usage: score-doc-topics.py [text corpus dir] ' +
-                         '[topic model prefix]\n')
-        sys.exit(1)
-
+@click.command()
+@click.argument('text_corpus_dir', type=click.Path(exists=True))
+@click.argument('topic_model_prefix')
+def main(text_corpus_dir, topic_model_prefix):
     corpus = {}
-    for doc in (str(f) for f in Path(sys.argv[1]).iterdir() if f.is_file()):
+    for doc in (str(f) for f in Path(text_corpus_dir).iterdir()
+                if f.is_file()):
         doc_id = os.path.basename(doc).replace('.txt', '')
         if doc_id and doc_id != ' ':
             corpus[doc_id] = open(doc).read().split()
 
     print('Read corpus of size', len(corpus))
 
-    model = Mallet(MALLET_PATH, prefix=sys.argv[2])
+    model = Mallet(MALLET_PATH, prefix=topic_model_prefix)
 
     with open('alt-dt.txt', 'w') as fout:
         alt_dt(model, corpus, fout)
+
+
+if __name__ == '__main__':
+    main()
