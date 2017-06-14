@@ -7,6 +7,8 @@ import sys
 import os
 import io
 import string
+from urllib.error import HTTPError
+
 import click
 import re
 import json
@@ -17,6 +19,7 @@ import random
 import subprocess
 import multiprocessing as mp
 import wikipedia as wiki
+import urllib
 
 from math import log
 from functools import partial
@@ -33,6 +36,7 @@ from techknacq.lx import ScrabbleLexicon, StopLexicon, SentTokenizer
 # Parameters
 
 PROCESSES = int(.5 * mp.cpu_count())
+GOOGLE_BOOKS_BASE_URL = 'https://www.googleapis.com/books/v1/volumes'
 
 SD_API_KEY = open(os.path.expanduser('~/.t/sd.txt')).read().strip()
 BING_API_KEY = open(os.path.expanduser('~/.t/bing.txt')).read().strip()
@@ -720,6 +724,158 @@ def export_tutorial(tutorial):
 
     return d
 
+###
+
+def export_gbook_record(book_item):
+    d = Document()
+    d.id = 'gbook-' + book_item['id']
+    if( book_item['volumeInfo'].get('authors', None) is not None):
+        d.authors = book_item['volumeInfo']['authors']
+    if( book_item['volumeInfo'].get('title', None) is not None):
+        d.title = book_item['volumeInfo']['title']
+        d.book = book_item['volumeInfo']['title']
+    d.url = book_item['volumeInfo']['infoLink']
+    content = book_item['volumeInfo'].get('description', "")
+    if book_item.get('searchInfo', None) is not None and \
+            book_item['searchInfo'].get('textSnippet', None):
+        content = content + '\n' + book_item['searchInfo'].get('textSnippet', "")
+
+    st = SentTokenizer()
+    for line in content.split('\n'):
+        if len(d.sections) == 0:
+            d.sections.append({'text': st.tokenize(line)})
+        else:
+            d.sections[-1]['text'] += st.tokenize(line)
+    return d
+
+def get_gbook_docs( gbooks):
+
+    gbook_corpus = Corpus()
+    for doc in pool.imap(export_gbook_record, gbooks):
+        if doc:
+            gbook_corpus.add(doc)
+    return gbook_corpus
+
+def read_gbook_resources_from_dir(inDir):
+
+    resources = {}
+    for root, dirs, files in os.walk(inDir):
+        for file in files:
+            json_lines = []
+            if os.path.isfile(root + '/' + file) and file[-5:] == '.json':
+
+                with open(root + '/' + file, 'r') as json_file:
+                    json_lines = json_file.readlines()
+
+                json_str = ""
+                for l in json_lines:
+                    json_str += l
+                json_data = json.loads(json_str)
+
+                count = 0
+                for book_item in json_data['items']:
+
+                    resources[book_item['id']] = book_item
+                    count += 1
+
+                print('{0:s}\t{1:d}'.format(file, count))
+
+    return resources.values()
+
+def add_gbook_lists(book_ids, term_data, new_term_data):
+    for item in new_term_data:
+        if (item['id'] not in book_ids):
+            term_data.append(item)
+            book_ids.append(item['id'])
+    return (book_ids, term_data)
+
+def run_gbooks_search(term, addl_query):
+
+    query = GOOGLE_BOOKS_BASE_URL + '?q=' + term + '&maxResults=40&key=' + GOOGLE_API_KEY \
+            + addl_query
+
+    print('\n' + term + '\n' + query)
+
+    google_books_response = urllib.request.urlopen(query)
+
+    google_books_response_data = google_books_response.read()
+    encoding = google_books_response.info().get_content_charset('utf-8')
+    google_books_data = json.loads(google_books_response_data.decode(encoding))
+    if(google_books_data.get('items', None) is None):
+        return []
+
+    term_data = google_books_data['items']
+
+    total = google_books_data['totalItems']
+
+    for i in range(40, total, 40):
+
+        query = GOOGLE_BOOKS_BASE_URL + '?q=' + term + '&maxResults=40&key=' + GOOGLE_API_KEY + '&startIndex=' + str(i) \
+                + addl_query
+        google_books_response = urllib.request.urlopen(query)
+
+        google_books_response_data = google_books_response.read()
+        encoding = google_books_response.info().get_content_charset('utf-8')
+        google_books_data = json.loads(google_books_response_data.decode(encoding))
+
+        if (google_books_data.get('items', None) is not None):
+            for item in google_books_data['items']:
+                term_data.append(item)
+        else:
+            return term_data
+
+        sys.stdout.write('\r')
+        # the exact output you're looking for:
+        sys.stdout.write("[%-20s] %d%% %d/%d" % ('='*int(i/total*20.0), int(100.0 * i / total), i, total))
+        sys.stdout.flush()
+        sys.stdout.write("")
+
+    return term_data
+
+
+def search_google_books(terms):
+
+    term_data = []
+    book_ids = []
+
+    for term in terms:
+
+        term = term.strip()
+
+        if os.path.isfile(os.path.join(outputdir, 'gbooks-download', term + '.json')):
+            continue
+
+        try:
+
+            term_data = []
+            book_ids = []
+
+            term_data_1 = run_gbooks_search(term, '&printType=books&orderBy=newest')
+            (book_ids, term_data) = add_gbook_lists(book_ids, term_data, term_data_1)
+
+            term_data_2 = run_gbooks_search(term, '&printType=books&orderBy=relevance')
+            (book_ids, term_data) = add_gbook_lists(book_ids, term_data, term_data_2)
+
+            term_data_3 = run_gbooks_search(term, '&printType=books&filter=free-ebooks&orderBy=newest')
+            (book_ids, term_data) = add_gbook_lists(book_ids, term_data, term_data_3)
+
+            term_data_4 = run_gbooks_search(term, '&printType=books&filter=free-ebooks&orderBy=relevance')
+            (book_ids, term_data) = add_gbook_lists(book_ids, term_data, term_data_4)
+
+            out_data = {'kind':'books#volumes', 'totalItems':len(term_data)}
+            out_data['items'] = term_data
+            with open(os.path.join(outputdir, 'gbooks-download', term+'.json'), 'w') as output:
+                out_string = json.dumps(out_data, indent=4, separators=(',', ': '))
+                output.write(out_string)
+
+        except HTTPError:
+
+            print(term + ' failed')
+            print(sys.exc_info()[0])
+
+    gbooks = read_gbook_resources_from_dir(os.path.join(outputdir, 'gbooks-download'))
+
+    return gbooks
 
 ###
 
@@ -740,14 +896,17 @@ def ensure_directory(path):
 @click.command()
 @click.option('--sd', is_flag=True, help='Use ScienceDirect.')
 @click.option('--wiki', is_flag=True, help='Use Wikipedia.')
+@click.option('--gbooks', is_flag=True, help='Use Google Books.')
 @click.option('--web', is_flag=True, help='Use tutorials from the Web.')
+@click.option('--termfile', type=click.Path(exists=True), help='Path to file of Terms for searches.')
 @click.argument('indir', type=click.Path(exists=True))
 @click.argument('outdir', type=click.Path())
-def main(indir, outdir, sd, wiki, web):
+def main(indir, outdir, sd, wiki, gbooks, web, termfile):
     global outputdir
     outputdir = outdir
     ensure_directory(outputdir + '/sd-download')
     ensure_directory(outputdir + '/web-download')
+    ensure_directory(outputdir + '/gbooks-download')
 
     global pool
     pool = mp.Pool(PROCESSES)
@@ -757,7 +916,11 @@ def main(indir, outdir, sd, wiki, web):
     c = Corpus(indir, pool)
 
     terms = []
-    if os.path.exists('data/terms.txt'):
+    if os.path.exists(termfile):
+        for line in open(termfile, 'r'):
+            terms.append(line.strip())
+        print('Loaded', len(terms), 'terms from', termfile)
+    elif os.path.exists('data/terms.txt'):
         for line in open('data/terms.txt', 'r'):
             terms.append(line.strip())
         print('Loaded', len(terms), 'terms from data/terms.txt.')
@@ -791,6 +954,11 @@ def main(indir, outdir, sd, wiki, web):
         tutorials = search_web(terms)
         download_web(tutorials)
         c |= get_web_docs(tutorials)
+
+    # Download Google Book Records (not full text).
+    if gbooks:
+        book_refs = search_google_books(terms)
+        c |= get_gbook_docs(book_refs)
 
     c.export(outputdir)
 

@@ -23,22 +23,23 @@ class Corpus:
     def __init__(self, path=None, pool=None):
         self.docs = {}
 
-        if os.path.isfile(path):
-            # Read a BioC corpus file.
-            j = json.load(open(path))
-            for d in j['documents']:
-                doc = Document()
-                doc.read_bioc_json(d)
-                self.add(doc)
-        else:
-            if not pool:
-                pool = mp.Pool(int(.5 * mp.cpu_count()))
-
-            docnames = (str(f) for f in Path(path).iterdir() if f.is_file())
-            for doc in pool.imap(Document, docnames):
-                if doc:
+        if path is not None:
+            if os.path.isfile(path):
+                # Read a BioC corpus file.
+                j = json.load(open(path))
+                for d in j['documents']:
+                    doc = Document()
+                    doc.read_bioc_json(d)
                     self.add(doc)
-            print('Read %d documents.' % len(self.docs))
+            else:
+                if not pool:
+                    pool = mp.Pool(int(.5 * mp.cpu_count()))
+
+                docnames = (str(f) for f in Path(path).iterdir() if f.is_file())
+                for doc in pool.imap(Document, docnames):
+                    if doc:
+                        self.add(doc)
+                print('Read %d documents.' % len(self.docs))
 
         if os.path.exists('data/pedagogical-roles.txt'):
             print('Loading pedagogical roles.')
@@ -189,6 +190,7 @@ class Document:
         self.sections = j.get('sections', [])
         self.roles = {}
         self.corpus = None
+        self.price = -1.0
 
         if fname and form == 'text':
             st = SentTokenizer()
@@ -230,7 +232,7 @@ class Document:
                         self.sections.append(sec)
                 else:
                     sys.sterr.write('Unexpected infon value %s.\n' %
-                                    (anntoation['infons']['value']))
+                                    (annotation['infons']['value']))
 
 
     def read_sd(self, f, fref=None):
