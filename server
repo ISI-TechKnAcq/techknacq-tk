@@ -42,7 +42,7 @@ def handle_request():
     try:
         level = int(request.args.get('t'))
     except:
-        level = 5
+        level = 4 # Intermediate
 
     print('Generating reading list for', q + ':', end=' ')
     user_model = {}

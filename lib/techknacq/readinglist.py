@@ -12,6 +12,7 @@ from nltk.stem.lancaster import LancasterStemmer
 THRESHOLD = .5
 MAX_MATCHES = 6
 MAX_DEPTH = 4
+BASE_DOC_NUM = 8
 
 # User model constants
 # The values are for interfacing with techknacq-server.
@@ -20,6 +21,20 @@ BEGINNER = 5
 INTERMEDIATE = 4
 ADVANCED = 3
 
+DEFAULT_DOC_PREFS = [
+    'reference', 'survey', 'tutorial', 'resource', 'empirical', 'manual',
+    'other'
+]
+
+INTRO_DOC_PREFS = [
+    'survey', 'reference', 'tutorial', 'resource', 'manual', 'empirical',
+    'other'
+]
+
+ADVANCED_DOC_PREFS = [
+    'empirical', 'tutorial', 'resource', 'manual', 'survey', 'reference',
+    'other'
+]
 
 class ReadingList:
     def __init__(self, cg, query, user_model=None, docs=True):
@@ -58,8 +73,7 @@ class ReadingList:
         given an ordered list of preferred pedagogical roles."""
 
         if roles is None:
-            roles = ['reference', 'survey', 'tutorial', 'resource',
-                     'empirical', 'manual']
+            roles = DEFAULT_DOC_PREFS
 
         # 1. Find the most relevant documents for the topic.
 
@@ -83,7 +97,7 @@ class ReadingList:
         return docs
 
 
-    def traverse(self, c, score, depth=1):
+    def traverse(self, c, score, depth=1, match_num=1):
         if score < THRESHOLD or c in self.covered_concepts:
             return
 
@@ -100,17 +114,17 @@ class ReadingList:
                  'documents2': []}
 
         # First compute any dependencies we'll include in the reading list
-        # so we know which documents we want to include at this level.
+        # so we know which -- and how many -- documents we want to include
+        # at this level.
         for dep, dep_weight in sorted(self.cg.topic_deps(c),
-                                      key=lambda x: x[1],
-                                      reverse=True)[:50]:
+                                      key=lambda x: x[1], reverse=True)[:50]:
             dep_discount = 1
             if self.user_model[c] == INTERMEDIATE:
                 dep_discount = 2
             elif self.user_model[c] == ADVANCED:
                 dep_discount = 10
             dep_entry = self.traverse(dep, score * dep_weight/dep_discount +
-                                      self.relevance[dep], depth+1)
+                                      self.relevance[dep], depth + 1)
             if dep_entry:
                 entry['subconcepts'].append(dep_entry)
             if len(entry['subconcepts']) >= MAX_MATCHES:
@@ -119,57 +133,66 @@ class ReadingList:
         if not self.docs:
             return entry
 
+        includes_dep = 1 if entry['subconcepts'] else 0
+
+        num_docs = max(BASE_DOC_NUM - 2*depth - includes_dep, 1)
+
+        if self.user_model[c] == BEGINNER:
+            num_intro_docs = round(.75 * num_docs)
+            num_advanced_docs = round(.25 * num_docs)
+        elif self.user_model[c] == INTERMEDIATE:
+            num_intro_docs = round(.5 * num_docs)
+            num_advanced_docs = round(.5 * num_docs)
+        elif self.user_model[c] == ADVANCED:
+            num_intro_docs = round(.25 * num_docs)
+            num_advanced_docs = round(.75 * num_docs)
+
+        intro_docs = self.best_docs(c, INTRO_DOC_PREFS)
+        advanced_docs = self.best_docs(c, ADVANCED_DOC_PREFS)
+
+
         #
         # Documents to print before any dependencies:
         #
 
-        doc1_to_print = 4 - depth
-        if entry['subconcepts']:
-            doc1_to_print -= 1
-        doc1_to_print = max(doc1_to_print, 1)
+        for doc_id, doc_weight in intro_docs:
+            if num_intro_docs == 0:
+                break
+            if doc_id in self.covered_documents or \
+               self.cg.g.node[doc_id]['title'] in self.covered_titles:
+                continue
+            entry['documents1'].append(self.doc_entry(doc_id, doc_weight))
+            self.covered_documents.add(doc_id)
+            self.covered_titles.add(self.cg.g.node[doc_id]['title'])
+            num_intro_docs -= 1
+            break
 
-        if self.user_model[c] != ADVANCED or entry['subconcepts']:
-            sorted_docs = self.best_docs(c, ['survey', 'reference',
-                                             'tutorial', 'resource',
-                                             'manual', 'empirical', 'other'])
-            for doc_id, doc_weight in sorted_docs:
-                if doc_id in self.covered_documents or \
-                   self.cg.g.node[doc_id]['title'] in self.covered_titles:
-                    continue
-
-                entry['documents1'].append(self.doc_entry(doc_id, doc_weight))
-                self.covered_documents.add(doc_id)
-                self.covered_titles.add(self.cg.g.node[doc_id]['title'])
-                if len(entry['documents1']) == doc1_to_print:
-                    break
 
         #
         # Documents to print after any dependencies:
         #
 
-        doc2_to_print = 4 - depth
-        if self.user_model[c] == BEGINNER:
-            doc2_to_print -= 1
-        if entry['subconcepts'] or self.user_model[c] == ADVANCED:
-            doc2_to_print = max(doc2_to_print, 1)
-        else:
-            doc2_to_print = max(doc2_to_print, 0)
+        for doc_id, doc_weight in intro_docs:
+            if num_intro_docs == 0:
+                break
+            if doc_id in self.covered_documents or \
+               self.cg.g.node[doc_id]['title'] in self.covered_titles:
+                continue
+            entry['documents2'].append(self.doc_entry(doc_id, doc_weight))
+            self.covered_documents.add(doc_id)
+            self.covered_titles.add(self.cg.g.node[doc_id]['title'])
+            num_intro_docs -= 1
 
-        if entry['subconcepts'] or depth == 1 or \
-           self.user_model[c] == ADVANCED:
-            sorted_docs = self.best_docs(c, ['empirical', 'tutorial',
-                                             'resource', 'manual', 'survey',
-                                             'reference', 'other'])
-            for doc_id, doc_weight in sorted_docs:
-                if doc_id in self.covered_documents or \
-                   self.cg.g.node[doc_id]['title'] in self.covered_titles:
-                    continue
-
-                entry['documents2'].append(self.doc_entry(doc_id, doc_weight))
-                self.covered_documents.add(doc_id)
-                self.covered_titles.add(self.cg.g.node[doc_id]['title'])
-                if len(entry['documents2']) == doc2_to_print:
-                    break
+        for doc_id, doc_weight in advanced_docs:
+            if num_advanced_docs == 0:
+                break
+            if doc_id in self.covered_documents or \
+               self.cg.g.node[doc_id]['title'] in self.covered_titles:
+                continue
+            entry['documents2'].append(self.doc_entry(doc_id, doc_weight))
+            self.covered_documents.add(doc_id)
+            self.covered_titles.add(self.cg.g.node[doc_id]['title'])
+            num_advanced_docs -= 1
 
         return entry
 
@@ -296,7 +319,7 @@ class ReadingList:
                     matches[query_word] += weight
                 elif set([query_word, query_lemma]) & set(ngram[0] + ngram[1]):
                     matches[query_word] += 0.75 * weight
-            # If the ngram in the concept model is a subset of the query,
+            # If the n-gram in the concept model is a subset of the query,
             # e.g., 'hidden markov' in 'hidden markov model', apply a bonus.
             if ' '.join([x[0] for x in ngram]) in \
                ' '.join([x[0] for x in self.query_words]):
