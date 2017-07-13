@@ -8,6 +8,7 @@ import random
 import re
 import subprocess
 import multiprocessing as mp
+import operator
 
 from numpy import zeros
 from itertools import combinations
@@ -70,12 +71,20 @@ class Mallet:
     def read(self, corpus, bigrams=False):
         stop = StopLexicon()
 
+        #cmd = [self.path, 'import-dir',
+        #       '--input', corpus,
+        #       '--output', self.mallet_corpus,
+        #       '--remove-stopwords',
+        #       '--extra-stopwords', stop.file,
+        #       '--token-regex', '[^\\s]+']
+
+        # Much better to use the tokenization process within MALLET
+        # This is immediately apparent.
         cmd = [self.path, 'import-dir',
                '--input', corpus,
                '--output', self.mallet_corpus,
                '--remove-stopwords',
-               '--extra-stopwords', stop.file,
-               '--token-regex', '[^\\s]+']
+               '--extra-stopwords', stop.file]
 
         if bigrams:
             cmd += ['--keep-sequence-bigrams', '--gram-sizes 2']
@@ -89,19 +98,32 @@ class Mallet:
 
 
     def train(self, num_topics, iters):
+
         cmd = [self.path, 'train-topics',
                '--input', self.prefix + 'corpus.mallet',
                '--num-topics', str(num_topics),
                '--num-iterations', str(iters),
-               '--optimize-interval', str(OPTIMIZE_INTERVAL),
                '--num-threads', str(PROCESSES),
                '--output-doc-topics', self.dtfile,
                '--word-topic-counts-file', self.wtfile,
                '--output-model', self.omfile,
                '--inferencer-filename', self.inffile,
                '--output-topic-keys', self.tkfile,
-               '--output-state', self.statefile,
-               '--beta', '0.00386']
+               '--output-state', self.statefile]
+
+        #cmd = [self.path, 'train-topics',
+        #       '--input', self.prefix + 'corpus.mallet',
+        #       '--num-topics', str(num_topics),
+        #       '--num-iterations', str(iters),
+        #       '--optimize-interval', str(OPTIMIZE_INTERVAL),
+        #       '--num-threads', str(PROCESSES),
+        #       '--output-doc-topics', self.dtfile,
+        #       '--word-topic-counts-file', self.wtfile,
+        #       '--output-model', self.omfile,
+        #       '--inferencer-filename', self.inffile,
+        #       '--output-topic-keys', self.tkfile,
+        #       '--output-state', self.statefile,
+        #       '--beta', '0.00386']
 
         if subprocess.call(cmd) != 0:
             sys.stderr.write('Mallet train-topics failed.\n')
@@ -244,10 +266,13 @@ class Mallet:
         num_topics = len(self.topics)
 
         if not os.path.exists(self.namefile):
-            self.names = [' '.join([x[0] for x in sorted(self.topics[i],
-                                                         key=lambda z: z[1],
-                                                         reverse=True)[:3]])
+
+            # CHANGED BY GULLY
+            self.names = [' '.join(n[0] for n in sorted(self.topics[i].items(),
+                                                        key=operator.itemgetter(1),
+                                                        reverse=True)[:3])
                           for i in range(num_topics)]
+
             return
 
         print('Loading topic names.')

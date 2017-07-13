@@ -20,10 +20,10 @@ from techknacq.conceptgraph import ConceptGraph
 
 # Parameters
 
-MALLET_PATH = 'ext/mallet/bin/mallet'
+MALLET_PATH = '/usr/local/bin/mallet'
 
 LDA_TOPICS = 300
-LDA_ITERATIONS = 1000
+LDA_ITERATIONS = 200
 
 
 class TopicDependency:
@@ -222,16 +222,24 @@ class TopicDependency:
 ###
 
 @click.command()
-@click.option('--method', default='avg',
-              type=click.Choice(['ce', 'simword', 'avg', 'sum']),
+@click.option('--method', default='none',
+              type=click.Choice(['ce', 'simword', 'avg', 'sum', 'none']),
               help='Method for computing concept dependencies.')
 @click.option('--threshold', default=0.0005)
 @click.option('--num-topics', default=LDA_TOPICS)
+@click.option('--out-path', type=click.Path(exists=True))
 @click.argument('corpusdir', type=click.Path(exists=True))
 @click.argument('topic_prefix', required=False)
-def main(corpusdir, topic_prefix, method, threshold, num_topics):
-    rand_prefix = hex(random.randint(0, 0xffffff))[2:] + '-'
-    prefix = os.path.join(tempfile.gettempdir(), rand_prefix)
+def main(corpusdir, topic_prefix, method, threshold, num_topics, out_path):
+
+    if out_path is None:
+        rand_prefix = hex(random.randint(0, 0xffffff))[2:] + '-'
+        prefix = os.path.join(tempfile.gettempdir(), rand_prefix)
+    elif topic_prefix is None:
+        rand_prefix = hex(random.randint(0, 0xffffff))[2:] + '-'
+        prefix = os.path.join(out_path, rand_prefix)
+    else:
+        prefix = os.path.join(out_path, topic_prefix)
 
     cg = ConceptGraph()
 
@@ -245,20 +253,20 @@ def main(corpusdir, topic_prefix, method, threshold, num_topics):
         mallet_corpus = prefix + 'corpus'
         os.makedirs(mallet_corpus)
         corpus.export(mallet_corpus, abstract=False, form='text')
-        model = Mallet(MALLET_PATH, mallet_corpus, num_topics=num_topics,
-                       iters=LDA_ITERATIONS, bigrams=True)
+        model = Mallet(MALLET_PATH, mallet_corpus, prefix=prefix, num_topics=num_topics,
+                       iters=LDA_ITERATIONS, bigrams=False)
     else:
         print('Loading topic model.')
-        model = Mallet(MALLET_PATH, prefix=topic_prefix)
-        if len(model.topic_doc[0]) < len(corpus.docs):
-            print('Found more documents in the corpus (%d)' %
-                  (len(corpus.docs)), end=' ')
-            print('than in the topic model (%d).' % (len(model.topic_doc[0])))
-            print('Inferring topics for corpus documents.')
-            mallet_corpus = prefix + 'corpus'
-            os.makedirs(mallet_corpus)
-            corpus.export(mallet_corpus, abstract=False, form='text')
-            model.infer_topics(mallet_corpus)
+        model = Mallet(MALLET_PATH, prefix=prefix)
+        #if len(model.topic_doc[0]) < len(corpus.docs):
+        #    print('Found more documents in the corpus (%d)' %
+        #          (len(corpus.docs)), end=' ')
+        #    print('than in the topic model (%d).' % (len(model.topic_doc[0])))
+        #    print('Inferring topics for corpus documents.')
+        #    mallet_corpus = prefix + 'corpus'
+        #    os.makedirs(mallet_corpus)
+        #    corpus.export(mallet_corpus, abstract=False, form='text')
+        #    model.infer_topics(mallet_corpus)
 
     if os.path.exists('data/alt-dt.txt'):
         print('Loading alternative document-topic composition.')
@@ -280,8 +288,9 @@ def main(corpusdir, topic_prefix, method, threshold, num_topics):
 
     cg.add_concepts(model)
 
-    dep = TopicDependency(corpus, model, method=method, threshold=threshold)
-    cg.add_dependencies(dep.edges)
+    if( method != 'none'):
+        dep = TopicDependency(corpus, model, method=method, threshold=threshold)
+        cg.add_dependencies(dep.edges)
 
     cg.export(prefix + 'cg.json',
               provenance=method + ' ' + str(threshold))

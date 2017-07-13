@@ -5,14 +5,20 @@ import sys
 import networkx as nx
 import json
 import uuid
+import math
+from collections import defaultdict
+from elasticsearch import Elasticsearch
 
 # Parameters
 
 WORDS_PER_CONCEPT = 100
 
-
 class ConceptGraph:
-    def __init__(self, fname=None):
+
+    def __init__(self, fname=None, elastic=None):
+        self.elastic = elastic
+        if (elastic):
+            self.es = Elasticsearch()
         self.id = str(uuid.uuid4())
         self.provenance = 'TechKnAcq'
         self.type = '1.0'
