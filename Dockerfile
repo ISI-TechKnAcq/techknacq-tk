@@ -109,6 +109,7 @@ RUN ln -s /t/data/server/application.properties \
 COPY lib /t/lib
 COPY build-corpus /t
 COPY concept-graph /t
+COPY data /t/data
 COPY reading-list /t
 COPY server /t
 COPY start-server /t

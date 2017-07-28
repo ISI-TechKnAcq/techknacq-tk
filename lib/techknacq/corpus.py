@@ -23,14 +23,14 @@ class Corpus:
     def __init__(self, path=None, pool=None):
         self.docs = {}
 
-        if os.path.isfile(path):
+        if path and os.path.isfile(path):
             # Read a BioC corpus file.
             j = json.load(open(path))
             for d in j['documents']:
                 doc = Document()
                 doc.read_bioc_json(d)
                 self.add(doc)
-        else:
+        elif path:
             if not pool:
                 pool = mp.Pool(int(.5 * mp.cpu_count()))
 

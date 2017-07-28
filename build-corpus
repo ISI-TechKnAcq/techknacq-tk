@@ -243,7 +243,10 @@ def search_sd(terms):
     print('-- Search ScienceDirect:', len(terms), 'terms.')
 
     books = defaultdict(set)
-    for result in pool.imap(search_sd_helper, chunks(terms, 50)):
+    # ScienceDirect can return errors when too many requests are sent in
+    # parallel.
+    # for result in pool.imap(search_sd_helper, chunks(terms, 50)):
+    for result in map(search_sd_helper, chunks(terms, 15)):
         for book in result:
             books[book] |= result[book]
 
@@ -261,7 +264,8 @@ def search_sd_helper(terms):
             'acknowledgment', 'acknowledgement', 'preface', 'references',
             'postface', 'edited by', 'list of', 'about the', 'afterword',
             'abbreviations', 'further reading', 'guide to readers',
-            'foreword', 'editors', 'author', 'abstract']
+            'foreword', 'editors', 'author', 'abstract',
+            'how to use this book']
     query += ' AND NOT title(' + ' OR '.join(['"'+s+'"' for s in stop]) + ')'
 
     url = 'http://api.elsevier.com/content/search/index:scidir'
@@ -367,11 +371,11 @@ def filter_sd(docs_by_book, terms):
             break
 
         print()
-        print(' -', book_title.encode('utf8'))
+        print(' -', book_title)
 
         for pii, doc_title in docs_by_book[book]:
             if pii in docs_low:
-                print('  ', doc_title.encode('utf8'), pii)
+                print('  ', doc_title, pii)
                 filtered.add(pii)
 
     print('-- ScienceDirect:', len(filtered), 'documents selected.')
@@ -389,8 +393,11 @@ def count_terms_in_doc(pii, terms):
         trie.add(term)
 
     file_path = os.path.join(outputdir, 'sd-download', pii + '-full.xml')
-    text = io.open(file_path, 'r', encoding='utf8').read().lower()
-    matches = [text[x[0]:x[1]] for x in trie.findall_long(text)]
+    try:
+        text = io.open(file_path, 'r', encoding='utf8').read().lower()
+        matches = [text[x[0]:x[1]] for x in trie.findall_long(text)]
+    except:
+        return [pii, 0, 0]
 
     return [pii, len(matches), len(set(matches))]
 
