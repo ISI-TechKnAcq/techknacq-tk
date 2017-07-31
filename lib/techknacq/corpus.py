@@ -476,7 +476,7 @@ class Document:
         t += '<infon key="authors">'
         t += escape('; '.join(self.authors)) + '</infon>'
         t += '<infon key="title">' + escape(self.title) + '</infon>'
-        t += '<infon key="year">' + escape(self.year) + '</infon>'
+        t += '<infon key="year">' + escape(str(self.year)) + '</infon>'
         t += '<infon key="book">' + escape(self.book) + '</infon>'
         t += '<infon key="url">' + escape(self.url) + '</infon>'
         t += '<text>'
