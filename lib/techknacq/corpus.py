@@ -10,12 +10,15 @@ import re
 import multiprocessing as mp
 import enchant
 import ftfy
+import codecs
+import pandas as pd
 
 from pathlib import Path
 from bs4 import BeautifulSoup
 from xml.sax.saxutils import escape
 from unidecode import unidecode
 from nltk import bigrams
+
 
 from techknacq.lx import SentTokenizer, StopLexicon, find_short_long_pairs
 
@@ -24,20 +27,60 @@ class Corpus:
         self.docs = {}
 
         if path is not None:
-            if os.path.isfile(path):
-                # Read a BioC corpus file.
+
+            # Corpus is a BioC corpus file.
+            if os.path.isfile(path) and re.search("\.json$", path):
                 j = json.load(open(path))
                 for d in j['documents']:
                     doc = Document()
                     doc.read_bioc_json(d)
                     self.add(doc)
+            # Corpus is a line-delineated text file, pmid(\t)title(\t)abstract
+            elif os.path.isfile(path) and re.search("\.txt$", path):
+                with codecs.open(path, 'r', 'utf-8') as f:
+                    lines = f.readlines()
+                for l in lines:
+                    doc = Document()
+                    doc.read_id_title_abstract(l)
+                    self.add(doc)
+            elif os.path.isfile(path) and re.search("\.tsv$", path):
+                tsv = pd.read_csv(path, sep='\t')
+                for i, row in tsv.iterrows():
+                    id = row['id']
+                    authors = row['authors']
+                    title = row['title']
+                    description = row['description']
+                    url = row['url']
+                    tags = row['tag']
+                    doc = Document()
+                    st = SentTokenizer()
+                    doc.id = 'video'+str(i)
+                    doc.title = title
+                    if description != description:
+                        pause = 0
+                    doc.sections = [{'text': st.tokenize(description)}]
+                    if authors is not None:
+                        doc.authors = authors.split("|")
+                    doc.book = ''
+                    doc.year = ''
+                    doc.url = url
+                    doc.references = []
+                    doc.roles = {}
+                    doc.corpus = self
+                    doc.price = -1.0
+                    if tags != tags :
+                        tags = ""
+                    if tags is not None:
+                        doc.tags = tags.split("|")
+                    self.docs['video'+str(i)] = doc
+
             else:
                 if not pool:
                     pool = mp.Pool(int(.5 * mp.cpu_count()))
 
                 docnames = (str(f) for f in Path(path).iterdir() if f.is_file())
                 for doc in pool.imap(Document, docnames):
-                    if doc:
+                    if doc and doc.id is not None:
                         self.add(doc)
                 print('Read %d documents.' % len(self.docs))
 
@@ -163,15 +206,17 @@ class Corpus:
 
 class Document:
     def __init__(self, fname=None, form=None):
+
+        self.id = None
+
         if fname and not form:
-            if 'json' in fname:
+            if '.json' in fname:
                 form = 'json'
-            elif 'xml' in fname:
+            elif '.xml' in fname:
                 form = 'sd'
-            elif 'txt' in fname:
+            elif '.txt' in fname:
                 form = 'text'
 
-        j = {'info': {}}
         if fname and form == 'json':
             try:
                 j = json.load(io.open(fname, 'r', encoding='utf-8'))
@@ -180,24 +225,54 @@ class Document:
                 print(e, file=sys.stderr)
                 sys.exit(1)
 
-        self.id = j['info'].get('id', '')
-        self.authors = [x.strip() for x in j['info'].get('authors', [])]
-        self.title = title_case(j['info'].get('title', ''))
-        self.book = title_case(j['info'].get('book', ''))
-        self.year = j['info'].get('year', '')
-        self.url = j['info'].get('url', '')
-        self.references = set(j.get('references', []))
-        self.sections = j.get('sections', [])
-        self.roles = {}
-        self.corpus = None
-        self.price = -1.0
+            self.id = j['info'].get('id', '')
+            self.authors = [x.strip() for x in j['info'].get('authors', [])]
+            self.title = title_case(j['info'].get('title', ''))
+            self.book = title_case(j['info'].get('book', ''))
+            self.year = j['info'].get('year', '')
+            self.url = j['info'].get('url', '')
+            self.references = set(j.get('references', []))
+            self.sections = j.get('sections', [])
+            self.roles = {}
+            self.corpus = None
+            self.price = -1.0
 
-        if fname and form == 'text':
+        elif fname and form == 'text':
             st = SentTokenizer()
             self.sections = [{'text': st.tokenize(open(fname).read())}]
+            self.id =  os.path.basename(fname)
+            self.title = ''
+            self.authors = []
+            self.title = ''
+            self.book = ''
+            self.year = ''
+            self.url = ''
+            self.references = []
+            self.roles = {}
+            self.corpus = None
+            self.price = -1.0
+            self.tags = []
+
         elif fname and form == 'sd':
             self.read_sd(fname)
 
+    def read_id_title_abstract(self, line):
+        """Read a document from a JSON-formatted BioC representation.
+        Currently this is specific to the PubMed corpus it was used on."""
+        (id, reviewFlag, title, abstract) = re.split("\t",line)
+        st = SentTokenizer()
+        self.id = id
+        self.title = title
+        self.sections = [{'text': st.tokenize(abstract)}]
+        self.authors = []
+        self.book = ''
+        self.year = ''
+        self.url = 'https://www.ncbi.nlm.nih.gov/pubmed/?term=' + id
+        self.references = []
+        self.roles = {}
+        self.corpus = None
+        self.price = -1.0
+        self.tags = []
 
     def read_bioc_json(self, j):
         """Read a document from a JSON-formatted BioC representation.
@@ -497,8 +572,8 @@ class Document:
 
     def text(self, abstract=False):
         """Return a plain-text string representing the document."""
-        out = self.title + '.\n'
-        out += self.title + '.\n'
+        out = self.title + '\n'
+        out += self.title + '\n'
 
         for author in self.authors:
             if author == 'Wikipedia':

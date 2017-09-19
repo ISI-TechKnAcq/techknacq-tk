@@ -370,10 +370,11 @@ def make_eval_html_page(unigrams, bigrams, entities, docs):
         html_string += '<p>Relevant words:</p>'
         html_string += topic_name_html(unigrams[topic],0,unigrams[topic][0][1])
 
-        html_string += '<p>Relevant documents:</p><ul>'
-        for doc_text in docs[topic]:
-            html_string += '<li>'+doc_text+'</li>'
-        html_string += '</ul>'
+        if len(docs[topic]) > 0:
+            html_string += '<p>Relevant documents:</p><ul>'
+            for doc_text in docs[topic]:
+                html_string += '<li>'+doc_text+'</li>'
+            html_string += '</ul>'
 
         html_string += '<p>How clear and coherent is the meaning of this topic?</p>'
         html_string += '<p class="rate">'

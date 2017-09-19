@@ -191,7 +191,7 @@ class ConceptGraph:
             sys.exit(1)
 
 
-    def export(self, file='concept-graph.json', concept_threshold=0.2,
+    def export(self, file='build-concept-graph.json', concept_threshold=0.2,
                provenance=''):
         """Export the concept graph as a JSON file."""
 

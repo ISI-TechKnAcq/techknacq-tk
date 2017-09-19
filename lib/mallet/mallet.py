@@ -14,7 +14,7 @@ from numpy import zeros
 from itertools import combinations
 
 from techknacq.lx import StopLexicon
-
+from collections import defaultdict
 
 # Parameters
 
@@ -22,7 +22,6 @@ PROCESSES = int(.5 * mp.cpu_count())
 #PROCESSES = 1
 
 OPTIMIZE_INTERVAL = 10
-
 
 class Mallet:
     def __init__(self, path, corpus=None, num_topics=200, bigrams=False,
@@ -35,19 +34,22 @@ class Mallet:
             rand_prefix = hex(random.randint(0, 0xffffff))[2:] + '-'
             self.prefix = os.path.join(tempfile.gettempdir(), rand_prefix)
 
-        self.dtfile = self.prefix + 'composition.txt'
-        self.wtfile = self.prefix + 'word-topic-counts.txt'
-        self.omfile = self.prefix + 'model.mallet'
-        self.inffile = self.prefix + 'inferencer'
-        self.tkfile = self.prefix + 'keys.txt'
-        self.wtkfile = self.prefix + 'weighted-keys.txt'
-        self.statefile = self.prefix + 'state.gz'
+        if os.path.isdir(self.prefix) is False:
+            os.makedirs(self.prefix)
 
-        self.cofile = self.prefix + 'co-occur.txt'
-        self.namefile = self.prefix + 'names.tsv'
-        self.scorefile = self.prefix + 'scores.txt'
+        self.dtfile = self.prefix + '/composition.txt'
+        self.wtfile = self.prefix + '/word-topic-counts.txt'
+        self.omfile = self.prefix + '/model.mallet'
+        self.inffile = self.prefix + '/inferencer'
+        self.tkfile = self.prefix + '/keys.txt'
+        self.wtkfile = self.prefix + '/weighted-keys.txt'
+        self.statefile = self.prefix + '/state.gz'
 
-        self.mallet_corpus = self.prefix + 'corpus.mallet'
+        self.cofile = self.prefix + '/co-occur.txt'
+        self.namefile = self.prefix + '/names.tsv'
+        self.scorefile = self.prefix + '/scores.txt'
+
+        self.mallet_corpus = self.prefix + '/corpus.mallet'
 
         if os.path.exists(self.tkfile):
             num_topics = len(open(self.tkfile).readlines())
@@ -55,6 +57,7 @@ class Mallet:
 
         self.topics = [{} for i in range(num_topics)]
         self.params = [0 for i in range(num_topics)]
+        self.word_count = 0
 
         if not os.path.exists(self.wtfile) or not os.path.exists(self.dtfile):
             self.read(corpus, bigrams)
@@ -67,6 +70,8 @@ class Mallet:
         self.load_names()
         self.load_scores()
 
+    def get_n_docs(self):
+        return len(self.topic_doc[0])
 
     def read(self, corpus, bigrams=False):
         stop = StopLexicon()
@@ -80,7 +85,11 @@ class Mallet:
 
         # Much better to use the tokenization process within MALLET
         # This is immediately apparent.
-        cmd = [self.path, 'import-dir',
+        if os.path.isdir(corpus) :
+            import_cmd = 'import-dir'
+        else :
+            import_cmd = 'import-file'
+        cmd = [self.path, import_cmd,
                '--input', corpus,
                '--output', self.mallet_corpus,
                '--remove-stopwords',
@@ -92,7 +101,7 @@ class Mallet:
             cmd += ['--keep-sequence']
 
         if subprocess.call(cmd) != 0:
-            sys.stderr.write('Mallet import-dir failed.\n')
+            sys.stderr.write('Mallet ' + import_cmd + ' failed.\n')
             print(cmd, file=sys.stderr)
             sys.exit(1)
 
@@ -100,7 +109,7 @@ class Mallet:
     def train(self, num_topics, iters):
 
         cmd = [self.path, 'train-topics',
-               '--input', self.prefix + 'corpus.mallet',
+               '--input', self.prefix + '/corpus.mallet',
                '--num-topics', str(num_topics),
                '--num-iterations', str(iters),
                '--num-threads', str(PROCESSES),
@@ -133,7 +142,7 @@ class Mallet:
     def infer_topics(self, corpus, iters=1000):
         # Read corpus using the original corpus file as a pipe to ensure
         # compatability.
-        cmd = [self.path, 'import-dir',
+        cmd = [self.path, '/import-dir',
                '--input', corpus,
                '--output', self.mallet_corpus + '-infer',
                '--use-pipe-from', self.mallet_corpus]
@@ -305,3 +314,20 @@ class Mallet:
     def topic_pairs(self, topic):
         return sorted(self.topics[topic].items(),
                       key=lambda x: (-1.0 * x[1], x[0]))
+
+    def get_top_topic_words(self, t_id, n_words):
+        topic_unigrams = defaultdict(set)
+
+        sorted()
+
+        for word in self.topics[t_id].keys():
+            count = self.topics[t_id].get(word)
+            word = tokens[1]
+            counts = tokens[2:]
+            for c in counts:
+                (topic, count) = c.split(':')
+                topic_unigrams[int(topic)].add((word, float(count)))
+
+        unigrams = []
+        for topic in topic_unigrams.keys():
+            unigrams.append( sorted(topic_unigrams[topic], key=lambda x: x[1],reverse=True)[:100])
