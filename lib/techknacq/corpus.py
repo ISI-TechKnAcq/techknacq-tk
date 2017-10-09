@@ -118,46 +118,59 @@ class Corpus:
                'manual': float(vals[6]),
                'other': float(vals[7])}
         for doc in self:
-            short_id = doc.id.lower()
-            short_id = short_id.replace('acl-', '')
-            short_id = short_id.replace('wiki-', '')
-            short_id = short_id.replace('sd-', '')
-            short_id = short_id.replace('web-', '')
-            if short_id in role_annotations:
-                doc.roles = role_annotations[short_id]
-                if 'wiki' in doc.id:
-                    doc.roles = {'survey': 0.2,
-                                 'tutorial': 0.0,
-                                 'resource': 0.0,
-                                 'reference': 0.8,
-                                 'empirical': 0.0,
-                                 'manual': 0.0,
-                                 'other': 0.0}
-            elif 'web-' in doc.id or \
-                 'Tutorials' in doc.book:
-                doc.roles = {'survey': 0.1,
-                             'tutorial': 0.6,
-                             'resource': 0.0,
-                             'reference': 0.0,
-                             'empirical': 0.0,
-                             'manual': 0.2,
-                             'other': 0.1}
-            elif 'acl-' in doc.id:
+            prior = None
+            if doc.id.startswith('wiki-'):
+                prior = {'survey': 0.2,
+                         'tutorial': 0.0,
+                         'resource': 0.0,
+                         'reference': 0.8,
+                         'empirical': 0.0,
+                         'manual': 0.0,
+                         'other': 0.0}
+            elif doc.id.startswith('web-') or 'Tutorials' in doc.book:
+                prior = {'survey': 0.1,
+                         'tutorial': 0.6,
+                         'resource': 0.0,
+                         'reference': 0.0,
+                         'empirical': 0.0,
+                         'manual': 0.2,
+                         'other': 0.1}
+            elif doc.id.startswith('acl-'):
+                prior = {'survey': 0.0,
+                         'tutorial': 0.0,
+                         'resource': 0.1,
+                         'reference': 0.0,
+                         'empirical': 0.8,
+                         'manual': 0.0,
+                         'other': 0.1}
+            elif doc.id.startswith('sd-'):
+                prior = {'survey': 0.1,
+                         'tutorial': 0.1,
+                         'resource': 0.0,
+                         'reference': 0.7,
+                         'empirical': 0.0,
+                         'manual': 0.0,
+                         'other': 0.1}
+
+            short_id = re.sub('^(acl|wiki|sd|web)-', '', doc.id.lower())
+            annotation = role_annotations.get(short_id)
+
+            if prior and annotation:
+                doc.roles = {}
+                for role in prior:
+                    doc.roles[role] = (prior[role] + annotation[role]) / 2.0
+            elif annotation:
+                doc.roles = annotation
+            elif prior:
+                doc.roles = prior
+            else:
                 doc.roles = {'survey': 0.0,
                              'tutorial': 0.0,
-                             'resource': 0.1,
-                             'reference': 0.0,
-                             'empirical': 0.8,
-                             'manual': 0.0,
-                             'other': 0.1}
-            elif 'sd-' in doc.id:
-                doc.roles = {'survey': 0.1,
-                             'tutorial': 0.1,
                              'resource': 0.0,
-                             'reference': 0.7,
+                             'reference': 0.0,
                              'empirical': 0.0,
                              'manual': 0.0,
-                             'other': 0.1}
+                             'other': 0.0}
 
 
 class Document:
