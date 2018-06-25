@@ -170,6 +170,23 @@ in the techknacq-server repository. It is run as:
     ./server [concept graph] ([port])
 
 
+## Citation
+
+If you use this code, cite either
+
+> Jonathan Gordon, Stephen Aguilar, Emily Sheng, and Gully Burns. 2017.
+> Structured Generation of Technical Reading Lists. In Proceedings of
+> the 12th Workshop on Innovative Use of NLP for Building Educational
+> Applications (BEA). https://doi.org/10.18653/v1/W17-5029
+
+or
+
+> Jonathan Gordon, Linhong Zhu, Aram Galstyan, Prem Natarajan, and Gully
+> Burns. 2016. Modeling Concept Dependencies in a Scientific Corpus. In
+> Proceedings of the 54th Annual Meeting of the Association for
+> Computational Linguistics (ACL). https://doi.org/10.18653/v1/P16-1082
+
+
 ## Acknowledgments
 
 This research is based upon work supported in part by the Office of the
