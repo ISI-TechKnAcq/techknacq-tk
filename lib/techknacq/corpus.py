@@ -192,7 +192,12 @@ class Document:
                 print(e, file=sys.stderr)
                 sys.exit(1)
 
-        self.id = j['info'].get('id', '')
+        if 'id' in j['info']:
+            self.id = j['info']['id']
+        else:
+            basename = os.path.basename(fname)
+            basename = re.sub('\.(json|xml|txt)$', '', basename)
+            self.id = basename
         self.authors = [x.strip() for x in j['info'].get('authors', [])]
         self.title = title_case(j['info'].get('title', ''))
         self.book = title_case(j['info'].get('book', ''))
