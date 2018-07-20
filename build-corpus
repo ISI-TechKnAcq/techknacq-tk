@@ -756,6 +756,8 @@ def main(indir, outdir, sd, wiki, web):
     ensure_directory(outputdir + '/sd-download')
     ensure_directory(outputdir + '/web-download')
 
+    expand = sd or wiki or web
+    
     global pool
     pool = mp.Pool(PROCESSES)
 
@@ -768,7 +770,7 @@ def main(indir, outdir, sd, wiki, web):
         for line in open('data/terms.txt', 'r'):
             terms.append(line.strip())
         print('Loaded', len(terms), 'terms from data/terms.txt.')
-    else:
+    elif expand:
         terms = get_terms(c, 2000)
         print('Writing terms to data/terms.txt.')
         with open('data/terms.txt', 'w') as tout:
@@ -777,7 +779,7 @@ def main(indir, outdir, sd, wiki, web):
 
     random.shuffle(terms)
 
-    if len(terms) == 0:
+    if len(terms) == 0 and expand:
         sys.stderr.write('Error: No terms to use.\n')
         sys.exit(1)
 
