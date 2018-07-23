@@ -51,7 +51,7 @@ class TopicDependency:
             deps = glob.glob('ext/techknacq-core/target/dependency/*.jar')
 
             cmd = ['java', '-cp', ':'.join([self.jar] + deps),
-                   'edu.isi.techknacq.topics.graph.Comparisononalledges',
+                   'edu.isi.techknacq.topics.graph.ComparisonOnAlledges',
                    model.wtkfile, infomap_tree_file, doc_comp_file,
                    str(len(model.topics)), citation_network_file,
                    infomap_flow_file]
