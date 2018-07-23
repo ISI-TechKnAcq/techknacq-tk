@@ -4,6 +4,7 @@ MAINTAINER Jonathan Gordon <jgordon@isi.edu>
 
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 
+
 # Install system dependencies.
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -12,7 +13,6 @@ RUN echo deb http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main \
     | tee /etc/apt/sources.list.d/webupd8team-java.list
 RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886
 
-# This is all one command to avoid cache issues.
 RUN apt-get update -q -y --fix-missing && \
     apt-get install -q -y --fix-missing --no-install-recommends \
         bzip2 ca-certificates enchant git g++ make poppler-utils ssh wget && \
@@ -61,7 +61,6 @@ RUN wget http://mallet.cs.umass.edu/dist/mallet-2.0.8RC3.tar.gz --quiet && \
     mv mallet-2.0.8RC3 mallet && \
     rm mallet-2.0.8RC3.tar.gz
 
-
 # Install Infomap.
 
 RUN wget http://www.mapequation.org/downloads/Infomap.zip --quiet && \
@@ -104,6 +103,7 @@ RUN git clone -b techknacq-tk-integration \
 RUN ln -s /t/data/server/application.properties \
           /t/ext/techknacq-server/application-production.properties
 
+
 # Add TechKnAcq Toolkit.
 
 COPY lib /t/lib
@@ -119,10 +119,10 @@ ENV PYTHONPATH /t/lib:$PYTHONPATH
 
 # Run TechKnAcq.
 
-ENV MAVEN_OPTS "-Xms1024m -Xmx4096m"
-
 WORKDIR /t
 
+# Increase memory for Java
+RUN sed -i 's/MEMORY=1g/MEMORY=16g/' /t/ext/mallet/bin/mallet
 
 # Elasticsearch HTTP
 EXPOSE 9200

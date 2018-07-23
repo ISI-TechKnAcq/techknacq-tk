@@ -51,12 +51,15 @@ Patch pyenchant:
 ### Precompiled third-party tools
 
 - pdftotext (Ubuntu: poppler-utils)
-- MALLET 2.0.7 or 2.0.8. Download and rename the directory to ext/mallet
-  (or change the path in 'concept-graph' script).
+- Mallet 2.0.7 or 2.0.8. Download and rename the directory to `ext/mallet`
+  (or change the path in `concept-graph` script).
+
+Note: For large corpora, you may need to increase the `MEMORY` specified
+for Java in Mallet's `bin/mallet` file.
 
 ### Infomap
 
-Download to ext/infomap and compile.
+Download to `ext/infomap` and compile.
 
 ### TechKnAcq Core
 
@@ -71,12 +74,12 @@ Download to ext/infomap and compile.
 ## Configuration
 
 Running corpus expansion requires several API keys:
-- Put your ScienceDirect API key in ~/.t/sd.txt.
-- Put your Bing API key in ~/.t/bing.txt.
+- Put your ScienceDirect API key in `~/.t/sd.txt`.
+- Put your Bing API key in `~/.t/bing.txt`.
 
 Change the file permissions to keep these keys private. They will be mapped
-into the Docker virtual machine at runtime, so ~/.t must exist on the machine
-you run on.
+into the Docker virtual machine at runtime, so `~/.t` must exist on the
+machine you run on.
 
 
 ## Run
@@ -112,7 +115,7 @@ XML files, BioC XML files, plain text, or the JSON corpus format used for this
 project. The output directory will be populated with JSON files that can be
 used for generating a concept graph.
 
-The various corpus expansion methods (e.g., '--wiki' above) can be
+The various corpus expansion methods (e.g., `--wiki` above) can be
 specified on the command line. Run `./build-corpus --help` to see a full
 list.
 
@@ -147,11 +150,11 @@ Topicnum,Name.
 
 The computation of pedagogical roles for documents is not part of this
 pipeline, but if a file of these annotations exists with the name
-'pedagogical-roles.txt', it will be read by `Corpus.read_roles()` and marked
+`pedagogical-roles.txt`, it will be read by `Corpus.read_roles()` and marked
 in the concept graph.
 
 You can try different methods and thresholds for computing concept
-dependencies using the '--method' and '--threshold' options.
+dependencies using the `--method` and `--threshold` options.
 
 
 ### Reading List
