@@ -34,9 +34,18 @@ from techknacq.lx import ScrabbleLexicon, StopLexicon, SentTokenizer
 
 PROCESSES = int(.5 * mp.cpu_count())
 
-SD_API_KEY = open(os.path.expanduser('~/.t/sd.txt')).read().strip()
-BING_API_KEY = open(os.path.expanduser('~/.t/bing.txt')).read().strip()
-GOOGLE_API_KEY = open(os.path.expanduser('~/.t/google.txt')).read().strip()
+def read_key(fname):
+    full_path = os.path.expanduser(fname)
+    if os.path.exists(full_path):
+        return open(full_path).read().strip()
+    print('Could not read API key from', fname, file=sys.stderr)
+    print('Some corpus expansion methods may fail.', file=sys.stderr)
+    return None
+
+
+SD_API_KEY = read_key('~/.t/sd.txt')
+BING_API_KEY = read_key('~/.t/bing.txt')
+GOOGLE_API_KEY = read_key('~/.t/google.txt')
 
 ###
 
@@ -757,7 +766,7 @@ def main(indir, outdir, sd, wiki, web):
     ensure_directory(outputdir + '/web-download')
 
     expand = sd or wiki or web
-    
+
     global pool
     pool = mp.Pool(PROCESSES)
 
