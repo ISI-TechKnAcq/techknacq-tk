@@ -4,6 +4,7 @@
 import math
 
 from collections import defaultdict
+from nltk.tokenize import word_tokenize
 from nltk.stem.lancaster import LancasterStemmer
 
 
@@ -40,7 +41,7 @@ class ReadingList:
     def __init__(self, cg, query, user_model=None, docs=True):
         self.cg = cg
 
-        self.query = ' '.join(query).lower().split()
+        self.query = word_tokenize(' '.join(query).replace('-', ' ').lower())
 
         self.user_model = user_model
         if self.user_model is None:
