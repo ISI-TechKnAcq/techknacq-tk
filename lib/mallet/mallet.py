@@ -244,9 +244,9 @@ class Mallet:
         num_topics = len(self.topics)
 
         if not os.path.exists(self.namefile):
-            self.names = [' '.join([x[0] for x in sorted(self.topics[i],
-                                                         key=lambda z: z[1],
-                                                         reverse=True)[:3]])
+            self.names = [' '.join([x for x in sorted(self.topics[i],
+                                                      key=lambda z: z[1],
+                                                      reverse=True)[:3]])
                           for i in range(num_topics)]
             return
 
