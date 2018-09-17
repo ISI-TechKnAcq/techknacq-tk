@@ -9,7 +9,7 @@ from nltk.stem.lancaster import LancasterStemmer
 
 # Parameters
 
-THRESHOLD = .5
+THRESHOLD = .005
 MAX_MATCHES = 6
 MAX_DEPTH = 4
 BASE_DOC_NUM = 8
