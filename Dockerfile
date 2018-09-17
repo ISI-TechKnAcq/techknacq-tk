@@ -36,8 +36,8 @@ ENV PATH /opt/conda/bin:$PATH
 
 RUN conda update -y conda
 
-RUN conda install numpy nltk beautifulsoup4 lxml networkx flask flask-cors \
-                  click
+RUN conda install numpy nltk beautifulsoup4 lxml networkx=1.11 \
+                  flask flask-cors click
 RUN pip install pyenchant ftfy noaho wikipedia unidecode
 
 

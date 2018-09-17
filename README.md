@@ -43,7 +43,7 @@ Install pip3 (Debian/Ubuntu: python3-pip). Use it to install the
 required Python packages:
 
     pip3 install beautifulsoup4 nltk noaho wikipedia gensim
-                 networkx pyenchant ftfy flask flask-cors
+                 networkx==1.11 pyenchant ftfy flask flask-cors
 
 Patch pyenchant:
   https://github.com/rfk/pyenchant/issues/45
