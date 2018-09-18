@@ -1,0 +1,56 @@
+Last login: Tue May 26 09:21:19 on console
+MacBook-Pro-de-Marcial:~ Marcial$ cd sourceTree/
+MacBook-Pro-de-Marcial:sourceTree Marcial$ ls
+Pytaxo		TecnologiasWeb	lab1-TParalelas	lab2-Paralelas	mallet-2.0.7
+MacBook-Pro-de-Marcial:sourceTree Marcial$ cd mallet-2.0.7/
+MacBook-Pro-de-Marcial:mallet-2.0.7 Marcial$ bin/mallet import-file --input textos.txt
+Exception in thread "main" java.io.FileNotFoundException: textos.txt (No such file or directory)
+	at java.io.FileInputStream.open0(Native Method)
+	at java.io.FileInputStream.open(FileInputStream.java:195)
+	at java.io.FileInputStream.<init>(FileInputStream.java:138)
+	at cc.mallet.classify.tui.Csv2Vectors.main(Csv2Vectors.java:260)
+MacBook-Pro-de-Marcial:mallet-2.0.7 Marcial$ bin/mallet import-file --input entradaMallet.txt 
+MacBook-Pro-de-Marcial:mallet-2.0.7 Marcial$ bin/mallet import-file --input entradaMallet.txt --output textos.mallet
+MacBook-Pro-de-Marcial:mallet-2.0.7 Marcial$ bin/mallet import-file --input entradaMallet.txt --output textos.mallet --remove-stopwords
+MacBook-Pro-de-Marcial:mallet-2.0.7 Marcial$ bin/mallet train-classifier --input textos.mallet --output-classifier my.classifier
+Training portion = 1.0
+ Unlabeled training sub-portion = 0.0
+Validation portion = 0.0
+Testing portion = 0.0
+
+-------------------- Trial 0  --------------------
+
+Trial 0 Training NaiveBayesTrainer with 1183 instances
+Trial 0 Training NaiveBayesTrainer finished
+Trial 0 Trainer NaiveBayesTrainer training data accuracy= 0.9137785291631445
+Trial 0 Trainer NaiveBayesTrainer Test Data Confusion Matrix
+Trial 0 Trainer NaiveBayesTrainer test data accuracy= NaN
+
+NaiveBayesTrainer
+Summary. train accuracy mean = 0.9137785291631445 stddev = 0.0 stderr = 0.0
+Summary. test accuracy mean = NaN stddev = NaN stderr = NaN
+MacBook-Pro-de-Marcial:mallet-2.0.7 Marcial$ bin/mallet train-classifier --input textos.mallet --output-classifier my.classifier --training-portion 0.9
+Training portion = 0.9
+ Unlabeled training sub-portion = 0.0
+Validation portion = 0.0
+Testing portion = 0.09999999999999998
+
+-------------------- Trial 0  --------------------
+
+Trial 0 Training NaiveBayesTrainer with 1065 instances
+Trial 0 Training NaiveBayesTrainer finished
+Trial 0 Trainer NaiveBayesTrainer training data accuracy= 0.9136150234741784
+Trial 0 Trainer NaiveBayesTrainer Test Data Confusion Matrix
+Confusion Matrix, row=true, column=predicted  accuracy=0.7288135593220338
+       label   0   1   2  |total
+  0 positivo  62   4   3  |69
+  1 negativo   5  17   5  |27
+  2  neutral   9   6   7  |22
+
+Trial 0 Trainer NaiveBayesTrainer test data accuracy= 0.7288135593220338
+
+NaiveBayesTrainer
+Summary. train accuracy mean = 0.9136150234741784 stddev = 0.0 stderr = 0.0
+Summary. test accuracy mean = 0.7288135593220338 stddev = 0.0 stderr = 0.0
+MacBook-Pro-de-Marcial:mallet-2.0.7 Marcial$ 
+
