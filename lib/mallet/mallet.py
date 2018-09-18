@@ -12,7 +12,7 @@ import multiprocessing as mp
 from numpy import zeros
 from itertools import combinations
 
-from techknacq.lx import StopLexicon
+from lib.techknacq.lx import StopLexicon
 
 
 # Parameters
