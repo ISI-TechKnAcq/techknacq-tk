@@ -1,0 +1,322 @@
+{
+  "info": {
+    "authors": [
+      "John Conroy",
+      "Sashka T. Davis",
+      "Jeff Kubina",
+      "Yi-Kai Liu",
+      "Dianne P. O’Leary",
+      "Judith D Schlesinger"
+    ],
+    "book": "MultiLing",
+    "id": "acl-W13-3108",
+    "title": "Multilingual Summarization: Dimensionality Reduction and a Step Towards Optimal Term Coverage",
+    "url": "https://aclweb.org/anthology/W13-3108",
+    "year": 2013
+  },
+  "references": [
+    "acl-C00-1072",
+    "acl-J93-1003",
+    "acl-P05-3013",
+    "acl-P06-2020"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "In this paper we present three term weighting approaches for multilingual document summarization and give results on the DUC 2002 data as well as on the 2013 Multilingual Wikipedia feature articles data set.",
+        "We introduce a new interval-bounded nonnegative matrix factorization.",
+        "We use this new method, latent semantic analysis (LSA), and latent Dirichlet alo-cation (LDA) to give three term-weighting methods for multi-document multilingual summarization.",
+        "Results on DUC and TAC data, as well as on the MultiLing 2013 data, demonstrate that these methods are very promising, since they achieve oracle coverage scores in the range of humans for 6 of the 10 test languages.",
+        "Finally, we present three term weighting approaches for the MultiLing13 single document summarization task on the Wikipedia featured articles.",
+        "Our submissions significantly outperformed the baseline in 19 out of 41 languages."
+      ]
+    },
+    {
+      "heading": "Multi-Document Summarization",
+      "text": [
+        "The past 20 years of research have yielded a bounty of successful methods for single document summarization (SDS) and multi-document summarization (MDS).",
+        "Techniques from statistics, machine learning, numerical optimization, graph theory, and combinatorics are generally language-independent and have been applied both to single and multi-document extractive summarization of multilingual data.",
+        "In this paper we extend the work of our research group, most recently discussed in Davis et al.",
+        "(2012) for multi-document summarization, and apply it to both single and multi-document multilingual document summarization.",
+        "Our extractive multi-document summarization performs the following steps:",
+        "1.",
+        "Sentence boundary detection; 2.",
+        "Tokenization and term identification; 3.",
+        "Term-sentence matrix generation; 4.",
+        "Term weight determination; 5.",
+        "Sentence selection; 6.",
+        "Sentence ordering.",
+        "Sentence boundary detection and tokenization are language dependent, while steps (3)-(6) are language independent.",
+        "We briefly discuss each of these steps.",
+        "We use a rule based sentence splitter FASST-E (very Fast, very Accurate Sentence Splitter for Text ?",
+        "English) (Conroy et al., 2009) and its multilingual extensions (Conroy et al., 2011) for determining the boundary of individual sentences.",
+        "Proper tokenization improves the quality of the summary and may include stemming and also morphological analysis to disambiguate compound words in languages such as Arabic.",
+        "Tokenization may also include stop word removal.",
+        "The result of this step is that each sentence is represented as a sequence of terms, where a term can be a single word, a sequence of words, or character n-grams.",
+        "The specifics of tokenization are discussed in Section 2.",
+        "Matrix generation (the vector space model) was pioneered by Salton (1991).",
+        "Later Dumais (1994) introduced dimensionality reduction in document retrieval systems, and this approach has also been",
+        "used by many researchers for document summarization.",
+        "(In addition to our own work, see, for example Steinberger and Jezek (2009).)",
+        "We construct a single term-sentence matrix A = (ai,j), where i = 1, .",
+        ".",
+        ".",
+        ",m ranges over all terms, and j = 1, .",
+        ".",
+        ".",
+        ", n ranges over all sentences, for either a single document, when we perform SDS, or for a collection of documents for MDS.",
+        "The row labels of the term-sentence matrix are the terms",
+        "The column labels are the sentences S1, .",
+        ".",
+        ".",
+        ", Sn of the document(s).",
+        "The entries of the matrix A are defined by ai,j = `i,jgi, Here, `i,j is the local weight, which is 1 when term i appears in sentence j and 0 otherwise.",
+        "The global weight gi should be proportional to the contribution of the term in describing the major themes of the document.",
+        "While the global weight could be used as a term weight in a sentence selection scheme, it may be beneficial to perform dimensionality reduction on the matrix A and compute term weights based on the lower dimensional matrix.",
+        "In this work we seek to find strong term weights for both single-and and multi-document summarization.",
+        "These cases are handled separately, as we found that multi-document summarization benefits a lot from dimensionality reduction while single document summarization does not.",
+        "Our previous multi-document summarization algorithm, OCCAMS (Davis et al., 2012), used the linear algebraic technique of Latent Semantic Analysis (LSA) to determine term weights and used techniques from combinatorial optimization for sentence selection.",
+        "In our CLASSY algorithms (e.g., (Conroy et al., 2011)), we used both a language model and machine learning as two alternative approaches to assign term weights.",
+        "CLASSY then used linear algebraic techniques or an integer linear program for sentence selection.",
+        "Section 3 describes the term weights we use when we summarize single documents.",
+        "In Section 4 we present three different dimensionality reduction techniques for the term-sentence matrix A.",
+        "Once term weight learning has assigned weights for each term of the document(s) and dimensionality reduction has been applied (if desired), the next step, sentence selection, chooses a set of sentences of maximal length L for the extract summary.",
+        "These sentences should cover the major themes of the document(s), minimize redundancy, and satisfy the bound on the length of the summary.",
+        "We discuss our OCCAMS V sentence selection algorithm in Section 5.",
+        "Sentence ordering is performed using an approximate traveling salesperson algorithm (Conroy et al., 2009).",
+        "Three term weighting variants were used to generate summaries for each of the 10 languages in the MultiLing 2013 multi-document summarization task.",
+        "The target summary length was set to be 250 words for all languages except Chinese, where 700 characters were generated.",
+        "We now present the details of our improvements to our algorithms and results of our experiments."
+      ]
+    },
+    {
+      "heading": "2 From Text to Term-Sentence Matrix",
+      "text": [
+        "After sentence boundaries are determined, we used one of three simple tokenization methods and then one of two term-creation methods, as summarized in Table 1.",
+        "Languages were divided into three categories: English, non-English languages with space delimited words, and ideographic languages (Chinese for MDS and Chinese, Japanese, and Thai for the SDS pilot task).",
+        "For non-ideographic languages, tokens are formed based on a regular expression.",
+        "For English, tokens are defined as contiguous sequences of upper or lower case letters and numbers.",
+        "For other non-ideographic languages, tokens were defined similarly, and the regular expression describes what characters are used to break the tokens.",
+        "These characters include white space and most punctuation except the apostrophe.",
+        "For English, Porter stemming was used for both SDS and MDS, with a stop list of approximately 600 words for SDS.",
+        "For English and other word-based languages, lower-cased bi-tokens were used in MDS and lower-cased tokens for SDS.",
+        "For all languages, and both SDS and MDS, Dunning's mutual information statistic (Dunning, 1993) is used to select terms, using the other documents as background.",
+        "The p-value (rejection threshold), initially set at 5.0e-4, is repeatedly doubled until the number of terms is at least twice the length of the target summary (250 for MDS, 150 words or 500 characters for SDS).",
+        "Note that these terms are high confidence signature terms (Lin and Hovy, 2000) i.e., the p-value is small.",
+        "We describe our terms as high mutual information (HMI), since Dunning's statistic is equivalent to mutual information as defined by"
+      ]
+    },
+    {
+      "heading": "3 Determining Term Weights for Single",
+      "text": []
+    },
+    {
+      "heading": "Document Summarization",
+      "text": [
+        "For SDS we consider three term weighting methods.",
+        "The first is global entropy as proposed by Dumais et al. for information retrieval (Dumais, 1994) (Rehder et al., 1997) and by Steinberger and Jezek for document summarization (Steinberger and Jezek, 2009).",
+        "Global entropy weighting is given by",
+        "where n is the number of sentences, pi,j = tij/fi, tij is the number of times term i appears in sentence j, and fi is the total number of times term i appears in all sentences.",
+        "The second term weighting is simply the logarithm of frequency of the term in all the sentences:",
+        "Log frequency is motivated by the fact that the sum of the term scores for a given sentence is (up to an affine transformation) the log probability of generating that sentence by sampling terms independently at random, where the probability of each term is estimated by maximum likelihood from the observed frequencies fi.",
+        "The third method is a personalized variant of TextRank, which was first proposed by Mihal-cea (2005) and motivated by PageRank (Page et al., 1999).",
+        "The personalized version smooths the Markov chain used in TextRank (PageRank) with term (page) preferences.",
+        "Previously, a sentence based version of personalization has been used for summarization; see, for example, Zhao et al. (2009).",
+        "Our current work may be the first use of",
+        "a term based personalized TextRank (TermRank), which we call PTR.",
+        "The personalization vector we choose is simply the normalized frequency, and the Markov chain is defined by the transition ma",
+        "L is the incidence term-sentence matrix.",
+        "The elements of L are previously defined local weights, `ij .",
+        "The vector e is all 1's and D is a diagonal matrix chosen to make the column sums equal to one.",
+        "The estimated weight vector used by OCCAMS V, w(PTR), is computed using 5 iterations of the power method to approximate the stationary vector of this matrix.",
+        "Note, there is no need to form the matrix M since the applications of M to a vector may be achieved by vector operations and matrix-vector multiplies by L and LT .",
+        "We test the performance of these three term weighting methods on two data sets: DUC 2002 English single-document data and the Wikipedia Pilot at MultiLing 2013."
+      ]
+    },
+    {
+      "heading": "3.1 Results for DUC 2002 Data",
+      "text": [
+        "The DUC 2002 English single-document data contains 567 newswire documents for which there are one or two human-generated summaries.",
+        "In addition to computing ROUGE-2 scores, we also compute an oracle coverage score (Conroy et al., 2006).",
+        "At TAC 2011 (Conroy et al., 2011) (Rankel et al., 2012) bigram coverage was shown to be a useful feature for predicting the performance of automated summarization systems relative to a human summarizer.",
+        "Oracle unigram coverage score is defined by",
+        "where T is the set of terms and f1(i) is the fraction of humans who included the ith term in the",
+        "summary.",
+        "More generally, we define Cn in similar way for n-gram oracle coverage scores.",
+        "Coverage scores differ from ROUGE scores since the score is not affected by the number of times that a given human or machine-generated summary uses the term, but only whether or not the term is included in the machine summary and the estimated fraction of humans that would use this term.",
+        "We note that this score can be modified to compute scores for human summarizers using the analogous jackknife procedure employed by ROUGE.",
+        "Table 2 gives a summary of the results.",
+        "We ran a Wilcoxon test to check for statistical dis-tinguishability in the performance of the different term-weighting methods.",
+        "Methods were placed in the same group if they produced results in coverage (C1) that were indistinguishable.",
+        "More precisely, we used the null hypothesis that the difference between the vector of scores for two methods has median 0.",
+        "If the p-value of two consecutive entries in the table was less than 0.05, the group label was increased and is shown in the last column.",
+        "Log frequency (LF) and global entropy (GE) are correlated.",
+        "For the DUC 2002 data they perform comparably.",
+        "Personalized term rank (PTR) weighting is statistically stronger than the other two approaches, as measured by the oracle term coverage score.",
+        "For these data the definition of term for the purposes of the computation of the oracle coverage score is non-stop word stemmed (unigram) tokens."
+      ]
+    },
+    {
+      "heading": "3.2 Results for the Wikipedia Pilot at MultiLing 2013",
+      "text": [
+        "This task involves single-document summarization for 1200 Wikipedia feature articles: 30 documents in each of 40 languages.",
+        "For each document, the organizers generated a baseline lead summary consisting of the first portion of the feature article following the ?hidden summary.?",
+        "Summary lengths were approximately 150 words for all non-ideograph languages and 500 characters for the ideograph languages.",
+        "Sentences were ordered in the order selected by OCCAMS V. Thus, sentences covering the largest number of relevant terms, as measured by the term-weighting scheme, will appear first.",
+        "Results of this pilot study will be presented in detail in the overview workshop paper, but we note here that, as measured by ROUGE-1, in 19 of the 40 languages, at least one of our three submitted methods significantly outperformed the lead-summary baseline."
+      ]
+    },
+    {
+      "heading": "4 Dimensionality Reduction",
+      "text": [
+        "The goal of dimensionality reduction is to identify the major factors of the term-sentence matrix A and to throw away those factors which are ?irrelevant?",
+        "for summarization.",
+        "Here we survey three algorithms: the well-known LSA, the more recent latent Dirichlet alocation (LDA), and the new interval-bounded nonnegative matrix factorization."
+      ]
+    },
+    {
+      "heading": "4.1 Latent Semantic Analysis",
+      "text": [
+        "Davis et al. (2012) successfully used an approximation to A, computed using the singular value decomposition (SVD) A = USV T .",
+        "They used the first 200 columns U200 of the singular vector matrix U and the corresponding part of the singular value matrix S. They eliminated negative entries in U200 by taking absolute values.",
+        "The term weights were computed as the L1 norm (sum of the entries) in the rows of W = |U200|S200.",
+        "Our method is similar, except that we use 250 columns and form them in a slightly different way.",
+        "Observe that in the SVD, if ui is a column of U and vTi is a row of V , then they can be replaced by ?ui and ?vTi .",
+        "This is true since if D is any diagonal matrix with entries +1 and ?1, then A = USV T = (UD)S(DV T ).",
+        "Therefore, we propose choosingD so that the sum of the positive entries in each column of U is maximized.",
+        "Then we form U?",
+        "by setting each negative entry of UD to zero and form W = U?250S250."
+      ]
+    },
+    {
+      "heading": "4.2 Latent Dirichlet Allocation",
+      "text": [
+        "We use the term-sentence matrix to train a simple generative topic model based on LDA (Blei et al., 2003).",
+        "This model is described by the following parameters: the number of terms m; the number of topics k; a vector w representing a probability distribution over topics; and an m?",
+        "k matrix A in",
+        "which each column represents a probability distribution over terms.",
+        "In this model, sentences are generated independently.",
+        "We use the ?pure-topic?",
+        "LDA model and assume, for simplicity, that the length of the sentence is fixed a priori.",
+        "First, a topic i ?",
+        "{1, .",
+        ".",
+        ".",
+        ", k} is chosen from the probability distribution w. Then, terms are generated by sampling independently from the distribution specified by the ith column of the matrix A.",
+        "We train this model using a recently-developed spectral algorithm based on third-order tensor decompositions (Anandkumar et al., 2012a; Anandkumar et al., 2012b).",
+        "This algorithm is guaranteed to recover the parameters of the LDA model, provided that the columns of the matrixA are linearly independent.",
+        "For our experiments, we used a Matlab implementation from Hsu (2012)."
+      ]
+    },
+    {
+      "heading": "4.3 Interval Bounded Nonnegative Matrix Factorization (IBNMF)",
+      "text": [
+        "We also use a new method for dimensionality reduction, a nonnegative matrix factorization algorithm that handles uncertainty in a new way (O?Leary and et al., In preparation).",
+        "Since the term-sentence matrix A is not known with certainty, let's suppose that we are given upper and lower bound matrices U and L so that L ?",
+        "A ?",
+        "U .",
+        "We compute a sparse nonnegative low-rank approximation toA of the formXY , where X is nonnegative (i.e., X ?",
+        "0) and has r columns and Y is nonnegative and has r rows.",
+        "This gives us an approximate nonnegative factorization of A of rank at most r. We choose to measure closeness of two matrices using the Frobenius norm-squared, where ?Z?2F denotes the sum of the squares of the entries of Z.",
+        "Since A is sparse, we also want X and Y to be sparse.",
+        "We use the common trick of forcing this by minimizing the sum of the entries of the matrices, denoted by sum(X) + sum(Y ).",
+        "This leads us to determine X and Y by choosing a weighting constant ?",
+        "and solving",
+        "We simplify this problem by noting that for any",
+        "We solve our minimization problem by an alternating algorithm, iterating by fixing X and determining the optimal Y and then fixing Y and determining the optimal X .",
+        "Either non-negativity is imposed during the solution to the subproblems, making each step more expensive, or negative entries of the updated matrices are set to zero, ruining theoretical convergence properties but yielding a more practical algorithm.",
+        "Each iteration reduces the distance to the term matrix, but setting negative values to zero increases it again.",
+        "For our summarization system we chose r = 50 and ?",
+        "= 1000.",
+        "We scaled the rows of the matrix using global entropy weights and used L = 0.9A and U = 1.1A."
+      ]
+    },
+    {
+      "heading": "4.4 Term Weighting and Dimension Choice for Multi-Document Summarization",
+      "text": [
+        "A natural term weighting can be obtained by computing the row sums of the dimension-reduced approximation to the term-sentence matrix.",
+        "For LSA, the resulting term weights are the sum of the entries in the rows of W = U?250S250.",
+        "For the LDA method the initial matrix is the matrix of counts.",
+        "The model has three components similar to that of the SVD in LSA, and the term weights are computed analogously.",
+        "For IBNMF, the term weights are the sum of the entries in the rows of the optimal XY .",
+        "Each of the three dimensionality reduction methods require us to specify the dimension of the ?topic space.?",
+        "We explored this question using the DUC 2005-2007 and the TAC 2011 data.",
+        "Tables 3, 4, 5, and 6 give the average ROUGE-2, ROUGE4, and bi-gram coverage scores, with confidence intervals, for the dimension that gave the best coverage.",
+        "The optimal ranks were 250 for LSA, 5 for LDA, and 50 for IBNMF.",
+        "We emphasize the these results are very strong despite the fact that no use of the topic descriptions or the guided summary aspects for the TAC 2010 and 2011 are used.",
+        "Thus, we treat these data as if the task were to generate a generic summary, as is the case in the MultiLing 2013 task.",
+        "2"
+      ]
+    },
+    {
+      "heading": "5 Sentence Selection",
+      "text": [
+        "Our sentence selection algorithm, OCCAMS V, is an extension of the one used in (Davis et al., 2012), which uses the (1 ?",
+        "e?1/2)-approximation scheme for the Budgeted Maximal Coverage (BMC) problem and the Dynamic Programming based FPTAS for the knapsack problem.",
+        "where T (Ki) is the set of terms covered by Ki.",
+        "This algorithm selects minimally overlapping sentences, thus reducing redundancy, while maximizing term coverage.",
+        "The algorithm guarantees a (1?",
+        "e?1/2) approximation ratio for BMC.",
+        "We use the m terms T = {t1, .",
+        ".",
+        ".",
+        ", tm} and their corresponding weightsW = {w1, .",
+        ".",
+        ".",
+        ", wm}.",
+        "We also use the n sentences D = {S1, .",
+        ".",
+        ".",
+        ", Sn}, where each Si is the set of terms in the ith sentence, so that Si ?",
+        "T .",
+        "We define c to be a vector whose components are the lengths of each sentence.",
+        "Our algorithm, OCCAMS V, determines four candidate sets of summary sentences and then 2 scores reported in (Davis et al., 2012), where a rank 200 approximation and a large background corpus were used, are higher than the ones reported here, where a small self-background and a rank 250 approximation is used.",
+        "chooses the one with maximal coverage weight.",
+        "The first three candidate sets were used in the OCCAMS algorithm (Davis et al., 2012).",
+        "The set K1 is determined using the Greedy BMC heuristic of Khuller et al. (1999) to maximize the sum of weights corresponding to terms in the summary sentences.",
+        "The set K2 is determined the same way, but the sentence that has the best sum of weights is forced to be included.",
+        "The third candidate K3 is determined by applying a fully polynomial-time approximation scheme (FPTAS) dynamic programming algorithm, denoted by KS, to the knapsack problem using sentences chosen by the Greedy BMC heuristic, asking for a length of 5L.",
+        "The fourth candidate K4 is similar, but the sentence with the best sum of weights is forced to be included in the input to KS.",
+        "OCCAMS V guarantees an approximation ratio of (1?",
+        "e?1/2) for the result because the quality of the solution chosen is no worse than the approximation ratio achieved by the OCCAMS algorithm."
+      ]
+    },
+    {
+      "heading": "6 Coverage Results for MultiLing 2013",
+      "text": [
+        "We defined a term oracle coverage score in Section 3.1, an automatic summarization evaluation score that computes the expected number of n-grams that a summary will have in common with a human summary selected at random, assuming that humans select terms independently.",
+        "As reported in (Davis et al., 2012), the 2-gram oracle coverage correlates as well with human evaluations of English summaries as ROUGE-2 does for English newswire summaries.3 It is natural then to ask to what extent oracle coverage scores can predict a summary's quality for other languages.",
+        "3Here a term is defined as a stemmed 2-gram token.",
+        "For each of the 10 MultiLing 2013 languages we can tokenize and generate bigrams (or character n-grams for Chinese) for the human-generated summaries and the machine-generated summaries.",
+        "Table 7 gives the average oracle term (bi-gram) coverage score (C2) for the lowest-scoring human and for each of the dimensionality reduction algorithms described in Section 4.",
+        "In all but four of the languages (Romanian, Hindi, Spanish, and Chinese), at least one of our methods scored higher than the lowest scoring human.",
+        "As with the DUC and TAC testing, the LDA method of term-weighting was the weakest of the three.",
+        "In fact, in eight of the languages one or both of OCCAMS V(LSA) and OCCAMS V(IBNMF) (indicated in boldface in the table) scored significantly higher than OCCAMS V(LDA) (p-value < 0.05 using a paired Wilcoxon test).",
+        "The human coverage scores for three of the languages (Romanian, Hindi, and Chinese) are surprisingly high.",
+        "Examining these data more closely indicates that a large number of the summaries are nearly identical.",
+        "As an example, in one of the Romanian document sets, there were 266 bi-grams in the union of the three summaries, and the summary length was 250.",
+        "Document sets similar to this are the major cause of the anomalously high scores for humans in these languages.",
+        "Human evaluation of the multilingual multi-document summaries is currently under way.",
+        "These evaluations will be extremely informative and will help measure to what extent ROUGE, coverage, and character n-gram based methods such as MeMoG (Giannakopoulos et al., 2010), are effective in predicting performance."
+      ]
+    },
+    {
+      "heading": "7 Conclusions and Future Work",
+      "text": [
+        "In this paper we presented three term weighting approaches for single document multilingual summarization.",
+        "These approaches were tested on the DUC 2002 data and on a submission to the MultiLing 2013 single document pilot task for all 40 languages.",
+        "Automatic evaluation of these summaries with ROUGE-1 indicates that the strongest of the approaches significantly outperformed the lead baseline.",
+        "The Wikipedia feature articles pose a challenge due to their variable summary size and genre.",
+        "Further analysis of the results as well as human evaluation of the submitted summaries would deepen our understanding.",
+        "A new nonnegative matrix factorization method, interval bounded nonnegative matrix factorization (IBNMF), was used.",
+        "This method allows specifying interval bounds, which give an intuitive way to express uncertainty in the term-sentence matrix.",
+        "For MDS we presented a variation of a LSA term-weighting for OCCAMS V as well as novel use of both of the IBNMF and an LDA model.",
+        "Based on automatic evaluation using coverage, it appears that the LSA method and the IBNMF term-weighting give rise to competitive summaries with term coverage scores approaching that of humans for 6 of the 10 languages.",
+        "The automatic evaluation of these summaries, which should soon be finished, will be illuminating.",
+        "Note: Contributions to this article by NIST, an agency of the US government, are not subject to US copyright.",
+        "Any mention of commercial products is for information only, and does not imply recommendation or endorsement by NIST."
+      ]
+    }
+  ]
+}

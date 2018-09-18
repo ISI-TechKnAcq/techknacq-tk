@@ -1,0 +1,224 @@
+{
+  "info": {
+    "authors": [
+      "Michael Heilman",
+      "Nitin Madnani"
+    ],
+    "book": "SemEval",
+    "id": "acl-S12-1076",
+    "title": "ETS: Discriminative Edit Models for Paraphrase Scoring",
+    "url": "https://aclweb.org/anthology/S12-1076",
+    "year": 2012
+  },
+  "references": [
+    "acl-C04-1051",
+    "acl-D07-1003",
+    "acl-N09-4006",
+    "acl-P05-1074",
+    "acl-P11-1020",
+    "acl-S12-1051",
+    "acl-W02-1001",
+    "acl-W08-0902",
+    "acl-W09-0441"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "Many problems in natural language processing can be viewed as variations of the task of measuring the semantic textual similarity between short texts.",
+        "However, many systems that address these tasks focus on a single task and may or may not generalize well.",
+        "In this work, we extend an existing machine translation metric, TERp (Snover et al., 2009a), by adding support for more detailed feature types and by implementing a discriminative learning algorithm.",
+        "These additions facilitate applications of our system, called PERP, to similarity tasks other than machine translation evaluation, such as paraphrase recognition.",
+        "In the SemEval 2012 Semantic Textual Similarity task, PERP performed competitively, particularly at the two surprise subtasks revealed shortly before the submission deadline."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Techniques for measuring the similarity of two sentences have various potential applications: automated short answer scoring (Nielsen et al., 2008; Leacock and Chodorow, 2003), question answering (Wang et al., 2007), machine translation evaluation (Przybocki et al., 2009; Snover et al., 2009a), etc.",
+        "An important aspect of this problem is that similarity is not binary.",
+        "Sentences can be very semantically similar, such that they might be called paraphrases of each other.",
+        "They might be completely different.",
+        "Or, they might be somewhere in between.",
+        "Indeed, it is arguable that all sentence pairs (except exact duplicates) lie somewhere on a continuum of similarity.",
+        "Therefore, it is desirable to develop methods that model sentence pair similarity on a continuous, or at least ordinal, scale.",
+        "In this paper, we describe a system for measuring the semantic similarity of pairs of short texts.",
+        "As a starting point, we use the Translation Error Rate Plus (Snover et al., 2009a), or TERp, system, which was specifically developed for machine translation evaluation.",
+        "TERp takes two sentences as input, finds a set of weighted edits that convert one into the other with low overall weight, and then produces a length-normalized score.",
+        "TERp also has a greedy, heuristic learning algorithm for inducing weights from la-beled sentence pairs in order to increase correlations with human similarity scores.",
+        "Some features of the original TERp make adaptation to other semantic similarity tasks difficult, including its largely one-to-one mapping of features to edits and its heuristic, greedy learning algorithm.",
+        "For example, there is a single feature for lexical substitution, even though it is clear that different types of substitutions have different effects on similarity (e.g., substituting ?43.6?",
+        "with ?17?",
+        "versus substituting ?a?",
+        "for ?an?).",
+        "In addition, the heuristic learning algorithm, which involves perturbing the weight vector by small amounts as in grid search, seems un-scalable to larger sets of overlapping features.",
+        "Therefore, here, we use TERp's inference algorithms that find low cost edit sequences but use a discriminative learning algorithm based on the Perceptron (Rosenblatt, 1958; Collins, 2002) to estimate edit cost parameters, along with an expanded feature set for broader coverage of the phenomena that are relevant to sentence-to-sentence similarity.",
+        "We",
+        "refer to this new approach as Paraphrase Edit Rate with the Perceptron (PERP).",
+        "In addition to describing PERP, we discuss how it was applied for the SemEval 2012 Semantic Textual Similarity (STS) task."
+      ]
+    },
+    {
+      "heading": "2 Problem Definition",
+      "text": [
+        "In this work, our goal is to create a system that can take as input two sentences (or short texts) x1 and x2 and produce as output a prediction y?",
+        "for how similar they are.",
+        "Here, we use the 0 to 5 ordinal scale from the STS task, where increasing values indicate greater semantic similarity.",
+        "The STS task data includes five subtasks with text pairs from different sources: the Microsoft Research Paraphrase Corpus (Dolan et al., 2004) (MSRpar), The Microsoft Research Video corpus (Chen and Dolan, 2011) (MSRvid), statistical machine translation output of parliament proceedings (Koehn, 2005) (SMT-eur).",
+        "For each of these sources, approximately 750 sentence pairs x1 and x2 and gold standard similarity values y were provided for training and development.",
+        "In addition, there were two surprise data sources revealed shortly before the submission deadline: pairs of sentences from Ontonotes (Pradhan and Xue, 2009) and Wordnet (Fellbaum, 1998) (OnWN), and machine translations of sentences from news conversations (SMT-news).",
+        "For all five sources, the held-out test set contained several hundred text pairs.",
+        "See the task description (Agirre et al., 2012) for additional details."
+      ]
+    },
+    {
+      "heading": "3 TER, TERp, and PERP",
+      "text": [
+        "In this section, we briefly describe the TER and TERp machine translation metrics, and how the PERP system extends them in order to better model semantic textual similarity.",
+        "TER (Snover et al., 2006) uses a greedy search algorithm to find a set of edits to convert one of the paired input sentences into the other.",
+        "We can view this set of edits as an alignment a between the two input sentences x1 and x2, and when two words in x1 and x2, respectively, are part of an edit operation, we say that those words are aligned.1 Unlike tradi",
+        "tional edit distance measures, TER allow for shifts?",
+        "that is, edits that change the positions of words or phrases in the input sentence x1.",
+        "Essentially, TER searches among a set of possible shifts of the phrases in x1 to find a set of shifts that result in the least cost alignment, using edits of other types, between x2 and the shifted version of x1.",
+        "TER allows one to specify costs for different edit types, but it does not include a method for learning those costs from data.",
+        "TERp (Snover et al., 2009b; Snover et al., 2009a) extends TER in two key ways.",
+        "First, TERp includes new types of edits, including edits for substitution of synonyms, word stems, and phrasal paraphrases extracted from a pivot-based paraphrase table (?3.1).",
+        "Second, it includes a heuristic learning algorithm for inferring cost parameters from labeled data.",
+        "TERp includes 8 types of edits: match (M), insertion (I), deletion (D), substitution (S), stemming (T), synonymy (Y), shift (Sh), and phrase substitution (P).",
+        "The edits are mutually exclusive, such that synonymy edits do not count as substitutions, for example.",
+        "TERp has 11 total parameters, with a single parameter for each edit except for phrase substition, which has four.",
+        "PERP has a general framework similar to that of TERp.",
+        "It extends TERp, however, by including additional edit parameters, and by using a discriminative learning algorithm (see ?5) to learn parameters rather than the heuristic technique used by TERp.",
+        "Thus, PERP uses the same greedy algorithm as TERp for finding the optimal sets of edits given the cost parameters, but it allows the cost for an individual edit to depend on multiple, overlapping features of that edit.",
+        "For example, costs for substitution edits depend on whether the aligned words are pronouns, whether the aligned words represent numbers, the lengths of the aligned words, etc.",
+        "See ?4 for the full list of features in PERP.",
+        "An alignment from the MSRpar portion of the STS training data is illustrated in Figure 1."
+      ]
+    },
+    {
+      "heading": "3.1 Phrasal Paraphrases",
+      "text": [
+        "PERP uses probabilistic phrasal substitutions to align phrases in the hypothesis with phrases in the all STS subtasks, we assigned sentences in the first and second columns of the input files to x2 and x1, respectively, so that the hypotheses and references in the SMT-eur subtask would be assigned appropriately.",
+        "the research firm earlier had forecast an increase of 4.9 percent .",
+        "the firm earlier had predicted increase this year a 4.9 percent .",
+        "the firm had predicted earlier this year a 4.9 percent increase .",
+        "The search algorithm first performs shifts on x1 and then performs other edits on x2.",
+        "The zero cost edits that match individual words are not shown.",
+        "reference.",
+        "It does so by looking up?in a precomputed phrase table?paraphrases of phrases in the reference and using its associated edit cost as the cost of performing a match against the hypothesis.",
+        "The paraphrase table used in PERP was identical to the one used by Snover et al. (2009a).",
+        "It was extracted using the pivot-based method as described by Bannard and Callison-Burch (2005) with several additional filtering mechanisms to increase the precision of the extracted pairs.",
+        "The pivot-based method utilizes the inherent monolingual semantic knowledge from bilingual corpora: we first identify phrasal correspondences between English and a given foreign language F , then map from English to English by following translation units from English to the other language and back.",
+        "For example, if the two English phrases e1 and e2 both correspond to the same foreign phrase f , then they may be considered to be paraphrases of each other with the following probability: p(e1|e2) ?",
+        "p(e1|f)p(f |e2) If there are several pivot phrases that link the two English phrases, then they are all used in computing the probability:",
+        "We used the same phrasal paraphrase database as in TERp (Snover et al., 2009a), which was extracted from an Arabic-English newswire bitext containing a million sentences.",
+        "A few examples of the paraphrase pairs used in the MSRpar portion of the STS training data are shown below:",
+        "(room to?",
+        "space for) (per cent?",
+        "percent)"
+      ]
+    },
+    {
+      "heading": "4 Features",
+      "text": [
+        "As discussed in ?3, PERP expands on TERp's original features in order to better model semantic textual similarity.",
+        "PERP models a pair of sentences x1 and x2 using a feature function f(a) that extracts a vector of real-valued features from an alignment a between x1 and x2.",
+        "This alignment is found with TERp's inference algorithm and consists of a set of edits of various types along with information about the words on which those edits operate.",
+        "For example, the alignment might contain an edit with the information, ?The token ?the?",
+        "in x1 was substituted for the token ?an?",
+        "in x2.?",
+        "This edit would increment the features in f(a) for the number of substitutions and the number of substitutions of stopwords, along with other relevant substitution features.",
+        "The set of features encoded in f(a) are described in Table 1.2 It includes general features that always fire for edits of a particular type (e.g., the ?Substitution?",
+        "feature) as well as specific features that fire only in specific situations (e.g., the ?Sub-Pronoun-Both?",
+        "edit, which fires only when one pronoun is substituted for another).",
+        "The function f(a) is normalized for sentence 2All words were converted to lower-case.",
+        "Word frequencies were calculated from the NYT stories in the fifth edition of the English Gigaword corpus.",
+        "The stories were tokenized using NLTK and words occurring fewer than 100 times were excluded.",
+        "Words occurring at least 100 times constituted the vocabulary used for computing the OOV features.",
+        "The OOV and frequency features only fired for words that consisted only of letters, and the frequency features did not fire for OOV words.",
+        "The set of negation words including the following: ?no?, ?not?, ?never?, and ?n't?.",
+        "The stopword list contained 158 common words and punctuation symbols.",
+        "(c) a personal pronoun, (d) a negation word, (e) a stop word, or (f) an OOV word (6 features in all).",
+        "The sum of the following over all substitutions: the Levenshtein distance between the words normalized by the length of the longer word.",
+        "lengths by dividing all the values in Table 1 by the sum of the number of words in x1 and x2, except for the intercept feature that models the base similarity value in the training data and always has value 1.",
+        "There are 36 features and corresponding parameters in all, compared to 11 for TERp.",
+        "It is worth pointing out that while the mutual exclusivity between most of the original TERp edits is preserved, PERP does have shared features between insert and delete edits (e.g., ?Insert-Delete-Number?",
+        "), and could in principle share features between substitution, stemming, and synonymy edits."
+      ]
+    },
+    {
+      "heading": "5 Learning",
+      "text": [
+        "Given a training set consisting of paired sentences x1 and x2 and gold standard semantic similarity ratings y, PERP uses Algorithm 1 to induce a good set",
+        "Algorithm 1 learn(w, T , ?, x1,x2,y): An Averaged Perceptron algorithm for learning edit cost parameters.",
+        "T is the number of iterations through the dataset.",
+        "?",
+        "is a learning rate.",
+        "x1 and x2 are paired lists of sentences, and y is a list of similarities that correspond to those sentence pairs.",
+        "of cost parameters for its various features.",
+        "The algorithm is a fairly straightforward application of the Perceptron algorithm described by Collins (2002).4 The only notable difference is that the algorithm constrains PERP's shift parameter to be at least 0.01 in the step labeled ?applyShiftConstraint.?",
+        "We found that TERp's inference algorithm would fail if the shift cost reached zero.5 In our experiments, we initialized all weights to 0, except for the following: the ?Substitution,?",
+        "?Insertion,?",
+        "and ?Deletion?",
+        "weights were initialized to 1.0, and the ?Shift?",
+        "weight was initialized to 0.1.",
+        "Following Collins (2002), the algorithm returns an averaged version of the weights, though this did not appear to substantially impact performance.",
+        "tually exceed the amount of available memory.",
+        "We also set the same minimum cost of 0.01 for shifts in our experiments with the original TERp."
+      ]
+    },
+    {
+      "heading": "6 Experiments",
+      "text": [
+        "In this section, we report results for the STS shared task.",
+        "For a full description of the task, see Agirre et al.",
+        "(2012).",
+        "The task consisted of three known subtasks (MSRpar, MSRvid, and SMT-eur) and two surprise subtasks (On-WN, SMT-news).",
+        "For the known subtasks, we trained models with task-specific data only.",
+        "For the On-WN subtask, we used the model trained for MSRpar.",
+        "For SMT-news, we used the model trained for SMT-eur.",
+        "Our submissions to the task included results from two variations, one using the full system (PERP-phrases) and one with the paraphrase substitution edits disabled (PERP), in order to isolate the effect of including phrasal paraphrases.",
+        "In our original submission, the PERPphrases system included a minor bug that affected the calculation of the phrasal paraphrasing features.",
+        "Here, we report both the original results and a corrected version (?PERPphrases (fix)?",
+        "), though the correction only minimally affected performance.",
+        "We also tested two variations of the original TERp system: one with the weights set as reported by Snover et al. (2009a) (?TERp (default)?",
+        "), and one tuned in the same task-specific manner as PERP (?TERp (tuned)?).",
+        "We multiplied TERp's predictions by ?1 since it produces costs rather than similarities.",
+        "The results, in terms of Pearson correlations with test set gold standard scores, are shown in Table 2.",
+        "In addition to correlations for each subtask, we include the three aggregated measures used for the task.",
+        "The ?ALL?",
+        "measure is the Pearson correlations on the concatenation of all the data for all five subtasks.",
+        "It was the original measured used to aggregate the results for the different subtasks.",
+        "The second aggregated measure is the ?Allnrm?",
+        "measure, which we view as an oracle because it uses the gold standard similarity values from the test set to adjust system predictions.",
+        "The final aggregate measure is the mean of the correlations for the subtasks, weighted by the number of examples in each subtask's test set (?Mean?).",
+        "See Agirre et al. (2012) for a full description of the metrics.",
+        "For comparison, the table also includes the results from the top-ranked submission according to the ?ALL?",
+        "measure, the results for the word-overlap",
+        "that were not parts of the official SemEval task 6 evaluation.",
+        "The highest correlation in each column is given in bold.",
+        "ALLnrm results are not included for all runs because we did not have an implementation of that measure.",
+        "baseline from the organizers (Agirre et al., 2012), and the means across all 88 submissions (not including the baseline).",
+        "Table 3 shows the rankings in the official results of the PERPphrases submission, for each subtask and overall, along with Pearson correlations from PERP and the best submission for each subtask.",
+        "PERPphrases for each of the five datasets as well for all datasets combined.",
+        "The STS task had a total of 88 submissions.",
+        "?best shows the correlation for the best submission, across all submissions, for each dataset."
+      ]
+    },
+    {
+      "heading": "7 Conclusion",
+      "text": [
+        "From the results in ?6, PERP appears to be competitive at measuring semantic textual similarity.",
+        "It performed particularly well on the surprise subtasks, indicating that it generalizes well to new data.",
+        "Finally, with the exception of the SMT-eur machine translation evaluation subtask, PERP outperformed the TERp system for all of the STS subtasks."
+      ]
+    },
+    {
+      "heading": "Acknowledgments",
+      "text": [
+        "We would like to thank the organizers of SemEval and the Semantic Textual Similarity task.",
+        "We would also like to thank Matt Snover for making the original TERp code available."
+      ]
+    }
+  ]
+}

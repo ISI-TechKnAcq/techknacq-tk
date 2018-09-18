@@ -1,0 +1,321 @@
+{
+  "info": {
+    "authors": [
+      "Wei Wang",
+      "Ming Zhou"
+    ],
+    "book": "SIGDAT Conference on Empirical Methods in Natural Language Processing",
+    "id": "acl-W04-3226",
+    "title": "Improving Word Alignment Models Using Structured Monolingual Corpora",
+    "url": "https://aclweb.org/anthology/W04-3226",
+    "year": 2004
+  },
+  "references": [
+    "acl-J03-1002",
+    "acl-J03-3002",
+    "acl-J93-2003",
+    "acl-J97-2004",
+    "acl-J97-3002",
+    "acl-P02-1050",
+    "acl-P03-1021",
+    "acl-P93-1004",
+    "acl-P93-1016",
+    "acl-P98-1069",
+    "acl-P98-2127",
+    "acl-W00-1212"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "We propose a new method to improve the performance of word alignment algorithms, in particular the recall, using structured monolingual corpora as sources to estimate cross language word similarities.",
+        "Normally, cross language word similarities, i.e., the similarity between a source language word and a target language word, can be estimated with a bilingual corpus of enough size.",
+        "We use a method to estimate them from two structured monolingual corpora based on the dependency correspondence assumption justified on large and balanced bilingual corpora.",
+        "We selected three typical word alignment models ranging over statistical-based ones and heuristic-based ones, to test whether cross language similarities can improve the performance of word alignment models.",
+        "The crosslingual word similarities are simply interpolated into these models.",
+        "The experiments show that crosslingual word similarities estimated from structured monolingual corpora can effectively improve the performance of word alignment models, in particular the recall."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Word alignment algorithms, e.g., (P. Brown et al., 1993), accept a bilingual sentence pair as input, and output the links between words across sentences of the pair.",
+        "Such links are very useful knowledge for machine translation.",
+        "Many of previous works implicitly assume that bilingual resources (e.g., bilingual corpora, bilingual dictionaries) on a large scale are available.",
+        "Better performance of word alignment algorithms can be achieved if the training is conducted on larger parallel corpora.",
+        "The increasing requirement for bilingual resources thus becomes a bottleneck of constructing practical",
+        "word aligners for a general domain.",
+        "To alleviate the problem, some works, like (Resnik & Smith, 2003; J. Nie et al., 1999), try to obtain parallel corpora by automatically scrawling them from the web.",
+        "Instead of heavily relying on bilingual corpora, some works try to solve the bottleneck problem in a different way: to mine bilingual knowledge from monolingual corpora, which can be more easily obtained in a large volume.",
+        "Koehn & Knight (2000) present an approach to estimating word translation probabilities by using unrelated monolingual corpora based on the EM algorithm.",
+        "Promising results of their method are exhibited in selecting the right translation among several options provided by a bilingual dictionary.",
+        "However, their method focuses on how to stochastize a bilingual dictionary instead of how to extend it by adding new translations.",
+        "They discussed that better language modeling, e.g., lexical dependencies, may be useful for further improvement.",
+        "Fung & Lee (1998) use an IR approach to inducing new word translations from comparable corpora.",
+        "Their method is able to induce new translations, thus to extend a bilingual dictionary.",
+        "As discussed in their paper, their method suffers form low recall.",
+        "They gave some suggestions in achieving better results, including introducing PoS tagging, improving word segmentation accuracy.",
+        "Using a better language model will certainly do these.",
+        "Zhou et al.",
+        "(2001) compute crosslingual word similarities from two dependency triple databases, each of which is obtained by parsing a large monolingual corpus with a dependency parser.",
+        "Since bilexical dependency correspondences are considered in the computation, the resulting similarities are expected to be more accurate.",
+        "Better language modeling imposes more constraints on the confidences/weights of translation candidates.",
+        "Encouraging results are shown in the application of the similarities to translation selection.",
+        "In this paper, we are interested in the question how and to what extent the word alignment task can benefit from the work in monolingual language processing, e.g., monolingual parsers and monolingual corpora, so that the requirement for large bilingual corpora could be minimized.",
+        "Specifically, we are concerned with how to \"convert\" structured monolingual corpora into bilingual word similarities (or translation probabilities) and how to use the similarities to enhance the existing word alignment models.",
+        "To do this, we first empirically justify the assumption exploiting the structural correspondence between different languages.)",
+        "Then crosslingual word similarities are computed from structured corpora using the method in (Zhou et al., 2001) based on this assumption.",
+        "After that, the crosslingual word similarities are normalized and incorporated into word alignment models.",
+        "Experiments are conducted on different types of alignment models ranging from statistical-based ones and heuristic-based ones.",
+        "Experimental results show that word alignment models can be consistently improved with the crosslingual similarities estimated from structured monolingual corpora.",
+        "The remainder of this paper is organized as follows.",
+        "Section 2 lists the related research.",
+        "Section 3 justifies the dependency correspondence assumption.",
+        "Section 4 presents the method to estimate crosslingual word similarities from structured monolingual corpora.",
+        "Sections 5 and 6 describe how to incorporate estimated similarities into word alignment methods.",
+        "Experiments are reported in Section 7.",
+        "The last section makes conclusions and points out future works."
+      ]
+    },
+    {
+      "heading": "2 Related Research",
+      "text": [
+        "One of the related topics is word alignment.",
+        "Word alignment models can generally be classified into two categories (Och & Ney, 2003): statistical alignment models and heuristic ones.",
+        "A statistical alignment model p(c, ale) describes the relationship (e.g., word alignment a) between a source language string e and a target language string c. Different decompositions of p(c, ale) result in different variants of word alignment models.",
+        "Heuristic based word align-'Although the language pair used in our paper is English and Chinese, the basic idea of this paper, however, can be generalized to other language pairs.",
+        "ment approaches use similarity functions of two languages.",
+        "Readers might want to refer to (Och & Ney, 2003) for a comprehensive examination of word alignment models.",
+        "Another related research topic is the automatic estimation of crosslingual word similarities (or probabilities) from monolingual corpora.",
+        "For example, the works (Koehn & Knight, 2000; Fung & Lee, 1998; Zhou et al., 2001) that we have mentioned in Section 1.",
+        "Methods to estimate crosslingual word similarities are sometimes related to methods of monolingual word clustering.",
+        "For instance, the method used in (Zhou et al., 2001) is motivated by the work in (Lin, 1998).",
+        "Lin (1998) presents a method to cluster monolingual words based on similarities between words in the same language.",
+        "The word similarities are estimated from a parsed monolingual corpus.",
+        "The third related topic is the justification of Direct Correspondence Assumption (DCA), which underlies the models/applications exploiting high level linguistic structures.",
+        "For example, tree-tree alignment, e.g., (Matsumoto, 1993), in example-based machine translation; synchronous grammars, e.g., (Wu, 1997), for statistical machine translation (SMT).",
+        "R. Hwa et al.",
+        "(2002) formulate the DCA, and evaluate it in terms of the accuracies (precision and recall) of the Chinese syntactic parses projected from the corresponding English parse trees, which are the output of an English parser.",
+        "Their Experiments are done on small newswire corpora.",
+        "They conclude that DCA is useful with some principled transformation of syntactic structures."
+      ]
+    },
+    {
+      "heading": "3 Dependency Correspondence",
+      "text": []
+    },
+    {
+      "heading": "Assumption",
+      "text": [
+        "Methods, e.g., (Zhou et al., 2001), to estimate crosslingual word similarities from structured monolingual corpora also take advantage of this assumption.",
+        "The justification of this assumption using a large scale and balanced data is thus necessary.",
+        "The Dependency Correspondence Assumption can be formally expressed as follows.",
+        "Let triple (wl, R, w2) be a syntactic dependency consisting of two words wl and w2 and a dependency relation R between them.",
+        "Given a pair of sentences E and C that are translation of each other with syntactic structures TreeE and Treec, if TreeE contains a dependency triple (el, R, e2), and eland e2 are aligned to words",
+        "cl and c2 in C, respectively, then there is a dependency triple (cl, R, c2) in Treec.",
+        "The experiment that we have done differentiates from that in (R. Hwa et al., 2002) in the following aspects.",
+        "First, we use a much larger and balanced corpora consisting of 10, 000 English-Chinese sentence pairs,2 coming from newswire, novels, general bilingual dictionaries, and software product manuals.",
+        "Second, instead of examining all the types of dependency relations, we examine only the Verb-Object (VO) dependency type since we think that VO is one of the dependency types that are often preserved across languages, and DCA will thus mostly hold among these dependency types.",
+        "Third, we evaluate the DCA in terms of mapping ratio: the ratio of the number of correct crosslingual dependency mappings versus the number of overall mappings.",
+        "To do this, we first manually add the word alignment information to the 10,000 sentence pairs.",
+        "Then, we run the English parser MiniPar (Lin, 1993) and the Chinese dependency parser BlockParser (Zhou, 2000) on both sides of the corpora, respectively.",
+        "Next, we extract all the mappings from English dependency triples to Chinese dependency triples (and vice versa) based on the word alignment and parsing results.",
+        "Table 1 lists the mapping results.",
+        "The first column shows the dependency type and the mapping directions.",
+        "The correct mapping ratio reaches 82.71% from English to Chinese, and 83.87% from Chinese to English.",
+        "Note that we treated the dependency type Verb-Object-Prep as VO.",
+        "The intent of this experiment is not to compare with the method and results in (R. Hwa et al., 2002), but to evaluate the dependency correspondence assumption for a certain type of dependency concerned by us.",
+        "The numbers in Table 1 are very encouraging because it indicates the feasibility of DCA.",
+        "This also suggests that translating the sentences in the way of keeping DCA on some key dependency types can normally get understandable translation results."
+      ]
+    },
+    {
+      "heading": "4 Crosslingual Word Similarities",
+      "text": [
+        "We now briefly describe the method that we use to estimate crosslingual words similarities from structured monolingual corpora.",
+        "The method was proposed in (Zhou et al., 2001).",
+        "We shall use slightly different notations.",
+        "The information of a dependency triple T =",
+        "where c( ... ) is the counting function.",
+        "T is called a supportive dependency of wl (or w2) if I(T) > 0.",
+        "Let D(e) be the set of e's supportive dependencies collected from a structured corpus in language Li.",
+        "Let D(c) be the set of c's supportive dependencies collected from a structured corpus in language L2.",
+        "Let 6(T) be a function returning 1 if dependency T E D(e) has a corresponding dependency in D(c), and e corresponds to c;3 and returning 0 otherwise.",
+        "Note that we need a bilingual dictionary to \"bridge\" corresponding dependencies in different languages, and this bilingual dictionary is the only bilingual resource used.",
+        "The common information between c and e is then defined as:",
+        "The overall information between e and c is defined as:",
+        "The similarity sim(c, e) between a pair of crosslingual words c in language L1 and e in language L2 is defined as the ratio of Ie(c, e) to",
+        "Readers might want to refer to (Zhou et al., 2001) for detailed derivations.",
+        "30r in the other direction, returning 1 if r E D(c) has a corresponding dependency in D(e).",
+        "It is worth mentioning that this method has the ability of inducing new translations.",
+        "In principle, the similarity of any pair of crosslingual words can be computed using Formula 4.",
+        "Since the information used in the computation is dis-tributedly encoded in the relevant dependency triples in the entire treebank, this method is also very robust.",
+        "Although the value of function sim(c, e) computed by their method ranges over [0, 1], it, however, is not a probability distribution because of the fact that Ec,e sim(c, e) _7� 1.",
+        "We thus use the following normalization so that sim(c, e) can be incorporated into a statistical translation model:",
+        "In the following two sections, we are going to present methods to integrate q(cl e) into word alignment models for performance improvements.",
+        "Word alignment models that will be involved range from statistical-based ones to heuristic-based ones."
+      ]
+    },
+    {
+      "heading": "5 Improving Statistical-Based Word Alignment Models",
+      "text": [
+        "IBM Model 2 is used to test the usefulness of q(cl e) to statistical word alignment algorithms.",
+        "The reason why we have not used more complex models is that our objective is not the comparison of different word alignment models.",
+        "It is reasonable to conclude that, if Model 2 can be improved by integrating q(cl e), more complex models can be improved, too.4 For brevity, we shall call the statistical word alignment model STATS hereafter.",
+        "We use a simple interpolated model to combine q(cl e) with the the word-to-word translation probabilities p(cl e) estimated from bilingual corpora: pstats – interp(cl e) _ A q(cl e) + (1 – A) p(cl e) (6) where 0 < A < 1.",
+        "We have made A a constant for all (c, e) pairs to get around the data sparseness problem in estimation.",
+        "'Of course, word alignment models (or translation models) can always be improved by exploiting more information, e.g., the structural information; but this does not conflict with out objective because a more complex model is usually composed of more parameters, and thus requires larger size of bilingual corpora for training.",
+        "How to extract bilingual knowledge from monolingual corpora and how to combine them into word alignment models is exactly our objective.",
+        "Like the estimation of interpolated monolingual language models, the optimal interpolation coefficient A can be estimated via the EM algorithm from held-out bilingual corpora X such that",
+        "We shall refer to the interpolated statistical model as STATS-interp hereafter."
+      ]
+    },
+    {
+      "heading": "6 Improving Heuristic-Based Word Alignment Models",
+      "text": [
+        "We consider the usefulness of q(el c) to the heuristic-based word alignment models.",
+        "We use two types of heuristic-based word alignment methods: the dictionary-based method and the class-based method.",
+        "They exploit different types of bilingual knowledge."
+      ]
+    },
+    {
+      "heading": "6.1 Dictionary-Based Models",
+      "text": [
+        "A way to examine the degree to which the cover age of a translation dictionary can be improved by q(cl e) is to show the word alignment accuracy (e.g., precision and recall).",
+        "The baseline for comparison is the dictionary-based word alignment method (DICT) in (Ker & Zhang, 1997), which is briefly described in Figure 1.",
+        "The input of DICT is a pair (S, T) of sentences and a bilingual dictionary.",
+        "The following method can be used to incorporate q(cl e) into DICT.",
+        "A(c,e)q(el c) +[1 – A(e,e)]sign((c, e) E BD) (8) where BD stands for the bilingual dictionary.",
+        "A(e,e) is chosen such that if q(cl e) is larger than a threshold, it is a non-zero value (e.g., empirically chosen as 0.3), and 0 otherwise.",
+        "When A(e,e) is 0, the bilingual dictionary will take full control sign functor returns 1 if (c, e) is in the bilingual dictionary, and 0, otherwise.",
+        "We shall refer to the interpolated DICT as DICT-interp."
+      ]
+    },
+    {
+      "heading": "6.2 Class-Based Models",
+      "text": [
+        "Class-based word alignment method (Ker & Zhang, 1997) attempts to broaden the word alignment coverage/recall using crosslingual concept similarities.",
+        "Concepts are classes defined in a monolingual thesaurus.",
+        "Crosslingual concept similarities are estimated from bilingual corpora by generalizing the words into their classes.",
+        "1.",
+        "Enumerate all words WS in S and words WT in T. 2.",
+        "Foreach s in WS, find the set of translations DT, of s based on a bilingual dictionary.",
+        "3.",
+        "For d E DT, and t E WT, calculate the dictionary",
+        "The basic idea of the class-based word alignment algorithm is as follows.",
+        "Taking a bilingual sentence pair as input, the algorithm first conducts DICT (see Figure 1), resulting in a list ALN of word alignments.",
+        "Words that are not in ALN are are aligned using the following model: a* = arg maxaconceptsim(cj lei) d(i, j) (9) where conceptsim(cj l ei) is the concept similarity between word cj in one language and ei in the other language.",
+        "d(i, j) is the distortion model.",
+        "We shall use CLASS to refer to the class-based method.",
+        "As with the integration of q(cl e) into statistical word alignment models in Section 5, q(cl e) can play a role in the improvement on class-based word alignment models by interpolating q(cl e) with conceptsim(cl e) as follows.",
+        "where 0 < A < 1.",
+        "The optimal interpolated coefficient A* can be computed via the EM algorithm with held-out bilingual data.",
+        "The class-based model interpolating with q(cl e) will be referred to as CLASS-interp."
+      ]
+    },
+    {
+      "heading": "7 Experiments",
+      "text": [
+        "The experiments include the estimation of crosslingual word similarities from structured monolingual corpora (Section 4), and the application of the estimated similarities to word alignment algorithms."
+      ]
+    },
+    {
+      "heading": "7.1 Estimation of Crosslingual Word Similarities",
+      "text": [
+        "To obtain two sets of dependency triples, each set per language, the English dependency parser MiniPar (Lin, 1993) is applied to 750M bytes of English corpora of Wall Street Journal (1980- 1990), resulting in 1.9 x 107 English dependency triples.",
+        "The Chinese dependency parser BlockParser (Zhou, 2000) is applied to 1,200M bytes of Chinese corpora of People's Daily (1980- 1998), resulting in 3.3 x 107 Chinese dependency triples.",
+        "The HIT English-Chinese bilingual dictionary5 consisting of 66,248 Chinese words, 73,693 English words, and 164,794 translation links is used."
+      ]
+    },
+    {
+      "heading": "7.2 Improving Word Alignment Models",
+      "text": [
+        "Evaluation metrics Let A denote the set of word alignments from a word alignment method for a pair of bilingual sentences, and let R denote the set of word alignments of the same sentence pair in the ref�erence corpora, letl �l denote the size of set , then we use",
+        "where n is a functor of two sets of word alignments, returning the number of matched alignments.",
+        "Experimental settings 215,347 pairs of English and Chinese sentences are used to train the statistical word alignment algorithm.",
+        "Since the interpolation coefficients are manually assigned in our experiments, no held-out data were reserved.",
+        "The HIT English-Chinese bilingual dictionary is used in the dictionary-based word alignment methods DICT and DICT-interp.",
+        "The same 215,347 bilingual sentences as used in the training of statistical-based models are used to train the crosslingual concept similarities conceptsim(el c) and the distortion model d(i, j).",
+        "Monolingual thesauri are WordNet (G. Miller, 1990) with 45,784 classes for English and Xian Dai Han Yu Tong Yi Ci Dian (Mei, 2002) with 3,724 classes (40,289 words) for Chinese.",
+        "A single test set is used for all the word alignment methods.",
+        "It consists of 1,000 sentence pairs that are disjoint with the training data."
+      ]
+    },
+    {
+      "heading": "Experimental results",
+      "text": [
+        "The performance comparison between STATS and STATS-interp are shown in Table 2.",
+        "All metrics including the precision, recall and thus F-measure have been improved.",
+        "The interpolation of crosslingual word similarities estimated from monolingual corpora into the statistical word alignment method STATS makes the word-to-word translation probability more reliable than otherwise.",
+        "Although the training bilingual corpus is relatively large, there still exists the data sparseness problem.",
+        "Probabilities of rare word translations are often inaccurate.",
+        "These probabilities are \"adjusted\" by being interpolated with crosslingual word similarities from a completely different knowledge source � monolingual copora.",
+        "The (optimized) interpolated coefficient A decides how the knowledge from difference sources (monolingual corpora or bilingual corpora) are weighted.",
+        "The performance comparison between DICT and DICT-interp are shown in Table 3.",
+        "We see that the recall and F-measure metrics of DICT have been improved by DICT-interp.",
+        "It is worth mentioning that the recall is even improved by more than 2% with only a slight drop of precsion.",
+        "This implies that the crosslingual word similarities provide more chances for words to be aligned when the bilingual dictionary fails.",
+        "Table 4 shows an example.",
+        "The words and alignments in bold fonts are those where the crosslingual word similarities help, and the bilingual dictionary fails.",
+        "Chinese are written in pinyin.",
+        "Table 5 lists the top 8 Chinese words (in pinyin) mined from the monolingual corpora that are the possible translations of the English word \"salary\".",
+        "The rightmost column shows the",
+        "tions of the corresponding pinyin (in the same rows) .",
+        "The performance comparisons between CLASS and CLASS-interp are shown in Table 6.",
+        "There are two reasons why CLASS is improved: First, although the generalization of words into their classes alleviates the data sparseness problem in CLASS, it gives rise to the overgeneralization problem.",
+        "The combination with crosslingual word similarities makes the crosslingual concept similarities more informative.",
+        "Second, the thesauri used are not large enough for a general domain.",
+        "For example, the Chinese thesaurus provides classes only for 40,289 Chinese words.",
+        "These words even cannot cover all the Chinese words in the bilingual dictionary we used.",
+        "Furthermore, the definition of Chinese words is not consistent, e.g, between the Chinese thesaurus and the Chinese word segmentor.",
+        "In the case where thesauri fails, our crosslingual word similarities takes control, raising the recall."
+      ]
+    },
+    {
+      "heading": "7.3 Discussions",
+      "text": [
+        "One of essential reasons why the performance of different types (statistical-based and heuristic-based) of alignment algorithms can be improved",
+        "is that the crosslingual word similarities estimated from monolingual corpora are able to broaden the coverage of, or adjust the knowledge learned from bilingual corpora.",
+        "The coverage is broadened because we can induce from structured monolingual corpora reliable new translations that do not co-occur in the same sentence pair in bilingual corpora.",
+        "The knowledge in bilingual corpora is adjusted in a way that probabilities of translations with low frequencies can be smoothed by simply being interpolated with the normalized word similarities estimated from structured monolingual corpora.",
+        "It is worth emphasizing that the improvements that we have achieved are valuable for the word alignment task in a general domain.",
+        "With the large training corpus, and a large bilingual dictionary, the word alignment methods we have used in experiments have set a high baseline for comparisons.",
+        "In a general domain, a slight improvement on the recall metric of the word alignment result usually requires a large increment of the size of training bilingual corpora.",
+        "By utilizing the crosslingual word similarities that are estimated from monolingual corpora, we have got around the problem of how to obtain bilingual corpora on a large scale.",
+        "The limitation of our experiments is that we used two independent monolingual corpora for the estimation of crosslingual word similarities.",
+        "The corpora are independent in the following ways: first, they are collected independently; second, they are collected during different dates; third, their major topics are different, e.g., political versus business.",
+        "Better results could be expected if we use comparable corpora, because, in comparable copora, crosslingual phrases with similar structures will provide more information for the estimation of crosslingual word similarities.",
+        "Our approach to estimating crosslingual word similarities assumes that two monolingual parsers are available.",
+        "Although the construction of monolingual parsers is expensive, there are free parsers available on the web."
+      ]
+    },
+    {
+      "heading": "8 Conclusions",
+      "text": [
+        "We have been concerned with how to \"convert\" structured monolingual corpora into bilingual word similarities (or translation probabilities) and how to incorporate them into word alignment models for performance improvement.",
+        "Our aim is to take advantage of monolingual resources, e.g., corpora, parsers, treebank, for bilingual tasks, e.g., word alignment, so that the requirement for large amounts of training bilingual corpora could be alleviated.",
+        "To do this, we first empirically justified the dependency correspondence assumption between different languages using large and balanced corpora.",
+        "Then, we computed crosslingual word similarities using the method in (Zhou et al., 2001) based on this assumption.",
+        "After that, we normalized the crosslingual word similarities and integrated them into word alignment algorithms using interpolated models.",
+        "Experiments are conducted on word alignment algorithms ranging from statistical-based ones and heuristic-based ones.",
+        "Experimental results show that word alignment models have been consistently improved, in particular the recall metric.",
+        "The main contribution of this paper is that we have presented an approach to combining the knowledge mined from structured monolingual corpora with the knowledge mined from bilingual corpora, and showed the usefulness of the approach to the improvement on word alignment performance, and thus showed the usefulness of monolingual resources to bilingual tasks.",
+        "Moreover, we also justified the dependency correspondence assumption based on a large and balanced corpora.",
+        "This assumption underlies the method that we have used to estimated crosslingual word similarities from structured monolingual corpora.",
+        "One of the interesting topics deserving study in the future could be to divide the crosslingual word pairs into clusters and estimate the optimal interpolation coefficient A for each of them using the minimum error rate (MER) as the optimization goal, instead of maximum likelihood.",
+        "Results in machine translation (Och, 2003) and speech recognition have shown the advantage of discriminative training.",
+        "Another topic will be to compute the (normalized) word similarities q(el✆) in an bootstrapping manner, for instance, using the EM algorithm.",
+        "In each iteration, the (normalized) word similarities output from the previous it",
+        "eration are used as weights of two corresponding dependency triples in two languages.",
+        "These weights are involved in the computation of the common information (Section 4) between two crosslingual words.",
+        "We also desire to improve statistical models of the state of art with these re-estimated similarities."
+      ]
+    },
+    {
+      "heading": "Acknowledgments",
+      "text": [
+        "We would like to thank the reviewers for their valuable comments."
+      ]
+    }
+  ]
+}

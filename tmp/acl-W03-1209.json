@@ -1,0 +1,269 @@
+{
+  "info": {
+    "authors": [
+      "Deepak Ravichandran",
+      "Eduard Hovy",
+      "Franz Josef Och"
+    ],
+    "book": "Workshop on Multilingual Summarization and Question Answering",
+    "id": "acl-W03-1209",
+    "title": "Statistical QA - Classifier Vs. Re-Ranker: What's the Difference?",
+    "url": "https://aclweb.org/anthology/W03-1209",
+    "year": 2003
+  },
+  "references": [
+    "acl-P02-1054"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "In this paper, we show that we can obtain a good baseline performance for Question Answering (QA) by using only 4 simple features.",
+        "Using these features, we contrast two approaches used for a Maximum Entropy based QA system.",
+        "We view the QA problem as a classification problem and as a re-ranking problem.",
+        "Our results indicate that the QA system viewed as a re-ranker clearly outperforms the QA system used as a classifier.",
+        "Both systems are trained using the same data."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Open-Domain factoid Question Answering (QA) is defined as the task of answering fact-based questions phrased in Natural Language.",
+        "Examples of some question and answers that fall in the fact-based category are:",
+        "1.",
+        "What is the capital of Japan?",
+        "- Tokyo 2.",
+        "What is acetaminophen?",
+        "- Non-aspirin pain killer 3.",
+        "Where is the Eiffel Tower?",
+        "- Paris",
+        "The architecture of most of QA systems consists of two basic modules: the information retrieval (IR) module and the answer pinpointing module.",
+        "These two modules are used in a typical pipeline architecture.",
+        "For a given question, the IR module finds a set of relevant segments.",
+        "Each segment typically consists of at most R sentences1.",
+        "The answer pinpointing module processes each of these segments and finds the appropriate answer phrase.",
+        "phrase.",
+        "Evaluation of a QA system is judged on the basis on the final output answer and the corresponding evidence provided by the segment.",
+        "This paper focuses on the answer pinpointing module.",
+        "Typical QA systems perform re-ranking of candidate answers as an important step in pinpointing.",
+        "The goal is to rank the most likely answer first by using either symbolic or statistical methods.",
+        "Some QA systems make use of statistical answer pinpointing (Xu et.",
+        "al, 2002; Ittycheriah, 2001; Ittycheriah and Salim, 2002) by treating it as a classification problem.",
+        "In this paper, we cast the pinpointing problem in a statistical framework and compare two approaches, classification and re-ranking."
+      ]
+    },
+    {
+      "heading": "2 Statistical Answer Pinpointing",
+      "text": []
+    },
+    {
+      "heading": "2.1 Answer Modeling",
+      "text": [
+        "The answer-pinpointing module gets as input a question q and a set of possible answer candidates { a1 a2...aA } .",
+        "It outputs one of the answer a E {a1 a2...aA } from the candidate answer set.",
+        "We consider two ways of modeling this problem.",
+        "One approach is the traditional classification view (Ittycheriah, 2001) where we present each Question-Answer pair to the classifier which classifies it as either correct answer (true) or incorrect answer (false), based on some evidence (features).",
+        "In this case, we model P(c |a,{a1a2...aA},q) .",
+        "Here, c = {true, false} signifies the correctness of the answer a with respect to the question q.",
+        "The probability P(c |a,{a1a2...aA},q) for each QA pair is modeled independently of other such pairs.",
+        "Thus, for the same question, many QA pairs are presented to the classifier as independent events (histories).",
+        "If the training corpus contains Q questions with A answers for each question, the total number of events (histories) would be equal to Q-A with two classes (futures) (correct or incorrect answer) for each event.",
+        "Once the probabilities P(c|a,{a1a2...aA},q) have been computed, the system has to return the best answer.",
+        "The following decision rule is used:",
+        "Another way of viewing the problem is as a re-ranking task.",
+        "This is possible because the QA task requires the identification of only one correct answer, instead of identifying all the correct answer in the collection.",
+        "In this case, we model P(a |{a1a2 ... aA},q) .",
+        "If the training corpus contains Q questions with A answers for each question, the total number of events (histories) would be equal to Q, with A classes (futures).",
+        "This view requires the following decision-rule to identify the answer that seems most promising: A where, parameters.",
+        "The decision rule for choosing the best answer is:",
+        "The above decision rule requires comparison of different probabilities of the form P(true |a, {a1 a2...aA }, q) .",
+        "However, these probabilities are modeled as independent events (histories) in the classifier and hence the training criterion does not make them directly comparable.",
+        "For the re-ranker, we model the probability",
+        "where, Q = total number of questions.",
+        "A = total number of answer chunks considered for each question."
+      ]
+    },
+    {
+      "heading": "2.2 Maximum Entropy formulation",
+      "text": [
+        "We use Maximum Entropy to model the given problem both as a classifier and a re-ranker.",
+        "We define M feature functions, fm(a,{a1a2 ... aA},q),m=1 ,...., M , that may be useful in characterizing the task.",
+        "Della Pietra et.",
+        "al (1995) contains good description of Maximum Entropy models.",
+        "We model the classifier as follows:",
+        "where, Am; m =1,...., M are the model parameters.",
+        "Note that for the classifier the model parameters are �m,c , whereas for the re-ranker they are �m.",
+        "This is because for the classifier, each feature function has different weights associated with each class (future).",
+        "Hence, the classifier has twice the model parameters as compared to the re-ranker.",
+        "The decision rule for the re-ranker is given by:",
+        "rule, directly comparable against each other, by incorporating them into the training criterion itself.",
+        "Table 1 summarizes the differences of the two models."
+      ]
+    },
+    {
+      "heading": "2.3 Feature Functions",
+      "text": [
+        "Using above formulation to model the probability distribution we need to come up with features fj.",
+        "We use only four basic feature functions for our system.",
+        "1.",
+        "Frequency: It has been observed that the correct answer has a higher frequency (Magnini et al.",
+        "; 2002) in the collection of answer chunks (C).",
+        "Hence we count the number of time a potential answer occurs in the IR output and use its logarithm as a feature.",
+        "This is a positive continuous valued feature.",
+        "2.",
+        "Expected Answer Class: Most of the current QA systems employ some type of Answer Class Identification module.",
+        "Thus questions like “When did Bill Clinton go to college?”, would be identified as a question asking about a time (or a time period), “Where is the sea of tranquility?” would be identified as a question asking for a location.",
+        "If the answer class matches the expected answer class (derived from the question by the answer identification module) this feature fires (i.e., it has a value of 1).",
+        "Details of this module are explained in Hovy et al.",
+        "(2002).",
+        "This is a binary-valued feature.",
+        "3.",
+        "Question Word Absent: Usually a correct",
+        "answer sentence contains a few of the question words.",
+        "This feature fires if the candidate answer does not contain any of the question words.",
+        "This is also a binary valued feature.",
+        "4.",
+        "Word Match: It is the sum of ITF2 values for the words in the question that matches identically with the words in the answer sentence.",
+        "This is a positive continuous valued feature."
+      ]
+    },
+    {
+      "heading": "2.4 Training",
+      "text": [
+        "We train our Maximum Entropy model using Generalized Iterative scaling (Darroch and Ratcliff, 1972) approach by using YASMET3 ."
+      ]
+    },
+    {
+      "heading": "3 Evaluation Metric",
+      "text": [
+        "The performance of the QA system is highly dependent on the performance of the two individual modules IR and answer-pinpointing.",
+        "The system would have excellent performance if both have good accuracy.",
+        "Hence, we need a good evaluation metric to evaluate each of these components individually.",
+        "One standard metric for IR is recall and precision.",
+        "We can modify this metric for QA as follows:",
+        "It is almost impossible to measure recall because the IR collection is typically large and involves several hundreds of thousands of documents.",
+        "Hence, we evaluate our IR by only the precision measure at top N segments.",
+        "This method is actually a rather sloppy approximation to the original recall and precision measure.",
+        "Questions with fewer correct answers in the collection would have a lower precision score as compared to questions with many answers.",
+        "Similarly, it is unclear how one would evaluate answer questions with No Answer (NIL) in the collection using this metric.",
+        "All these questions would have zero precision from the IR collection.",
+        "The answer-pinpointing module is evaluated by checking if the answer returned by the system as the top ranked (#1) answer is correct/incorrect with respect to the IR collection and the true answer.",
+        "Hence, if the IR system fails to return even a single sentence that contains the correct answer for the given question, we do not penalize the answer-pinpointing module.",
+        "It is again unclear how to evaluate questions with No answer (NIL).",
+        "(Here, for our experiments we attribute the error to the IR module.)",
+        "Finally, the combined system is evaluated by using the standard technique, wherein the Answer (ranked #1) returned by the system is judged to be either correct or incorrect and then the average is taken."
+      ]
+    },
+    {
+      "heading": "4 Experiments",
+      "text": []
+    },
+    {
+      "heading": "4.1 Framework Information Retrieval",
+      "text": [
+        "For our experiments, we use the Web search engine AltaVista.",
+        "For every question, we remove stop-words and present all other question words as query to the Web search engine.",
+        "The top relevant documents are downloaded.",
+        "We apply a sentence segmentor, and identify those sentences that have high ITF overlapping words with the given question.",
+        "The sentences are then re-ranked accordingly and only the top K sentences (segments) are presented as output of the IR system."
+      ]
+    },
+    {
+      "heading": "Candidate Answer Extraction",
+      "text": [
+        "For a given question, the IR returns top K segments.",
+        "For our experiments a segment consists of one sentence.",
+        "We parse each of the sentences and obtain a set of chunks, where each chunk is a node of the parse tree.",
+        "Each chunk is viewed as a potential answer.",
+        "For our experiments we restrict the number of potential answers to be at most 5000.",
+        "We illustrate this process in Figure 1."
+      ]
+    },
+    {
+      "heading": "Training/Test Data",
+      "text": [
+        "We use the TREC 9 and TREC 10 data sets for training and the TREC 11 data set for testing.",
+        "We initially apply the IR step as described above and obtain a set of at most 5000 answers.",
+        "For each such answer we use the pattern file supplied by NIST to tag answer chunks as either correct (1) or incorrect (0).",
+        "This is a very noisy way of tagging data.",
+        "In some cases, even though the answer chunk may be tagged as correct it may not be supported by the accompanying sentence, while in other cases, a correct chunk may be graded as incorrect, since the pattern file list did not represent a exhaustive list of answers.",
+        "We set aside 20% of the training data for validation."
+      ]
+    },
+    {
+      "heading": "4.2 Classifier vs. Re-Ranker",
+      "text": [
+        "We evaluate the performance of the QA system viewed as a classifier (with a post-processing step) and as a re-ranker.",
+        "In order to do a fair evaluation of the system we test the performance of the QA system under varying conditions of the output of the IR system.",
+        "The results are shown in Table 3.",
+        "The results should be read in the following way: We use the same IR system.",
+        "However, during each run of the experiment we consider only the top K sentences returned by the IR system K={1,10,50,100,150,200}.",
+        "The column “correct” represents the number of questions the entire QA (IR + re-ranker) system answered correctly.",
+        "“IR Loss” represents the average number of questions for which the IR failed completely (i.e., the IR did not return even a single sentence that contains the correct answer).",
+        "The IR precision is the precision of the IR system for the number of sentences considered.",
+        "Answer-pinpointing performance is based on the metric described above.",
+        "Finally, the overall score is the score of the entire QA system.",
+        "(i.e., precision at rank#1).",
+        "The “Overall Precision\" column indicates that the re-ranker clearly outperforms the classifier.",
+        "However, it is also very interesting to compare the performance of the re-ranker “Overall Precision” with the “Answer-Pinpointing precision”.",
+        "For example, in the last row, for the re-ranker the “Answer-Pinpointing Precision” is 0.5182 whereas the “Overall Precision” is only 0.34.",
+        "The difference is due to the performance of the poor performance of the IR system (“IR Loss” = 0.344)."
+      ]
+    },
+    {
+      "heading": "4.3 Oracle IR system",
+      "text": [
+        "In order to determine the performance of the answer pinpointing module alone, we perform the so-called oracle IR experiment.",
+        "Here, we present to the answer pinpointing module only those sentences from IR that contain an answer4.",
+        "The task of the answer pinpointing module is to pick out of the correct answer from the given collection.",
+        "We report results in Table 4.",
+        "In these results too the re-ranker has better performance as compared to the classifier.",
+        "However, as we see from the results, there is a lot of room for improvement for the re-ranker system, even with a perfect IR system."
+      ]
+    },
+    {
+      "heading": "5 Discussion",
+      "text": [
+        "Our experiments clearly indicate that the QA system viewed as a re-ranker outperforms the QA system viewed as a classifier.",
+        "The difference stem from the following reasons: 1.",
+        "The classification training criteria work on a more difficult objective function of trying to find whether each candidate answer answers the given question, as opposed to trying to find the best answer for the given question.",
+        "Hence, the same feature set that works for the re-ranker need not work for the classifier.",
+        "The feature set used in this problem is not good enough to help the classifier distinguish between correct and incorrect an4 This was performed by extracting all the sentences that were judged to have the correct answer by human evaluators during the TREC 2002 evaluations.",
+        "swers for the given question (even though it is good for the re-ranker to come up with the best answer).",
+        "2.",
+        "The comparison of probabilities across different events (histories) for the classifier, during the decision rule process, is problematic.",
+        "This is because the probabilities, which we obtain after the classification approach, are only a poor estimate of the true probability.",
+        "The re-ranker, however, directly allows these probabilities to be comparable by incorporating them into the model itself.",
+        "3.",
+        "The QA system viewed as a classifier suffers from the problem of a highly unbalanced data set.",
+        "We have less than 1% positive examples and more than 99% negative examples (we had almost 4 million training data events) in the problem.",
+        "Ittycheriah (2001), and Ittycheriah and Roukos (2002), use a more controlled environment for training their system.",
+        "They have 23% positive examples and 77% negative examples.",
+        "They prune out most of the incorrect answer initially, using a preprocessing step by using either a rule-based system (Ittycheriah, 2001) or a statistical system (Ittycheriah et al., 2002); and hence obtain a much more manageable distribution in the training phase of the Maximum Entropy model."
+      ]
+    },
+    {
+      "heading": "6 Conclusion",
+      "text": [
+        "The re-ranker system is very robust in handling large amounts of data and still produces reasonable results.",
+        "There is no need for a major preprocessing step (for eliminating undesirable incorrect answers from the training) or the post-processing step (for selecting the most promising answer.)",
+        "We also consider it significant that a QA system with just 4 features (viz.",
+        "Frequency, Expected Answer Type, Question word absent, and ITF word match) is a good baseline system and performs better than the median performance of all the QA systems in the TREC 2002 evaluations5.",
+        "Ittycheriah (2001), and Ittycheriah and Rou-kos (2002) have shown good results by using a range of features for Maximum Entropy QA systems.",
+        "Also, the results indicate that there is scope for research in IR for QA systems.",
+        "The QA system has an upper ceiling on performance due to the quality of the IR system.",
+        "The QA community has yet to address these problems in a principled way, and the IR details of most of the system are hidden behind the complicated system architecture.",
+        "The re-ranking model basically changes the objective function for training and the system is directly optimized on the evaluation function criteria (though still using Maximum Likelihood training).",
+        "Also this approach seems to be very robust to noisy training data and is highly scalable."
+      ]
+    },
+    {
+      "heading": "Acknowledgements.",
+      "text": [
+        "This work was supported by the Advance Research and Development Activity (ARDA)’s Advanced Question Answering for Intelligence (AQUAINT) Program under contract number 5 However, since the IR system used here was from the Web, our results are not directly comparable with the TREC systems.",
+        "MDA908-02-C-007.",
+        "The authors wish to express particular gratitude to Dr. Abraham Ittycheriah, both for his supervision and education of the first author during his summer visit to IBM TJ Watson Research Center in 2002 and for his thoughtful comments on this paper, which was inspired by his work."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,197 @@
+{
+  "info": {
+    "authors": [
+      "Thomas Emerson"
+    ],
+    "book": "Proceedings of the Fourth SIGHAN Workshop on Chinese Language Processing",
+    "id": "acl-I05-3017",
+    "title": "The Second International Chinese Word Segmentation Bakeoff",
+    "url": "https://aclweb.org/anthology/I05-3017",
+    "year": 2005
+  },
+  "references": [
+    "acl-W03-1719"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "The second international Chinese word segmentation bakeoff was held in the summer of 2005 to evaluate the current state of the art in word segmentation.",
+        "Twenty three groups submitted 130 result sets over two tracks and four different corpora.",
+        "We found that the technology has improved over the intervening two years, though the out-of-vocabulary problem is still or paramount importance."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Chinese is written without inter-word spaces, so finding word-boundaries is an essential first step in many natural language processing applications including mono and cross-lingual information retrieval and text-to-speech systems.",
+        "This word segmentation problem has been active area of research in computational linguistics for almost two decades and is a topic of active research around the world.",
+        "As the very notion of “word-hood” in Chinese is hotly debated, so the determination of the correct division of a Chinese sentence into “words” can be very complex.",
+        "In 2003 SIGHAN, the Special Interest Group for Chinese Language Processing of the Association for Computational Linguistics (ACL) conducted the first International Chinese Word Segmentation Bakeoff (Sproat and Emerson, 2003).",
+        "That competition was the first conducted outside of China and has become the benchmark with which researchers evaluate their segmentation systems.",
+        "During the winter of 2004 it was decided to hold a second evaluation to determine how the latest research has affected segmentation technology."
+      ]
+    },
+    {
+      "heading": "2 Details of the Contest 2.1 The Corpora",
+      "text": [
+        "Four corpora were used in the evaluation, two each using Simplified and Traditional Chinese characters.",
+        "The Simplified Chinese corpora were provided by Beijing University and Microsoft Research Beijing.",
+        "The Traditional Chinese corpora were provided by Academia Sinica in Taiwan and the City University of Hong Kong.",
+        "Each provider supplied separate training and truth data sets.",
+        "Details on each corpus are provided in Table 1.",
+        "With one exception, all of the corpora were provided in a single character encoding.",
+        "We decided to provide all of the data in both Unicode (UTF-8 encoding) and the standard encoding used in each locale.",
+        "This would allow systems that use one or the other encoding to chose appropriately while ensuring consistent transcoding across all sites.",
+        "This conversion was problematic in two cases: 1.",
+        "The Academia Sinica corpus, provided in Unicode (UTF-16), contained characters found in Big Five Plus that are not found in Microsoft’s CP950 or standard Big Five.",
+        "It also contained compatibility characters that led to transcoding errors when converting from Unicode to Big Five Plus.",
+        "A detailed description of these issues can be found on the Bakeoff 2005",
+        "pages on the SIGHAN website.",
+        "The data also included 11 instances of an invalid character that could not be converted to Big Five Plus.",
+        "2.",
+        "The City University of Hong Kong data was initially supplied in Big Five/ HKSCS.",
+        "We initially converted this to Unicode but found that there were characters appearing in Unicode Ideograph Extension B, which many systems are unable to handle.",
+        "City University was gracious enough to provide Unicode versions for their files with all characters in the Unicode BMP.",
+        "Specific details can be found on the Bakeoff 2005 pages of the SIGHAN website.",
+        "The truth data was provided in segmented and unsegmented form by all of the providers except Academia Sinica, who only provided the segmented truth files.",
+        "These were converted to unsegmented form using a simple Perl script.",
+        "Unfortunately this script also removed spaces separating non-Chinese (i.e., English) tokens.",
+        "We had no expectation of correct segmentation on non-Chinese text, so the spaces were manually removed between non-Chinese text in the truth data prior to scoring.",
+        "The Academia Sinica data separated tokens in both the training and truth data using a full-width space instead of one or more half-width (i.e., ASCII) spaces.",
+        "The scoring script was modified to ignore the type of space used so that teams would not be penalized during scoring for using a different separator.",
+        "The segmentation standard used by each provider were made available to the participants, though late in the training period.",
+        "These standards are either extremely terse (MSR), verbose but in Chinese only (PKU, AS), or are verbose and moderately bilingual.",
+        "The PKU corpus uses a standard derived from GB 13715, the Chinese government standard for text segmentation in computer applications.",
+        "Similarly AS uses a Taiwanese national standard for segmentation in computer applications.",
+        "The CityU data was segmented using the LIVAC corpus standard, and the MSR data to Microsoft's internal standard.",
+        "The standards are available on the bakeoff web site.",
+        "The PKU data was edited by the organizers to remove a numeric identifier from the start of each line.",
+        "Unless otherwise noted in this paper no changes beyond transcoding were made to the data furnished by contributors."
+      ]
+    },
+    {
+      "heading": "2.2 Rules and Procedures",
+      "text": [
+        "The bakeoff was run almost identically to the first described in Sproat and Emerson (2003): the detailed instructions provided to the participants are available on the bakeoff website at http://www.sighan.org/bakeoff2005/ .",
+        "Groups (or “sites” as they were also called) interested in participating in the competition registered on the SIGHAN website.",
+        "Only the primary researcher for each group was asked to register.",
+        "Registration was opened on June 1,",
+        "ID Site Contact Country AS PKU CityU MSR 2 ICL, Beijing University Wuguang SHI ZH o 3 XiamenUniversity Xiaodong SHI ZH ♦0 ♦0 ♦0 ♦0 4 ITNLP Lab, Harbin Institute of Wei JIANG ZH ♦0 ♦0 ♦0 ♦0 Technology 5 France Telecom R&D Beijing Heng LI ZH ♦0 ♦0 ♦0 ♦0 6 Information Retrieval Lab, Harbin Huipeng ZHANG ZH ♦0 Institute of Technology 7 Dept.",
+        "of Linguistics, The University Guohong FU HK ♦0 ♦0 ♦0 ♦0 of Hong Kong 8 Computer Science Dept., Xiamen Hua-lin Zeng ZH ♦0 ♦0 University 9 Dept.",
+        "of Linguistics, The Ohio State Xiaofei LU US University 12 Dept.",
+        "of Computer Science, The Yaoyong LI GB ♦0 ♦0 ♦0 ♦0 University of Sheffield 13 Nanjing University Jiajun CHEN ZH ♦0 ♦0 14 Stanford NL Group Huihsin TSENG US � � � 15 Nara Institute of Science and Tech- Masayuki ASAHARA JP � � � nology 16 Academia Sinica Yu-Fang TSAI TW o 0 19 National University of Singapore Hwee Tou NG SG 0 0 0 0 21 Kookmin University Seung-Shik KANG KO � � 23 US Dept.",
+        "of Defense Thomas Keenan US 0 0 24 Dept.",
+        "of Information Management, Jia-Lin TSAI TW Tung Nan Institute of Technology 26 ICL, Peking University Huiming DUAN ZH ♦0 27 Yahoo!",
+        "Inc. Aitao CHEN US ♦0 ♦0 ♦0 ♦0 29 The Chinese University of Hong Tak Pang LAU HK � � Kong 31 City University of Hong Kong Ka Po CHOW HK 0 0 33 City University of Hong Kong Chun Yu KIT HK � � 34 Institute of Computing Technology, ShuangLong LI ZH ♦0 ♦0 Chinese Academy of Sciences",
+        "2005 and allowed to continue through the time the training data was made available on July 11.",
+        "When a site registered they selected which corpus or corpora there were interested in using, and whether they would take part in the open or closed tracks (described below.)",
+        "On July 11 the training data was made available on the Bakeoff website for downloading: the same data was used regardless of the tracks the sites registered for.",
+        "The web site did not allow a participant to",
+        "add a corpus to the set they initially selected, though at least one asked us via email to add one and this was done manually.",
+        "Groups were given until July 27 to train their systems, when the testing data was released on the web site.",
+        "They then had two days to process the test corpora and return them to the organizer via email on Jul 29 for scoring.",
+        "Each participant’s results were posted to their section of the web site on August 6, and the summary results for all participants were made available to all groups on August 12.",
+        "Two tracks were available for each corpus, open and closed:",
+        "• In the open tests participants could use any external data in addition to the training corpus to train their system.",
+        "This included, but was not limited to, external lexica, character set knowledge, part-of-speech information, etc.",
+        "Sites participating in an open test were required to describe this external data in their system description.",
+        "• In closed tests, participants were only allowed to use information found in the",
+        "training data.",
+        "Absolutely no other data or information could be used beyond that in the training document.",
+        "This included knowledge of character sets, punctuation characters, etc.",
+        "These seemingly artificial restrictions (when compared to “real world” systems) were formulated to study exactly how far one can get without supplemental information.",
+        "Other obvious restrictions applied: groups could not participate using corpora that they or their organization provided or that they had used before or otherwise seen.",
+        "Sites were allowed submit multiple runs within a track, allowing them to compare various approaches.",
+        "Scoring was done automatically using a combination of Perl and shell scripts.",
+        "Participants were asked to submit their data using very strict naming conventions to facilitate this: in only a couple of instances were these not followed and human intervention was required.",
+        "After the scoring was done the script would mail the detailed results to the participant.",
+        "The scripts used for scoring can be downloaded from the",
+        "Bakeoff 2005 web site.",
+        "It was provided to the participants to aid in the their data analysis.",
+        "As noted above, some of the training/truth data used a full-width space to separate tokens: the scoring script was modified to ignore the differences between full-width and half-width spaces.",
+        "This is the only case where the half-width/full-width distinction was ignored: a system that converted tokens from full-width to half-width was penalized by the script."
+      ]
+    },
+    {
+      "heading": "2.3 Participating Sites",
+      "text": [
+        "Thirty-six sites representing 10 countries initially signed up for the bakeoff.",
+        "The People’s Republic of China had the greatest number with 17, followed by the United States (6), Hong Kong (5), Taiwan (3), six others with one each.",
+        "Of these, 23 submitted results for scoring and subsequently submitted a paper for these proceedings.",
+        "A summary of participating groups and the tracks for which they submitted results can be found in Table 2 on the preceding page.",
+        "All together 130 runs were submitted for scoring."
+      ]
+    },
+    {
+      "heading": "3 Results",
+      "text": [
+        "In order to provide hypothetical best and worst case results (i.e., we expect systems to do no worse than the baseline and to generally under-perform the top-line), we used a simple left-to-right maximal matching algorithm implemented in Perl to generate “top-line” and “base-line”",
+        "numbers.",
+        "This was done by generating word lists based only on the vocabulary in each truth (top-line) and training (bottom-line) corpus and segmenting the respective test corpora.",
+        "These results are presented in Tables 3 and 4.",
+        "All of the results comprise the following data: test recall (R), test precision (P), balanced F score (where F = 2PR/(P + R)), the out-of-vocabulary (OOV) rate on the test corpus, the recall on OOV words (Roov), and the recall on in-vocabulary words (Riv).",
+        "We use the usual definition of out-of-vocabulary words as the set of words occurring in the test corpus that are not in the training corpus.",
+        "As in the previous evaluation, to test the confidence level that two trials are significantly different from each other we used the Central Limit Theorem for Bernoulli trials (Grinstead and Snell, 1997), assuming that the recall rates from the various trials represents the probability that a word will be successfully identified, and that a binomial distribution is appropriate for the experiment.",
+        "We calculated these values at the 95% confidence interval with the formula ±2 -✓(p",
+        "(1 - p)/n) where n is the number of words.",
+        "This value appears in subsequent tables under the column cr.",
+        "We also calculate the confidence that the a character string segmented as a word is actually a word by treating p as the precision rates of each system.",
+        "This is referred to as cp in the result tables.",
+        "Two systems are then considered to be statistically different (at a 95% confidence level) if one of their cr or cp are different.",
+        "Tables 5–12 contain the results for each corpus and track (groups are referenced by their ID as found in Table 2) ordered by F score."
+      ]
+    },
+    {
+      "heading": "4 Discussion",
+      "text": [
+        "Across all of the corpora the best performing system, in terms of F score, achieved a 0.972, with an average of 0.918 and median of 0.941.",
+        "As one would expect the best F score on the open tests was higher than the best on the closed tests, 0.972 vs. 0.964, both on the MSR corpus.",
+        "This result follows from the fact that systems taking part on the open test can utilize more information than those on the closed.",
+        "Also interesting to compare are the OOV recall rates between the Open and Closed tracks.",
+        "The best OOV recall in the open evaluation was 0.872 compared to just 0.813 on the closed track.",
+        "These data indicate that OOV handling is still the Achilles heel of segmentation systems, even when the OOV rates are relatively small.",
+        "These OOV recall scores are better than those observed in the first bakeoff in 2003, with similar OOV values, which suggests that advances in unknown word recognition have occurred.",
+        "Nevertheless OOV is still the most significant problem in segmentation systems.",
+        "The best score on any track in the 2003 bakeoff was F=0.961, while the best for this evaluation was F=0.972, followed by 17 other scores above 0.961.",
+        "This shows a general trend to a decrease in error rates, from 3.9% to 2.8%!",
+        "These scores are still far below the theoretical 0.99 level reflected in the topline and the higher numbers often reflected in the literature.",
+        "It is plain that one can construct a test set that any given system will achieve very high measures of precision and recall on, but these numbers must viewed with caution as they may not scale to other applications or other problem sets.",
+        "Three participants that used the scoring script in their system evaluation observed different behavior from that of the organizers in the",
+        "generation of the recall numbers, thereby affecting the F score.",
+        "We were unable to replicate the behavior observed by the participant, nor could we determine a common set of software versions that might lead to the problem.",
+        "We verified our computed scores on two different operating systems and two different hardware architectures.",
+        "In each case the difference was in the participants favor (i.e., resulted in an increased F score) though the impact was minimal.",
+        "If there is an error in the scripts then it affects all data sets identically, so we are confident in the scores as reported here.",
+        "Nevertheless, we hope that further investigation will uncover the cause of the discrepancy so that it can be rectified in the future."
+      ]
+    },
+    {
+      "heading": "4.1 Future Directions",
+      "text": [
+        "This second bakeoff was an unqualified success, both in the number of systems represented and in the demonstrable improvement in segmentation technology since 2003.",
+        "However, there are still open questions that future evaluations can attempt to answer, including: how well a system trained on one genre performs when faced with text from a different register.",
+        "This will stress OOV handling in the extreme.",
+        "Consider a situation where a system trained on PRC newswire",
+        "text is given the Chinese translation of the Arabic al Jazeera newspaper.",
+        "A more detailed evaluation of different techniques for dealing with certain constructs is also in order, finding the right balance of learned and heuristic knowledge is paramount.",
+        "Tied to the accuracy performance of such hybrid systems is the runtime speed: the trade-off between accuracy and throughput is vitally important as more and more data becomes computerized.",
+        "The overall effects of the various segmentation standards on the comparison of disparate systems has yet to be studied.",
+        "In particular, a categorization of the differences in standards and the prevalence of the features reflected would be a worth while study.",
+        "Xia (2000) compares the Penn Chinese Treebank’s standard with those used in Taiwan and China, and concludes that, “most disagreements among these three guidelines do not make much difference in bracketing or sentence interpretation.” This is probably not so transparent when evaluating segmentation accuracy, however.",
+        "No segmentation study has yet to examine the handling of short strings where there is little surrounding context, as in search engine queries.",
+        "Future evaluations should be designed to focus on these and other specific areas of interest."
+      ]
+    },
+    {
+      "heading": "Acknowledgments",
+      "text": [
+        "This bakeoff could not have taken place without the following institutions who provided training and testing data:",
+        "• Institute of Linguistics, Academia Sinica, Taipei, Taiwan • Institute for Computational Linguistics, Beijing University, Beijing, China • Language Information Sciences Research Centre, City University of Hong Kong, Hong Kong SAR • Microsoft Research Asia, Beijing, China",
+        "I would like to thank Gina Lavow and Chu-Ren Huang for their organization of the fourth SIGHAN workshop of which this bakeoff is",
+        "part, and John O’Neil for his comments on an earlier draft of this paper.",
+        "Finally I would also like to thank the participants for their interest and hard work in making this bakeoff a success."
+      ]
+    }
+  ]
+}

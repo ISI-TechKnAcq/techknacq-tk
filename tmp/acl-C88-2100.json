@@ -1,0 +1,183 @@
+{
+  "info": {
+    "authors": [
+      "Sergei Nirenburg",
+      "Irene B. Nirenburg"
+    ],
+    "book": "International Conference on Computational Linguistics",
+    "id": "acl-C88-2100",
+    "title": "A Framework for Lexical Selection in Natural Language Generation",
+    "url": "https://aclweb.org/anthology/C88-2100",
+    "year": 1988
+  },
+  "references": [
+    "acl-C86-1131",
+    "acl-C86-1148",
+    "acl-C86-1154",
+    "acl-P84-1105",
+    "acl-P84-1107"
+  ],
+  "sections": [
+    {
+      "text": [
+        "tats N'it t. Ibis paper describes a procedure fest Raical tenter, or open-clews 1cxtcaI items in a natural language system.",
+        "An optimum lexical selection module must he able to make realization decisions UrIrlef vary-ittg circumstances.",
+        "First, it must be able to oF;roto.",
+        "withont tt:o influence of context, based on meaning correspondences between elements of conceptual in.",
+        "pat tori the 'lexical invesamy of the target language.",
+        "Sec-nd, it tnust ite.",
+        "able to use contextual constiaints, as sup-postod by collostational information in the generation lexicon.",
+        "a Mid, there suust 1w MI option of realizing input represent: lions pronominally or through definite descriptions.",
+        "Entail), there most also be 'MI option of acing elliptical constmetions.",
+        "The nature of background knowledge anti the :ilporithiti we suggest for this task are described.",
+        "The lexical selection procedure, is a part of a comprehensive generation system, DIOC;MM.",
+        "ORO OW: atit011 reSt'arch Mai).",
+        "Natural itmadage, girt rattcin is icaditionaily divided into two stages: the ufieraece planning ('what tic :ay') stage ant iii; lexical and syntactic aitalization (how to say it') stage.",
+        "latter stage consists, essentially, of a large set of realization choices for the vat ions meanings of the in-put,,slug the morphologietd, syntactic and lexical means of expression in the torgel, language (To.",
+        "Pesaarch reported here deals with the process of lexical selection dining this second stage of generation.",
+        "Many ti' file existing generation systems have been conceived as components of natural language interfaces to database systems.",
+        ".10 such generators the lexical inventory can be strongly constrained without jeopardizing the quality of the interaction (cf., e.g., McKeown, 1985).",
+        "Such systems necessarily concentrate on choosing appropriate T1.",
+        "syntax indeed, generators ase expected to produce adequate syntactic structures.",
+        "Lexical selection becomes Mole important when it is difficult to constrain die types of output in generation, and, consequently, Wheli the lexicon incomes law.",
+        "Machine translation and automatic text summarization ate mining applications that by nature require a wide range of outputs and have to me a sivhiahle, lexicon, Note that of these two the former does not involve utterance planning and concentrates on lexical and syntactic realization.",
+        "In the natural language generation community the task of lexical selection hos not yet ;4i.tra(101.1 a sufficient amount of attention, though it was Iddlt MCA in a well-known early generation project (Goldman, 1975) and is widely imtognized as au important problem (cf. Dan-los, 1904 .theobs, 1985; Ilienkowski, 1986; and the survey Clamming, 1986).",
+        "Out, motivation for this research was that we agree with Mar'ens (1987, p. 211) that 'most generation systems don't use words at MI,' and we believe that the quality of generation output will improve sigthlicantlY OHM' an adequate.",
+        "lexical selection component becomes a tauditrat lane l or a NI.C; system.",
+        "'Ow \"AlAr,t Research reported in this paper was performed within the btOGENES project (Nhenbing, 1987), whose objective is to provide a high-quality jamerator far a knowledge-based intedingual machine minslation system.",
+        "The Mimi to this generator it; a set of a) world concept instances that my-vete:id the propositional content of the original text, and b) sets of text parameter valises that represent its pragmatic content.",
+        "(These concepts are represented in a frame-oriented formalism and are interconnected according to the rules of a special grammar see Nirennurg et al., 1986 for a detailed description.)",
+        "In this paper we deal with a subset of the generation task, namely, the selection of open-class lexical items to realize the meanings of object, event and property tokens in the input, 'thus, the output of the generation module described here is a lexical unit or a pronoun in the target language.",
+        "Our approach (and especially the expected input) to text get-H.4601i is similar to that of the SEMSYN project (e.g. ROsner, 1986).",
+        "Lexical selection is not, however, an immediate concern of and is not discussed at any length in SIIMSYN descriptions (see, for instance, 1 aubsch al.",
+        "(1984, p. 492), and a published analysis of practical difficulties me, countered by the, project (tianakata et 1986) does not address this issue at all.",
+        "Furthermore, since until very recently that project noti generate sentence-length texts (article titles), the problem of qcti;the descriptions, pronominalization and ellipsis did not heroine acutely in, - portant."
+      ]
+    },
+    {
+      "heading": "3 Why is it a difficult task?",
+      "text": [
+        "Lexical choice is not a straightforward task.",
+        "Suppose we have to express in English the meaning 'a person whose sex is male and whose age is between 13 and 15 years.' What knowledge do people use in order to come up with an appropriate choice out of such candidate, realizations as those listed in (1).",
+        "Without a sentential context the choice, basest on closeness of the meaning match and generality of meaning, should be boy.",
+        "For a computer program to be capable of making choices like this, it has to possess a preference-assigning capability on the matches between die meanings of the candidate lexical realization on the one hand and the input meaning unit (see the discussion of the matching metric below)."
+      ]
+    },
+    {
+      "heading": "3,1 Collocations",
+      "text": [
+        "Lexical choices are, however, typically made in context.",
+        "Contextual relations among lexical units reflect meaning-induced constraints on cooccurrence (selectional restrictions: admire takes a Imam subject).",
+        "Sometimes, however, it is difficult to formulate a coos;corrence constraint in terms of selectional restrictions alone.",
+        "Thus, the example, the causative construction with the English influence requires exact; ill Russian equivalent vlijanie requires okazyvat' , and the latter is not a Russian correlate of exert other than in the above and very few similar syntagmatic constructions.",
+        "Why do we use, in English, shed with tears or leaves but don't usually say shed water out of a bucket or they drop tears every time when <...›?",
+        "Such properties of the lexical stock of a natural language arc called collocational.",
+        "We will now illustrate the concept of collocation through several examples, Consider the conceptual operator of a large quantity of, a (relative) value for measuring quantities (of materials, forces, qualities, properties, etc.).",
+        "It is realized in English in accordance with coltheational properties of the lexical units that are used as its operands.",
+        "Not every quantity goes with every realization of the above operator.",
+        "Members of the set -:big, enormous, great, high, large, strong, wide> of potential realizations of a large quantity of can cooccur with every of the menthets of the set <amount, difficulty, expanse, selection, voltage> of quantities.",
+        "We say high voltage but a large amount.",
+        "It would be inappropriate for a generation system to produce something like high selection or Mtge difficulty.",
+        "(Note that in parsing the problem of assigning a similar semantic marker to all the various expressions front the example can, in principle, be tackled through a mechanism of metaphor processing (e.g., Carbonell, 1987), whereby a general heuristic rule is developed for processing metaphorical input belonging a single class, such as, for instance, a large quantity of.. – see Lakoff and Johnson, 1980, for au extensive listing of potential metaphor classes; in generation, however, the task is the opposite – to produce fluent metaphorical language.",
+        "Since this depends not on regularities of meaning, but .rather on the idiosyncrasies of meaning realization in the various natural languages, the general rules will be more difficult to come by and formulate.)",
+        "An additional class of collocations are the paradigmatic collocations.",
+        "'these are best exemplified by the `set-complement' collocations such as the English left and right or parents and children.",
+        "The knowledge of these collocations, for instance, simplifies the process of lexical selection of conjoined constructions, such as ladies and gentlemen.",
+        "Collocational relations are defined on lexical units, not meaning representations.",
+        "The study of collocations ascends to Firth (1951); it is",
+        "a central part of the Meaning - Text school of linguistics – cf. Mereuk, 1974; 1981.",
+        "The importance of collocational properties in generations has been recognized (cf. Cumming, 1986), but relatively few systems actually include collocational information in their decision processes."
+      ]
+    },
+    {
+      "heading": "3.2 Ellipsis and Anaphora",
+      "text": [
+        "Certain contexts completely alleviate the problem of open-class lexical selection.",
+        "Consider the following (gloss of an) input segment:",
+        "(2) Clause): Buy(John3 book7), timer, focus: book7 Clause2: Bring(John3 book7 office)), belong-to(officei John3), time2: timea > timer, focus: office/ Clause3: Read(John3 book7), aspect: inchoative, time: after(time2) One of the adequate ways of realizing it is: (3) John bought a book, lie brought this book to his office and started to read it.",
+        "There are seven instances of the three object-type concepts in the case-role slots of the input propositions above.",
+        "Each of the three concepts is realized lexically only once.",
+        "In two cases these meanings were realized through pronominalization and in one each through definite description and an elliptical construction.",
+        "This example shows that non-lexical realization is an integral part of the process of lexical selection in generation.",
+        "In what follows we briefly describe the system architecture, the knowledge structures and the algorithm we use for selecting open-class lexical items in generation."
+      ]
+    },
+    {
+      "heading": "4 The System and the Knowledge",
+      "text": [
+        "DIOGENES is a distributed natural language generation system featuring a blackboard-type control structure.",
+        "The processing in it is concentrated in the knowledge source's which are triggered by the state of the various blackboards.",
+        "The latter contain the input to generation as well as all intermediate and final results of DIOGENES operation, represented uniformly in a frame-oriented knowledge representation language.",
+        "Background knowledge in DIOGENES includes the following components relevant to the task of lexical selection: a concept lexicon, a set of knowledge structures that describe object and event-types in the (sub)world of the texts to be generated (the first application of DIOGETIES is; for example, in the domain of computer hardware manuals) a a generation lexicon that bias (sub)world concepts (or, more accurately, their instances) with particular lexical units of the target language.",
+        "The above description is necessarily incomplete.",
+        "See Nirenburg, 19117 for an extensive specification of all the facets of DIOGENES.",
+        "The implementation vehicles for DIOGENES are the Frarnekit knowledge representation language (Carbonell and Joseph, 1985) and clot/ CommonLisp running on an IBM PC RT.",
+        "Sample concept lexicon entries are illustrated in Figure 1.",
+        "The figure shows a screen of the knowledge acquisition and maintenance system.",
+        "called ONTOS (Nirenburg et al.",
+        "1988), which we use for acquiring and maintaining the lexicons.",
+        "The figure shows a partial view of the concept network and three concept lexicon frames corresponding to the concepts of research-workstation, memory and disk.",
+        "The following is a sample input that will allow DIOGENES to produce the sentence",
+        ";an object instance to which all the various ;descriptions (intensions) of it refer; ;for.",
+        "example, \"John Smith\" can be intensionally ;represented as \"john,\" \"Mr. Smith,\" or \"Jim's father\" ;-- but it will.",
+        "refer to the same ;extension",
+        ";one needs this tautology; otherwise, system ;units have to be concept NAMES in the ;ontothgyA note the binding for the \"model\" ;which does the same compositionally, without ;proliferating names"
+      ]
+    },
+    {
+      "heading": "6.1 The Generation Lexicon",
+      "text": [
+        "The main static knowledge source for generating of open-class items is a specialized generation lexicon (GL).",
+        "The structure of an entry in the generation lexicon in DIOGENES is shown in Figure 2 (the BNF is incomplete wherever obvious): The importance value serves to distinguish the saliency of the various relations for the identity of the entry head.",
+        "Thus, for instance, generating youth instead of boy seems to be less a deviation than generating girl.",
+        "This is why the importance of the sex slot in the example below is greater than that of the age slot The sample GL entries below do not contain a full complement of collocation relations.",
+        "(<TL-lexeme><lex-info><collocation> ) (<1anguage>TL-lexical-unit I (synonym TL-lexical-unit*)) english I spanish I Japanese I ... ((<syntactic-info>) (morph <inflection-type>)) {the contents of a syntactic dictionary (cf. e.g. Ingria, 1987)) an indication of irregularities in forming word forms, e.g., @i[goose] - pl.",
+        "8i{geese]} (<dimension> <dimension-value>*)* ) the name of a (syntagmatic or paradigmatic) collocation relation based on the CI.",
+        "slot names for the concept in question} a TL lexical unit (word or expression) that can ordinarily collocate with the TL lexical unit in <TL-lexeme> above and connected to the TL unit on a specified dimension; can be recursive)"
+      ]
+    },
+    {
+      "heading": "5 The Algorithm",
+      "text": [
+        "In the DIOGENES generator an instantiation of a head-selecting knowledge source is triggered simultaneously for every event and role instance in the input representation.",
+        "The results of their operation are posted to a public blackboard, so that all knowledge source instances can draw on this knowledge in their own decision processes.",
+        "The knowledge sources responsible for selecting modifiers are triggered when the heads of their phrases have already been selected.",
+        "Figure 3 illustrates the algorithm for a single lexical selection (head or modifier) knowledge source.",
+        "if an input frame was already meni-toned in the input, the question arises whether it should be realized non-lexically, that is, using deictic means (this is the case with the second appearance of John in (2)).",
+        "If so, a proper realization must be found and posted on the corresponding blackboard.",
+        "If this process fails at any point, we revert to tile 'regular' case of lexical realization.",
+        "This latter consists, first of all, in scanning the generation lexicon in search of a set of candidate realizations for the input frame.",
+        "(1) is an example of such a set.",
+        "When such a set is produced, we attempt to filter it by removing those candidates that are not compatible with realizations already decided upon for other input frames in the same sentence.",
+        "This processing is based on comparing the collocation information in the lexicon entries for the members of various candidate realization sets.",
+        "For example, if a neighbor frame has already been realized as demonstrator, then the collocational information will filter out all members of (1) but youth, teenager, man.",
+        "If the residual set has cardinality one, we post the result.",
+        "Otherwise --- as in the case when no collocational information can be used we proceed to select the realization based solely on the entries in the candidate realization set (that is, without the",
+        "benefit of a context).",
+        "This routine uses a well-defined inexacfmatching metric that calculates distances between the meaning of the input frame and the meanings of the lexical units in the candidate realization set.",
+        "The closest meaning is then selected and posted."
+      ]
+    },
+    {
+      "heading": "6 Status and Future Work",
+      "text": [
+        "The blackboard architecture and the inexact meaning matching module has been implemented; the collocation treatment module has also been implemented, but extensive testing has not been performed due to the lack of a large-scale lexicon.",
+        "The anaphora treatment module has been implemented for pronominalization only, and the number of pronominalization rules employed has to be and will be increased.",
+        "It is chair that the acquisition of the generation lexicon is a major and extremely labor-intensive task in natural language generation.",
+        "The acquisition of this dictionary, especially of the collocational information cannot at present be done automatically.",
+        "But the efficiency of the team of human lexicographers working on this problem can be increased dramatically through the use of specialized intelligent interactive aids.",
+        "We have developed one such Knowledge Base Maintenance System (cf. Nirenbing et al., 1987) for the acquisition of concept lexicons and will extend it so that it becomes applicable to the task of acquiring generation lexicons as well."
+      ]
+    },
+    {
+      "heading": "Acknowledgements",
+      "text": [
+        "The authors would like to thank Victor Raskin, James Pustejovsky, Rita McCardell, Carl Pollard, Eric Nyberg, Scott Huffinann, and Ed Kenschaft ter fruitful discussions of the topic."
+      ]
+    },
+    {
+      "heading": "Referat ices",
+      "text": []
+    }
+  ]
+}

@@ -1,0 +1,354 @@
+{
+  "info": {
+    "authors": [
+      "Ben Carterette",
+      "Rosie Jones",
+      "Wiley Greiner",
+      "Cory Barr"
+    ],
+    "book": "International Conference on Computational Linguistics and Annual Meeting of the Association for Computational Linguistics – Poster Sessions",
+    "id": "acl-P06-2007",
+    "title": "N Semantic Classes Are Harder Than Two",
+    "url": "https://aclweb.org/anthology/P06-2007",
+    "year": 2006
+  },
+  "references": [
+    "acl-C92-2082",
+    "acl-J93-1003",
+    "acl-P99-1004"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "We show that we can automatically classify semantically related phrases into 10 classes.",
+        "Classification robustness is improved by training with multiple sources of evidence, including within-document cooccurrence, HTML markup, syntactic relationships in sentences, substitutability in query logs, and string similarity.",
+        "Our work provides a benchmark for automatic n-way classification into WordNet’s semantic classes, both on a TREC news corpus and on a corpus of substitutable search query phrases."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Identifying semantically related phrases has been demonstrated to be useful in information retrieval (Anick, 2003; Terra and Clarke, 2004) and sponsored search (Jones et al., 2006).",
+        "Work on semantic entailment often includes lexical entailment as a subtask (Dagan et al., 2005).",
+        "We draw a distinction between the task of identifying terms which are topically related and identifying the specific semantic class.",
+        "For example, the terms “dog”, “puppy”, “canine”, “schnauzer”, “cat” and “pet” are highly related terms, which can be identified using techniques that include distributional similarity (Lee, 1999) and within-document cooccurrence measures such as point-wise mutual information (Turney et al., 2003).",
+        "These techniques, however, do not allow us to distinguish the more specific relationships:",
+        "• hypernym(dog,puppy)",
+        "• hyponym(dog,canine) • coordinate(dog,cat)",
+        "Lexical resources such as WordNet (Miller, 1995) are extremely useful, but are limited by being manually constructed.",
+        "They do not contain semantic class relationships for the many new terms we encounter in text such as web documents, for example “mp3 player” or “ipod”.",
+        "We can use WordNet as training data for such classification to the extent that the training on pairs found in WordNet and testing on pairs found outside WordNet provides accurate generalization.",
+        "We describe a set of features used to train n-way supervised machine-learned classification of semantic classes for arbitrary pairs of phrases.",
+        "Redundancy in the sources of our feature information means that we are able to provide coverage over an extremely large vocabulary of phrases.",
+        "We contrast this with techniques that require parsing of natural language sentences (Snow et al., 2005) which, while providing reasonable performance, can only be applied to a restricted vocabulary of phrases cooccuring in sentences.",
+        "Our contributions are:",
+        "• Demonstration that binary classification removes the difficult cases of classification into closely related semantic classes • Demonstration that dependency parser paths are inadequate for semantic classification into 7 WordNet classes on TREC news corpora • A benchmark of 10-class semantic classification over highly substitutable query phrases • Demonstration that training a classifier using WordNet for labeling does not generalize well to query pairs • Demonstration that much of the performance in classification can be attained using only",
+        "Sydney, July 2006. c�2006 Association for Computational Linguistics syntactic features",
+        "• A learning curve for classification of query phrase pairs that suggests the primary bottleneck is manually labeled training instances: we expect our benchmark to be surpassed."
+      ]
+    },
+    {
+      "heading": "2 Relation to Previous Work",
+      "text": [
+        "Snow et al.",
+        "(2005) demonstrated binary classification of hypernyms and non-hypernyms using WordNet (Miller, 1995) as a source of training labels.",
+        "Using dependency parse tree paths as features, they were able to generalize from WordNet labelings to human labelings.",
+        "Turney et al.",
+        "(2003) combined features to answer multiple-choice synonym questions from the TOEFL test and verbal analogy questions from the SAT college entrance exam.",
+        "The multiple-choice questions typically do not consist of multiple closely related terms.",
+        "A typical example is given by Turney:",
+        "• hidden:: (a) laughable (c) ancient (b) veiled (d) revealed",
+        "Note that only (b) and (d) are at all related to the term, so the algorithm only needs to distinguish antonyms from synonyms, not synonyms from say hypernyms.",
+        "We use as input phrase pairs recorded in query logs that web searchers substitute during search sessions.",
+        "We find much more closely related",
+        "phrases: (a) secret (e) hiden • hidden:: (b) hidden camera (f) voyeur (c) hidden cam (g) hide (d) spy",
+        "This set contains a context-dependent synonym, topically related verbs and nouns, and a spelling correction.",
+        "All of these could cooccur on web pages, so simple cooccurrence statistics may not be sufficient to classify each according to the semantic type.",
+        "We show that the techniques used to perform binary semantic classification do not work as well when extended to a full n-way semantic classification.",
+        "We show that using a variety of features performs better than any feature alone."
+      ]
+    },
+    {
+      "heading": "3 Identifying Candidate Phrases for Classification",
+      "text": [
+        "In this section we introduce the two data sources we use to extract sets of candidate related phrases for classification: a TREC-WordNet intersection and query logs."
+      ]
+    },
+    {
+      "heading": "3.1 Noun-Phrase Pairs Cooccuring in TREC News Sentences",
+      "text": [
+        "The first is a dataset derived from TREC news corpora and WordNet used in previous work for binary semantic class classification (Snow et al., 2005).",
+        "We extract two sets of candidate-related pairs from these corpora, one restricted and one more complete set.",
+        "Snow et al.",
+        "obtained training data from the intersection of noun-phrases cooccuring in sentences in a TREC news corpus and those that can be labeled unambiguously as hypernyms or non-hypernyms using WordNet.",
+        "We use a restricted set since instances selected in the previous work are a subset of the instances one is likely to encounter in text.",
+        "The pairs are generally either related in one type of relationship, or completely unrelated.",
+        "In general we may be able to identify related phrases (for example with distributional similarity (Lee, 1999)), but would like to be able to automatically classify the related phrases by the type of the relationship.",
+        "For this task we identify a larger set of candidate-related phrases."
+      ]
+    },
+    {
+      "heading": "3.2 Query Log Data",
+      "text": [
+        "To find phrases that are similar or substitutable for web searchers, we turn to logs of user search sessions.",
+        "We look at query reformulations: a pair of successive queries issued by a single user on a single day.",
+        "We collapse repeated searches for the same terms, as well as query pair sequences repeated by the same user on the same day."
+      ]
+    },
+    {
+      "heading": "3.2.1 Substitutable Query Segments",
+      "text": [
+        "Whole queries tend to consist of several concepts together, for example “new york |maps” or “britney spears |mp3s”.",
+        "We identify segments or phrases using a measure over adjacent terms similar to mutual information.",
+        "Substitutions occur at the level of segments.",
+        "For example, a user may initially search for “britney spears |mp3s”, then search for “britney spears |music”.",
+        "By aligning query pairs with a single substituted segment, we generate pairs of phrases which a user has substituted.",
+        "In this example, the phrase “mp3 s” was substituted by the phrase “music”.",
+        "Aggregating substitutable pairs over millions of users and millions of search sessions, we can calculate the probability of each such rewrite, then",
+        "test each pair for statistical significance to eliminate phrase rewrites which occurred in a small number of sessions, perhaps by chance.",
+        "To test for statistical significance we use the pair independence likelihood ratio, or log-likelihood ratio, test.",
+        "This metric tests the hypothesis that the probability of phrase 0 is the same whether phrase a has been seen or not by calculating the likelihood of the observed data under a binomial distribution using probabilities derived using each hypothesis (Dunning, 1993).",
+        "A high negative value for A suggests a strong dependence between query a and query 0."
+      ]
+    },
+    {
+      "heading": "4 Labeling Phrase Pairs for Supervised Learning",
+      "text": [
+        "We took a random sample of query segment substitutions from our query logs to be labeled.",
+        "The sampling was limited to pairs that were frequent substitutions for each other to ensure a high probability of the segments having some relationship."
+      ]
+    },
+    {
+      "heading": "4.1 WordNet Labeling",
+      "text": [
+        "WordNet is a large lexical database of English words.",
+        "In addition to defining several hundred thousand words, it defines synonym sets, or synsets, of words that represent some underlying lexical concept, plus relationships between synsets.",
+        "The most frequent relationships between noun-phrases are synonym, hyponym, hypernym, and coordinate, defined in Table 1.",
+        "We also may use meronym and holonym, defined as the PART-OF relationship.",
+        "We used WordNet to automatically label the subset of our sample for which both phrases occur in WordNet.",
+        "Any sense of the first segment having a relationship to any sense of the second would result in the pair being labeled.",
+        "Since WordNet contains many other relationships in addition to those listed above, we group the rest into the other category.",
+        "If the segments had no relationship in WordNet, they were labeled no relationship."
+      ]
+    },
+    {
+      "heading": "4.2 Segment Pair Labels",
+      "text": [
+        "Phrase pairs passing a statistical test are common reformulations, but can be of many semantic types.",
+        "Rieh and Xie (2001) categorized types of query reformulations, defining 10 general categories: specification, generalization, synonym, parallel movement, term variations, operator usage, error correction, general resource, special resource, and site URLs.",
+        "We redefine these slightly to apply to query segments.",
+        "The summary of the definitions is shown in Table 1, along with the distribution in the data of pairs passing the statistical test."
+      ]
+    },
+    {
+      "heading": "4.2.1 Hand Labeling",
+      "text": [
+        "More than 90% of phrases in query logs do not appear in WordNet due to being spelling errors, web site URLs, proper nouns of a temporal nature, etc.",
+        "Six annotators labeled 2,463 segment pairs selected randomly from our sample.",
+        "Annotators agreed on the label of 78% of pairs, with a Kappa statistic of .74."
+      ]
+    },
+    {
+      "heading": "5 Automatic Classification",
+      "text": [
+        "We wish to perform supervised classification of pairs of phrases into semantic classes.",
+        "To do this, we will assign features to each pair of phrases, which may be predictive of their semantic relationship, then use a machine-learned classifier to assign weights to these features.",
+        "In Section 7 we will look at the learned weights and discuss which features are most significant for identifying which semantic classes."
+      ]
+    },
+    {
+      "heading": "5.1 Features",
+      "text": [
+        "Features for query substitution pairs are extracted from query logs and web pages.",
+        "We submit the two segments to a web search engine as a conjunctive query and download the top 50 results.",
+        "Each result is converted into an HTML Document Object Model (DOM) tree and segmented into sentences.",
+        "Dependency Tree Paths The path from the first segment to the second in a dependency parse tree generated by MINIPAR (Lin, 1998) from sentences in which both segments appear.",
+        "These were previously used by Snow et al.",
+        "(2005).",
+        "These features were extracted from web pages in all experiments, except where we identify that we used TREC news stories (the same data as used by Snow et al.).",
+        "HTML Paths The paths from DOM tree nodes the first segment appears in to nodes the second segment appears in.",
+        "The value is the number of times the path occurs with the pair.",
+        "Lexico-syntactic Patterns (Hearst, 1992) A sub-string occurring between the two segments extracted from text in nodes in which both segments appear.",
+        "In the example fragment “authors such as Shakespeare”, the feature is “such as” and the value is the number of times the substring appears between “author” and “Shakespeare”.",
+        "Table 2 summarizes features that are induced from the query strings themselves or calculated from query log data."
+      ]
+    },
+    {
+      "heading": "5.2 Additional Training Pairs",
+      "text": [
+        "We can double our training set by adding for each pair u1, u2 a new pair u2, u1.",
+        "The class of the new pair is the same as the old in all cases but hypernym, hyponym, specification, and generalization, which are inverted.",
+        "Features are reversed from f (u1, u2) to f (u2, u1).",
+        "A pair and its inverse have different sets of features, so splitting the set randomly into training and testing sets should not result in resubstitution error.",
+        "Nonetheless, we ensure that a pair and its inverse are not separated for training and testing."
+      ]
+    },
+    {
+      "heading": "5.3 Classifier",
+      "text": [
+        "For each class we train a binary one-vs.-all linear-kernel support vector machine (SVM) using the optimization algorithm of Keerthi and DeCoste (2005)."
+      ]
+    },
+    {
+      "heading": "5.3.1 Meta-Classifier",
+      "text": [
+        "For n-class classification, we calibrate SVM scores to probabilities using the method described by Platt (2000).",
+        "This gives us P(classlpair) for each pair.",
+        "The final classification for a pair is"
+      ]
+    },
+    {
+      "heading": "5.3.2 Evaluation",
+      "text": [
+        "Binary classifiers are evaluated by ranking instances by classification score and finding the Max F 1 (the harmonic mean of precision and recall; ranges from 0 to 1) and area under the ROC curve (AUC; ranges from 0.5 to 1 with at least 0.8 being “good”).",
+        "The meta-classifier is evaluated by precision and recall of each class and classification accuracy of all instances."
+      ]
+    },
+    {
+      "heading": "6 Experiments",
+      "text": []
+    },
+    {
+      "heading": "6.1 Baseline Comparison to Snow et al.’s Previous Hypernym Classification on WordNet-TREC data",
+      "text": [
+        "Snow et al.",
+        "(2005) evaluated binary classification of noun-phrase pairs as hypernyms or non-hypernyms.",
+        "When training and testing on WordNet-labeled pairs from TREC sentences, they report classifier Max F of 0.348, using dependency path features and logistic regression.",
+        "To justify our choice of an SVM for classification, we replicated their work.",
+        "Snow et al.",
+        "provided us with their data.",
+        "With our SVM we achieved a Max F of 0.453, 30% higher than they reported."
+      ]
+    },
+    {
+      "heading": "6.2 Extending Snow et al.’s WordNet-TREC Binary Classification to N Classes",
+      "text": [
+        "Snow et al.",
+        "select pairs that are “Known Hyper-nyms” (the first sense of the first word is a hy",
+        "ponym of the first sense of the second and both have no more than one tagged sense in the Brown corpus) and “Known Non-Hypernyms” (no sense of the first word is a hyponym of any sense of the second).",
+        "We wished to test whether making the classes less cleanly separable would affect the results, and also whether we could use these features for n-way classification.",
+        "From the same TREC corpus we extracted known synonym, known hyponym, known coordinate, known meronym, and known holonym pairs.",
+        "Each of these classes is defined analogously to the known hypernym class; we selected these six relationships because they are the six most common.",
+        "A pair is labeled known no-relationship if no sense of the first word has any relationship to any sense of the second word.",
+        "The class distribution was selected to match as closely as possible that observed in query logs.",
+        "We labeled 50,000 pairs total.",
+        "Results are shown in Table 4(a).",
+        "Although AUC is fairly high for all classes, MaxF is low for all but two.",
+        "MaxF has degraded quite a bit for hypernyms from Table 3.",
+        "Removing all instances except hypernym and no relationship brings MaxF up to 0.45, suggesting that the additional classes make it harder to separate hypernyms.",
+        "Metaclassifier accuracy is very good, but this is due to high recall of no relationship and coordinate pairs: more than 80% of instances with some relationship are predicted to be coordinates, and most of the rest are predicted no relationship.",
+        "It seems that we are only distinguishing between no vs. some relationship.",
+        "The size of the no relationship class may be biasing the results.",
+        "We removed those instances, but performance of the n-class classifier did not improve (Table 4(b)).",
+        "MaxF of binary classifiers did improve, even though AUC is much worse."
+      ]
+    },
+    {
+      "heading": "6.3 N-Class Classification of Query Pairs",
+      "text": [
+        "We now use query pairs rather than TREC pairs."
+      ]
+    },
+    {
+      "heading": "6.3.1 Classification Using Only Dependency Paths",
+      "text": [
+        "We first limit features to dependency paths in order to compare to the prior results.",
+        "Dependency paths cannot be obtained for all query phrase pairs, since the two phrases must appear in the same sentence together.",
+        "We used only the pairs for which we could get path features, about 32% of the total.",
+        "Table 5(a) shows results of binary classification and metaclassification on those instances using dependency path features only.",
+        "We can see that dependency paths do not perform very well on their own: most instances are assigned to the “coordinate” class that comprises a plurality of instances.",
+        "A comparison of Tables 5(a) and 4(a) suggests that classifying query substitution pairs is harder than classifying TREC phrases.",
+        "Table 5(b) shows the results of binary classification and metaclassification on the same instances using all features.",
+        "Using all features improves performance dramatically on each individual binary classifier as well as the metaclassifier."
+      ]
+    },
+    {
+      "heading": "6.3.2 Classification on All Query Pairs Using All Features",
+      "text": [
+        "We now expand to all of our hand-labeled pairs.",
+        "Table 6(a) shows results of binary and meta classification; Figure 1 shows precision-recall curves for 10 binary classifiers (excluding URLs).",
+        "Our classifier does quite well on every class but hypernym and hyponym.",
+        "These two make up a very small percentage of the data, so it is not surprising that performance would be so poor.",
+        "The metaclassifier achieved 71% accuracy.",
+        "This is significantly better than random or majority-class baselines, and close to our 78% interannotator agreement.",
+        "Thresholding the metaclassifier to pairs with greater than .5 max class probability (68% of instances) gives 85% accuracy.",
+        "Next we wish to see how much of the performance can be maintained without using the com",
+        "putationally expensive syntactic parsing of dependency paths.",
+        "To estimate the marginal gain of the other features over the dependency paths, we excluded the latter features and retrained our classifiers.",
+        "Results are shown in Table 6(b).",
+        "Even though binary and meta-classifier performance decreases on all classes but generalizations and specifications, much of the performance is maintained.",
+        "Because URL changes are easily identifiable by the IsURL feature, we removed those instances and retrained the classifiers.",
+        "Results are shown in Table 6(c).",
+        "Although overall accuracy is worse, individual class performance is still high, allowing us to conclude our results are not only due to the ease of classifying URLs.",
+        "We generated a learning curve by randomly sampling instances, training the binary classifiers on that subset, and training the metaclassifier on the results of the binary classifiers.",
+        "The curve is shown in Figure 2.",
+        "With 10% of the instances, we have a metaclassifier accuracy of 59%; with 100% of the data, accuracy is 71%.",
+        "Accuracy shows no sign of falling off with more instances."
+      ]
+    },
+    {
+      "heading": "6.4 Training on WordNet-Labeled Pairs Only",
+      "text": [
+        "Figure 2 implies that more labeled instances will lead to greater accuracy.",
+        "However, manually labeled instances are generally expensive to obtain.",
+        "Here we look to other sources of labeled instances for additional training pairs."
+      ]
+    },
+    {
+      "heading": "6.4.1 Training and Testing on WordNet",
+      "text": [
+        "We trained and tested five classifiers using 10- fold cross validation on our set of WordNet-labeled query segment pairs.",
+        "Results for each class are shown in Table 7.",
+        "We seem to have regressed to predicting no vs. some relationship.",
+        "Because these results are not as good as the human-labeled results, we believe that some of our performance must be due to peculiarities of our data.",
+        "That is not unexpected: since words that appear in WordNet are very common, features are much noisier than features associated with query entities that are often structured within web pages."
+      ]
+    },
+    {
+      "heading": "6.4.2 Training on WordNet, Testing on WordNet and Hand-Labeled Pairs",
+      "text": [
+        "We took the five classes for which human and WordNet definitions agreed (synonyms, coordinates, hypernyms, hyponyms, and no relationship) and trained classifiers on all WordNet-labeled instances.",
+        "We tested the classifiers on human-labeled instances from just those five classes.",
+        "Results are shown in Table 8.",
+        "Performance was not very good, reinforcing the idea that while our features can distinguish between query segments, they cannot distinguish between common words."
+      ]
+    },
+    {
+      "heading": "7 Discussion",
+      "text": [
+        "Almost all high-weighted features are either HTML paths or query log features; these are the ones that are easiest to obtain.",
+        "Many of the highest-weight HTML tree features are symmetric, e.g. both words appear in cells of the same table, or as items in the same list.",
+        "Here we note a selection of the more interesting predictors.",
+        "synonym – “X or Y” expressed as a dependency path was a high-weight feature.",
+        "hyper/hyponym – “Y and other X” as a dependency path has highest weight.",
+        "An interesting feature is X in a table cell and Y appearing in text outside but nearby the table.",
+        "sibling – many symmetric HTML features.",
+        "“X to the Y” as in “80s to the 90s”.",
+        "“X and Y”, “X, Y, and Z” highly-weighted minipar paths.",
+        "general/specialization – the top three features are substring containment, word subset difference count, and prefix overlap.",
+        "spelling change – many negative features, indi",
+        "cating that two words that cooccur in a web page are not likely to be spelling differences.",
+        "other – many symmetric HTML features.",
+        "Two words emphasized in the same way (e.g. both bolded) may indicate some relationship.",
+        "none – many asymmetric HTML features, e.g. one word in a blockquote, the other bolded in a different paragraph.",
+        "Dice coefficient is a good negative features."
+      ]
+    },
+    {
+      "heading": "8 Conclusion",
+      "text": [
+        "We have provided the first benchmark for n-class semantic classification of highly substitutable query phrases.",
+        "There is much room for improvement, and we expect that this baseline will be surpassed."
+      ]
+    },
+    {
+      "heading": "Acknowledgments",
+      "text": [
+        "Thanks to Chris Manning and Omid Madani for helpful comments, to Omid Madani for providing the classification code, to Rion Snow for providing the hypernym data, and to our labelers.",
+        "This work was supported in part by the CIIR and in part by the Defense Advanced Research Projects Agency (DARPA) under contract number HR001-06-C-0023.",
+        "Any opinions, findings, and conclusions or recommendations expressed in this material are those of the authors and do not necessarily reflect those of the sponsor."
+      ]
+    }
+  ]
+}

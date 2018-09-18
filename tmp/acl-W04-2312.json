@@ -1,0 +1,298 @@
+{
+  "info": {
+    "authors": [
+      "Berenike Loos",
+      "Robert Porzel"
+    ],
+    "book": "SIGdial Workshop on Discourse and Dialogue",
+    "id": "acl-W04-2312",
+    "title": "Resolution of Lexical Ambiguities in Spoken Dialogue System",
+    "url": "https://aclweb.org/anthology/W04-2312",
+    "year": 2004
+  },
+  "references": [
+    "acl-A00-1031",
+    "acl-C92-2070",
+    "acl-J96-2004",
+    "acl-J98-1001",
+    "acl-N03-1012",
+    "acl-N03-4011",
+    "acl-P02-1056",
+    "acl-P95-1026",
+    "acl-P98-1013",
+    "acl-W02-0207",
+    "acl-W03-0811",
+    "acl-W03-0903",
+    "acl-W04-2802"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "The development of conversational multi-domain spoken dialogue systems poses new challenges for the reliable processing of less restricted user utterances.",
+        "Unlike in controlled and restricted dialogue systems a simple one-to-one mapping from words to meanings is no longer feasible here.",
+        "In this paper two different approaches to the resolution of lexical ambiguities are applied to a multi-domain corpus of speech recognition output produced from spontaneous utterances in a spoken dialogue system.",
+        "The resulting evaluations show that all approaches yield significant gains over the majority class baseline performance of .68, i.e. f-measures of .79 for the knowledge-driven approach and .86 for the supervised learning approach."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Following Ide and Veronis (1998) we can distinguish between data and knowledge-driven word sense disambiguation (WSD).",
+        "Given the basic distinction between written text and spoken utterances, we follow Allen et al.",
+        "(2001) and differentiate further between controlled and conversational spoken dialogue systems.",
+        "Neither data nor knowledge-driven word sense disambiguation has been performed on speech data stemming from human interactions with dialogue systems, since multi-domain conversational spoken dialogue systems for human computer interaction (HCI) have not existed in the past.",
+        "Now that speech data from multi-domain systems have become available, corresponding experiments and evaluations have become feasible.",
+        "In this paper we present the results of first word sense disambiguation annotation experiments on data from spoken interactions with multi-domain dialogue systems.",
+        "Additionally, we describe the results of a corresponding evaluation of a data and a knowledge-driven word sense disambiguation system on that data.",
+        "For knowledge-driven disambiguation we examined whether the ontology-based method for computing semantic coherence introduced by Gurevych et al.",
+        "(2003a) can be employed to disambiguate between alternative interpretations, i.e. concept representations, of a given speech recognition hypothesis (SRH) at hand.",
+        "We will show the results of its evaluation in the semantic interpretation task of WSD.",
+        "For example, in speech recognition hypotheses containing forms of the German verb kom-men, i.e. (to) come, a decision had to be made whether its meaning corresponds to the motion sense or to the showing sense, i.e. becoming mapped onto either a MotionDirectedTransliteratedProcessora WatchPerceptualProcess in the terminology of our spoken language understanding system.",
+        "For a data-driven approach we employed a highly supervised learning algorithm introduced by Brants (2000) and trained it on a corpus of annotated data.",
+        "A second set of semantically annotated speech recognition hypotheses was employed as a gold-standard for evaluating both the ontology-based and supervised learning method.",
+        "Both data sets were annotated by separate human annotators.",
+        "All annotated data stems from log files of an automatic speech recognition system that was implemented in the SMAxTKOM system (Wahlster et al., 2001; Wahlster, 2003).",
+        "It is important to point out that there are at least two essential differences between spontaneous speech WSD and textual WSD, i.e., a smaller size of processable context as well as imperfections, hesitations, disfluencies and speech recognition errors.",
+        "Existing spoken language understanding systems, that are not shallow and thusly produce deep syntactic and semantic representations for multiple domains, e.g. the production system approach described by Engel (2002) or unification-based approaches described by Crysmann et al.",
+        "(2002), have shown to be more suitable for well-formed input but less robust in case of imperfect input.",
+        "For conversational and reliable dialogue systems that achieve satisfactory scores in evaluation frameworks such as proposed by Walker et al.",
+        "(2000) or Beringer et al.",
+        "(2002) for multi-modal dialogue systems, we need robust knowledge or data-driven methods for disambiguating the sometimes less than ideal output of the large vocabulary spontaneous speech recognizers.",
+        "In the long run, we would also like to avoid expensive preprocessing work, which is necessary for both ontology-driven and supervised learning methods, i.e. labor intensive ontology engineering and data annotation respectively."
+      ]
+    },
+    {
+      "heading": "2 State of the Art",
+      "text": [
+        "After work on WSD had overcome so-called early doubts (Ide and Veronis, 1998) in the 1960’s, it was applied to various NLP tasks, such as machine translation, information retrieval, content and grammatical analysis and text processing.",
+        "Yarowsky (1995) used both supervised and unsupervised WSD for correct phonetizitation of words in speech synthesis.",
+        "However, there is no recorded work on processing speech recognition hypotheses resulting from speech utterances as it is done in our research.",
+        "In general, following Ide and Veronis (1998) the various WSD approaches of the past can be divided into two types, i.e., data and knowledge-based approaches."
+      ]
+    },
+    {
+      "heading": "2.1 Databased Methods",
+      "text": [
+        "Databased approaches extract their information directly from texts and are divided into supervised and unsupervised methods (Yarowsky, 1995; Stevenson, 2003).",
+        "Supervised methods work with a given (and therefore limited) set of potential classes in the learning process.",
+        "For example, Yarowsky (1992) used a thesaurus to generate 1042 statistical models of the most general categories.",
+        "Weiss (1973) already showed that disambiguation rules can successfully be learned from hand-tagged corpora.",
+        "Despite the small size of his training and test corpus, an accuracy of 90 was achieved.",
+        "Even better results on a larger corpus were obtained by Kelly and Stone 1975 who included collocational, syntactic and part of speech information to yield an accuracy of 93 on a larger corpus.",
+        "As always, supervised methods require a manually annotated learning corpus.",
+        "Unsupervised methods do not determine the set of classes before the learning process, but through analysis of the given data by identifying clusters of similar cases.",
+        "One example is the algorithm for clustering by committee described by Pantel and Lin (2003), which automatically discovers word senses from text.",
+        "Generally, unsupervised methods require large amounts of data.",
+        "In the case of spoken dialogue and speech recognition output sufficient amounts of data will hopefully become available once multi-domain spoken dialogue systems are deployed in real world applications."
+      ]
+    },
+    {
+      "heading": "2.2 Knowledge-based Methods",
+      "text": [
+        "Knowledge-based approaches work with lexica and/or ontologies.",
+        "The kind of knowledge varies widely and machine-readable as well as computer lexica are employed.",
+        "The knowledge-based approach employed herein (Gurevych et al., 2003a) operates on an ontology partially derived from FrameNet data (Baker et al., 1998) and described by Gurevych et al.",
+        "(2003b).",
+        "In a comparable approach Sussna (1993) worked with the lexical reference system WordNet and used a similar metric for the calculation of semantic distance of a number of input lexemes.",
+        "Depending on the type of semantic relation (hyperonymy, synonymy etc.)",
+        "different weights are given and his metric takes account of the number of arcs of the same type leaving a node and the depth of a given edge in the overall tree.",
+        "The disambiguation results on textual data reported by Sussna (1993) turned out to be significantly better than chance.",
+        "In contrast to many other work on WSD with WordNet he took into account not only the isa hierarchy, but other relational links as well.",
+        "The method is, therefore, similar to the one used in this evaluation, with the difference that this one uses a semantic-web conform ontology instead of WordNet and it is applied to speech recognition hypotheses.",
+        "The fact, that our WSD work is done on SRHs makes it difficult to compare the results with methods evaluated on textual data such as in the past SENSEVAL studies (Edmonds, 2002).",
+        "The ontology-based system has been successfully used for a set of tasks such as finding the best speech recognition hypotheses from sets of competing SRHs, labeling SRHs as correct or incorrect representations of the users intention and for scoring their degree of contextual coherence (Gurevych et al., 2003a; Porzel and Gurevych, 2003; Porzel et al., 2003).",
+        "In general, the system offers an additional way of employing ontologies, i.e. to use the knowledge modeled therein as the basis for evaluating the semantic coherence of sets of concepts.",
+        "It can be employed independent of the specific ontology language used, as the underlying algorithm operates only on the nodes and named edges of the directed graph represented by the ontology.",
+        "The specific knowledge base, e.g. written in OIL-RDFS, DAML+OIL or OWL,' is converted into a graph, consisting of the class hierarchy, with each class corresponding to a concept representing either an entity or a process and their slots, i.e. the named edges of the graph corresponding to the class properties, constraints and restrictions."
+      ]
+    },
+    {
+      "heading": "3 Data and Annotation Experiment",
+      "text": [
+        "In this section we describe the data collection and annotation experiments performed in order to obtain independent data sets for training and evaluation."
+      ]
+    },
+    {
+      "heading": "3.1 Data Collection",
+      "text": [
+        "The first data set was used for training the supervised model is described in Gurevych et al.",
+        "(2002b) and was collected using the so-called Hidden Operator Test (Rapp and Strube, 2002).",
+        "This procedure represents a simplification of classical end-to-end experiments and Wizard-of-Oz experiments (Francony et al., 1992) - as it is conductible without the technically very complex use of a real or a seemingly real conversational system.",
+        "The subjects are prompted to ask for specific information and the system response is pre-manufactured.",
+        "We had 29 subjects prompted to say certain inputs in 8 dialogues.",
+        "1479 turns were recorded.",
+        "In our experimental setup each user-turn in the dialogue corresponded to a single illocution, e.g. route request or sights information request as described by Gurevych et al.",
+        "(2002a).",
+        "The second data set was used for testing the data and ontology-based systems and thusly will be called the test corpus.",
+        "It was produced by means of Wizard-of-Oz experiments (Francony et al., 1992).",
+        "In this type of setting a full-blown multimodal dialogue system is simulated by a team of human hidden operators.",
+        "A test person communicates with the supposed system and the dialogues are recorded and filmed digitally.",
+        "Here over 224 subjects produced 448 dialogues (Schiel et al., 2002), employing the same domains and tasks as in the first data collection."
+      ]
+    },
+    {
+      "heading": "3.2 Data Pre-Processing",
+      "text": [
+        "After manual segmentation of the data into single utterances.",
+        "The resulting audio files were then manually transcribed.",
+        "The segmented audio files were handed to the speech recognition engine integrated in the SMAxTKOM dialogue system (Wahlster, 2003).",
+        "Employing the semantic parsing system described by Engel (2002) the corresponding speech recognition word lattices (Oerder and Ney, 1993) were first transformed into n-best lists of so-called hypotheses sequences.",
+        "These were mapped onto conceptual representations, which contain the multiple semantic interpretations of the individual hypotheses sequences that arise due to lexical ambiguities.",
+        "For obtaining the training data, we used only the best, correct and perfectly disambiguated speech recognition hypotheses as described by Porzel et al.",
+        "(2003) from the first data set of 552 utterances.",
+        "For obtaining the test data we took a random sample of 3100 utterances from the second data set.",
+        "This seeming discrepancy between training and test data is due to the fact that only a part of the test data set actually contains ambiguous lexical items and many of the utterances quite similar to each other.",
+        "For example, given the utterance shown in its transcribed form in example (1), we then obtained the sequence of recognition hypotheses shown in examples (1a) - (1e)."
+      ]
+    },
+    {
+      "heading": "3.3 Annotation",
+      "text": [
+        "We employed VISTAE2 (M¨uller, 2002) for annotating the data and for creating the corresponding gold-standards for the training and test corpora.",
+        "The annotation of the data was done by two persons specially trained for the annotation tasks, with different purposes: First of all, if humans are able to annotate the data reliably, it is generally more feasible that machines are able to do that as well.",
+        "This was the case as shown by the resulting inter annotator agreement of 78.89 .",
+        "Secondly, a gold-standard is needed to evaluate the systems’ performances.",
+        "For that purpose, the annotators reached an agreement on annotated items of the test data which had differed in the first place.",
+        "The resulting gold-standard represents the highest degree of correctly disambiguated data and is used for comparison with the tagged data produced by the disambiguation systems.",
+        "Thirdly, for the supervised learning another correctly disambiguated data set is needed for training the statistical model.",
+        "The class-based kappa statistic of (Cohen, 1960; Car-letta, 1996) cannot be applied here, as the classes vary depending on the number of ambiguities per entry in the lexicon.",
+        "Also an additional class, i.e., not-decidable was allowed for cases as in SRH (1c), where it is impossible to assign sensible meanings.",
+        "The test data set altogether was annotated with 2219 markables of ambiguous tokens, stemming from 70 ambiguous words occurring in the test corpus."
+      ]
+    },
+    {
+      "heading": "3.4 Calculating the Baselines",
+      "text": [
+        "For calculating the majority class baseline, which in our case corresponds to the performance of a unigram tagger, we applied the method described in (Porzel and Malaka, 2004).",
+        "Therefore, all markables in the gold-standard were counted and, corresponding to the frequency of each concept of each ambiguous lexeme, the percentage of correctly chosen concepts by means of selecting the most frequent meaning was calculated.",
+        "This resulted in a baseline of 52.48 for the test data set."
+      ]
+    },
+    {
+      "heading": "4 Word Sense Disambiguation Systems",
+      "text": [
+        "Both word sense disambiguation systems described herein were tested and developed with the SMARTKOM research framework.",
+        "As one of the most advanced current systems, the SMARTKOM (Wahlster, 2003) comprises a large set of input and output modalities together with an efficient fusion and fission pipeline.",
+        "SMARTKOM features speech input with prosodic analysis, gesture input via infrared camera, recognition of facial expressions and their emotional states.",
+        "On the output side, the system features a gesturing and speaking lifelike character together with displayed generated text and multimedia graphical output.",
+        "It currently comprises nearly 50 modules running on a parallel virtual machine-based integration software called Multiplatform3 described in Herzog et al.",
+        "(2003)."
+      ]
+    },
+    {
+      "heading": "4.1 The Knowledge-driven System",
+      "text": [
+        "The ontology employed for the evaluation has about 800 concepts and 200 relations (apart from the isa-relations defining the general taxonomy) and is described by Gurevych et al.",
+        "(2003b).",
+        "It includes a generic top-level ontology whose purpose is to provide a basic structure of the world, i.e. abstract classes to divide the universe in distinct parts as resulting from the ontological analysis .4 The modeling of Processes and Physical Objects as a kind of event that is continuous and homogeneous in nature, follows the frame semantic analysis used for generating the FRAMENET data (Baker et al., 1998).",
+        "The hierarchy of Processes is connected to the hierarchy of Physical Objects via slot-constraint definitions herein referred to as relations.",
+        "The system performs a number of processing steps.",
+        "A first preprocessing step is to convert each SRH into a concept representation (CR).",
+        "For that purpose the system’s lexicon is used, which contains either zero, one or many corresponding concepts for each entry.",
+        "A simple vector of concepts - corresponding to the words in the SRH for which entries in the lexicon exist - constitutes each resulting CR.",
+        "All other words with empty concept mappings, e.g. articles, are ignored in the conversion.",
+        "Due to lexical ambiguity, i.e. the one to many word - concept mappings, this processing step yields a set of possible interpretations for each SRH.",
+        "For example, the words occurring in a SRH such as (2) have the corresponding entries in the lexicon that are shown below.",
+        "Since we have multiple concept entries for individual words, i.e. lexical ambiguities, we get a resulting set of concept representations.",
+        "The concept representations consist of a different number of concepts, because the concept none is not represented in the CRs.",
+        "The concept none is assigned to lexemes which have one (or more than one) meaning outside the SmartKom domains or constitute functional grammatical markers.",
+        "The system then converts the domain model, i.e. an ontology, into a directed graph with concepts as nodes and relations as edges.",
+        "In order to find the shortest path between two concepts, the ONTOSCORE system employs the single source shortest path algorithm of Dijkstra (Cormen et al., 1990).",
+        "Thus, the minimal paths connecting a given concept with every other concept in CR (excluding itself) are selected, resulting in an matrix of the respective paths.",
+        "To score the minimal paths connecting all concepts with each other in a given CR, a method proposed by Demetriou and Atwell (1994) to score the semantic coherence of alternative sentence interpretations against graphs based on the Longman Dictionary of Contemporary English (LDOCE) was used in the original system.",
+        "The new addition made for this evaluation was to assign different weights to the individual relations found by the algorithm, depending on their level of granularity within the relation hierarchy.",
+        "For example, a broad level relation such as has-theme which is found in the class statement of Process is weighted with negative 1 as it has only one super-relation, i.e. has-role, whereas a more specific relation such as has-actor is weighted with negative 4 because it has four super-relations, i.e. has-artist, has-associated-person(s), has-attribute and has-role.",
+        "As before, the algorithm selects from the set of all paths between two concepts the one with the smallest weight, i.e. the cheapest.",
+        "The distances between all concept pairs in CR are summed up to a total score.",
+        "The set of concepts with the lowest aggregate score represents the combination with the highest semantic relatedness."
+      ]
+    },
+    {
+      "heading": "4.2 The Data-driven System",
+      "text": [
+        "In this section we describe the implementation of the statistical learning techniques employed for the task of performing WSD on our corpus of spoken dialogue data.",
+        "For our experiments we took the general purpose statistical tagger (Brants, 2000), which is generally used for part-of-speech tagging.",
+        "It employs a VITERBI algorithm for second order Markov models (Rabiner, 1989), linear interpolation for smoothing and deleted interpolation for",
+        "is the set of corresponding weights, where the weight of each isa relation is set to and that of each other relation to .",
+        "6 Note that more specific relations subtract more then less specific ones from the aggregate score.",
+        "determining the weights.",
+        "According to Edmonds (2002), WSD is in many ways similar to part-of-speech tagging as it involves labeling every word in a text with a tag from a pre-specified set of tag possibilities for each word by using features of the context and other information.",
+        "This, together with the fact that we do not find cross-paradigmatic ambiguities in our data, led to the idea to use a part-of-speech tagger as a concept tagger.",
+        "In our case the tagset consisted of part-of-speech specific concepts of the SmartKom Ontology.",
+        "The data we used for preparing the model consisted of a combination of three gold-standard annotations, namely the best SRHs, the correct SRHs and the correctly disambiguated SRHs as described in Section 3.3.",
+        "These were listed lexeme by lexeme with their corresponding concepts in a file in the format expected by TnT.",
+        "TnT used the file to produce a new model, consisting of a trigram model and a lexicon with lexemes and the concepts which corresponded to them as shown in Figure 1.",
+        "As one can see in Table 1, in our corpus the concept Greeting occurred 38 times and was followed 20 times by Person, which itself was followed 13 times by EmotionExperiencerSubjectProcess.",
+        "Thisis equivalent to an utterance beginning with ”Hello, I want ”.",
+        "The lexicon (see Table 2) shows how often a certain lexeme was tagged with which concept.",
+        "For example, the German TV channel ARD was tagged in all occurrences with the concept Channel.",
+        "The German preposition am (at) occurred 17 times and in 12 cases it was tagged as a TwoPointRelation, in one case as Tempo ralTwoPointRelation and in 4 cases with none.",
+        "In cases in which the tagger cannot decide between different concepts, because of missing context, it chooses the concept, which occurred most frequently in the model according to the lexicon."
+      ]
+    },
+    {
+      "heading": "5 Evaluation",
+      "text": [
+        "The percentage of correctly disambiguated lexemes from both systems is calculated by the following formula: .",
+        "Where is he result in percent, the number of lexemes that match with the gold-standard, the number of not-decidable ones and the number of total lexemes.",
+        "As opposed to the human annotators, both systems always select a specific reading and never assign the value not-decidable.",
+        "For this evaluation, therefore, we treat any concept occurring in a not-decidable slot as correct.7"
+      ]
+    },
+    {
+      "heading": "5.1 Evaluation Knowledge",
+      "text": [
+        "For this evaluation, ONTOSCORE transformed the SRH from our corpus into concept representations as described above.",
+        "To perform the WSD task, ONTOSCORE calculates a coherence score for each of these concept sets in .",
+        "The concepts in the highest ranked set are considered to be the ones representing the correct word meaning in this context.",
+        "OntoScore has two variations: Using the first variation, the relations between two concepts are weighted for taxonomic relations and for all others.",
+        "The second mode allows each relation being assigned an individual weight as described in Section 4.1.",
+        "For this purpose, the relations have been weighted according to their level of generalization.",
+        "More specific relations should indicate a higher degree of semantic coherence and are therefore weighted cheaper, which means that they - more likely - assign the correct meaning.",
+        "Compared to the gold-standard, the original method of Gurevych et al.",
+        "(2003a) reached a precision of 63.76 (f-measure = .78)8 as compared to 64.75 (f-measure = .79) for the new method described herein (baseline 52.48 )."
+      ]
+    },
+    {
+      "heading": "5.2 Evaluation Supervised",
+      "text": [
+        "For the purpose of evaluating a supervised learning approach on our data we used the efficient and general statistical TnT tagger, the short form for Trigrams’n’Tags (Brants, 2000).",
+        "With this tagger it is possible to train a new statistical model with any tagset.",
+        "In our case the tagset consisted of part-of-speech specific concepts of the SmartKom ontology.",
+        "The data we used for preparing the model consisted of a gold-standard annotation of the training data set.",
+        "Compared to the gold-standard made for the test corpus the method achieved a precision of 75.07 (baseline 52.48 )."
+      ]
+    },
+    {
+      "heading": "5.3 Evaluation Comparison",
+      "text": [
+        "For a direct comparison we computed f-measures for the human reliability, the majority class baseline method as well as for the knowledge-based and data-driven methods in Table 3."
+      ]
+    },
+    {
+      "heading": "6 Discussion",
+      "text": [
+        "In this paper we presented two methods for disambiguating speech recognition hypotheses.",
+        "Both methods showed significant gains over the majority class baseline.",
+        "The results also show that the statistical method outperforms the ontology-based method.",
+        "This is congruent to findings from textual WSD methods, where the results from databased approaches frequently yield better scores.",
+        "However, labeling and training times for these methods are high and costly and they take up a significant amount of memory space.",
+        "Furthermore, if new domains - featuring lexical ambiguites hitherto unseen by the statistical model - are integrated into the system, new models must consequently be trained in order to keep performance up to par.",
+        "In such cases, new annotated data has to be made available.",
+        "The results of the knowledge-based approach show that ontologies can be employed for such tasks even if they have not been constructed specifically for WSD.",
+        "Since ontology engineering is at least as costly as annotation and training of statistical models, alternative means for ontology construction and learning need to be pursed.",
+        "Nonetheless, projects related the semantic web efforts (Heflin and Hendler, 2000) continue to increase their coverage and will become dynamically combinable so that new domains can be integrated in less time without the need of manually processed data.",
+        "Our future work will involve the testing of an unsupervised method as well as the improvement of the presented approaches.",
+        "This will include a compression of the databased model and experiments concerning the scalability of the knowledge-based approach."
+      ]
+    },
+    {
+      "heading": "Acknowledgments",
+      "text": [
+        "This work has been partially funded by the German Federal Ministry of Research and Technology (BMBF) as part of the SmartKom project under Grant 01 IL 905C/0 and by the Klaus Tschira Foundation.",
+        "The authors would also like to thank Annika Scheffler and Vanessa Micelli for their reliable annotation work and Rainer Malaka and Hans-Peter Zorn for helpful comments on the paper."
+      ]
+    }
+  ]
+}

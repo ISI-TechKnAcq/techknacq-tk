@@ -1,0 +1,310 @@
+{
+  "info": {
+    "authors": [
+      "Suresh Manandhar"
+    ],
+    "book": "Conference of the European Association for Computational Linguistics",
+    "id": "acl-E95-1023",
+    "title": "Deterministic Consistency Checking of LP Constraints",
+    "url": "https://aclweb.org/anthology/E95-1023",
+    "year": 1995
+  },
+  "references": [
+    "acl-C94-1008",
+    "acl-E91-1007",
+    "acl-E95-1025",
+    "acl-P94-1035"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "We provide a constraint based computational model of linear precedence as employed in the HPSG grammar formalism.",
+        "An extended feature logic which adds a wide range of constraints involving precedence is described.",
+        "A sound, complete and terminating deterministic constraint solving procedure is given.",
+        "Deterministic computational model is achieved by weakening the logic such that it is sufficient for linguistic applications involving word-order."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Within HPSG (Pollard and Sag, 1987) (Pollard and Sag, 1994) the constituent ordering principle given in (1) is intended to express the relation between the value of the PHON attribute and the DTRS attribute which contains the hierarchical structure of the derivation.",
+        "(1) phrasal_sign – PHON order_constituentC) DTRS n (2) Linear Precedence Constraint 1 (LP1): HEAD[LEX+] < []",
+        "However, it is not entirely clear how or-der_constituent is supposed to interpret various linear precedence statements such as LP1."
+      ]
+    },
+    {
+      "heading": "1.1 Reape's approach",
+      "text": [
+        "The idea taken in Reape's approach (Reape, 1993) is to suggest that word-order is enforced between locally definable word order domains which are ordered sequences of constituents.",
+        "Word order domains in Reape's approach are totally ordered sequences.",
+        "A domain union operation as given in (3) is then employed to construct word order domains locally within a HPSG derivation step.",
+        "If A is the string < a, b > and B is the string < c, d >, their domain union C given by 0(A, B, C) will produce all the sequences in which a precedes b and c precedes d i.e. the following sequences:",
+        "< a,b,c,d > < a, c, b,d > < a, c,d,b > < c,d,a,b > < c,d,a,b > < c,a,b,d >",
+        "However in this system to encode the property that {x, y, z} is a domain in which the ordering is arbitrary (i.e. free) then one needs the following disjunctive statements:",
+        "We identify two deficiencies in Reape's approach namely:",
+        "• System is non-deterministic (generate and test paradigm) • Not possible to be agnostic about order",
+        "This is so since domain union is a non-deterministic operation and secondly underspecification of ordering within elements of a domain is not permitted.",
+        "In the following sections we describe a constraint language for specifying LP constraints that overcomes both these deficiencies.",
+        "Additionally our constraint language provides a broad range of constraints for specifying linear precedence that go well beyond what is available within current typed feature formalisms.",
+        "Our approach is in the spirit of Reape's approach but improves upon it.",
+        "Furthermore, a sound, complete and terminating consistency checking procedure is described.",
+        "Our constraint solving rules are deterministic and incremental.",
+        "Hence these do not introduce costly choice-points.",
+        "These constraint solving rules can be employed for building an efficient implementation.",
+        "This is an important requirement for practical systems.",
+        "Indeed we have successfully extended the ProFIT typed feature formalism (Er-bach, 1995) with the constructs described in this paper."
+      ]
+    },
+    {
+      "heading": "2 Outline of an alternative approach",
+      "text": [
+        "To motivate our approach we start with an example on scrambling in German subordinate clauses.",
+        "(4) daB er einen Mann in der Strafe laufen that he a man in the street walking sah.",
+        "saw.",
+        "that he saw a man walking in the street.",
+        "(5) daf3 er in der StraBe einen Mann laufen sah.",
+        "(6) daB einen Mann er in der StraBe laufen sah.",
+        "(7) daf3 einen Mann in der StraBe er laufen sah.",
+        "(8) daB in der Straf3e er einen Mann laufen sah.",
+        "(9) daB in der StraBe einen Mann er laufen sah.",
+        "The above data can be captured precisely if we can state that sah requires both its verbal argument laufen and its NP argument er to precede it.",
+        "Similarly, laufen would require both its arguments einen Mann and in der Strafle to precede it.",
+        "This is illustrated schematically in (10) below.",
+        "Our idea is to employ a specification such as the one given in (11) which is a partial specification of the lexical entry for the verb sah.",
+        "The specification can be thought of as a formal specification of the intuitive description given in (12).",
+        "For space reasons, our treatment is necessarily somewhat superficial since we do not take into account other interacting phenomena such as fronting or extraposition.",
+        "The definition in (11) does not make specific assumption about whether a context-free backbone is employed or not.",
+        "However, if a CFG backbone is employed then we assume that the value of the subcat attribute is treated as an unordered sequence (i.e. a set) as defined in (11).",
+        "The essential idea is to use set-valued descriptions to model word-order domains.",
+        "In particular subset constraints (Manandhar, 1994) are employed to construct larger domains from smaller ones.",
+        "Thus in example (11) the domain of the verb is constructed by including the domains of the subcategorised arguments (enforced by the constraints dom :3 N Pdomildom :3 V iDom).",
+        "Note that in this example the verb itself is not part of its own domain.",
+        "The binary constraint V, < V enforces precedence ordering between the signs V, and V. The constraint Vidom < dom {V} ensures that every element of the set V iDom precedes the sign V. In other words, the set V iDorn is in the domain precedence relation with the singleton {V}.",
+        "However there are strong constraints on ordering in the middle field.",
+        "For instance, when pronomial complements are involved then not all permutations are acceptable.",
+        "Examples such as (13) are considered ungrammatical.",
+        "(13) *daB in der StraBe ihn er laufen sah.",
+        "According to Uszkoreit (Uszkoreit, 1985), ordering of arguments in the middle field is governed by the following set of LP constraints given in (14) which are to be interpreted disjunctively.",
+        "(14) PPRN:+ < PPRN: – T R : agent < T R : theme TR : agent < TR: goal TR : goal < TR:theme FOCUS : – < FOCUS :",
+        "The LP constraint in (14) states that for every pair of constituents in the middle field at least one of the conditions should apply otherwise the sentence is considered ungrammatical.",
+        "A related but more elaborate LP rule mechanism is considered in (Steinberger, 1994).",
+        "To approximate this complex LP constraint employing the kind of logical machinery described in this paper, we can use a description such as the one given in (15).",
+        "The definition given in (15) extends the description given in (11).",
+        "The definition in (15) can be understood as follows.",
+        "The feature constraint syn : darn : MF co-instantiates the middle field domain to the variable MF.",
+        "To keep the example simple, we assume that the whole domain is in the middle field and we ignore fronting or extraposition.",
+        "A more complex condition would be needed to handle these.",
+        "The rest of the definition in (15) ensures that for every pair of elements x and y such that x and y are both members of MF and x precedes y at least one of the LP constraints hold.",
+        "If every LP constraint is violated then an inconsistency results.",
+        "The constraints in (15) is a weaker representation of the disjunctive specification given in (16).",
+        "(16) 3x3y i f (x EMF A y E MFAx < y) then",
+        "The description in (16) non-deterministically requires that at least one of the LP constraints hold.",
+        "On the other hand, the description in (15) waits until either one of the LP constraints is satisfied (in which case it succeeds) or all the LP constraints are violated (in which case it fails).",
+        "Thus the description in (15) can be solved deterministically.",
+        "Thus (15) should rule out the ungrammatical example in (13) if the assumptions regarding focus are made as in (17).",
+        "(17) *daf3 in der StraBe ihn er laufen sah.",
+        "PPrn:- focus:-th:theme pprn:+ tr: agent",
+        "Note that it is not necessary to know whether the PP in der Strafe is focussed to rule out (17) since the fact that the pronoun ihn is focus:- is enough to trigger the inconsistency."
+      ]
+    },
+    {
+      "heading": "3 Some generic LP constraints",
+      "text": [
+        "As suggested by the example in (11), in general we would want support within typed feature formalisms for at least the following kinds of LP constraints.",
+        "1.",
+        "Sign, < Sign, 2.",
+        "Dom, < dom.",
+        "Dom2 (Dom, and Dom, are set-valued) 3.",
+        "Dom, is included in Dom,",
+        "The constraint Sign, < Sign2 states that Sign, precedes Sign2.",
+        "The constraint Dom, < don, Dom, states that every element of the set described by Dom, precedes every element of the set described by Dom,.",
+        "Constraints such as Dom, is included in Dom, essentially builds larger domains from smaller ones and can be thought of as achieving the same effect as Reape's domain union operation.",
+        "Note crucially that within our approach the specification of precedence constraints (such as Sign, < Sign2 and Dom, < dom, Dom2) is independent of the domain building constraint (i.e. the constraint Dom, is included in Dom2).",
+        "This we believe is a generalisation of Reape's approach.",
+        "Other constraints such as the following involving immediate precedence and first element of a domain are of lesser importance.",
+        "However, these could be of the form:",
+        "1.",
+        "Sign, immediately-precedes Sign2 2.",
+        "First daughter of Dom, is Sign,",
+        "To be able to state descriptions such as in (15), we also want to introduce guarded (or conditional) LP constraints such the following:",
+        "1. if Sign, is NP[acc] A Sign2 is NP[dat] then Sign, < Sign, ( Guards on Feature constraints) 2. if Sign, < Sign2 then ( Guards on precedence constraints) 3.",
+        "3x3y (if x:NP[acc] E Dom A y:NP[dat] E Dom then x < y) ( Guards on set members)",
+        "Guarded constraints can be thought of as conditional constraints whose execution depends on the presence of other constraints.",
+        "The condition part }",
+        "G of a guarded constraint if G then S else T is known as a guard.",
+        "The consequent S is executed if the current set of constraints entail the guard G. The consequent T is executed if the current set of constraints disentail the guard G. If the current set of constraints neither entail nor disentail G then the execution of the whole guarded constraint is blocked until more information is available.",
+        "The application of guarded constraints within computational linguistics has not been well explored.",
+        "However, the Horn extended feature structures described in (Hegner, 1991) can be thought of as adding guards to feature structures.",
+        "On the other hand, within logic programming guarded logic programming languages have a longer history originating with committed-choice languages (Ueda, 1985) and popularised by the concurrent constraint programming paradigm due to Saraswat (Saraswat and Rinard, 1990) (Saraswat, 1993).",
+        "For space reasons, we do not cover the logic of guarded feature constraints, guards on set membership constraints and guards on precedence constraints.",
+        "Guarded feature constraints have been extensively studied in (Ait-Kati et al., 1992) (Smolka and Treinen, 1994) (Ait-Kati and Podel-ski, 1994)."
+      ]
+    },
+    {
+      "heading": "4 A feature logic with LP constraints",
+      "text": [
+        "In this section we provide formal definitions for the syntax and semantics of an extended feature logic that directly supports linear precedence constraints as logical primitives.",
+        "The logic described in this paper is a further development of the one described in (Manandhar, 1993).",
+        "The syntax of the constraint language is defined by the following BNF definitions.",
+        "Syntax Let .T be the set of relation symbols and let P be the set of irreflexive relation symbols.",
+        "We shall require that .7. and P are disjoint.",
+        "where f E Y and p E The constraint x = f : y specifies that y is the only f-value of x.",
+        "The constraint x = 3f : y states that y is one of the f-values of x.",
+        "The constraint x = 323+ : y just says that x is related to y via the transitive closure of p. The precedence constraint such as Sign, precedes Sign2 is intended to be captured by the constraint Sign, 3p+ :Sign2 where p denotes the (user chosen) immediate precedence relation.",
+        "Similarly, x = 3p* : y states that x is related to y via the transitive, reflexive closure of p. This constraint is similar to the constraint x = 3p+ : y except that it permits x and y to be equal.",
+        "The constraints f (x) : p+ : g(y) and f (x) : p* : g(y) are intended to enforce precedence between two word-ordering domains.",
+        "The constraint f (x) : p+ : g(y) states that every f-value of x precedes (i. e. is in the p+ relation with) every g-value of y.",
+        "The constraint f (x) : p* : g(y) is analogous.",
+        "The constraint x = [f p l]y states that y is the first daughter amongst the f-values of x (i.e. is in the p* relation with every f-value of x).",
+        "Since our language supports both feature constraints and set-membership constraints the conventional semantics for feature logic (Smolka, 1992) needs to be extended.",
+        "The essential difference being that we interpret every feature/relation as a binary relation on the domain of interpretation.",
+        "Feature constraints then require that they behave functionally on the variable upon which the constraint is expressed.",
+        "A precise semantics of our constraint language is given next.",
+        "Semantics An interpretation structure / /4/, ./ > is a structure such that:",
+        "• Li/ is an arbitrary non-empty set • .1 is an interpretation function which maps: – every relation f E ,T to a binary relation: f1 C x 241 – every relation p E P to a binary relation: p1 cU'x Li/ with the added condition that (p1)+ is irreflexive",
+        "A variable assignment a is a function a:V--3 We shall write f (e) to mean the set: f l (e) = { e' E (e, e') E f11 We say that an interpretation I and a variable assignment a satisfies a constraint /5 written I, a if the following conditions are satisfied:",
+        "Given the above semantics, it turns out that the first-daughter constraint can be defined in terms of other constraints in the logic.",
+        "Let f _p_1 be a distinct relation symbol then we can equivalently define the first-daughter constraint by:",
+        "• x = [f p fly x = f_p_l yA x = 3f : y A f _p_1(x) : p* : f(x)",
+        "The translation states that y (which is the f_p_1value of x) precedes or is equal to every f-value of x and y is a f-value of x.",
+        "For this to work, we require that the feature symbol f _p_1 appears only in the translation of the constraint x = [f p 1]y."
+      ]
+    },
+    {
+      "heading": "4.1 Two Restrictions",
+      "text": [
+        "The logic we have described comes with 2 limitations which at first glance appears to be somewhat severe, namely:",
+        "• NO atomic values • NO precedence as a feature",
+        "This is so because it turns out that adding both functional precedence and atoms in general leads to a non-deterministic constraint solving procedure.",
+        "To illustrate this, consider the following constraints: x=f:yAy=aAx= 3f*:z where a is assumed to be an atom.",
+        "The above constraints state that y is the f-value of x and y is the atom a and z is related to x by the reflexive-transitive closure of f. Determining consistency of such constraints in general involves solving for the following disjunctive choices of constraints.",
+        "where G ranges over g, 3g",
+        "However for practical reasons we want to eliminate any form of backtracking since this is very likely to be expensive for implemented systems.",
+        "On the other hand, we certainly cannot prohibit atoms since they are crucially required in grammar specification.",
+        "But disallowing functional precedence is less problematic from a grammar development perspective."
+      ]
+    },
+    {
+      "heading": "4.2 Imposing the restriction",
+      "text": [
+        "We note that precedence can be restricted to non-atomic types such as HPSG signs without compromising the grammar in any way.",
+        "We then need to ensure that precedence constraints never have to consider atoms as their values.",
+        "This can be easily achieved within current typed feature formalisms by employing appropriateness conditions (Carpenter, 1992).",
+        "An appropriateness condition just states that a given feature (in our case a relation) can only be defined on certain (appropriate) types.",
+        "The assumption we make is that precedence is specified in such a way that is appropriate only for non-atomic types.",
+        "This restriction can be imposed by the system (i.e. a typed feature formalism) itself."
+      ]
+    },
+    {
+      "heading": "5 Constraint Solving",
+      "text": [
+        "We are now ready to consider consistency checking rules for our constraint language.",
+        "To simplify the presentation we have split up the rules into two groups given in figure 1 and figure 2.",
+        "The constraint solving rules given in figure 1 deal with constraints involving features, set-memberships, subset and first daughter.",
+        "Rules (Equals) and (Feat) are the usual feature logic rules (Smolka, 1992) that deal with equality and features.",
+        "By [xly]C, we mean replacing every occurrence of x with y in C,.",
+        "Rule (FeatEx",
+        "where R ranges over p+, p*",
+        "ists) deals with the interaction of feature and set-membership constraint.",
+        "Rule (Subset) deals with subset constraints and adds a new constraint x 3f : y in the presence of the subset constraint x f :D g(y) and the constraint y G : z (where G ranges over g, 3g).",
+        "The constraint solving rules given in figure 2 deal with constraints involving the precedes and the precedes or equal to relations and domain precedence.",
+        "Rule (TransConj) eliminates the weaker constraint x = 3p* : y when both x = 3p5 : y A x = 3p+ : y hold.",
+        "Rule (TransClos) effectively computes the transitive closure of the precedence relation one-step at a time.",
+        "Rule (Cycle) detects cyclic relations that are consistent, namely, when x precedes or equals y and vice versa then x = y is asserted.",
+        "Finally rule (DomPrec) propagates constraints involving domain precedence.",
+        "We say that a set of constraints are in normal form if no constraint solving rules are applicable to it.",
+        "We say that a set of constraints in normal form contains a clash if it contains constraints of the form:",
+        "In the following sections we show that our constraint solving rules are sound and every clash-free constraint system in normal form is consistent."
+      ]
+    },
+    {
+      "heading": "5.1 Soundness, Completeness and Termination",
+      "text": [
+        "Theorem 1 (Soundness) Let I, a be any interpretation, assignment pair and let C9 be any set of constraints.",
+        "If a constraint solving rule transforms C9 to C', then: /, a Cs iff 1,a C' Proof Sketch: The soundness claim can be verified by checking that every rule indeed preserves the interpretation of every variable and every relation symbol.",
+        "Let succ(x, f) and succ(x,p) and denote the sets:",
+        "• succ(x, f) = {Y1x=---3f :yECO/ x= f:yEC,} • succ(x,p) = { y I",
+        "Proof Sketch: For the first part, let C, be a constraint system containing a clash then it is clear from the definition of clash that there is no interpretation I and variable assignment a which satisfies C,.",
+        "Let Cs be a clash-free constraint system in normal form.",
+        "We shall construct an interpretation R, =< UR, .R > and a variable assignment a such that 'R, a Cs.",
+        "Let = V .",
+        "The assignment function a is defined as follows:",
+        "• if x does not occur in C, then a(x) = x • if x is such that x occurs exactly once in x = y E C, then a(x) = x • if x=yEC5 then a(y) = a(x)",
+        "Note that for constraints in normal form: if x E Cs then either x is identical to y or x occurs just once in C, (in the constraint x = y).",
+        "Otherwise Rule (Equals) is applicable.",
+        "The interpretation function .R is defined as follows:",
+        "• f R(a(x)) = succ(a(x), f) • pR(a(x)) = succ(a(x),p)",
+        "It can be shown by a case by case analysis that for every constraint K in Cs: a K. Hence we have the theorem.",
+        "The consistency checking procedure terminates in a finite number of steps.",
+        "Proof Sketch: The termination claim can be easily verified if we first exclude rules (Subset), (TransClos) and (DomPrec) from consideration.",
+        "Then for the remainder of the rules termination is obvious since these rules only simplify existing constraints.",
+        "For these rules:",
+        "1.",
+        "Rule (Subset) increases the size of succ(x, f) but since none of our rules introduces new variables this is terminating.",
+        "2.",
+        "Rules (TransClos) and (DomPrec) asserts a",
+        "relation R between pairs of variables x, y.",
+        "However, none of these rules apply once x = 3p+ : y is known.",
+        "Furthermore, if x = 3p+ : y is known it is never simplified to the weaker x = 3p* : y.",
+        "This means that these rules converge."
+      ]
+    },
+    {
+      "heading": "6 Linearisation of precedence ordered DAGs",
+      "text": [
+        "The models generated by the completeness theorem interpret (the map of) every precedence relation p as a directed acyclic graph (DAG) as depicted in figure 3.",
+        "However sentences in natural languages are always totally ordered (i. e. they are strings of words).",
+        "This then raises the question: Is it possible to generate linearised models?",
+        "For the logic that we have described this is always possible.",
+        "We only provide a graphical argument given in figure 3 to illustrate that this is indeed possible.",
+        "The question that arises is then:"
+      ]
+    },
+    {
+      "heading": "6.1 Problem with immediate precedence",
+      "text": [
+        "However if we add immediate precedence to our logic then it is not clear whether we can guarantee linearisable models.",
+        "This is highlighted in figure 4.",
+        "As illustrated in this figure consistency checking of constraints involving both linear precedence and immediate precedence with a semantics that requires linearised models is not trivial.",
+        "So we do not explore this scenario in this paper.",
+        "However, it is possible to add immediate precedence and extend the constraint solving rules de-: scribed in this paper in such a way that it is sound and complete with respect to the current semantics described in this paper (which does not insist on linearised models)."
+      ]
+    },
+    {
+      "heading": "7 Handling immediate precedence",
+      "text": [
+        "In this section, we provide additional constraint solving rules for handling immediate precedence.",
+        "The basic idea is to treat immediate precedence as a functional relation whose inverse too is functional.",
+        "In effect what we add to our logic is both precedence as a feature and a new constraint for representing the inverse functional precedence.",
+        "This is summarised by:",
+        "• Represent x immediately precedes y by : x x • Semantics: 1,a y : x •<>",
+        "The additional rules given in figure below are all that is needed to handle immediate precedence."
+      ]
+    },
+    {
+      "heading": "8 Conclusions",
+      "text": [
+        "We have shown that the logic of linear precedence can be handled elegantly and deterministically by adding new logical primitives to feature logic.",
+        "Although, theoretically speaking, our logic comes with some restrictions these have no practical consequences whatsoever.",
+        "Our implementation of the logic as an extension to the ProFIT typed feature formalism shows that a reasonably efficient implementation is feasible.",
+        "Some further work is necessary to determine the computational complexity of our constraint solving procedure.",
+        "However, we believe that it is polynomial.",
+        "The logic presented in this paper generalises the approach taken in (Reape, 1993).",
+        "Our approach demonstrates that it is not necessary to employ a non-deterministic operation such as domain union to manipulate domains.",
+        "Instead precedence constraints are directly embedded in feature logic and a deterministic constraint solving procedure is provided.",
+        "A wide range of constraints involving precedence is provided directly in feature logic ranging from constraints expressing precedence between variables, precedence between domains to guards on precedence constraints."
+      ]
+    },
+    {
+      "heading": "9 Acknowledgments",
+      "text": [
+        "This work was supported by The Commission of the European Communities through the project LRE-61-061 \"Reusable Grammatical Resources\" , where the logic described in this paper has been implemented.",
+        "Thanks to Wojciech Skut for developing sample grammars to test the implementation and for working on the interface to ProFIT.",
+        "Thanks to Gregor Erbach for demoing the extended system dubbed CLONE.",
+        "Thanks to Herbert Ruessink and Craig Thiersch for using and providing feedback on the implementation.",
+        "And thanks to Ralf Steinberger for providing useful comments on an earlier draft."
+      ]
+    }
+  ]
+}

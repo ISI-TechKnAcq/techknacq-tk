@@ -1,0 +1,262 @@
+{
+  "info": {
+    "authors": [
+      "Pascale Fung",
+      "Benfeng Chen"
+    ],
+    "book": "International Conference on Computational Linguistics and Annual Meeting of the Association for Computational Linguistics – Poster Sessions",
+    "id": "acl-P06-2031",
+    "title": "Robust Word Sense Translation by EM Learning of Frame Semantics",
+    "url": "https://aclweb.org/anthology/P06-2031",
+    "year": 2006
+  },
+  "references": [
+    "acl-C02-1011",
+    "acl-C02-1162",
+    "acl-C04-1134",
+    "acl-J02-3001",
+    "acl-J03-2001",
+    "acl-P04-1038",
+    "acl-P04-1048",
+    "acl-P98-1013",
+    "acl-P99-1043"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "We propose a robust method of automatically constructing a bilingual word sense dictionary from readily available monolingual ontologies by using estimation-maximization, without any annotated training data or manual tuning.",
+        "We demonstrate our method on the English FrameNet and Chinese HowNet structures.",
+        "Owing to the robustness of EM iterations in improving translation likelihoods, our word sense translation accuracies are very high, at 82% on average, for the 11 most ambiguous words in the English FrameNet with 5 senses or more.",
+        "We also carried out a pilot study on using this automatically generated bilingual word sense dictionary to choose the best translation candidates and show the first significant evidence that frame semantics are useful for translation disambiguation.",
+        "Translation disambiguation accuracy using frame semantics is 75%, compared to 15% by using dictionary glossing only.",
+        "These results demonstrate the great potential for future application of bilingual frame semantics to machine translation tasks."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "As early as in the 1950s, semantic nets were invented as an “interlingua” for machine translation.",
+        "The “semantic net” or “semantic map” that humans possess in the cognitive process is a structure of concept classes and lexicon (Illes and Francis 1999).",
+        "In addition, the frame-semantic representation of predicate-argument relations has gained much attention in the research community.",
+        "The Berkeley FrameNet (Baker et al.",
+        "1998) is such an example.",
+        "We suggest that in addition to dictionaries, bilingual frame semantics (word sense dictionary) is a useful resource for lexical selection in the translation process of a statistical machine translation system.",
+        "Manual inspection of the contrastive error analysis data from a state-of-the-art SMT system showed that around 20% of the error sentences produced could have been avoided if the correct predicate argument information was used (Och et al.",
+        "2003).",
+        "Therefore, frame semantics can provide another layer of translation disambiguation in these systems.",
+        "We therefore propose to generate a bilingual frame semantics mapping (word sense dictionary), simulating the “semantic map” in a bilingual speaker.",
+        "Other questions of interest to us include how concept classes in English and Chinese break down and map to each other.",
+        "This paper is organized as follows.",
+        "In section 2, we present the one-frame-two-languages idea of bilingual frame semantics representation.",
+        "In section 3, we explain the EM algorithm for generating a bilingual ontology fully automatically.",
+        "In section 4, we present an evaluation on word sense translation.",
+        "Section 5 describes an evaluation on how well bilingual frame semantics can improve translation disambiguation.",
+        "We then discuss related work in section 6, conclude in section 7, and finally discuss future work in section 8."
+      ]
+    },
+    {
+      "heading": "2 One Frame Two Languages",
+      "text": [
+        "The challenge of translation disambiguation is to select the target word cl* with the correct semantic frame f--(cl,f), among the multitude of translation candidates Pr(clj el).",
+        "We suggest that while a source word in the input sentence might have multiple translation candidates, the correct target word must have the same sense, i.e., belong to the same semantic frame, as the source word (i.e. Pr(cl,fjel,f) is high).",
+        "For example, “burn|",
+        "(tang)” carries the “cause_harm|damage” sense, whereas “burn |烧 (shao) ” carries the “heat|cooking” sense.",
+        "The source sentence “My hands are burned” has the “cause_harm|damage” sense, therefore the correct translation of “burn” is “ 烫 (tang)” not “烧 (shao) ” .",
+        "The frame semantics information of the source word can thus lead to the best translation candidate.",
+        "Whereas some translation ambiguities are preserved over languages, most are not.",
+        "In particular, for languages as different as English and Chinese, there is little overlap between how lexicon is broken-down (Ploux and Ji 2003).",
+        "Some cognitive scientists suggest that a bilingual speaker tends to group concepts in a single semantic map and simply attach different words in English and Chinese to the categories in this map.",
+        "Based on the above, we propose the one-frame-two-languages idea for constructing a bilingual word sense dictionary from monolingual ontologies.",
+        "FrameNet (Baker et al.",
+        "1998) is a collection of lexical entries grouped by frame semantics.",
+        "Each lexical entry represents an individual word sense, and is associated with semantic roles and some annotated sentences.",
+        "Lexical entries with the same semantic roles are grouped into a “frame” and the semantic roles are called “frame elements”.",
+        "Each frame in FrameNet is a concept class and a single word sense belongs to only one frame.",
+        "However, the Chinese HowNet represents a hierarchical view of lexical semantics in Chinese.",
+        "HowNet (Dong and Dong 2000) is a Chinese ontology with a graph structure of word senses called “concepts”, and each concept contains 7 fields including lexical entries in Chinese, English gloss, POS tags for the word in Chinese and English, and a definition of the concept including its category and semantic relations (Dong and Dong, 2000).",
+        "Whereas HowNet concepts correspond roughly to FrameNet lexical entries, its semantic relations do not correspond directly to FrameNet semantic roles.",
+        "A bilingual frame, as shown in Figure 1, simulates the semantic system of a bilingual speaker by having lexical items in two languages attached to the frame."
+      ]
+    },
+    {
+      "heading": "3 Automatic Generation of Bilingual",
+      "text": []
+    },
+    {
+      "heading": "Frame Semantics",
+      "text": [
+        "To choose “burn|烫(tang) ” instead of “burn|烧 (shao) ” in the translation of “My hands are burned”, we need to know that “烫(tang) ” belongs to the “cause _harm” frame, but “ 烧 (shao) ” belongs to the “heat” frame.",
+        "In other words, we need to have a bilingual frame semantics ontology.",
+        "Much like a dictionary, this bilingual ontology forms part of the translation “lexicon”, and can be used either by human translators or automatic translation systems.",
+        "Such a bilingual frame semantics ontology also provides a simulation of the “concept lexi-con\" of a bilingual person, as suggested by cognitive scientists.",
+        "Figure 1 shows an example of a bilingual frame that possibly corresponds to the semantic structure in a bilingual person.",
+        "We previously proposed using the Chinese HowNet and a bilingual lexicon to map the English FrameNet into a bilingual BiFrameNet (Fung and Chen 2004).",
+        "We used a combination of frame size thresholding and taxonomy distance to obtain the final alignment between FrameNet frames and HowNet categories, to generate the BiFrameNet.",
+        "Our previous algorithm had the disadvantage of requiring the ad hoc tuning of thresholds.",
+        "This results in poor performance on lexical entries from small frames (i.e. frames with very few lexical entries).",
+        "The tuning process also means that a development set of annotated data is needed.",
+        "In this paper, we propose a fully automatic estimation-maximization algorithm instead, to generate a similar FrameNet to HowNet",
+        ") bilingual ontology, without requiring any annotated data or manual tuning.",
+        "As such, our method can be applied to ontologies of any structure, and is not restricted to FrameNet or HowNet.",
+        "Our approach is based on the following assumptions:",
+        "1.",
+        "A source semantic frame is mapped to a target semantic frame if many word senses in the two frames translate to each other; 2.",
+        "A source word sense translates into a target word sense if their parent frames map to each other.",
+        "The semantic frame in FrameNet is defined as a single frame, whereas in HowNet it is defined as the category.",
+        "The formulae of our proposed algorithm are listed in Figure 2.",
+        "In the initialization step of our EM algorithm, all English words in FrameNet are glossed into Chinese using a bilingual lexicon with uniform probabilities Pr(cl |el).",
+        "Next, we apply the EM algorithm to align FrameNet frames and HowNet categories.",
+        "By using EM, we improve the probabilities of frame mapping in Pr(cf|ef) and word sense translations in Pr(cl,cf |el, ef) iteratively: We estimate sense translations based on uniform bilingual dictionary probabilities Pr(cl|el) first.",
+        "The frame mappings are maximized by using the estimated sense translation.",
+        "The a priori lexical probability Pr(cl) is assumed to be one for all Chinese words.",
+        "Underlining the correctness of our algorithm, we note that the overall likelihoods of the model parameters in our algorithm improve until convergence after 11 iterations.",
+        "We use the alignment output after the convergence step.",
+        "That is, we obtain all word sense translations and frame mapping from the EM algorithm:",
+        "The mapping between FrameNet frames and HowNet categories is obviously not one-to-one since the two languages are different.",
+        "The initial and final mappings before and after EM iterations are shown in Figures 3a,b and 4a,b.",
+        "Each point (ij) in Figures 3a and b represents an alignment between FrameNet frame i to HowNet category j.",
+        "Before EM iterations, each English lexical item is glossed into its (multiple) Chinese translations by a bilingual dictionary.",
+        "The parent frame of the English lexical item and those of all its Chinese translations are aligned to form an initial mapping.",
+        "This initial mapping shows that each English FrameNet frame is aligned to an average of 56 Chinese HowNet categories.",
+        "This mapping is clearly noisy.",
+        "After EM iterations, each English frame is aligned to 5 Chinese categories on average, and each Chinese category is aligned to 1.58 English frames on average.",
+        "(All variables are assumed to be independent of each other.)",
+        "Model parameters: Pr(cl|el): bilingual word pair probability from dictionary Pr(cf|ef): Chinese to English frame mapping probability.",
+        "Pr(cl,cf |el,ef): Chinese to English word sense translation probability.",
+        "(1) Word senses that belong to mapped frames are translated to each other: Pr(cl, cf |el, ef) = Pr(cl |el) ⋅ Pr(cf |ef ) ∑ Pr(cl, cf |el, ef ) ∀cf where we assume the a priori probability (2) Frames that have translated word senses are mapped to each other:",
+        "We also plot the histograms of one-to-X mapping between FrameNet frames and HowNet categories before and after EM iterations in Figure 4.",
+        "The horizontal axis is the number X in one-to-X mapping between English and Chinese frames.",
+        "The vertical axis is the occurrence frequency.",
+        "For example, point (ij) represents that there are j frames in English mapping to i categories in Chinese.",
+        "Figure 4 shows that using lexical glossing only, there are a large number of frames that are aligned to over 150 of Chinese categories, while only a small number of English frames align to relatively few Chinese categories.",
+        "After EM iterations, the majority of the English frames align to only a few Chinese categories, significantly improving the frame mapping across the two languages.",
+        "The above plots demonstrate the difference between FrameNet and HowNet structures.",
+        "For example, “boy.n” belongs to “attention_getting” and “people” frames in FrameNet.",
+        "“boy.n|attention_getting” should translate into “ 茶房/waiter” in Chinese, whereas “boy.n|people” has the sense of “ 男孩/male child”.",
+        "However, in HowNet, both “茶房/waiter” and “男孩/male child” belong to the same category, human|人.",
+        "An example of word sense translation from our algorithm output is shown in Figure 5.",
+        "The word sense translations of the FrameNet lexical entries represent the simulated semantic world of a bilingual person who uses the same semantic structure but with lexical access in two languages.",
+        "For example, the frame “cause _harm” now contains the bilingual word sense pair “burn.",
+        "v, cause_harm --> 辣 .",
+        "v, damage |损 害 “; and the frame “experience_bodily_harm ” contains the bilingual word sense pair"
+      ]
+    },
+    {
+      "heading": "4 Robust Word Sense Translation Using Frame Semantics",
+      "text": [
+        "We evaluate the accuracy of word sense translation in our automatically generated bilingual ontology, by testing on the most ambiguous lexical entries in FrameNet, i.e. words with the highest number of frames.",
+        "These words and some of their sense translations are shown in Table 1 below.",
+        "The word sense translation accuracies of the above words are shown in Table 2.",
+        "The results are highly positive given that those from previous work in word translation disambiguation using bootstrapping methods (Li and Li, 2003; Yarowsky 1995) achieved 80-90% accuracy in disambiguating between only two senses per word1.",
+        "The only susceptibility of our algorithm is in its reliance on bilingual dictionaries.",
+        "The sense translations of the words “tie”, “roll”, and “look” are relatively less accurate due to the absence of certain translations in the dictionaries we used.",
+        "For example, the “bread/food” sense of the word “roll” is not found in the bilingual dictionaries at all.",
+        "We compare our results to that of our previous work (Fung and Chen 2004), by using the same bilingual lexicon.",
+        "Table 3 shows that we have improved the accuracy of word sense translation using the current method.",
+        "Table 3.",
+        "Our method improves word sense translation precision over Fung and Chen (2004).",
+        "We note in particular that whereas the previous algorithm in Fung and Chen (2004) does not",
+        "perform well on lexical entries from small frames (e.g. on “hold.v” and “issue.v”) due to ad hoc manual thresholding, the current method is fully automatic and therefore more robust.",
+        "In Fung and Chen (2004), semantic frames are mapped to each other if their lexical entries translate to each other above a certain threshold.",
+        "If the frames are small and therefore do not contain many lexical entries, then these frames might not be correctly mapped.",
+        "If the parent concept classes are not correctly mapped, then word sense translation accuracy suffers.",
+        "The main advantage of our algorithm over our work in 2004 lies in the hill-climbing iterations of the EM algorithm.",
+        "In the proposed algorithm, all concept classes are mapped with a certain probability, so no mapping is filtered out prematurely.",
+        "As the algorithm iterates, it is more probable for the correct bilingual word sense to be translated to each other, and it is also more probable for the bilingual concept classes to be mapped to each other.",
+        "After convergence of the algorithm, the output probabilities are optimal and the translation results are more accurate."
+      ]
+    },
+    {
+      "heading": "5 Towards Translation Disambiguation using Frame Semantics",
+      "text": [
+        "As translation disambiguation forms the core of various machine translation strategies, we are interested in studying whether the generated bilingual frame semantics can complement existing resources, such as bilingual dictionaries, for translation disambiguation.",
+        "The semantic frame of the predicate verb and the argument structures in a sentence can be identified by the syntactic structure, part-of-speech tags, head word, and other features in the sentence.",
+        "The predicate verb translation corresponds to the word sense translation we described in the previous sections, Pr(cl,cf j el,ef).",
+        "We intend to evaluate the effectiveness of bilingual frame semantics mapping in disambiguating between translation candidates.",
+        "For the evaluation set, we use 202 randomly selected example sentences from FrameNet, which have been annotated with predicate-argument structures.",
+        "In the first step of the experiment, for each predicate word (el, ef), we find all its translation candidates of the predicate word in each sentence, and annotate them with their HowNet categories to form a translated word sense Pr(cl,cfjel,ef).",
+        "For the example sentence in Figure 6, there are altogether 147 word sense translations for (hold,detaining).",
+        "We then find the word sense translation with the highest probability among all HowNet and FrameNet class mappings from our EM algorithm:",
+        "An example (el,ef) is (hold, detaining) and the cl*=argmax P(cl, cfj el, ef) found by our program is AVAY (cl,cf)* in this case is (#p�,detainj #pft).",
+        "Human evaluators then look at the set of {cl*} and mark cl* as either true translations or erroneous.",
+        "The accuracy of word sense translations on this evaluation set of example sentences is at 74.9%.",
+        "In comparison, we also look at Pr(clj el), translation based on bilingual dictionary only, and find",
+        "The translation accuracy of using bilingual dictionary only, is at a predictable low 15.8%.",
+        "Our results are the first significant evidence of, in addition to bilingual dictionaries, bilingual frame semantics is a useful resource for the translation disambiguation task."
+      ]
+    },
+    {
+      "heading": "6 Related Work",
+      "text": [
+        "The most relevant previous works include word sense translation and translation disambiguation (Li & Li 2003; Cao & Li 2002; Koehn and Knight 2000; Kikui 1999; Fung et al., 1999), frame semantic induction (Green et al., 2004; Fung & Chen 2004), and bilingual semantic mapping (Fung & Chen 2004; Huang et al.",
+        "2004; Ploux & Ji, 2003, Ngai et al., 2002; Palmer & Wu 1995).",
+        "Other than the English FrameNet (Baker et al., 1998), we also note the construction of the Spanish FrameNet (Subirats & Petruck, 2003), the Japanese FrameNet (Ikeda 1998), and the German FrameNet (Boas, 2002).",
+        "In terms of learning method, Chen and Palmer (2004) also used EM learning to cluster Chinese verb senses."
+      ]
+    },
+    {
+      "heading": "Word Sense Translation",
+      "text": [
+        "Previous word sense translation methods are based on using context information to improve translation.",
+        "These methods look at the context words and discourse surrounding the source word and use methods ranging from boostrap-ping (Li & Li 2003), EM iterations (Cao and Li, 2002; Koehn and Knight 2000), and the cohesive relation between the source sentence and translation candidates (Fung et al.",
+        "1999; Kikui 1999).",
+        "Our proposed translation disambiguation method compares favorably to (Li & Li 2003) in that we obtain an average of 82% precision on words with multiple senses, whereas they obtained precisions of 80-90% on words with two senses.",
+        "Our results also compare favorably to (Fung et al.",
+        "1999; Kikui 1999) as the precision of our predicate verb in the input sentence translation disambiguation is about 75% whereas their precisions range from 40% to 80%, albeit on an independent set of words."
+      ]
+    },
+    {
+      "heading": "Automatic Generation of Frame Semantics",
+      "text": [
+        "Green et al.",
+        "(2004) induced SemFrame automatically and compared it favorably to the hand-constructed FrameNet (83.2% precision in covering the FrameNet frames).",
+        "They map WordNet and LDOCE, two semantic resources, to obtain SemFrame.",
+        "Burchardt et al.",
+        "(2005) used FrameNet in combination with WordNet to extend coverage."
+      ]
+    },
+    {
+      "heading": "Bilingual Semantic Mapping",
+      "text": [
+        "Ploux and Ji, (2003) proposed a spatial model for matching semantic values between French and English.",
+        "Palmer and Wu (1995) studied the mapping of change-of-state English verbs to Chinese.",
+        "Dorr et al.",
+        "(2002) described a technique for the construction of a Chinese-English verb lexicon based on HowNet and the English LCS Verb Database (LVD).",
+        "They created links between HowNet concepts and LVD verb classes using both statistics and a manually constructed “seed mapping” of thematic classes between HowNet and LVD.",
+        "Ngai et al.",
+        "(2002) induced bilingual semantic network from WordNet and HowNet.",
+        "They used lexical neighborhood information in a word-vector based approach to create the alignment between WordNet and HowNet classes without any manual annotation."
+      ]
+    },
+    {
+      "heading": "7 Conclusion",
+      "text": [
+        "Based on the one-frame-two-languages idea, which stems from the hypothesis of the mind of a bilingual speaker, we propose automatically generating a bilingual word sense dictionary or ontology.",
+        "The bilingual ontology is generated from iteratively estimating and maximizing the probability of a word translation given frame mapping, and that of frame mapping given word translations.",
+        "We have shown that for the most ambiguous 11 words in the English FrameNet, the average word sense translation accuracy is 82%.",
+        "Applying the bilingual ontology mapping to translation disambiguation of predicate verbs in another evaluation, the accuracy of our method is at an encouraging 75%, significantly better than the 15% accuracy of using bilingual dictionary only.",
+        "Most importantly, we have demonstrated that bilingual frame semantics is potentially useful for cross-lingual retrieval, machine-aided and machine translation."
+      ]
+    },
+    {
+      "heading": "8 Future Work",
+      "text": [
+        "Our evaluation exercise has shown the promise of using bilingual frame semantics for translation task.",
+        "We are currently carrying out further work in the aspects of (1) improving the accuracy of source word frame identification and (2) incorporating bilingual frame semantics in a full fledged",
+        "machine translation system.",
+        "In addition, FrameNet has a relatively poor coverage of lexical entries.",
+        "It would be necessary to apply either semi-automatic or automatic methods such as those in (Burchardt et al.",
+        "2005, Green et al. 2004) to extend FrameNet coverage for final application to machine translation tasks.",
+        "Last but not the least, we are interested in applying our method to other ontologies such as the one used for the Propbank data, as well as to other language pairs."
+      ]
+    },
+    {
+      "heading": "Acknowledgement",
+      "text": [
+        "This work was partially supported by CERG# HKUST6206/03E and CERG# HKUST6213/02E of the Hong Kong Research Grants Council.",
+        "We thank Yang, Yongsheng for his help in the final draft of the paper, and the anonymous reviewers for their useful comments."
+      ]
+    }
+  ]
+}

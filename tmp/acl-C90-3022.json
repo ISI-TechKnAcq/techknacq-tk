@@ -1,0 +1,153 @@
+{
+  "info": {
+    "authors": [
+      "Alessandra Giorgi",
+      "Fabio Pianesi",
+      "Giorgio Satta"
+    ],
+    "book": "International Conference on Computational Linguistics",
+    "id": "acl-C90-3022",
+    "title": "A Computational Approach to Binding Theory",
+    "url": "https://aclweb.org/anthology/C90-3022",
+    "year": 1990
+  },
+  "references": [
+    "acl-C88-1026",
+    "acl-P89-1032"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "This paper is a first step towards a computational account of Binding Theory (BT).",
+        "Two algorithms that compute, respectively, Principle A and B have been provided.",
+        "Particular attention has been devoted to possible interactions of BT with other modules of the linguistic theory, such as those ruling argumental chains.",
+        "Finally, the computational complexity of the algorithms has been studied."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "This work is a contribution to the computational study of the referential properties of Noun Phrases (NPs).",
+        "In particular, it focuses on the disjoint reference constraint for pronouns, and on the binding requirement for anaphors.'",
+        "Unlike other authors, we do not output actual references for pronouns.",
+        "The reasons for such a move will be discussed below.",
+        "In pursuing these goals, we will refer to Binding Theory (henceforth BT), as developed within the Government and Binding framework by Chomsky and his collaborators (see Chomsky, 1981, 1986); in particular, algorithms will be presented that compute Principles A and B of BT.",
+        "Section 2 presents a brief introduction to BT.",
+        "In Section 3, we will introduce a formal (computational) apparatus, which will then be used to formulate the algorithms.",
+        "Finally, some considerations about their formal properties will be discussed.",
+        "Section 4 illustrates, by means of an example, how the algorithms work.",
+        "Finally, in Section 5, our approach and results will be compared with those already present in the literature.",
+        "*Every part of this work has been elaborated jointly by the three authors.",
+        "However, as far as legal requirements are concerned, A.Giorgi takes responsability of Sections 1 and 2, F.Pianesi of Sections 4 and 5 and G.Satta of Section 3."
+      ]
+    },
+    {
+      "heading": "2 Introduction to Binding Theory",
+      "text": [
+        "Binding Theory (BT) is a module of the Government and Binding theory ruling the distribution and the referential properties of anaphors (such as himself), pronouns (such as him and his) and R(eferential)expressions (such as John, the man I met yesterday, my sister, etc).",
+        "Here we will briefly illustrate its scope, without entering into a detailed analysis.",
+        "It is a well known fact that lexical items, such as Noun Phrases, must undergo an interpretation process by which they are assigned a referent.",
+        "Such a process is ruled by principles that vary according to the nature of the item in question, i.e. anaphor, pronoun or R expression.",
+        "A first generalization can be stated as follows: anaphors must have an antecedent in the syntax, i.e. in the same sentence where they appear; pronouns can directly identify a referent in the world or in the previous discourse; R-expressions are intrinsically referential, i.e. they need no antecedent.3 Consider the following examples: (1)a. John, loves himself, b.",
+        "*I love himself In (1)a. the anaphor himself takes John as an antecedent, i.e. in technical terms, it is bound by it; in (1)b, for morphological reasons, I cannot work as an antecedent for himself, so that the whole sentence is ruled out.4 Consider now what happens in the case of pronouns: (2)John thinks that Mary likes him him can either refer to John or to someone else in the world, for instance to someone mentioned in the previous discourse.",
+        "The conclusion up to this point can be summarized as follows: an anaphor must have an antecedent, a pronoun can have one, an R-expression cannot.",
+        "However further properties must be taken into account; let us consider pronouns again: (3)John, likes him*, Him cannot be interpreted as John, contrary to what happens in (2): there is a \"negative\" condition on",
+        "pronouns, since they cannot have an antecedent lying within a certain context.",
+        "Technically speaking, a pronoun must be free in its local domain; a similar locality condition holds with respect to anaphors, since an anaphor must have an antecedent inside a certain domain: (4)a.",
+        "*Johni thinks that Mary likes himself b.Mary thinks that John i likes himself; (4)a. is ungrammatical because the intended antecedent, John, lies too far away.",
+        "The local domain is the so-called Complete Functional Complex (CFC) pertaining to the item in question, i.e. containing both the item itself and its govemor:5 (5)y is a Complete Functional Complex iff one of the following holds:",
+        "Finally, an important structural condition must hold, namely c-command: (cf. Chomsky, 1981; 1986): (6)a c-commands p iff a#P, a does not dominate P and the first node, y, dominating a also dominates P. To be bound by a given item actually means: to be coindexed and c-commanded by that item; whereas to be free means: not to be coindexed with a c-commanding item (non c-commanding items might work, on the other hand, as possible antecedents).",
+        "The principles of binding can be expressed as follows: (7)A: An anaphor is bound in its local domain B: A pronoun is free in its local domain C: An R-expression is free Note that, as will be shown below, in our system we can also handle constructions involving the so-called pro-drop phenomena, found in languages like Italian, Spanish and so on.",
+        "Consider the following Italian example:6 (8)pro; arriva lui; lit: arrives he The system must know that the coindexation in (8), i.e. the fact that the pronoun /ui is coindexed with a c commanding empty category (the expletive pro), is not a Principle B violation,"
+      ]
+    },
+    {
+      "heading": "3 The Algorithms",
+      "text": [
+        "With respect to the two principles considered here, i.e. Principles A and B, the output of BT can be represented 'The definition in the text is the one found in Giorgi (1987); cfr also Chomsky (1986).",
+        "Note that, in most cases, the CFC coincides with the first Sentence or Noun Phrase dominating the item in question.",
+        "However, this is not always the case and the systems defining the binding domain this way often inn into trouble; this point will he further considered in Section 5; see also Giorgi, Pianesi, Satta (1989a).",
+        "6 In pro-drop languages (see Chomsky 1981) typically, the subject can be noolexicai, i.e. can be an empty category, or can be expressed postverbally, leaving an expletive empty category in subject position.",
+        "as a formal language LB.",
+        "More precisely, given a sentence w, let T be the set of all tuples /=<T, a, Pt, rt__0, where T,, is a parse tree for w , a is either an anaphor or a pronoun and the components p, fin represent any set of NPs.7 Let us define LB C T to be the set of all tuples such that the following conditions hold: (i) if a is an anaphor, 1314, are all and only the items that can be antecedents for a, according to Principle A of BT; (ii) if a is a pronoun, then pi...p are all and only the items disjoint from a, according to Principle B of BT.",
+        "The algorithms to be presented can be seen as recognisers for LB."
+      ]
+    },
+    {
+      "heading": "3.1 Definitions",
+      "text": [
+        "Let N.(ni, n1), be the set of all nodes in rw.",
+        "We will also assume the following functions and predicates:8 a function father from N to NU(L); a function siblings from N to TOO; a binary predicate agreement, defined on NxN, such that agreetnent(ni, n2)=TRUE iff the agreement features of ni and n2 are mutually compatible; a unary predicate pt-antecedent, defined in N, such that pt-antecedent(n)=TRUE iff pz is a maximal projection of a head N (a Noun) within Tiv.",
+        "Definition 1 A binary predicate domain is defined in NxN in such a way that domain(nd, na).,--TRUE iff: (i) nd is the least constituent such that either all the 19-roles pertaining to a lexical head are realized, or all the grammatical .functions pertaining to the same lexical head are realized; (ii) fly is the lexical governor of n a and",
+        "also a function ch-marker, from N to Nu (I) , defined such that ch-rnarker(n)=n iff n is a landing-site of a chain c within 2 and a previous call to the procedure ch-mark has marked each node in c with the marker-node rtm."
+      ]
+    },
+    {
+      "heading": "3.2 Algorithm Schemata",
+      "text": [
+        "The two algorithms behave in a very similar way; they take as input a node in W, corresponding to an NP in Tw, and analyse some specific relations between the input node and each node in N that c-commands the input node, up to certain specific domain.",
+        "The c commanding relation is implicitly encoded in the way in which the algorithms apply the two functions father and siblings.",
+        "An Algorithm for Principle A Given an input node 'n which corresponds to an anaphor in Tw, the algorithm outputs a list of nodes corresponding to \"actual antecedents\" for the anaphor itself.",
+        "The algorithm looks for a \"potential antecedent\" of the input anaphor, starting from node n and proceeding from bottom-to-top.",
+        "As soon as a potential antecedent is found, the algorithm restricts its search to the local domain it has just identified.",
+        "Note that each potential antecedent must pass the agreement check to be considered an actual antecedent\" We also consider some cases of referential circularity; in particular, problems arising in pro drop constructions.",
+        "More specifically, a node which belongs to the chain also containing the anaphor, cannot be collected as a potential antecedent.",
+        "The following circularity check is therefore included: every chain whose landing-sites dominate the input anaphor, up to the domain of interest, is marked by the procedure ch-mark using the input-node as a marker.",
+        "In this way a node c commanding the input node and corresponding to a landing-site of a chain marked by the latter, cannot be taken as a potential antecedent for the input-nod.e itself (for more discussion, see Section 5).",
+        "The same mechanism also ensures that, for every possible chain, only one of its landing-sites is ever considered as a potential antecedent.",
+        "(9) Lip Mary [r [vp [v, sees herself [pp in the",
+        "At the beginning, the variable present-node is set to the.",
+        "value of input-node, i.e. the anaphor node, while the variable local-domain-flag is set to FALSE.",
+        "Then Algorithm 1 enters Step 2, where it scans the anaphor's siblings.",
+        "Once present-sibling is set to the PP node, ptantecedent(present-sibling)=FALSE.",
+        "At this point, Algorithm 1 exits Step 2 and enters Step 3, where present-node is set to the value offather(present-node), in this case, the V node.",
+        "Given that local-domainflag,--TALSE, Algorithm 1 enters Step 2 again.",
+        "We do not follow the whole computation but directly skip to the point where Algorithm 1 enters Step 2 with present-12 The standard notation g(n)c 0(f(n)) means that there exist a positive constant Al and an integer no such that g(n)<Mf(n) for all n?no.",
+        "I3See.",
+        "Jackendoff (1977).",
+        "I4Another possible analysis of this sentence hypothesises, as the argument of see, a Small Clause including herself and the predicate PP.",
+        "x =n 7",
+        "node=r.",
+        "The only sibling of I' is the subject NP and, setting present-sibling to it, one has that ptantecedent(present-sibling)=TRUE.",
+        "Algorithm 1 then sets local-domain-flag to TRUE; furthermore, agreement(present-sibling, present-node)=TRUE, so that the value of present-sibling is output.",
+        "After that, Algorithm 1 enters Step 3 and sets present-node to father(present-node), i.e. to the topmost (IP) node.",
+        "Now local-domain-flag=TRUE and domain(present-node, input-node)=TRUE (i.e. IP is the local domain for the input anaphor); therefore Algorithm 1 enters Step 4 and then stops."
+      ]
+    },
+    {
+      "heading": "5 Discussion",
+      "text": [
+        "By fixing an upper bound, it has been shown that the computational complexity of the recognition problem of a language that encodes Principles A and B of BT is in P.15 These results are similar to those obtained by all authors who have studied BT from a computational point of view (Correa, 1988; Ingria and Stallard, 1989; Berwick and Weinberg, 1984; Berwick, 1989).",
+        "Nevertheless, with respect to such works we have both taken a rather different perspective and paid more attention to the subtleties of the linguistic theory.",
+        "Previous works were mainly concerned with providing actual referents (actual indexations) for the NPs of a sentence.",
+        "We claim, on the contrary, that Principles A, B and C per se are not sufficient for this purpose, since BT only restricts the search space for indices selection, and does not actually provide them.",
+        "For instance, Correa (1988) proposes an algorithm that builds lists of antecedents for pronouns and anaphors, and complements it with a Binding Rule, that selects, for each item, an indexation from such lists.",
+        "However, the selection of an antecedent for a certain item could affect the indexation of other nodes, leading to violations of Principle B.16 In this framework, a related problem arises considering split antecedents for pronouns; in fact, a pronoun can be coindexed with a set of items, provided that each of them has a different thematic role.17 This point has never been explicitely addressed in computational works; nevertheless, if the purpose is to output actual indexations, it seems to us that the only possibility, in order to consider split antecedents, would be to compute lists of possible antecedents for pronouns and then to consider their power set; this way, however, the search space becomes exponentially large.",
+        "Furthermore, the interactions of the referential properties 15P denotes the class of languages recognizable in polynomial time by a deterministic Turing machine.",
+        "16Consider, for instance, the following sentence: (i) Mary says that she saw her in this case both embedded pronouns can take Mary as an antecedent, according to Correa's Binding Rule, leading to a violation of Principle B.",
+        "In our opinion, to avoid this incorrect result, it is necessary to put together the constraints that have been separately computed for each item according to Principles A and B (and C); this way we can account for the interactions between coindexations and disjointness.",
+        "A possible way to do it, is to pose the problem of BT verification, i.e. whether a given index assignment for the NPs of a sentence complies with the restrictions of BT.",
+        "See Giorgi, Piancsi, Satta (1989b).",
+        "\"For instance, in Mary told John that they should go home the pronoun they can refer to the complex antecedent constituted by Mary plus John.",
+        "of a split antecedent with those of other items (possibly other split antecedents) would thereby hardly be addressable.I8 Finally, given the referential properties of pronouns it seems that there is no point in trying to use the grammatical knowledge of BT to hypothesise intrasentential antecedents.19 Another crucial aspect concerns the treatment of local domains, whose importance has often been misconsidered in computational works on BT.",
+        "Such a notion has been mainly seen as a static one, whereas, in our interpretation, the value of the actual domain depends on the interaction of structural and lexical properties of at least two different positions in the derivation tree.",
+        "For example, in Ingria and Stallard (1989), an S node is taken to be the binding domain for every node it dominates.",
+        "Consider, however, the cases in which government of the specifier position of a maximal projection is obtained through an external head; this situation arises, for instance, in exceptional case marking examples, as in John believed him to be intelligent.",
+        "Ingria and Stallard's static definition of local domain would lead to the conclusion that the pronoun, being dominated by an S type node (the embedded sentence), is free in that category and, thus, could be coindexed outside, for instance with the R-expression John.",
+        "But this is ungrammatical; according to the definition adopted here, the domain of binding for him is the matrix clause, so that the pronoun must, correctly, be free in it, i.e. disjoint from John.",
+        "Our approach also improves on Ingria and Stallard's treatment of NP as a binding domain.",
+        "If a node NP containes a possessive then they consider it a binding domain for all the nodes it dominates, except the possessive itself.",
+        "There are at least two problems, though.",
+        "First, they do not predict that a pronoun subcategorized for by the head cannot be hound in the domain of the NP; second the well-known not complementary distribution of pronouns and anaphors in the specifier position of an NP cannot be accounted for.",
+        "The definition of binding domain adopted in (5) and the way it is computed allow our algorithms to avoid these problems; see Giorgi, Pianesi, Satta (1989a).",
+        "As a final remark, note that in this work the interaction with A-chains has been explicitely considered.",
+        "This problem is particularly important in Italian which, being a pro-drop language, admits sentences like (8) and (10): (10) Giannii ha detto che prod arrivera [la propriai madre]i lit.",
+        ": Gianni told that will arrive self's mother Gianni told that his mother will arrive",
+        "in (8) the postverbal subject pronoun is coindexed with the expletive pro, but a procedure looking for disjoint elements would output a list containing pro (it lies in the local domain of the pronoun) thereby giving rise to a contradiction: the pronoun is coindexed with the expletive pro but must be disjoint from it.",
+        "In (10), we must avoid the anaphoric possessive proprio being coindexed with the c-commanding expletive pro, in order to rule out circular interpretations.",
+        "The circularity and identity checks, discussed in Section 3.2, explicitly take care of these cases."
+      ]
+    }
+  ]
+}

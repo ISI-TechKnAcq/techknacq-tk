@@ -1,0 +1,231 @@
+{
+  "info": {
+    "authors": [
+      "Qiang Zhou"
+    ],
+    "book": "International Conference on Computational Linguistics",
+    "id": "acl-C00-2141",
+    "title": "Local Context Templates for Chinese Constituent Boundary Prediction",
+    "url": "https://aclweb.org/anthology/C00-2141",
+    "year": 2000
+  },
+  "references": [
+    "acl-A88-1019",
+    "acl-P95-1037",
+    "acl-P96-1025",
+    "acl-W93-0306",
+    "acl-W95-0103",
+    "acl-W97-0104",
+    "acl-W97-0301"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract:",
+      "text": [
+        "In this paper, we proposed a shallow syntactic knowledge description: constituent boundary representation and its simple and efficient prediction algorithm, based on different local context templates learned from the annotated corpus.",
+        "An open test on 2780 Chinese real text sentences showed the satisfying results: 94% (92%) precision for the words with multiple (single) boundary tag output."
+      ]
+    },
+    {
+      "heading": "1. Introduction",
+      "text": [
+        "Research on syntactic parsing has been a focus in natural language processing for a long time.",
+        "As the development of corpus linguistics, many statistics-based parsers were proposed, such as Magerman (1995)'s statistical decision tree parser, Collins (1996)'s bigram dependency model parser, Ratnaparkhi (1997)'s maximum entropy model parser.",
+        "All of them tried to get the complete parse trees of the input sentences, based on the statistical data extracted from an annotated corpus.",
+        "The best parsing accuracy of these parsers was about 87%.",
+        "Realizing the difficulties of complete parsing, many researches turned to explore the partial parsing techniques.",
+        "Church (1988) proposed a simple stochastic technique for recognizing the non-recursive base noun phrases in English.",
+        "Voutilaimen (1993) designed an English noun phrase recognition tool --- NP7'ool.",
+        "Abney (1997) applied both rule-based and statistics-based approaches for parsing chunks in English.",
+        "Due to the advantages of simplicity and robustness, these systems can be acted as good preprocessors for the further complete parsing.",
+        "In this paper, we will introduce our partial parsing approach for the Chinese language.",
+        "We first proposed a shallow syntactic knowledge description: constituent boundary representation.",
+        "It simplified the complex constituent levels in parse trees and only kept the boundary information of every word in different constituents.",
+        "Then, we developed a simple and efficient constituent boundary prediction algorithm, based on different local context templates learned from the annotated corpus.",
+        "An open test on 2780 Chinese real text sentences showed the satisfying results: 94% (92%) precision for the words with multiple (single) boundary tag output."
+      ]
+    },
+    {
+      "heading": "2. Constituent boundary description",
+      "text": [
+        "The constituent boundary representation comes from the simplification of the complete parse trees of the sentences.",
+        "It omits the constituent' levels in parse trees and only keeps the boundary information of every word in different constituents, i.e. it is at the left boundary, right boundary or middle position of a constituent.",
+        "Evidently, if the input sentence has only one parse tree, i.e. without syntactic ambiguity, the constituent boundary position of every word in the sentence is clear and definite.",
+        "In the sense, the constituent boundary tag indicates the basic syntactic structure information in the sentence.",
+        "Separating them from the constituent structure tree and assigning them to every word in the sentence, we can .form a special syntactic unit: word boundary block (WBB).",
+        "Definition: A word boundary block is the combination of the word (including part-of-speech information) and its constituent boundary tag, i.e. wbb,=<w„ bi>, where w; is the ith word in the sentence, bi can value 0,1,2, which means Iv; is at",
+        "the middle, left-most, or rightmost position of a constituent respectively.",
+        "In the view of syntactic description capability, the WBBs defined above, the chunks defined by Abney (1991) and the phrases (i.e. constituents) defined in a parse tree have the following realtions: WBBs < chunks < phrases Here is an example:",
+        "• The input sentence (10 words): n T (My brother gives him a book.)",
+        "• Its parse tree representation (7 phrases):",
+        "• Its chunk representation (5 chunks):",
+        "• its constituent boundary representation (10 WBBs): <R,1> <111,1,0> <mm,2> <",
+        "The goal of the constituent boundary prediction is to assign a suitable boundary tag for every word in the sentence.",
+        "It can provide basic information for further syntactic parsing research.",
+        "The following lists some application examples:",
+        "• To develop a statistics-based Chinese parser (Zhou 1997) based on the bracket matching principle (Zhou and Huang,1997).",
+        "• To develop a Chinese maximum noun phrase identifier (Zhou,Sun and Huang, 1999).",
+        "• The automatic inference of Chinese probabilistic context-free grammar (PCFG) (Zhou and Huang 1998).",
+        "3.",
+        "Local context templates",
+        "The linguistic intuitions tell us that many local contexts may be useful for constituent boundary prediction.",
+        "For example, many function words in Chinese have their certain constituent boundary position in the sentences, such as, most prepositions are at the left boundaries, and the aspectual particles (\"le\", \"zhe\", \"guo\") are at the right boundaries.",
+        "Moreover, some content words also show their preferential constituent boundary positions in a special local context, such as most adjectives are at the right boundary in local context: \"adverb + adjective\".",
+        "A tentative idea is how to use such simple local context information (including the part-of-speech (POS) tags and the number of Chinese characters (CN)) to develop an efficient automatic boundary prediction algorithm.",
+        "Therefore, we defined the following local context templates (LCTs):",
+        "1) Unigram POS template: t,, BM; 2) Bigram POS templates: • Left restriction: t; BPPL; • Right restriction: t; t;.„, BPFL, 3) Trigram POS template: tHtit„.,, BPFL, 4) Trigram POS+CN template: t +en BPFL,",
+        "in the above LCTs, t is the POS tag of the ith word in the sentence, cn is its character number, and BPFL, is the frequency distribution list of its different BP (boundary prediction) value (0, I ,2) under the local context restrictions (LCR) (the left and right word).",
+        "Table 1 Some examples of the local context templates Type Token Meaning Unigram p, A preposition is prior to bigram 39 849 476 at the constituent left a n, boundary in Chinese.",
+        "A noun is prior to at the (left) 5 164 2007 right boundary if its previous word is an adjective.",
+        "bigram a n, An adjective is prior to (right) 4 2012 160 at the left boundary if its next word is a noun.",
+        "Trigram n n ODE, A noun is prior to at the POS 1 18 1496 right boundary if its previous word is a noun and its next one is a partial (De).",
+        "Table shows some examples of LCTs.",
+        "Ali these templates can be easily acquired from the Chinese treebanks or Chinese corpus annotated with constituent boundary tags.",
+        "Among these templates, sonic special ones have the following properties:",
+        "b) ]bpie [0,21, P (bp [bpi] / TF,> where the total frequency threshold a and the BP probability threshold p are set to 3 and 0.95, respectively.",
+        "They are called the projected templates (PTs) (i.e. the local context template with a projecting BP value).",
+        "Based on the different PTs, we can design a three-stage training procedure to overcome the problem of data sparseness:",
+        "Stage I : Learn the unigram and bigram templates on the whole instances in annotated corpus.",
+        "Stage 2 : Learn the trigram POS templates on the non-projected unigram and bigram instances (see next section for more detailed).",
+        "Stage 3 : Learn the trigram POS+CN templates on the non-projected trigram POS instances.",
+        "Therefore, only the useful trigram templates can be learned."
+      ]
+    },
+    {
+      "heading": "4. Automatic prediction algorithm",
+      "text": [
+        "After getting the LCTs, the automatic prediction algorithm becomes very simple: 1) to set the projecting 13Ps based on the projected LCTs, 2)1:0 select the best BPs based on the non-projected LCTs.",
+        "Some detailed information will be discussed in the following sections."
+      ]
+    },
+    {
+      "heading": "4.1 Set the projecting BPs",
+      "text": [
+        "In this stage, the reference sequence to the LCTs is : unigram 4 bigram trigram POS trigram POS+CN, i.e. from the rough restriction LCTs to the tight restriction LCTs.",
+        "This sequence is same with the LCT training procedure.",
+        "The detailed algorithm is as follows: Input: the position of the ith word in the sentence.",
+        "Background: the LCTs learned from corpus.",
+        "Output: the projecting BP of the word – if found;",
+        "-1 – otherwise.",
+        "Procedure: • Get the local context of the ith word.",
+        "• If its unigram template is a PT, then return its projecting IW.",
+        "• If its left and right bigram template satisfy the following conditions: • 777L+ TF„=1 L, L11 +>_,' BP FL,[ii > a ➢ P (bpjl LCR,) = (BP FL, BPFL, Ill) (TEt+ 7F„)> then return this combined projecting 13P (bp).",
+        "• If its trigram POS template is a PT, then return its projecting BP.",
+        "• If its trigram POS+CN template is a PT, then return its projecting 13P."
+      ]
+    },
+    {
+      "heading": "4.2 Select the best BPs",
+      "text": [
+        "In this stage, the reference sequence to the LCTs is : trigram POS+CN 4 trigram POS - bigram unigram.",
+        "It's a backing-off model (Katz, I987), just like the approach of Collins and Brooks (1995) for the prepositional phrase attachment problem in English.",
+        "The detailed algorithm is as follows: Input: the position of the ith word in the sentence.",
+        "Background: the LCTs learned from corpus.",
+        "Output: the best BP of the word.",
+        "Procedure: • Get the local context of the ith word.",
+        "• For the kth matched trigram POS+CN templates, if Tr > a, then return SelectRestRI) (Blink).",
+        "• For the /nth matched left bigram and nth matched right bigram, >-.> Get the Combined BPFL = BP El + BPFL„ If TE, „ , > 0, then return SelecthessiBP (Combined BP FL).",
+        "• For the kth matched unigram templates, if 777k > 0, then return Selecil3estB1' (13PFLO.",
+        "• Return l (default is at the left boundary).",
+        "The internal function SelectBestRPO tries to select the best BP based on the frequency distribution list of different BP value in LCTs.",
+        "It has two output modes: 1) single-output mode: only output the best 13P with the highest frequency in the LCT; 2) multiple-output mode: output the BPs satisfying the conditions: IPbi-Pb•,I < y, where y = 0.2"
+      ]
+    },
+    {
+      "heading": "5. Experimental results",
+      "text": []
+    },
+    {
+      "heading": "5.1 Training and test data",
+      "text": [
+        "The training data were extracted from two different parts of annotated Chinese corpus:",
+        "1) The small Chinese treebank developed in Peking .University (Zhou, 1996b), which consists of the sentences extracted from two parts of Chinese texts: (a) test set for Chinese-English machine translation systems, (b) Singapore primary school textbooks.",
+        "2) The test suite treebank being developed in Tsinghua University (Zhou and Sun,1999), which consists of about 10,000 representative Chinese sentences extracted from a large-scale Chinese balanced corpus with about 2,000,000 Chinese characters.",
+        "The test data were extracted from the articles of People's Daily and manually annotated with",
+        "correct constituent boundary tags.",
+        "It was also divided into two parts: 1) The ordinary sentences.",
+        "2) The sentences with keywords for conjunction structures (such as the conjunctions or special punctuation `DunHao').",
+        "They can be used to test the performance of our prediction algorithm on complex conjunction structures.",
+        "Table 2 shows some basic statistics of these training and test data.",
+        "Only the sentences with more than one word were used for training and testing."
+      ]
+    },
+    {
+      "heading": "5.2 The learned templates",
+      "text": [
+        "After the three-stage learning procedure, we got four kinds of local context templates.",
+        "Table 3 shows their different distribution data, where the section 'Type' lists the distribution of different kinds of LCTs and the section 'Token' lists the distribution of total words (i.e. tokens) covered by the LCTs.",
+        "In the column TTs' and 'Ratio', the slash '/' was used to separate the PTs with total frequency threshold 0 and 3.",
+        "More than 66% words in the training corpus can be covered by the unigram and bigram POS projected templates.",
+        "Then only about 1/3 tokens will be used for training the trigram templates.",
+        "Although the type distribution of the trigram templates shows the tendency of data sparseness (more than 70% trigram projected templates with total frequency less than 3), the useful trigram templates (TF>3) still covers about 70% tokens learned.",
+        "Therefore, we can expect that them can play an important role during constituent boundary prediction in open test set."
+      ]
+    },
+    {
+      "heading": "5.3 Prediction results",
+      "text": [
+        "In order to evaluate the performance of the constituent boundary prediction algorithm, the following measures were used:",
+        "1) The cost time (CT) of the kernal functions (CPU: Celeronm 366, RAM: 64M).",
+        "2) Prediction precision (PP) =",
+        "number of words with correct BPs (CortBP) total word number (TWN) For the words with single BP output, the correct condition is: Annotated BP = Predicted BP For the words with multiple BP outputs, the correct condition is: Annotated BP E Predicted BP set The prediction results of the two test sets were shown in Table 4 and Table 5, whose first columns list the different template combinations using in the algorithm.",
+        "In the columns `CortBP' and 'PP', the slash '/' was used to list the different results of the single and multiple BP outputs.",
+        "After analyzing the experimental results, we found: 1) The POS information in local context is very important for constituent boundary prediction.",
+        "After using the bigram and trigram POS templates, the prediction accuracy was increased by about 9% and 3% respectively.",
+        "But the character number information shows lower boundary restriction capability.",
+        "Their application only results in a slight increase of precision in single-output mode but a slight decrease in multiple-output mode.",
+        "2) Most of the prediction errors can be attributed to the special structures in the sentences, such as conjunction structures (CSs) or collocation structures.",
+        "Due to the long",
+        "distance dependencies among them, it's very difficult to assign the correct boundary tags to the words in these structures only according to the local context templates.",
+        "The lower overall precision of the test set 2 (about 2% lower than test set 1) also indicates the boundary prediction difficulties of the conjunction structures, because there are more CSs in test set 2 than in test set 1.",
+        "3) The accuracy of the multiple Output results is about 2% better than the single output results.",
+        "But the words with multiple boundary tags constitute only about 10% of the total words predicted.",
+        "Therefore, the multiple-output mode shows a good trade-off between precision and redundancy.",
+        "It can be used as the best preprocessing data for the further syntactic parser.",
+        "4) The maximal ratio of the words set by projected templates can reach 80%.",
+        "It guarantees the higher overall precision.",
+        "Table 5 Experimental results of the test set 2 5) The algorithm shows high efficiency.",
+        "It can process about 6,000 words per second (CPU: Celeronlm 366, RAM: 64M)."
+      ]
+    },
+    {
+      "heading": "5.4 Compare with other work",
+      "text": [
+        "Thou (1996) proposed a constituent boundary prediction algorithm based on hidden Marcov model (HMM).",
+        "The Viterbi algorithm was used to find the best boundary path B': arg max P (W ,T I B)P (B)",
+        "where the local POS probability P (CT bi) was computed by backing-off model and the bigram parameters: f (t. 1) and I (/' , t , To compare its performance with our algorithm, the trigram (POS and POS+CN) information was added up to its backing-off model.",
+        "Table 6 and Table 7 show the prediction results of the HMM-based algorithm, based on the same parameters learned from training set I and 2.",
+        "The performance of the LCT-based algorithm surpassed the HMM-based algorithm in accuracy (about 1 %) and efficiency (about 10 times).",
+        "Another similar work is Sun (1999).",
+        "The difference lies in the definition of the constituent boundary tags: he defined them between word pair: Iv, ni„.„ not for the word.",
+        "By using the HMM and Viterbi model, his algorithm showed the similar performance with Zhou (1996) (using bigram POS parameters):",
+        "• Training data : 3051 sentences extracted from People's Daily.",
+        "• Test data: 1000 sentences.",
+        "• Best precision: 86.3%"
+      ]
+    },
+    {
+      "heading": "6. Conclusions",
+      "text": [
+        "The paper proposed a constituent boundary prediction algorithm based on local context templates.",
+        "Its characteristics can be summarized as follows:",
+        "• The simple definition of the local context templates made the training procedure very easy.",
+        "• The three-stage training procedure guarantees that only the useful trigram templates can be learned.",
+        "Thus, the data sparseness problem was partially overcome.",
+        "• The high coverage of different types of projected templates assures a higher overall prediction accuracy.",
+        "• The multiple output mode provides the possibility to describe different boundary ambiguities.",
+        "• The algorithm runs very fast, surpasses the HMM-based algorithm in accuracy and efficiency.",
+        "There are a few possible improvement which may raise performance further.",
+        "Firstly, some lexical-based templates, such as prepositions as left restriction, may improve performance further -- this needs to be investigated.",
+        "The introduction of the automatic identifiers for some special structures, such as conjunction structures or collocation structures, may reduce the prediction errors due to the long distance dependency problem.",
+        "Finally, more training data is almost certain to improve results."
+      ]
+    },
+    {
+      "heading": "Acknowledgements",
+      "text": [
+        "The research was supported by National Natural Science Foundation of China (NSFC) (Grant No. 69903007)."
+      ]
+    }
+  ]
+}

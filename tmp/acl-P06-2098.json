@@ -1,0 +1,262 @@
+{
+  "info": {
+    "authors": [
+      "Nobuyuki Shimizu",
+      "Andrew R. Haas"
+    ],
+    "book": "International Conference on Computational Linguistics and Annual Meeting of the Association for Computational Linguistics – Poster Sessions",
+    "id": "acl-P06-2098",
+    "title": "Exact Decoding for Jointly Labeling and Chunking Sequences",
+    "url": "https://aclweb.org/anthology/P06-2098",
+    "year": 2006
+  },
+  "references": [
+    "acl-N03-1028",
+    "acl-N04-1042",
+    "acl-P05-1012",
+    "acl-W00-0726",
+    "acl-W02-1001",
+    "acl-W04-3112",
+    "acl-W95-0107"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "There are two decoding algorithms essential to the area of natural language processing.",
+        "One is the Viterbi algorithm for linear-chain models, such as HMMs or CRFs.",
+        "The other is the CKY algorithm for probabilistic context free grammars.",
+        "However, tasks such as noun phrase chunking and relation extraction seem to fall between the two, neither of them being the best fit.",
+        "Ideally we would like to model entities and relations, with two layers of labels.",
+        "We present a tractable algorithm for exact inference over two layers of labels and chunks with time complexity O(n2), and provide empirical results comparing our model with linear-chain models."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "The Viterbi algorithm and the CKY algorithms are two decoding algorithms essential to the area of natural language processing.",
+        "The former models a linear chain of labels such as part of speech tags, and the latter models a parse tree.",
+        "Both are used to extract the best prediction from the model (Manning and Schütze, 1999).",
+        "However, some tasks seem to fall between the two, having more than one layer but flatter than the trees created by parsers.",
+        "For example, in relation extraction, we have entities in one layer and relations between entities as another layer.",
+        "Another task is shallow parsing.",
+        "We may want to model part-of-speech tags and noun/verb chunks at the same time, since performing simultaneous labeling may result in increased joint accuracy by sharing information between the two layers of labels.",
+        "To apply the Viterbi decoder to such tasks, we need two models, one for each layer.",
+        "We must feed the output of one layer to the next layer.",
+        "In such an approach, errors in earlier processing nearly always accumulate and produce erroneous results at the end.",
+        "If we use CKY, we usually end up flattening the output tree to obtain the desired output.",
+        "This seems like a roundabout way of modeling two layers.",
+        "There are previous attempts at modeling two layer labeling.",
+        "Dynamic Conditional Random Fields (DCRFs) by (McCallum et al., 2003; Sutton et al., 2004) is one such attempt, however, exact inference is in general intractable for these models and the authors were forced to settle for approximate inference.",
+        "Our contribution is a novel model for two layer labeling, for which exact decoding is tractable.",
+        "Our experiments show that our use of label-chunk structures results in significantly better performance over cascaded CRFs, and that the model is a promising alternative to DCRFs.",
+        "The paper is organaized a follows: In Section 2 and 3, we describe the model and present the decoding algorithm.",
+        "Section 4 describes the learning methods applicable to our model and the baseline models.",
+        "In Section 5 and 6, we describe the experiments and the results."
+      ]
+    },
+    {
+      "heading": "2 Model for Joint Labeling and Chunking",
+      "text": [
+        "Consider the task of finding noun chunks.",
+        "The noun chunk extends from the beginning of a noun phrase to the head noun, excluding postmodifiers (which are difficult to attach correctly).",
+        "Table 1 shows a sentence labeled with POS tags and segmented into noun chunks.",
+        "B marks the first word of a noun chunk, I the other words in a noun chunk, and O the words that are not in a noun chunk.",
+        "Note that we collapsed the 45 different POS labels into 5 labels, following (McCallum et al., 2003).",
+        "All different types of adjectives are labeled as JADJ.",
+        "Each word carries two tags.",
+        "Given the first layer, our aim is to present a model that can predict the second and third layers of tags at the same time.",
+        "Assume we have n training samples, {(xz, yz)}�z� 1, where xz is a sequence of input tokens and yz is a label-chunk structure for xz.",
+        "In this example, the first column contains the tokens xz and the second and third columns together represent the label-chunk structures yz.",
+        "We will present an efficient exact decoding for this structure.",
+        "The label-chunk structure, shown in Table 2, is a representation of the two layers of tags.",
+        "The tuples in Table 2 are called parts.",
+        "If the token at index r carries a POS tag P and a chunk tag C, the first layer includes part (C, P, r).",
+        "This part is called a node.",
+        "If the tokens at index r − 1 and r are in the same chunk, and C is the label of that chunk, the first layer also includes part (C, P0, P, r−1, r) (where P0 and P are the POS tags of the tokens at r − 1 and r",
+        "respectively).",
+        "This part is called a transition.",
+        "If a chunk tagged C extends from the token at q to the token at r inclusive, the second layer includes part (C, q, r) .",
+        "This part is a chunk node.",
+        "And if the token at q −1 is the last token in a chunk tagged C0, while the token at q is the first token of a chunk tagged C, the second layer includes part (C0, C, q−1, q).",
+        "This part is a chunk transition.",
+        "In this paper we use the common method of factoring the score of the label-chunk structure as the sum of the scores of all the parts.",
+        "Each part in a label-chunk structure can be lexicalized, and gives rise to several features.",
+        "For each feature, we have a corresponding weight.",
+        "If we sum up the weights for these features, we have the score for the part, and if we sum up the scores of the parts, we have the score for the label-chunk structure.",
+        "Suppose we would like to score a pair (xz, yz) in the training set, and it happens to be the one shown in Table 2.",
+        "To begin, let’s say we would like to find the features for the part (I, NOUN, 7) of POS node type (1st Layer).",
+        "This is the NOUN tag on the seventh token “level” in Table 2.",
+        "By default, the POS node type generates the following binary feature.",
+        "• Is there a token labeled with “NOUN” in a chunk labeled with “I”?",
+        "Now, to have more features, we can lexicalize POS node type.",
+        "Suppose we use xr to lexicalize POS node (C, P, r), then we have the following binary feature, as it is (I, NOUN, 7) and xz7 = “level”.",
+        "• Is there a token “level” labeled with “NOUN” in a chunk labeled with “I”?",
+        "We can also use xr_1 and xr to lexicalize the parts of POS node type.",
+        "• Is there a token “level” labeled with “NOUN” in a chunk labeled with “I” that’s preceded by “highest”?",
+        "This way, we have a complete specification of the feature set given the part type, lexicalization for each part type and the training set.",
+        "Let us define f a boolean feature vector function such that each dimension of f(xz, yz) contains 1 if the pair (xz, yz) has the feature, 0 otherwise.",
+        "Now define a real-valued weight vector w with the same dimension as f. To represent the score of the pair (xz, yz), we write s(xz, yz) = wTf (xz, yz) We could also have wTf(xz, {p}) where p just a single part, in which case we just write s(p).",
+        "Assuming an appropriate feature representation as well as a weight vector w, we would like to find the highest scoring label-chunk structure y = argmaxy′ (wTf (x, y′)) given an input sentence x.",
+        "In the upcoming section, we present a decoding algorithm for the label-chunk structures, and later we give a method for learning the weight vector used in the decoding."
+      ]
+    },
+    {
+      "heading": "3 Decoding",
+      "text": [
+        "The decoding algorithm is shown in Figure 1.",
+        "The idea is to use two tables for dynamic programming: label table and chunk table.",
+        "Suppose we are examining the current position r, and would like to consider extending the chunk [q, r −1] to [q, r].",
+        "We need to know the chunk tag C for [q, r −1] and the last POS tag P0 at index r − 1.",
+        "The array entry label table [q] [r − 1] keeps track of this information.",
+        "Then we examine how the current chunk is connected with the previous chunk.",
+        "The array entry chunk table [q] [C0] keeps track of the score of the best label-chunk structure from 0 up to the index q that has the ending chunk tag C0.",
+        "Now checking the chunk transition from C0 to C at the index q is simple, and we can record the score of this chunk to chunk table [r] [C], so that the next chunk starting at r can use this information.",
+        "In short, we are executing two Viterbi algorithms on the first and second layer at the same time.",
+        "One extends [q, r − 1] to [q, r], considering the node indexed by r (first layer).",
+        "The other extends [0, q] to [0, r], considering the node indexed by [q, r] (second layer).",
+        "The dynamic programming table for the first layer is kept in the label table (r − 1 and P0 are used in the Viterbi algorithm for this layer) and that for the second layer in the chunk table (q and C0 used).",
+        "The algorithm returns the best score of the label-chunk structure.",
+        "To recover the structure, we simply need to maintain back pointers to the items that gave rise to the each item in the dynamic programming table.",
+        "This is just like maintaining back pointers in the Viterbi algorithm for sequences, or the CKY algorithm for parsing.",
+        "The pseudo-code shows that the runtime complexity of the decoding algorithm is O(n2) unlike that of CFG parsing, O(n3).",
+        "Thus the algorithm performs better on long sentences.",
+        "On the other hand, the constant is c 2 p 2 where c is the number of chunk tags and p is the number of POS tags."
+      ]
+    },
+    {
+      "heading": "4 Learning",
+      "text": []
+    },
+    {
+      "heading": "4.1 Voted Perceptron",
+      "text": [
+        "In the CKY and Viterbi decoders, we use the forward-backward or inside-outside algorithm to find the marginal probabilities.",
+        "Since we don’t yet have the inference algorithm to find the marginal probabilities of the parts of a label-chunk structure, we use an online learning algorithm to train the model.",
+        "Despite this restriction, the voted percep-tron is known for its performance (Sha and Pereira, 2003).",
+        "The voted perceptron we use is the adaptation of (Freund and Schapire, 1999) to the structured setting.",
+        "Algorithm 4.1 shows the pseudo code for the training, and the function update(wk, xz, yz, y′) returns wk − f (xz, y′) + f (xz, yz) .",
+        "Given a training set { (xz yz) }�z� 1 and the epoch number T, Algorithm 4.1 will return a list of",
+        "if (score >= label table [q] [r] [C] [P]) label table[q] [r] [C] [P] := score; #Add the score of the chunk node at [q,r-1].",
+        "(2nd Layer, NP)",
+        "#Add the score of the chunk transition from q-1 to q.",
+        "(2nd Layer, NP)",
+        "score := score + s((C0, C, q − 1, q)) + chunk table[q] [C0]; if (score >= chunk table[r][C]) chunk table[r] [C] := score; end for end for end for end for end for end for",
+        "Note: Since the scoring function s(p) is defined as w⊤f(xi, {p}), the input sequence xi and the weight vector w are also the inputs to the algorithm.",
+        "weighted perceptrons {(w1, c1), ..(wk, ck)1.",
+        "The final model V uses the weight vector"
+      ]
+    },
+    {
+      "heading": "4.2 Max Margin 4.2.1 Sequential Minimum Optimization",
+      "text": [
+        "A max margin method minimizes the regularized empirical risk function with the hard (penalized) margin",
+        "li finds the loss for y with respect to yi, and it is assumed that the function is decomposable just as y is decomposable to the parts.",
+        "This equation is equivalent to",
+        "After taking the Lagrange dual formation, we have",
+        "This quadratic program can be optimized by bi-coordinate descent, known as Sequential Minimum Optimization.",
+        "Given an example i and two label-chunk structures y′ and y″,",
+        "Using the equation (1), any increase in a can be translated to w. For a naive SMO, this update is executed for each training sample i, for all pairs of possible parses y′ and y″ for xi.",
+        "See (Taskar and Klein, 2005; Zhang, 2001; Jaakkola et al., 2000).",
+        "Here is where we differ from (Taskar et al., 2004).",
+        "We choose y″ to be the correct parse yi, and y′ to be the best runner-up.",
+        "After setting the initial weights using yi, we also set �i(yi) = 1 and �i(y′) = 0.",
+        "Although these alphas are not correct, as optimization nears the end, the margin is wider; �i(yi) and �i(y′) gets closer to 1 and 0 respectively.",
+        "Given this approximation, we can compute S. Then, the function update(wk, xi, yi, y′) will return wk – Sf (xi, y′) +Sf (xi, yi) and we have reduced the SMO to the perceptron weight update.",
+        "We can think of maximizing the margin in terms of extending the Margin Infused Relaxed Algorithm (MIRA) (Crammer and Singer, 2003; Crammer et al., 2003) to learning with structured outputs.",
+        "(McDonald et al., 2005) presents this approach for dependency parsing.",
+        "In particuler, Single-best MIRA (McDonald et al., 2005) uses only the single margin constraint for the runner up y′ with the highest score.",
+        "The resulting online update would be wk+1 with the following",
+        "Incidentally, the equation (2) for d above when ai(yi) = 1 and ai(y') = 0 solves this minimization problem as well, and the weight update is the same as the SMO case."
+      ]
+    },
+    {
+      "heading": "4.2.3 Conditional Random Fields",
+      "text": [
+        "Instead of minimizing the regularized empirical risk function with the hard (penalized) margin, conditional random fields try to minimize the same with the negative log loss:",
+        "Usually, CRFs use marginal probabilities of parts to do the optimization.",
+        "Since we have not yet come up with the algorithm to compute marginals for a label-chunk structure, the training methods for CRFs is not applicable to our purpose.",
+        "However, on sequence labeling tasks CRFs have shown very good performance (Lafferty et al., 2001; Sha and Pereira, 2003), and we will use them for the baseline comparison."
+      ]
+    },
+    {
+      "heading": "5 Experiments",
+      "text": []
+    },
+    {
+      "heading": "5.1 Task: Base Noun Phrase Chunking",
+      "text": [
+        "The data for the training and evaluation comes from the CoNLL 2000 shared task (Tjong Kim Sang and Buchholz, 2000), which is a portion of the Wall Street Journal.",
+        "We consider each sentence to be a training instance xi, with single words as tokens.",
+        "The shared task data have a standard training set of 8936 sentences and a test set of 2012 sentences.",
+        "For the training, we used the first 447 sentences from the standard training set, and our evaluation was done on the standard test set of the 2012 sentences.",
+        "Let us define the set D to be the first 447 samples from the standard training set.",
+        "There are 45 different POS labels, and the three NP labels: begin-phrase, inside-phrase, and other.",
+        "(Ramshaw and Marcus, 1995) To reduce the inference time, following (McCallum et al., 2003), we collapsed the 45 different POS labels contained in the original data.",
+        "The rules for collapsing the POS labels are listed in the Table 3."
+      ]
+    },
+    {
+      "heading": "Original Collapsed",
+      "text": [
+        "all different types of nouns NOUN all different types of verbs VERB all different types of adjectives JADJ all different types of adverbs RBP the remaining POS labels OTHER",
+        "and after collapsing the labels.",
+        "We present two experiments: one comparing our label-chunk model with a cascaded linear-chain model and a simple linear-chain model, and one comparing different learning algorithms.",
+        "The cascaded linear-chain model uses one linear-chain model to predict POS tags, and another linear-chain model to predict NP labels, using the POS tags predicted by the first model as a feature.",
+        "More specifically, we trained a POS-tagger using the training set D. We then used the learned model and replaced the POS labels of the test set with the labels predicted by the learned model.",
+        "The linear-chain NP chunker was again trained on D and evaluated on this new test set with POS supplied by the earlier processing.",
+        "Note that the new test set has exactly the same word tokens and noun chunks as the original test set."
+      ]
+    },
+    {
+      "heading": "5.2 Systems 5.2.1 POS Tagger and NP Chunker",
+      "text": [
+        "There are three versions of POS taggers and NP chunkers: CRF, VP, MMVP.",
+        "For CRF, L-BFGS, a quasi-Newton optimization method was used for the training, and the implementation we used is CRF++ (Kudo, 2005).",
+        "VP uses voted perceptron, and MMVP uses max margin update for the voted perceptron.",
+        "For the voted perceptron, we used aver",
+        "aging of the weights suggested by (Collins, 2002).",
+        "The features are exactly the same for all three systems.",
+        "For each CRF, VP, MMVP, the output of a POS tagger was used as a feature for the NP chunker.",
+        "The feeds always consist of a POS tagger and NP chunker of the same kind, thus we have CRF+CRF, VP+VP, and MMVP+MMVP.",
+        "Since CRF requires the computation of marginals for each part, we were not able to use the learning method.",
+        "VP and MMVP were used to train the label-chunk structures with the features explained in the following section."
+      ]
+    },
+    {
+      "heading": "5.3 Features",
+      "text": [
+        "First, as a preprocessing step, for each word token xQ, feature tQ was created with the rule in Table 5, and included in the input files.",
+        "This feature is included in x along with the word tokens.",
+        "The feature tells us whether the token is capitalized, and whether digits occur in the token.",
+        "No outside resources such as a list of names or a gazetteer were used.",
+        "Table 6 shows the lexicalized features for the joint labeling and chunking.",
+        "For the first iteration of training, the weights for the lexicalized features were not",
+        "updated.",
+        "The intention is to have more weights on the unlexicalized features, so that when lexical feature is not found, unlexicalized features could provide useful information and avoid overfitting, much as back-off probabilities do."
+      ]
+    },
+    {
+      "heading": "6 Result",
+      "text": [
+        "We evaluated the performance of the systems using three measures: POS accuracy, NP accuracy, and F1 measure on NP.",
+        "These figures show how errors accumulate as the systems are chained together.",
+        "For the statistical significance testing, we have used pair-samples t test, and for the joint labeling and chunking task, everything was found to be statistically significant except for CRF + CRF vs VP Joint.",
+        "One can see that the systems with joint labeling and chunking models perform much better than the cascaded models.",
+        "Surprisingly, the perceptron update motivated by the max margin principle performed significantly worse than the simple perceptron update for linear-chain models but performed better on joint labeling and chunking.",
+        "Although joint labeling and chunking model takes longer time per sample because of the time complexity of decoding, the number of iteration needed to achieve the best result is very low compared to other systems.",
+        "The CPU time required to run 10 iterations of MMVP is 112 minutes."
+      ]
+    },
+    {
+      "heading": "7 Conclusion",
+      "text": [
+        "We have presented the decoding algorithm for label-chunk structure and showed its effectiveness in finding two layers of information, POS tags and NP chunks.",
+        "This algorithm has a place between the",
+        "Viterbi algorithm for linear-chain models and the CKY algorithm for parsing, and the time complexity is O(n2).",
+        "The use of our label-chunk structure significantly boosted the performance over cascaded CRFs despite the online learning algorithms used to train the system, and shows itself as a promising alternative to cascaded models, and possibly dynamic conditional random fields for modeling two layers of tags.",
+        "Further work includes applying the algorithm to relation extraction, and devising an effective algorithm to find the marginal probabilities of parts."
+      ]
+    }
+  ]
+}

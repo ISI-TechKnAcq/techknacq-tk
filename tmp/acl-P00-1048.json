@@ -1,0 +1,198 @@
+{
+  "info": {
+    "authors": [
+      "Sang-Zoo Lee",
+      "Jun'ichi Tsujii",
+      "Hae-Chang Rim"
+    ],
+    "book": "Annual Meeting of the Association for Computational Linguistics",
+    "id": "acl-P00-1048",
+    "title": "Hidden Markov Model-Based Korean Part-Of-Speech Tagging Considering High Agglutinativity, Word-Spacing, And Lexical Correlativity",
+    "url": "https://aclweb.org/anthology/P00-1048",
+    "year": 2000
+  },
+  "references": [],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "In this paper we present hidden Markov models for Korean part-of-speech tagging, which consider Korean characteristics such as high agglutinativity, word-spacing, and high lexical correlativity.",
+        "In order of consider rich information in contexts, the models adopt a less strict Markov assumption.",
+        "In the models, sparse-data problem is very serious and their parameters tend to be estimated unreliably because they have a large number of parameters.",
+        "To overcome sparse-data problem, our model uses a simplified version of the well-known back-off smoothing method.",
+        "To mitigate unreliable estimation problem, our models assume joint independence instead of conditional independence because joint probabilities have the same degree of estimation reliability.",
+        "Experimental results show that models with rich contexts perform even better than standard HMMs and that joint independent assumption is effective in some models."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Korean is an highly agglutinative language which has word-spacing orthography.",
+        "It makes Korean part-of-speech (POS) tagging different from English POS tagging.",
+        "Generally English POS tagging can be regarded as a process in which a proper POS tag is assigned to each word in texts.",
+        "However, in Ko",
+        "rean POS tagging, each word is tagged with a proper combination of categories and lexical forms of morphemes(Lee et al., 1999) because Korean words can be freely formed by agglutinating morphemes and so the number of categories of Korean words can be (theoretically) infinite.",
+        "Over a decade, many works for Korean POS tagging have used a wide range of machine learning techniques such as a hidden Markov model (HMM) (Lee, 1995) (Kim et al., 1998), a maximum entropy model (Kang, 1998), transformation rules (Lim, 1997), a decision tree (Lee et al., 1999), discriminative learning (Kim et al., 1995), a fuzzy net (Kim et al., 1993), a neural network (Lee, 1994), and so on.",
+        "In this paper we propose hidden Markov models for Korean POS tagging, which adopt a less strict Markov assumption(Cinlar, 1975) to consider rich contexts and which consider Korean characteristics such as high agglutinativity, word-spacing, and high lexical correlativity.",
+        "In the models, sparse-data problem is very serious because they have a large number of parameters.",
+        "To overcome sparse-data problem, our model uses a simplified version of the well-known back-off smoothing method.",
+        "If the parameters are very specific like lexi-calized ones, they tend to have very different estimation reliability, making the Markov assumption implausible.",
+        "To mitigate this problem, our models assume joint independence between random variables instead of conditional independence because joint probabilities have the same degree of estimation reliability.",
+        "Experimental results for the KUNLP corpus (Lee et al., 1999) show that models with rich contexts perform even better than standard HMMs and that joint independent assumption is effective in some models."
+      ]
+    },
+    {
+      "heading": "2 Lexical correlativity of Korean",
+      "text": [
+        "In Korean, the same word form can be made from different morpheme sequences with the same tag sequence.",
+        "For instance, a word form Na-Neun can correspond to two different morpheme sequences with the same tag sequence, Na/V (=to sprout) +Neon/E(=case marker) and Nal/V (=to fly)+Neon/E1.",
+        "We call this ambiguity \"homo-categorial\" ambiguity.",
+        "Usually homo-categorial ambiguity is not easy to resolve without consulting lexical information in contexts.",
+        "For example, Na-Neun is tagged with Na/V+Neon/E in \"SSag-i Na",
+        "these sentences have the same tag context \"N+P V+E N+I+E\" 2, they cannot be discriminated by considering only POS tag information in contexts.",
+        "Moreover, although two lexical probabilities, Pr(Na I V) and Pr(Nal I V), are considered, the word can not be correctly tagged since the tag with larger probability is always selected in both sentences.",
+        "However, such ambiguity can be resolved by referring lexical relations in contexts.",
+        "For example, Na-Neun can be correctly tagged if we consider lexical relations between SSag-Gi and Na-Neun and between Sae-Ga and Na-Neun."
+      ]
+    },
+    {
+      "heading": "3 HMM-based Korean POS tagging",
+      "text": [
+        "Figure 1 shows a morpheme-unit lattice structure of a Korean sentence, \"Neo-Neon Hal Su iss-Da.\" , where each node has a morpheme and its POS tag and where the sequence connected by bold lines indicates the most likely sequence.",
+        "Because Korean has word-spacing orthography, transitions between nodes can",
+        "be distinguished by a word boundary.",
+        "Transitions across a word boundary, which are depicted by a solid line, are distinguished from transitions within a word, which are depicted by a dotted line."
+      ]
+    },
+    {
+      "heading": "3.1 Standard word-unit model",
+      "text": [
+        "We basically follow the notation of (Char-niak et al., 1993) to describe Bayesian models.",
+        "In this paper, we assume that {wl, w2 �... , wW } is a set of words, {tl, t2, �tT} is a set of POS tags, a sequence of random variables Wl,,,, _ Wl W2 ... W,,, is a sentence of n words, a sequence of random variables Tl,,, _ Tl T2 ... T,, is a sequence of n word categories.",
+        "Because each of random variables W can take as its value any of the words in the vocabulary, we denote the value of Wi by wi and a particular sequence of values for Wi j (i G j) by wi j .",
+        "In a similar way, we denote the value of Ti by ti and a particular sequence of values for Ti j (i G j) by ti j .",
+        "For generality, terms wi j and ti j (i > j) are defined as being empty.",
+        "The purpose of Bayesian models for POS tagging is to find the most likely sequence of POS tags for a given sequence of words, as follows:",
+        "Eqn.",
+        "1 becomes Eqn.",
+        "2 because reference to the random variables themselves can be omitted.",
+        "Eqn.",
+        "2 is then transformed into Eqn.",
+        "3 since Pr(wl,n) is constant for all ti,n-Then, the probability Pr(tl,n, w1,n) is broken down into Eqn.",
+        "4 by using the chain rule.",
+        "The standard HMM simplifies them by making the following two strict Markov assumption (conditional independence), Eqn.",
+        "5 and Eqn.",
+        "6, to get a more tractable form, Eqn.",
+        "7.",
+        "The standard HMM assumes that the probability of a current tag ti conditionally depends on only the previous K tags ti_K,i_1 and that the probability of a current word wi conditionally depends on only the current tag3.",
+        "Generally, the standard HMM has a limitation that it can not solve complicated ambiguities because it does not consider rich contexts.",
+        "To overcome this limitation, the standard HMM should be extended so that it can consult rich information in contexts.",
+        "Moreover, the standard word-unit model can not be used effectively for tagging highly agglutinative languages like Korean.",
+        "Therefore, the word-unit model should be transformed into a morpheme-unit model.",
+        "3Usually, K is determined as 1 (bigram as in (Char-niak et al., 1993)) or 2 (trigram as in (Merialdo, 1991))."
+      ]
+    },
+    {
+      "heading": "3.2 Extended morpheme-unit model",
+      "text": [
+        "Bayesian models for morpheme-unit tagging find the most likely sequence of morphemes and corresponding tags for a given sequence of words, as follows:",
+        "In the above equations, u(> n) denotes the number of morphemes in a sequence corresponding the given word sequence, c denotes a morpheme-unit tag, m denotes a morpheme, and p denotes a type of transition from the previous tag to the current tag.",
+        "p can have one of two values, \"#\" denoting a transition across a word boundary and \"+\" denoting a transition within a word.",
+        "Because it is difficult to calculate Eqn.",
+        "8, the word sequence term w1,n is usually ignored as in Eqn.",
+        "9.",
+        "Instead, we introduce p in Eqn.",
+        "9 to consider word-spacing4.",
+        "The probability Pr(C1,u,P2,u,m1,u) is also broken down into Eqn.",
+        "10 by using the chain rule.",
+        "Because Eqn.",
+        "10 is not easy to compute, it is simplified by making a Markov assumption to get a more tractable form.",
+        "An extended HMM for morpheme-unit tagging can be defined by making a less strict Markov assumption, as follows:",
+        "In a model A(C[s](K,J), M[s](L,i)), the probability of the current morpheme tag ci conditionally depends on both the previous K tags",
+        "sition Pi – K+1 i-1) and the previous J morphemes mti_Jti_1 and the probability of the current morpheme Tni conditionally depends on the current tag and the previous L tags Ci_L i (optionally, the types of their transition pi – L+l,i) and the previous I morphemes mi_I,i_1.",
+        "In experiments, we set K as 1 or 2, Jas 0 or K, Las 1 or 2, and I as 0 or L. If J and I are zero, the above models are non-lexicalized models.",
+        "Otherwise, they are lexicalized models.",
+        "For example, the extended model A(CS(2,2),M(2,2)), where word-spacing is considered only in the tag probabilities, calculate the probability of a node \"Su/NNBG\" of the most likely sequence in Figure 1 as follows:",
+        "The extended models have a large number of parameters, as compared to the standard models.",
+        "Therefore, they must suffer from both sparse-data problem and unreliable estimation problem.",
+        "The models adopt a simplified back-off smoothing technique as a solution to the first problem, and joint independence assumption as a solution to the second."
+      ]
+    },
+    {
+      "heading": "4.1 Simplified back-off smoothing",
+      "text": [
+        "In supervised learning, the simpliest parameter estimation is the maximum like-lihood(ML) estimation(Duda et al., 1973) which maximizes the probability of a training set.",
+        "The ML estimate of morpheme tag",
+        "where the function Fq(x) returns the frequency of x in the training set.",
+        "When using the ML estimation, data sparseness is even more serious in the extended models than in the standard models because the former has even more parameters than the latter.",
+        "In (Chen, 1996), where various smoothing techniques was tested for a language model by using the perplexity measure, it was reported that the back-off smoothing method(Katz, 1987) performs better on a small Craning set than other methods.",
+        "In the back-off smoothing, the smoothed probability of tag (K+1)",
+        "where r = F ) r* = (r + 1) nr+1",
+        "In the equation above, nr denotes the number of (K+1)-gram whose frequency is r, and the coefficient dr is called the discount ratio, which reflects the Good-Turing es-timate(Good, 1953)5.",
+        "Eqn.",
+        "13 says that",
+        "dr than its maximum likelihood estimate, if r > 0, or is backed off by its smoothing term PrSBO(ci I Ci – K+1,i-1) in proportion to the value of the function *i – K,i – l) of its conditional term Ci_K,ti_l, if r = 0.",
+        "However, because Eqn.",
+        "13 requires complicated computation in a(Ci_K,i_l), we simplify it to get a function of the frequency of a conditional term, as follows:",
+        "where",
+        "In Eqn.",
+        "14, the range of f is bucketed into 7",
+        "since it is also difficult to compute this equation for all possible values of f. In the formalism of the simplified back-off smoothing, each probability whose ML estimate is zero is backed off by its corresponding smoothing term.",
+        "In experiments, the smoothing term of PrSBO (ci [, Pi] I ci-K,i-1[,Pi-K+1,i-1], mi-J,i-1) is determined as follows: The smoothing term of PrSBO (mi I",
+        "as follows: In the equations above, the unigram probabilities are calculated by using the additive smoothing with 6 = 10-2, which is chosen through experiments.",
+        "The equation for the additive smoothing(Chen, 1996) is as follows:"
+      ]
+    },
+    {
+      "heading": "4.2 Joint independence",
+      "text": [
+        "The parameters of an HMM may have different degree of statistical reliability because parameter reliability depends on the frequency of conditional term.",
+        "For example, let a corpus consist of 1 million words and let the following parameters be extracted from the corpus by using the maximum likelihood estimation.",
+        "In this case, three conditional probabilities, Pr(d I a), Pr(d I b), and Pr(d I c) are all 0.1 but Pr(d I a) is statistically more reliable than others because its sample size (10,000 words = 1 million Pr(a)) is bigger than others.",
+        "Actually, this problem becomes very serious in extended models, even though parameters of the models are seen in the training corpus.",
+        "To consider such statistical reliability of a probability estimate, we introduce the concept of weighting Markov assumption, as follows:",
+        "If the probability function, Pr, is used as the weight function, W, the equations above become equations assuming joint independence between random variables as follows:",
+        "The equations above assume that the probability of the current morpheme tag ci jointly depends on both the previous K tags ci_K,2_1 and the previous J words m2_J2_1 and that the probability of the current word rni jointly depends on the current tag and the previous L tags ci_L i and the previous I words mi_1,i_1.",
+        "If a Bayesian model assumes joint independence, we call it a joint independence model (JIM).",
+        "Actually, using the probability function as the weight function is mathematically incorrect and implausible.",
+        "For example, while the sum of probabilities of all sentences with the same length becomes 1.0 in an HMM, it becomes naturally less than 1.0 in a JIM.",
+        "Therefore, JIMs should not be used in calculating the probability of a sentence.",
+        "However, if we want to find the most likely sequence for each sentence and the joint probability of each pa",
+        "rameter is regarded as a score, JIMs work well.",
+        "By replacing corresponding parameters, an extended morpheme-unit HMM can be transformed into the corresponding JIM, which is defined as follows:",
+        "In the extended JIM, 'W,(2,2), M(2,2)), the probability of a node \"Su/NNBG\" of the most likely sequence in Figure 1 is calculated as follows:",
+        "The parameters of a JIM are estimated by using the parameters of the corresponding HMM as follows:"
+      ]
+    },
+    {
+      "heading": "5 Experiments",
+      "text": [
+        "In experiments, we used the KUNLP corpus which consists of 167,115 words and 15,211 sentences and is tagged with 65 POS tags.",
+        "It was segmented into two parts, the training set of 90% and the test set of 10%, in the way that each sentence in the test set was extracted from every 10 sentence.",
+        "In the same way, we made 10-fold data set for 10-fold cross validation.",
+        "In order to morphologically analyze each word, we used the Korean morphological analyzer (Lee, 1999) which is consistent with the KUNLP corpus.",
+        "By using the morphological analyzer, the average number of possible analyses per word becomes 3.41.",
+        "Figure 2-5 illustrate graphs showing the average accuracy rates of HMMs and JIMs, without considering word-spacing, with considering word-spacing only in the lexical probabilities, with considering word-spacing only in the tag probabilities, and with considering word-spacing in both the tag and lexical probabilities, respectively.",
+        "Here, labels in x-axis",
+        "The models are arranged by the ascending order of theoretical number of parameters.",
+        "The first two models are standard models and the others are extended models.",
+        "The average accuracy rates beyond the range of each graph are intentionally omitted.",
+        "In these figures, we can observe that the simplified back-off smoothing technique mitigates sparse-data problems in both HMMs and JIMs.",
+        "As expected, JIMs achieves higher accuracy than the corresponding HMMs in some extended models consulting rich contexts.",
+        "Consulting word-spacing makes slight improvement in some of both HMMs and JIMs.",
+        "It is statistically significant with confidence 99that the best model, A(CS(2,2), MS(2,2)) (96.97%), is better than any other models including the previous standard model A(C(1,o),M(o,o)) (94.95%)(Lee, 1995), the previous model A(CS(1,o),M(o,o)) (94.96%) (Kim et al., 1998), and the best JIM, A(C(1,1),MS(1,1)) (96.95%)."
+      ]
+    },
+    {
+      "heading": "6 Conclusion",
+      "text": [
+        "We have presented the extended HMMs for Korean POS tagging, which assume joint independence between random variables, which are based on the morpheme-unit lattice structure, and which consider word-spacing and rich information in contexts.",
+        "In the models, a simplified version of back-off smoothing is used to mitigate data sparseness problem.",
+        "From the experimental results, we have observed that extended models achieved even better results than the standard models in case of both HMMs and JIMs, that the simpli",
+        "fied back-off smoothing technique mitigated data sparseness quite effectively, that consulting word-spacing made slight improvement of accuracy, and that some extended JIMs outperformed the corresponding HMMs.",
+        "Now, we are implementing and evaluating various smoothing techniques in order to find more effective smoothing technique for HMM/JIM-based Korean POS tagging.",
+        "And also, we are trying to apply JIMs to different areas such as information extraction in the bio-molecular domain, noun phrase chunck-ing, and so on."
+      ]
+    }
+  ]
+}

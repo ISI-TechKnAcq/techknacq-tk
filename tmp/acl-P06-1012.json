@@ -1,0 +1,320 @@
+{
+  "info": {
+    "authors": [
+      "Yee Seng Chan",
+      "Hwee Tou Ng"
+    ],
+    "book": "International Conference on Computational Linguistics and Annual Meeting of the Association for Computational Linguistics",
+    "id": "acl-P06-1012",
+    "title": "Estimating Class Priors in Domain Adaptation for Word Sense Disambiguation",
+    "url": "https://aclweb.org/anthology/P06-1012",
+    "year": 2006
+  },
+  "references": [
+    "acl-H94-1046",
+    "acl-P03-1058",
+    "acl-P04-1036",
+    "acl-P96-1006",
+    "acl-W00-1322",
+    "acl-W02-1006",
+    "acl-W04-0807",
+    "acl-W04-3204"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "Instances of a word drawn from different domains may have different sense priors (the proportions of the different senses of a word).",
+        "This in turn affects the accuracy of word sense disambiguation (WSD) systems trained and applied on different domains.",
+        "This paper presents a method to estimate the sense priors of words drawn from a new domain, and highlights the importance of using well calibrated probabilities when performing these estimations.",
+        "By using well calibrated probabilities, we are able to estimate the sense priors effectively to achieve significant improvements in WSD accuracy."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Many words have multiple meanings, and the process of identifying the correct meaning, or sense of a word in context, is known as word sense disambiguation (WSD).",
+        "Among the various approaches to WSD, corpus-based supervised machine learning methods have been the most successful to date.",
+        "With this approach, one would need to obtain a corpus in which each ambiguous word has been manually annotated with the correct sense, to serve as training data.",
+        "However, supervised WSD systems faced an important issue of domain dependence when using such a corpus-based approach.",
+        "To investigate this, Escudero et al.",
+        "(2000) conducted experiments using the DSO corpus, which contains sentences drawn from two different corpora, namely Brown Corpus (BC) and Wall Street Journal (WSJ).",
+        "They found that training a WSD system on one part (BC or WSJ) of the DSO corpus and applying it to the other part can result in an accuracy drop of 12% to 19%.",
+        "One reason for this is the difference in sense priors (i.e., the proportions of the different senses of a word) between BC and WSJ.",
+        "For instance, the noun interest has these 6 senses in the DSO corpus: sense 1, 2, 3, 4, 5, and 8.",
+        "In the BC part of the DSO corpus, these senses occur with the proportions: 34%, 9%, 16%, 14%, 12%, and 15%.",
+        "However, in the WSJ part of the DSO corpus, the proportions are different: 13%, 4%, 3%, 56%, 22%, and 2%.",
+        "When the authors assumed they knew the sense priors of each word in BC and WSJ, and adjusted these two datasets such that the proportions of the different senses of each word were the same between BC and WSJ, accuracy improved by 9%.",
+        "In another work, Agirre and Martinez (2004) trained a WSD system on data which was automatically gathered from the Internet.",
+        "The authors reported a 14% improvement in accuracy if they have an accurate estimate of the sense priors in the evaluation data and sampled their training data according to these sense priors.",
+        "The work of these researchers showed that when the domain of the training data differs from the domain of the data on which the system is applied, there will be a decrease in WSD accuracy.",
+        "To build WSD systems that are portable across different domains, estimation of the sense priors (i.e., determining the proportions of the different senses of a word) occurring in a text corpus drawn from a domain is important.",
+        "McCarthy et al.",
+        "(2004) provided a partial solution by describing a method to predict the predominant sense, or the most frequent sense, of a word in a corpus.",
+        "Using the noun interest as an example, their method will try to predict that sense 1 is the predominant sense in the BC part of the DSO corpus, while sense 4 is the predominant sense in the WSJ part of the",
+        "corpus.",
+        "In our recent work (Chan and Ng, 2005b), we directly addressed the problem by applying machine learning methods to automatically estimate the sense priors in the target domain.",
+        "For instance, given the noun interest and the WSJ part of the DSO corpus, we attempt to estimate the proportion of each sense of interest occurring in WSJ and showed that these estimates help to improve WSD accuracy.",
+        "In our work, we used naive Bayes as the training algorithm to provide posterior probabilities, or class membership estimates, for the instances in the target domain.",
+        "These probabilities were then used by the machine learning methods to estimate the sense priors of each word in the target domain.",
+        "However, it is known that the posterior probabilities assigned by naive Bayes are not reliable, or not well calibrated (Domingos and Pazzani, 1996).",
+        "These probabilities are typically too extreme, often being very near 0 or 1.",
+        "Since these probabilities are used in estimating the sense priors, it is important that they are well calibrated.",
+        "In this paper, we explore the estimation of sense priors by first calibrating the probabilities from naive Bayes.",
+        "We also propose using probabilities from another algorithm (logistic regression, which already gives well calibrated probabilities) to estimate the sense priors.",
+        "We show that by using well calibrated probabilities, we can estimate the sense priors more effectively.",
+        "Using these estimates improves WSD accuracy and we achieve results that are significantly better than using our earlier approach described in (Chan and Ng, 2005b).",
+        "In the following section, we describe the algorithm to estimate the sense priors.",
+        "Then, we describe the notion of being well calibrated and discuss why using well calibrated probabilities helps in estimating the sense priors.",
+        "Next, we describe an algorithm to calibrate the probability estimates from naive Bayes.",
+        "Then, we discuss the corpora and the set of words we use for our experiments before presenting our experimental results.",
+        "Next, we propose using the well calibrated probabilities of logistic regression to estimate the sense priors, and perform significance tests to compare our various results before concluding."
+      ]
+    },
+    {
+      "heading": "2 Estimation of Priors",
+      "text": [
+        "To estimate the sense priors, or a priori probabilities of the different senses in a new dataset, we used a confusion matrix algorithm (Vucetic and Obradovic, 2001) and an EM based algorithm (Saerens et al., 2002) in (Chan and Ng, 2005b).",
+        "Our results in (Chan and Ng, 2005b) indicate that the EM based algorithm is effective in estimating the sense priors and achieves greater improvements in WSD accuracy compared to the confusion matrix algorithm.",
+        "Hence, to estimate the sense priors in our current work, we use the EM based algorithm, which we describe in this section."
+      ]
+    },
+    {
+      "heading": "2.1 EM Based Algorithm",
+      "text": [
+        "Most of this section is based on (Saerens et al., 2002).",
+        "Assume we have a set of labeled data DL with n classes and a set ofN independent instances",
+        "Assuming the within-class densities p(Xkjw2), i.e., the probabilities of observing Xk, given the class w2 , do not change from the training set DL to the new data set, we can define: p (Xk.",
+        "j w2)",
+        "estimates p(w2) of the new data set that will maximize the likelihood of (1) with respect to p (w2) , we can apply the iterative procedure of the EM algorithm.",
+        "In effect, through maximizing the likelihood of (1), we obtain the a priori probability estimates as a by-product.",
+        "Let us now define some notations.",
+        "When we apply a classifier trained on DL on an instance",
+        "instance Xk being classified as class w2 by the classifier trained on DL.",
+        "Further, let us define pL (w2) as the a priori probabilities of class w2 in DL.",
+        "This can be estimated by the class frequency of w2 in DL.",
+        "We also define p-.)",
+        "(coj) and p(s) (cOi jXk) as estimates of the new a priori and a posteriori probabilities at step s of the iterative EM procedure.",
+        "Assuming we initialize p-°)(coj) = pL(coj), then for each instance Xk, in Dt; and each class w2 , the EM",
+        "algorithm provides the following iterative steps:",
+        "where Equation (2) represents the expectation E-step, Equation (3) represents the maximization M-step, and N represents the number of instances in Dt; .",
+        "Note that the probabilities pL (wi Ixk) and pL (wi) in Equation (2) will stay the same throughout the iterations for each particular instance xk and class wi .",
+        "The new a posteriori probabilities p(s) (wi Ixk.)",
+        "at steps in Equation (2) are simply the a posteriori probabilities in the conditions of the labeled data, pL (wi I xk) , weighted by the ratio of the new priors p-(s) (coi) to the old priors pL (�oi) .",
+        "The denominator in Equation (2) is simply a normalizing factor.",
+        "The a posteriori P(s) (wi Ixk.)",
+        "and a priori probabilities p(S) (wi) are re-estimated sequentially during each iterations for each new instance xk and each class wi, until the convergence of the estimated probabilities p(S) (wi) .",
+        "This iterative procedure will increase the likelihood of (1) at each step."
+      ]
+    },
+    {
+      "heading": "2.2 Using A Priori Estimates",
+      "text": [
+        "If a classifier estimates posterior class probabilities pL Pi I xk) when presented with a new instance xk.",
+        "from Dt; , it can be directly adjusted according to estimated a priori probabilities p(wi) on Dt; :",
+        "where pL (wi) denotes the a priori probability of class �oi from DL and &dJust(�OiIxk.)",
+        "denotes the adjusted predictions."
+      ]
+    },
+    {
+      "heading": "3 Calibration of Probabilities",
+      "text": [
+        "In our eariler work (Chan and Ng, 2005b), the posterior probabilities assigned by a naive Bayes classifier are used by the EM procedure described in the previous section to estimate the sense priors p(wi) in a new dataset.",
+        "However, it is known that the posterior probabilities assigned by naive Bayes are not well calibrated (Domingos and Pazzani, 1996).",
+        "It is important to use an algorithm which gives well calibrated probabilities, if we are to use the probabilities in estimating the sense priors.",
+        "In this section, we will first describe the notion of being well calibrated before discussing why having well calibrated probabilities helps in estimating the sense priors.",
+        "Finally, we will introduce a method used to calibrate the probabilities from naive Bayes."
+      ]
+    },
+    {
+      "heading": "3.1 Well Calibrated Probabilities",
+      "text": [
+        "Assume for each instance x, a classifier outputs a probability Su,z (x) between 0 and 1, of x belonging to class wi .",
+        "The classifier is well-calibrated if the empirical class membership probability p(wi I S,,z (x) = t) converges to the probability value Su,z (x) = t as the number of examples classified goes to infinity (Zadrozny and Elkan, 2002).",
+        "Intuitively, if we consider all the instances to which the classifier assigns a probability Su,z (x) of say 0.6, then 60% of these instances should be members of class �oi ."
+      ]
+    },
+    {
+      "heading": "3.2 Being Well Calibrated Helps Estimation",
+      "text": [
+        "To see why using an algorithm which gives well calibrated probabilities helps in estimating the sense priors, let us rewrite Equation (3), the M-step of the EM procedure, as the following:",
+        "where Su,z = { ti, ... t?,,, } denotes the set of posterior probability values for class coi, and Su,, (x4,) denotes the posterior probability of class wi assigned by the classifier for instance xq.",
+        "Based on t1, ... , t,, we can imagine that we have m. bins, where each bin is associated with a specific t value.",
+        "Now, distribute all the instances in the new dataset Dt; into the m. bins according to their posterior probabilities Su,z (x) .",
+        "Let Bl, for 1 = 1, ... , m., denote the set of instances in bin 1.",
+        "Note that JB1I+•••+IBII+•••+IBmI=N.",
+        "Now, let pl denote the proportion of instances with true class label �oi in BL.",
+        "Given a well calibrated algorithm, pl = tl by definition and Equation (5) can be rewritten as:",
+        "where A',, denotes the number of instances in Dt, with true class label coi.",
+        "Therefore, pG'+i) (coi) reflects the proportion of instances in Dt, with true class label w2.",
+        "Hence, using an algorithm which gives well calibrated probabilities helps in the estimation of sense priors."
+      ]
+    },
+    {
+      "heading": "3.3 Isotonic Regression",
+      "text": [
+        "Zadrozny and Elkan (2002) successfully used a method based on isotonic regression (Robertson et al., 1988) to calibrate the probability estimates from naive Bayes.",
+        "To compute the isotonic regression, they used the pair-adjacent violators (PAV) (Ayer et al., 1955) algorithm, which we show in Figure 1.",
+        "Briefly, what PAV does is to initially view each data value as a level set.",
+        "While there are two adjacent sets that are out of order (i.e., the left level set is above the right one) then the sets are combined and the mean of the data values becomes the value of the new level set.",
+        "PAV works on binary class problems.",
+        "In a binary class problem, we have a positive class and a negative class.",
+        "Now, let D = (Pk, xk.",
+        "), 1 < k,.",
+        "< N, where xi, ... , xN represent Nexamples and Pk is the probability of xk, belonging to the positive class, as predicted by a classifier.",
+        "Further, let gk, represent the true label of xk.",
+        "For a binary class problem, we let gk.",
+        "= 1 if xk is a positive example and gk.",
+        "= 0 if xk is a negative example.",
+        "The PAV algorithm takes in a set of (Pk, Yk.",
+        "), sorted in ascending order of Pk and returns a series of increasing step-values, where each step-value gj, d (denoted by m in Figure 1) is associated with a lowest boundary value pj and a highest boundary value pl.",
+        "We performed 10-fold cross-validation on the training data to assign values to pk.",
+        "We then applied the PAV algorithm to obtain values for 9k.. To obtain the calibrated probability estimate for a test instance x, we find the boundary values pj and pi where pj < Su,, (x) < pl and assign gj,l as the calibrated probability estimate.",
+        "To apply PAV on a multiclass problem, we first reduce the problem into a number of binary class problems.",
+        "For reducing a multiclass problem into a set of binary class problems, experiments in (Zadrozny and Elkan, 2002) suggest that the one-against-all approach works well.",
+        "In one-against-all, a separate classifier is trained for each class w2, where examples belonging to class w2 are treated as positive examples and all other examples are treated as negative examples.",
+        "A separate classifier is then learnt for each binary class problem and the probability estimates from each classifier are calibrated.",
+        "Finally, the calibrated binary-class probability estimates are combined to obtain multiclass probabilities, computed by a simple normalization of the calibrated estimates from each binary classifier, as suggested by Zadrozny and Elkan (2002)."
+      ]
+    },
+    {
+      "heading": "4 Selection of Dataset",
+      "text": [
+        "In this section, we discuss the motivations in choosing the particular corpora and the set of words used in our experiments."
+      ]
+    },
+    {
+      "heading": "4.1 DSO Corpus",
+      "text": [
+        "The DSO corpus (Ng and Lee, 1996) contains 192,800 annotated examples for 121 nouns and 70 verbs, drawn from BC and WSJ.",
+        "BC was built as a balanced corpus and contains texts in various categories such as religion, fiction, etc.",
+        "In contrast, the focus of the WSJ corpus is on financial and business news.",
+        "Escudero et al.",
+        "(2000) exploited the difference in coverage between these two corpora to separate the DSO corpus into its BC and WSJ parts for investigating the domain dependence of several WSD algorithms.",
+        "Following their setup, we also use the DSO corpus in our experiments.",
+        "The widely used SEMCOR (SC) corpus (Miller et al., 1994) is one of the few currently available manually sense-annotated corpora for WSD.",
+        "SEMCOR is a subset of BC.",
+        "Since BC is a balanced corpus, and training a classifier on a general corpus before applying it to a more specific corpus is a natural scenario, we will use examples from BC as training data, and examples from WSJ as evaluation data, or the target dataset."
+      ]
+    },
+    {
+      "heading": "4.2 Parallel Texts",
+      "text": [
+        "Scalability is a problem faced by current supervised WSD systems, as they usually rely on manually annotated data for training.",
+        "To tackle this problem, in one of our recent work (Ng et al., 2003), we had gathered training data from parallel texts and obtained encouraging results in our where",
+        "evaluation on the nouns of SENSEVAL-2 English lexical sample task (Kilgarriff, 2001).",
+        "In another recent evaluation on the nouns of SENSEVAL2 English all-words task (Chan and Ng, 2005a), promising results were also achieved using examples gathered from parallel texts.",
+        "Due to the potential of parallel texts in addressing the issue of scalability, we also drew training data for our earlier sense priors estimation experiments (Chan and Ng, 2005b) from parallel texts.",
+        "In addition, our parallel texts training data represents a natural domain difference with the test data of SENSEVAL2 English lexical sample task, of which 91% is drawn from the British National Corpus (BNC).",
+        "As part of our experiments, we followed the experimental setup of our earlier work (Chan and Ng, 2005b), using the same 6 English-Chinese parallel corpora (Hong Kong Hansards, Hong Kong News, Hong Kong Laws, Sinorama, Xinhua News, and English translation of Chinese Treebank), available from Linguistic Data Consortium.",
+        "To gather training examples from these parallel texts, we used the approach we described in (Ng et al., 2003) and (Chan and Ng, 2005b).",
+        "We then evaluated our estimation of sense priors on the nouns of SENSEVAL-2 English lexical sample task, similar to the evaluation we conducted in (Chan and Ng, 2005b).",
+        "Since the test data for the nouns of SENSEVAL-3 English lexical sample task (Mihalcea et al., 2004) were also drawn from BNC and represented a difference in domain from the parallel texts we used, we also expanded our evaluation to these SENSEVAL-3 nouns."
+      ]
+    },
+    {
+      "heading": "4.3 Choice of Words",
+      "text": [
+        "Research by (McCarthy et al., 2004) highlighted that the sense priors of a word in a corpus depend on the domain from which the corpus is drawn.",
+        "A change of predominant sense is often indicative of a change in domain, as different corpora drawn from different domains usually give different predominant senses.",
+        "For example, the predominant sense of the noun interest in the BC part of the DSO corpus has the meaning “a sense of concern with and curiosity about someone or something”.",
+        "In the WSJ part of the DSO corpus, the noun interest has a different predominant sense with the meaning “a fixed charge for borrowing money”, reflecting the business and finance focus of the WSJ corpus.",
+        "Estimation of sense priors is important when there is a significant change in sense priors between the training and target dataset, such as when there is a change in domain between the datasets.",
+        "Hence, in our experiments involving the DSO corpus, we focused on the set of nouns and verbs which had different predominant senses between the BC and WSJ parts of the corpus.",
+        "This gave us a set of 37 nouns and 28 verbs.",
+        "For experiments involving the nouns of SENSEVAL-2 and SENSEVAL-3 English lexical sample task, we used the approach we described in (Chan and Ng, 2005b) of sampling training examples from the parallel texts using the natural (empirical) distribution of examples in the parallel texts.",
+        "Then, we focused on the set of nouns having different predominant senses between the examples gathered from parallel texts and the evaluation data for the two SENSEVAL tasks.",
+        "This gave a set of 6 nouns for SENSEVAL-2 and 9 nouns for SENSEVAL3.",
+        "For each noun, we gathered a maximum of 500 parallel text examples as training data, similar to what we had done in (Chan and Ng, 2005b)."
+      ]
+    },
+    {
+      "heading": "5 Experimental Results",
+      "text": [
+        "Similar to our previous work (Chan and Ng, 2005b), we used the supervised WSD approach described in (Lee and Ng, 2002) for our experiments, using the naive Bayes algorithm as our classifier.",
+        "Knowledge sources used include parts-of-speech, surrounding words, and local collocations.",
+        "This approach achieves state-of-the-art accuracy.",
+        "All accuracies reported in our experiments are micro-averages over all test examples.",
+        "In (Chan and Ng, 2005b), we used a multiclass naive Bayes classifier (denoted by NB) for each word.",
+        "Following this approach, we noted the WSD accuracies achieved without any adjustment, in the column L under NB in Table 1.",
+        "The predictions k (wi IXk) of these naive Bayes classifiers are then used in Equation (2) and (3) to estimate the sense priors p(w2), before being adjusted by these estimated sense priors based on Equation (4).",
+        "The resulting WSD accuracies after adjustment are listed in the column EMNB in Table 1, representing the WSD accuracies achievable by following the approach we described in (Chan and Ng, 2005b).",
+        "Next, we used the one-against-all approach to reduce each multiclass problem into a set of binary class problems.",
+        "We trained a naive Bayes classifier for each binary problem and calibrated the probabilities from these binary classifiers.",
+        "The WSD"
+      ]
+    },
+    {
+      "heading": "6 Discussion",
+      "text": [
+        "accuracies of these calibrated naive Bayes classifiers (denoted by NBcal) are given in the column L under NBcal.",
+        "The predictions of these classifiers are then used to estimate the sense priors p (w2) , before being adjusted by these estimates based on Equation (4).",
+        "The resulting WSD accuracies after adjustment are listed in column EMNB,,l in Table The results show that calibrating the probabilities improves WSD accuracy.",
+        "In particular, EMNB,,l achieves the highest accuracy among the methods described so far.",
+        "To provide a basis for comparison, we also adjusted the calibrated probabilities by the true sense priors p(w2) of the test data.",
+        "The increase in WSD accuracy thus obtained is given in the column True - L in Table",
+        "2.",
+        "Note that this represents the maximum possible increase in accuracy achievable provided we",
+        "know these true sense priors p (w2) .",
+        "In the column EMNB,,l - L in Table 2, we list the increase in WSD accuracy when adjusted by the sense priors p(w2) which were automatically estimated using the EM procedure.",
+        "The relative improvements obtained with using p (w2) (compared against using p (w2)) are given as percentages in brackets.",
+        "As an example, according to Table 1 for the DSO verbs, EMNB,,l gives an improvement of 49.5% - 46.9% = 2.6% in WSD accuracy, and the relative improvement compared to using the true sense priors is 2.6/10.3 = 25.2%, as shown in Table 2.",
+        "The experimental results show that the sense priors estimated using the calibrated probabilities of naive Bayes are effective in increasing the WSD accuracy.",
+        "However, using a learning algorithm which already gives well calibrated posterior probabilities may be more effective in estimating the sense priors.",
+        "One possible algorithm is logistic regression, which directly optimizes for getting approximations of the posterior probabilities.",
+        "Hence, its probability estimates are already well calibrated (Zhang and Yang, 2004; Niculescu-Mizil and Caruana, 2005).",
+        "In the rest of this section, we first conduct experiments to estimate sense priors using the predictions of logistic regression.",
+        "Then, we perform significance tests to compare the various methods."
+      ]
+    },
+    {
+      "heading": "6.1 Using Logistic Regression",
+      "text": [
+        "We trained logistic regression classifiers and evaluated them on the 4 datasets.",
+        "However, the WSD accuracies of these unadjusted logistic regression classifiers are on average about 4% lower than those of the unadjusted naive Bayes classifiers.",
+        "One possible reason is that being a discriminative learner, logistic regression requires more training examples for its performance to catch up to, and possibly overtake the generative naive Bayes learner (Ng and Jordan, 2001).",
+        "Although the accuracy of logistic regression as a basic classifier is lower than that of naive Bayes, its predictions may still be suitable for estimating",
+        "sense priors.",
+        "To gauge how well the sense priors are estimated, we measure the KL divergence between the true sense priors and the sense priors estimated by using the predictions of (uncalibrated) multiclass naive Bayes, calibrated naive Bayes, and logistic regression.",
+        "These results are shown in Table 3 and the column EML,9R shows that using the predictions of logistic regression to estimate sense priors consistently gives the lowest KL divergence.",
+        "Results of the KL divergence test motivate us to use sense priors estimated by logistic regression on the predictions of the naive Bayes classifiers.",
+        "To elaborate, we first use the probability estimates k Pi I X k) of logistic regression in Equations (2) and (3) to estimate the sense priors p(w2).",
+        "These estimates p(w2) and the predictions k(cOiIXk) of the calibrated naive Bayes classifier are then used in Equation (4) to obtain the adjusted predictions.",
+        "The resulting WSD accuracy is shown in the column EML,9R under NBcal in Table 1.",
+        "Corresponding results when the predictions k Pi I Xk ) of the multiclass naive Bayes is used in Equation (4), are given in the column EML,9R under NB.",
+        "The relative improvements against using the true sense priors, based on the calibrated probabilities, are given in the column EML,9R – L in Table 2.",
+        "The results show that the sense priors provided by logistic regression are in general effective in further improving the results.",
+        "In the case of DSO nouns, this improvement is especially significant."
+      ]
+    },
+    {
+      "heading": "6.2 Significance Test",
+      "text": [
+        "Paired t-tests were conducted to see if one method is significantly better than another.",
+        "The t statistic of the difference between each test instance pair is computed, giving rise to a p value.",
+        "The results of significance tests for the various methods on the 4 datasets are given in Table 4, where the symbols “�”, “> ”, and “»” correspond to p-value > 0.05, (0.01, 0.05], and C 0.01 respectively.",
+        "The methods in Table 4 are represented in the form a1-a2, where a1 denotes adjusting the predictions of which classifier, and a2 denotes how the sense priors are estimated.",
+        "As an example, NBcal-EML,9R specifies that the sense priors estimated by logistic regression is used to adjust the predictions of the calibrated naive Bayes classifier, and corresponds to accuracies in column EML,9R under NBcal in Table 1.",
+        "Based on the significance tests, the adjusted accuracies of EMNB and EMNBLQ.I in Table 1 are significantly better than their respective unadjusted L accuracies, indicating that estimating the sense priors of a new domain via the EM approach presented in this paper significantly improves WSD accuracy compared to just using the sense priors from the old domain.",
+        "NB-EMNB represents our earlier approach in (Chan and Ng, 2005b).",
+        "The significance tests show that our current approach of using calibrated naive Bayes probabilities to estimate sense priors, and then adjusting the calibrated probabilities by these estimates (NBcal-EMNB,,I) performs significantly better than NB-EMNB (refer to row 2 of Table 4).",
+        "For DSO nouns, though the results are similar, the p value is a relatively low 0.06.",
+        "Using sense priors estimated by logistic regression further improves performance.",
+        "For example, row 1 of Table 4 shows that adjusting the predictions of multiclass naive Bayes classifiers by sense priors estimated by logistic regression (NB-EML,9R) performs significantly better than using sense priors estimated by multiclass naive Bayes (NB-EMNB ).",
+        "Finally, using sense priors estimated by logistic regression to adjust the predictions of calibrated naive Bayes (NBcal-EML,9R) in general performs significantly better than most other methods, achieving the best overall performance.",
+        "In addition, we implemented the unsupervised method of (McCarthy et al., 2004), which calculates a prevalence score for each sense of a word to predict the predominant sense.",
+        "As in our earlier work (Chan and Ng, 2005b), we normalized the prevalence score of each sense to obtain estimated sense priors for each word, which we then used",
+        "to adjust the predictions of our naive Bayes classifiers.",
+        "We found that the WSD accuracies obtained with the method of (McCarthy et al., 2004) are on average 1.9% lower than our NBcal-EMLo9R method, and the difference is statistically significant."
+      ]
+    },
+    {
+      "heading": "7 Conclusion",
+      "text": [
+        "Differences in sense priors between training and target domain datasets will result in a loss of WSD accuracy.",
+        "In this paper, we show that using well calibrated probabilities to estimate sense priors is important.",
+        "By calibrating the probabilities of the naive Bayes algorithm, and using the probabilities given by logistic regression (which is already well calibrated), we achieved significant improvements in WSD accuracy over previous approaches."
+      ]
+    }
+  ]
+}

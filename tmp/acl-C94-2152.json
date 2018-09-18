@@ -1,0 +1,324 @@
+{
+  "info": {
+    "authors": [
+      "Koong H. C. Lin",
+      "Von-Wun Soo"
+    ],
+    "book": "International Conference on Computational Linguistics",
+    "id": "acl-C94-2152",
+    "title": "Hypothesis Scoring Over Theta Grids Information in Parsing Chinese Sentences With Serial Verb Constructions",
+    "url": "https://aclweb.org/anthology/C94-2152",
+    "year": 1994
+  },
+  "references": [
+    "acl-C90-2010",
+    "acl-J83-3004",
+    "acl-P93-1033"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "Serial verb constructions (SVCs) in Chinese are popular structural ambiguities which make parsing difficult.",
+        "In this paper, we propose a quantitative model, 'S-model', based on theta grids information, that can systematically resolve ambiguities of SVCs to arbitrate competence between verbs in parsing SVCs sentences.",
+        "S-model has three major characteristics: (1) it can resolve SVCs without relying on specific types of SVCs classified by linguists; (2) it can handle long SVCs, i.e., SVCs with more than two verbs; (3) it can simultaneously determine whether a verb candidate is really acts as a verb in the sentence."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "In Mandarin Chinese, it is common that there are two or more verbs in a sentence without any marker indicating the relationships between them.",
+        "Such peculiar construct is called Serial verb constructions (SVCs) [Li and Thompson 1981].",
+        "For example, in the sentence: \"# nx\" (the defendant hope the plaintiff forgive) (The defendant hoped that the plaintiff could forgive him.",
+        "), there arc two verbs: \"4; V\" (hope) and \"n ftg\" (forgive); however, there are no such markers as subordination markers, conjunctions, preposition, or other morphological cues, which indicate the relationships between them.",
+        "In developing a parser, SVCs cause considerable problems.",
+        "We have designed a modified chart parser using theta grids information.",
+        "In parsing sentences with SVCs, different verbs will compete in searching the chart for their own theta roles.",
+        "Thus, some mechanism for arbitrating among the competing verbs for the ownership of each constituent in the chart must be designed.",
+        "The theta grid chart parser is to be described in the next section.",
+        "The study of SVCs is still primitive.",
+        "Most previous work [Chang and Kntlee 1991] [Yeh and Lee 1992] were based on Li and Thompson's classification of SVCs [Li and Thompson 1981].",
+        "Surveying their work, we find there are some limitations.",
+        "Yang [1987] and Chang et al.",
+        "[Chang and Krulee 1991] dealt with only subsets of SVCs.",
+        "Moreover, it is not clear how the implementations of Yang [1987], Chang et al.",
+        "[Chang and Kmiec 1991], and Yeh et al.",
+        "[Yeh and Lee 1992] can be extended to handle long SVCs, i.e., those sentences containing more than two occurrences of verbs.",
+        "It is because their work were based on the classification of SVCs, and the classification was based on two-verbs cases only.",
+        "Pun [1991] claimed that his work could handle long SVCs; however, did not report how to systematically extend his method to SVCs with three or more verbs.",
+        "In our model, there arc three characteristics: First, instead of classifying SVCs into several types, we make use of a numerical scoring function to determine a preferred structure.",
+        "It is an attempt to make the SVCs handling process more systematic.",
+        "The information encoded in theta grids are used as bases for scoring.",
+        "Second, it can handle long SVCs.",
+        "Third, category ambiguities can be taken into consideration at the same time.",
+        "Namely, we can simultaneously determine whether a verb candidate actually plays a verb or not.",
+        "While in previous work, before the SVC handling processes are triggered, it must determine the actual verbs in the sentence.",
+        "This work is part of our long-term research for building a natural language front-end of a verdict understanding system.",
+        "Thus, the corpora we use arc judicial verdict documents from the Kaohsiung district court [Taiwan 1990a][Taiwan 1990b], which were written in a special official-document style.",
+        "Thus, our analysis is based on such kind of sub-language."
+      ]
+    },
+    {
+      "heading": "2 A Theta-grid Chart Parser",
+      "text": [
+        "Since the mechanism we propose is under the framework of a theta-grid chart parser, in this section, we introduce the parser briefly.",
+        "Thematic information is one of the information sources that can bridge the gap between syntactic and semantic processing phases.",
+        "In theta-grid theory [Tang 1992], rich thematic information is incorporated for the analysis of human languages.",
+        "The idea of theta-grid theory is as follows: we use a predicate, say, a verb, as the center of a \"grid\" and, by finding the theta-roles registered in the lexical entries of this predicate, we can construct a grid formed by this predicate and then construe the sentence (or clause) spanned by this predicate.",
+        "We think the theta-grid representation suitable for processing Chinese.",
+        "This shares similar viewpoint with other work of designing Chinese parser which uses thematic information, such as ICG parser [Chen and Huang 1990].",
+        "To computationalize theta-grid theory, some control strategies for parsing must be implemented.",
+        "The well-known chart parser [Kay 1980[, which utilizes the data structure \"chart\" to record the partial parsing results, is suitable for our work.",
+        "Since it keeps all possible combination of constituents, it can accept sentences with missing theta roles.",
+        "Thus, we designed a modified chart parser called TG-Chart parser [Lin and Soo 1993] by combining theta-grid theory and chart parser.",
+        "Note that currently in our work, only the theta",
+        "grids for verbs arc considered.",
+        "For each verb, there arc two kinds of theta roles registered: the obligatory roles, which must be found for this verb to construct a legal \"grid\"; the optional roles, with their appearance being optional.",
+        "Take \" \" for example, its theta roles arc registered as: +1'171) (Pd) Agi; thus, two NPs must be found in the chart for the constniction of a legal grid (From syntactic clues, both \"Ag\" and \"Th\" are always played by NPs.",
+        "!Liu and Soo I 993].",
+        "), while the appearance of a clause to serve as a \"Pd\" role is optional.",
+        "A brief description of our parsing algorithm is as follows: [Step 11 Search the sentence for positions of all \"verb candidates\".",
+        "(What we call verb candidates are those words that have the verb-category as one of its syntactic categories in the dictionary.)",
+        "[Step 2] By considering all possible combination, the chart parser groups the words into syntactic constituents.",
+        "Syntactic knowledge is used in this step.",
+        "[Step 3] If only one verb candidate is found in 'Step search the chart for constituents which can play the theta roles of this verb.",
+        "[Step 4] If more than one verb candidate arc found, call S-model to determine the most preferred structure.",
+        "S-model will be described in section 3."
+      ]
+    },
+    {
+      "heading": "3 The S-model",
+      "text": [
+        "We design a model which utilizes scoring functions and thet►-grid theory to handle the SVCs problem.",
+        "This model, called S-model (an abbreviation of \"SVCs handling model\"), consists of four modules: a combination generator, a combination filter, a score evaluator, and a structure selector as shown in !figure 1 I.",
+        "We now describe these modules as follows:",
+        "Verb-string Generator generates all possible verb strings by sequentially enumerating the binary string: 001, 010, 011, 100, 101, 110, III.",
+        "The verb string \"WI\" represents the situation where vl and v3 act as verbs, while v2 doesn't.",
+        "And then, Subordination-relation 'I'agger tags these verb strings with possible subordination relations.",
+        "It divides these strings into three classes according to the occurrences of l's in the string, that is, the number of verb candidates in the sentence.",
+        "These three classes arc: (1) For the one-1 class (i.e., 001, 010, 100), there is obviously no subordination relation.",
+        "That is, there is only one possible case to consider: this candidate acts as the only verb in this sentence.",
+        "(2) For the two-1 class (i.e., 011, 101, 110), there are three possibilities to consider: vl=v2, vl<v2, and v1>v2.",
+        "We follow the notations used by Pun ll'un 1991], where \"v1>v2\" means v2 is subordinate to vi; \"v1=v2\", no subordination relations exist between the two verbs.",
+        "(3)",
+        "As we know, all verb candidates compete to act as verbs.",
+        "The question is: \"which candidates can actually act as verbs?\" and, \"what is their correlation?\".",
+        "If we can enumerate all possible combination and evaluate their scores respectively, we can determine the most preferred construction.",
+        "Take the two-verb-candidates case as an example, let the two verb candidates be vl, v2, there arc five combination: (1) only vl is a verb while v2 is not, (2) only v2 is a verb, (3) both vl and v2 are verbs, while there is not any subordination relation between them.",
+        "(1) both are verbs, and vl is subordinate to v2.",
+        "(5) both arc verbs, and v2 is subordinate to vl."
+      ]
+    },
+    {
+      "heading": "3.1 Combination Generator",
+      "text": [
+        "Combination Generator consists of two subniodules: Verb-string Generator and Subordination-relation Jagger.",
+        "We illustrate a case with three verb candidates:",
+        "For the three-1 class (i.e., 111), there are seventeen cases.",
+        "We use abbreviated notations to represent them, where \"><\" is the abbreviation of \"v1 > [v2<v3]\", with square brackets being represented by underlines, meaning that locally v2 is subordinate to v3, and they together form a clause, which then plays a prepositional role for vl, and, for another example, \"=<\" is the abbreviation of \"[1/1 – v2] < v3\".",
+        "These seventeen cases arc: ==, =<, =>, <=, <<, <<, <>, <>, >=, ><, ><, », and ».",
+        "These cases arc generated simply by enumerating possible combinations of these three symbols: <, and >.",
+        "For each pair of symbols S, S2, two combinations are possible: and Si S2.",
+        "Note that \"==\" and \"=\" represents the same case; thus, only a single \"==\" is generated.",
+        "Therefore, 3 x 3 x 2 – 1 = 17 cases arc possible.",
+        "By summarizing classes (1), (2), and (3), Combination Generator generates Ci3 x 1 + (7; x 3 + C3 x 17 = 29 cases.",
+        "It is easy to design a routine which systematically enumerates these possibilities."
+      ]
+    },
+    {
+      "heading": "3.2 Combination Filter",
+      "text": [
+        "The Combination Generator above does not take linguistic knowledge into consideration.",
+        "Actually, there are some cases which will never happen in a real sentence according to syntactic constraints.",
+        "Thus, it is not necessary to pass it to the score evaluator.",
+        "Combination Filter is responsible for filtering out impossible cases.",
+        "We illustrate three circumstances.",
+        "Firstly, for \"v1 > v2\", the Combination Filter will check the theta grid for v1; if there is a Pd or Pc role registered in v 1 , it is possible, since v2 can be subordinate to vl only if vl also expects a prepositional role; othenvise, such a case is filtered out.",
+        "The second circumstance is, when vi has only a single syntactic category, verb, it must act as a verb in the sentence.",
+        "Thus, the case that v2 acts as a verb while vl doesn't is removed.",
+        "The third circumstance regards the three-candidates situations.",
+        "Combination Generator generates seventeen cases; however, under some circumstances, there are four cases which are impossible: <<, <>, <>, and >>.",
+        "These circumstances happens when the main verb of the prepositional part (i.e., the part marked by a underline.)",
+        "expects an animate agent.",
+        "In such circumstances, a VP cannot be subordinate to an \"event\".",
+        "Thus, these four will be filtered out by Combination Filter.",
+        "For example, the following sentence, with the relation \"<>\" (i.e., 47 <",
+        "(Thundering hoped to attend the labor insurance.).",
+        "It is because \"4- / \"expects an animate NP to act as its Ag, the VP \"47 \" thus cannot act as its Ag role.",
+        "There are still many linguistic knowledge and constraints which can be used by Combination Filter.",
+        "However, some of them, such as the third circumstance mentioned above, are too specific and thus must be used carefully to avoid over-constraints.",
+        "Therefore, how to collect and select those constraints and knowledge which are general enough is still our future concern.",
+        "The main function of Combination Filter is to improve the performance of the S-model.",
+        "Note that in this paper, for the beneficiary of brevity, Combination Generator and Combination Filter are designed as two separate modules.",
+        "However, Combination Filter can behave as an embedded module of Combination Generator so that it can cut off some generating branches which arc impossible as early as possible.",
+        "It is also our future concern."
+      ]
+    },
+    {
+      "heading": "3.3 Score Evaluator",
+      "text": [
+        "Whenever Combination Filter passes a feasible case into Score Evaluator, the Score Evaluator utilizes a scoring function to compute the score of the input case and then, passes the evaluated score to the structure selector.",
+        "We will now describe it:",
+        "In our legal domain corpora, there arc many occurrences of SVCs.",
+        "Since our parser is based on the theta grids, in case of SVCs, different verbs will compete in finding their own theta roles.",
+        "Thus, some mechanism for arbitrating among verbs for the ownership of each constituent in the chart must be designed.",
+        "Just as what Yorick Wilks said, language does not always allow the formation of \"100%-correct\" theories [Hirst 19811; therefore, we attempt to find a more flexible method for recognizing SVCs.",
+        "We propose a scoring function to select a \"preferable\" construction for the sentence with SVCs.",
+        "(For the \"preference\" notion, see [Wilks 19751 [Foss and Wilks 19831.)",
+        "The scoring function is called S-function, an abbreviation for \"SVCs scoring function\".",
+        "S-function is defined as in [figure 21, where RWR is the abbreviation of \"Ratio of Words included in sonic phrase with Roles assigned\", RRF, \"Ratio of Roles Found\", OBR, \"OBligatory Role\", and OPR, \"OPtional Role\" (Note that OBR and OPR indicate those roles registered in theta grids.",
+        "):",
+        "The score is calculated as the average value of scores obtained by each verb in the sentence (as in equation t).",
+        "For each verb, the score is estimated by two factors: first, the ratio of theta roles found, i.e., RRF, and, .second, the ratio of words with roles assigned, i.e., RWR.",
+        "For detailed formula, see equation (2).",
+        "The relative significance between obligatory roles and optional roles is heuristically weighted by 2:1, as in (3) and (5); thus, the value of k is set to be 2.",
+        "In some cases, the verb finds many theta roles in the clause it constructs, but the words in this clause are not all assigned roles.",
+        "We consider such assignment doesn't construe the real construction of the sentence.",
+        "Thus, to reflect such cases, we calculate RWR by dividing the number of words which are included in some phrase with a role assigned by the total number of words in the clause (see equation 4)."
+      ]
+    },
+    {
+      "heading": "3.3.2 Illustration of S-function",
+      "text": [
+        "Now, let's illustrate the calculation of S-function by the following examples:",
+        "Tbe phi int rifled a .lawSTI IV g,a in In this example, we demonstrate how to determine whether a verb candidate can actually act as a verb.",
+        "In [Step \" Ad \" (file) and \"*X \" (tell) are both found as \"verb candidates\".",
+        "Here \" \" has two syntactic categories registered in its lexical entry: the verb and the noun, while \" LB \" has only one category, the verb.",
+        "The theta grid for \" \" is •-■-.",
+        "[Th \"'- X \", 1-[Th (Pd) AO.",
+        "So, to decide whether \"fi- olF \" is treated as a verb or a noun, there are four cases to be considered: (1) \"Adi \" is treated as a verb, while \"*X\" a noun.",
+        "g a In the above, \"A LB \" enveloped by a box means it plays a verb.",
+        "When it searches for theta roles, \"1;?.",
+        "±\" and \"* X \" are respectively found as its Ag and Th, the two obligatory theta roles registered in its lexical entry.",
+        "The score is calculated as follows: For \" di \", there are two obligatory roles, so Base = 2 X 2 = 4.",
+        "Moreover, in this sentence, \"S*\",\" \",\" A di \",and \"*X \" are all assigned some roles; thus, RWR = 4/4 = 1.",
+        "And then, Score-Per-Verb {!",
+        "(number of OBR found)*2 + (number of OPR found)]/Base) * RWR = {[2 X 2+01/4)",
+        "X 1=1.",
+        "Finally, Score = 1/1 = 1.00.",
+        "(2) \" \" and \" \" both are treated as verbs.",
+        "Score (0.5+0.4)/2 = 0.45.",
+        "(3) di \" and \"* X \" both are treated as verbs, while \" *X\" is subordinate to \"ALP, \".",
+        "Score = (0.375+0)/2= 0.1775 (4) \"iXdi \" and \"*X\" both are treated as verbs, while \" tt di \" is subordinate to \"ilk X \".",
+        "Score (0.5+0.2)/2 0.35.",
+        "From the above discussions, case(l) apparently gets the highest score (1.00).",
+        "So, the parsed structure in case(1) is preferable to those in the other cases.",
+        "That is, in this sentence, \" LB \" plays the only verb, while \" * \" plays a noun.",
+        "Therefore, the right syntactic category for \"-11-\" in this sentence is detertnined.",
+        "In this example, we will demonstrate how to determine the relationship between verbs.",
+        "In [Step 1], \" * (request) and \"# 0\" (divorce) are both found as \"verb candidates\".",
+        "Here \" nicf \" and \" gcf \" both have two syntactic categories registered in its lexical entry: the verb and the noun.",
+        "The theta grid for \" uti \" is + [(Th)",
+        "Pe \" + iAg (Ng)].",
+        "So, there are five cases to be considered: (1) \"-a*\" is treated as the only verb, while \"#*\" a noun.",
+        "Score = 0.15/1 = 0.15.",
+        "(2) \"Aft 0\" is treated as a verb, while \"th y*\" a noun.",
+        "-1( A g ) cod g",
+        "For \"Aft o\", Base= 3.",
+        "Note that although \" \" is all NP, it cannot play as Ag for \" Aft \".",
+        "It is because it doesn't satisfy the constraint for playing as Ag: an Ag must has a feature \" +animate\", according to Gruber's theory that an agent must be an entity with intentionality Gruber J. S. 19761.",
+        "The situation that a verb cannot find a theta role is represented by the symbol \"ri\".",
+        "So, RWR = 3/4 = 0.75, and Score-Per-Verb = ([1*2+01/3)*0.75 = 0.5.",
+        "Score 0.5/1 = 0.5.",
+        "(3) \" g*\" and \"14kt \" both are treated as verbs.",
+        "Score = (0.134+0.67)/2 = 0.402.",
+        "(4) \"g*\" and \"NI*\" both are treated as verbs, with \" \" being subordinate to \"M*\"",
+        "Ag For \",-**\", Base=5.",
+        "RWR= 4/4 =1.",
+        "Score-Per-Verb = {[1*2+01/5} = 0.4.",
+        "For \" t \", Base=3.",
+        "RW.R=3/3=1.",
+        "Score-Per-Verb = (11*2+0.1/3) = 0.67.",
+        "Score = (0.4+0.67)/2 = 0.535.",
+        "(5) \"th*\" and \"* 0,\" both are treated as verbs, with \" \" being subordinate to \" AftIS \".",
+        "Score = (0.134+0)/2 = 0.067.",
+        "From the above discussions, case(4) apparently gets the highest score (0.535).",
+        "So, the parsed structure in case(4) is preferable to those in the other cases.",
+        "That is, in this sentence, \" M*\" and \" \" both are treated as verbs, while \" * \" is subordinate to \" iiw*\".",
+        "The clause constructed by \"\" is assigned the Pe role for \"a* \".",
+        "Thus, this is a SVC sentence; moreover, this kind of SVC is commonly called \"sentential objects\"."
+      ]
+    },
+    {
+      "heading": "3.4 Structure Selector",
+      "text": [
+        "Structure Selector plays a final arbitrator.",
+        "It collects all feasible cases and their scores.",
+        "After scores of all cases arc evaluated, the competition of all cases is arbitrated by Structure Selector.",
+        "Structure Selector selects the case with the highest score as the most preferred one.",
+        "The final result is returned to the parser."
+      ]
+    },
+    {
+      "heading": "4 Experimental Results",
+      "text": []
+    },
+    {
+      "heading": "4.1 Results of More Sample Sentences",
+      "text": [
+        "In table 2, we show the results of more sentences with SVC in the legal documents which are parsed by this scheme in our TG-Chart parser.",
+        "The sample sentences are shown in table 1:",
+        "si:EgN igg4 ?",
+        ")YM ntaY7 =-1 – M7G (the plaintiff petition the defendant give three hundred thousand dollars) The plaintiff petitioned the defendant to give him three hundred thousand dollars.",
+        "S2: FA 84* ,T, Al2 1AA (the plaintiff request the defendant repay debts) The plaintiff requested the defendant to repay his debts.",
+        "S3: ;ISM * id ti VA (the defendant didn't arrive the court argue) The defendant didn't arrive at the court to argue.",
+        "S4: lkA Ill a II* IT (the defendant suddenly causelessly left home desert his family) The defendant deserted his family suddenly and causelessly.",
+        "S5: #kA*V*.04PA pg (the defendant didn't return home with the plaintiff cohabit) The defendant didn't return home to cohabit with the plaintiff.",
+        "S6: PA Int gin Mk (the defendant petition interrogate the witness) The defendant petitioned to interrogate the witness.",
+        "S7: ION: M..v ig,,: g toq (the defendant hope the plaintiff can forgive) The defendant hoped that the plaintiff could forgive him.",
+        "SR: ?‘)P c:i 03 AA OM niE1Vik (the defendant apply attend the labor insurance) The defendant applied to attend the labor insurance.",
+        "S9: SA T:114 14 AIR *EX' (the plaintiff ordinarily treat mplc very friendly) Ordinarily, the plaintiff treats people friendly.",
+        "S I o: FA tRk 3 – 01 MA 'NOR (the plaintiff break Asp one vase very valuable) The plaintiff broke a vase that was valuable."
+      ]
+    },
+    {
+      "heading": "4.2 Demonstrating How to handle Three-Verbs SVCs",
+      "text": [
+        "Let's consider the following three-verbs sentence: \" % i * [1,1 \" (thcplaintilf return home remind his wife pay fees) (The plaintiff returned home to remind his wife to pay fees.).",
+        "There are three verbs in this sentence: (return), (tY.",
+        "(remind), and * (pay).",
+        "At the first stage, Combination Generator generates 29 possible combination; and then, Combination Filter filters out 26 of them, and only three cases remained to be considered: > in, and \"[ 61 > \".",
+        "Thus, Score Evaluator only needs to calculate the scores for these three remained cases.",
+        "At the final stage, Structure Selector accepts the evaluated scores for these cases and selects the one with the highest score.",
+        "In this example, the structure \"=>\" gets the highest score: 0.94; it is the correct structure for this sentence.",
+        "Consider another interesting example, \"Ito k;k A A, ntf)j 11e, el!)",
+        "\" (he think 1 mock he is wrong) [Pun 19911.",
+        "This sentence is ambiguous to native speakers, since there arc two possible readings: (1) \"Hitt,"
+      ]
+    },
+    {
+      "heading": "5 Conclusion",
+      "text": [
+        "in this paper, we propose a systematic method for analyzing SVCs.",
+        "The method is based on the information offered by theta grids.",
+        "Many possible correlation relations may exist between verbs, we use a numerical scoring function to determine the most preferred one.",
+        "To utilize the S-function defined, we design a S-model, which consists of four modules: a combination generator, a combination filter, a score evaluator, and a structure selector, to realize it.",
+        "For the examples we have tested so far, taken from the legal documents 1Taiwan90al [Taiwan904 our mechanism always produces the correct reading.",
+        "Li and Thompson 119811 classified SVCs into four types: (1) two or more separate events (2) a VP or a clause plays the subject or direct object of another verb (3) pivotal construction (4) descriptive clauses.",
+        "We usually split type (2) into two sub-types: (2)-1 sentential subjects, and (2)-2 sentential objects.",
+        "Most work for handling SVCs arc based on this classification, In our design of 5 function, information about this classification is not used.",
+        "However, in our testing sentences, it turns out that these five types are actually covered by the S-model which selects a preferred structure based on only scoring functions.",
+        "For example, S5 in table 1 belongs to type (1), S9, type (2)-1, S6, type (2)-2, S2, type (3), and SIO, type (4).",
+        "The reason why S-model may cover the classification is due to the rich information encoded in theta grids.",
+        "As an example, consider the sentence \"j& 1t gj A \".",
+        "(The defendant petitioned to interrogate the witness.)",
+        "By Li and Thompson's classification, it belongs to the \"sentential objects\" type.",
+        "If we can classify the sentence into the correct type, the structure \":t.-)1.",
+        "(petition) > (interrogate)\" will be determined.",
+        "This is the idea used in most previous work.",
+        "However, in S-model, we achieve the same result without relying on the classification.",
+        "In S-model, since \" \" needs a \"Pe\" which implies that it expects an \"event\", i.e., a \"sentential object\" to play the theta role, after calculating S-function, the structure where \"111.",
+        "\" is subordinate to \"*-4\" naturally gets the highest score and thus becomes the \"winner\".",
+        "As the previous example in section 4.2, for the ambiguous sentence S-model also yields more than one highest score.",
+        "We can conclude that S-model could be a very general and sound mechanism to handle SVC sentences."
+      ]
+    },
+    {
+      "heading": "Acknowledgment",
+      "text": [
+        "This research is supported in part by National Science Council of R.O.C.",
+        "under the grant NSC83-0408-E-007008."
+      ]
+    }
+  ]
+}

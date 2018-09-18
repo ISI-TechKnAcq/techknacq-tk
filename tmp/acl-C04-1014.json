@@ -1,0 +1,157 @@
+{
+  "info": {
+    "authors": [
+      "Guodong Zhou"
+    ],
+    "book": "International Conference on Computational Linguistics",
+    "id": "acl-C04-1014",
+    "title": "Modeling of Long Distance Context Dependency",
+    "url": "https://aclweb.org/anthology/C04-1014",
+    "year": 2004
+  },
+  "references": [
+    "acl-H90-1056",
+    "acl-J92-4003",
+    "acl-J93-1005",
+    "acl-P98-2239"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "Ngram models are simple in language modeling and have been successfully used in speech recognition and other tasks.",
+        "However, they can only capture the short distance context dependency within an n-words window where currently the largest practical n for a natural language is three while much of the context dependency in a natural language occurs beyond a three words window.",
+        "In order to incorporate this kind of long distance context dependency in the ngram model of our Mandarin speech recognition system, this paper proposes a novel MI-Ngram modeling approach.",
+        "This new MI-Ngram model consists of two components: a normal ngram model and a novel MI model.",
+        "The ngram model captures the short distance context dependency within an n-words window while the MI model captures the context dependency between the word pairs over a long distance by using the concept of mutual information.",
+        "That is, the MI-Ngram model incorporates the word occurrences beyond the scope of the normal ngram model.",
+        "It is found that MI-Ngram modeling has much better performance than the normal word ngram modeling.",
+        "Experimentation shows that about 20% of errors can be corrected by using a MI-Trigram model compared with the pure word trigram model."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Language modeling is the attempt to characterize, capture and exploit the regularities and constraints in a natural language and has been successfully applied to many domains.",
+        "Among all the language modeling approaches, ngram models have been most widely used in speech recognition (Jelinek 1990; Gale and Church 1990; Brown et al.",
+        "1992; Yang et al.",
+        "1996) and other applications.",
+        "While ngram models are simple in language modeling and have been successfully used in speech recognition and other tasks, they have obvious deficiencies.",
+        "For instance, ngram models can only capture the short-distance dependency within an n-words window where currently the largest practical N for a natural language is three.",
+        "In the meantime, it is found that there always exist many preferred relationships between words.",
+        "Two highly associated word pairs are “not only/but also” and “doctor/nurse”.",
+        "Psychological experiments in Meyer D. et al.",
+        "(1975) indicated that the human’s reaction to a highly associated word pair was stronger and faster than that to a poorly associated word pair.",
+        "Such preference information is very useful for natural language processing (Church K.W.",
+        "et al.",
+        "1990; Hiddle D. et al.",
+        "1993; Rosenfeld R. 1994 and Zhou G.D. et al.1998).",
+        "Obviously, the preference relationships between words can expand from a short to long distance.",
+        "While we can use conventional ngram models to capture the short distance dependency, the long distance dependency should also be exploited properly.",
+        "The purpose of this paper is to propose a new modeling approach to capture the context dependency over both a short distance and a long distance and apply it in Mandarin speech recognition.",
+        "This paper is organized as follows.",
+        "In Section 2, we present the normal ngram modeling while a new modeling approach, named MI-ngram modeling, is proposed in Section 3.",
+        "In Section 4, we will describe its use in our Mandarin speech recognition system.",
+        "Finally we give a summary of this paper."
+      ]
+    },
+    {
+      "heading": "2 Ngram Modeling",
+      "text": [
+        "Let S = w1m = w1w2 ... wm , where wi ’s are the words that make up the hypothesis, the probability of the word string, P(S) , can be computed by using the chain rule:",
+        "By taking a log function to both sides of Equation (2.",
+        "1), we have the log probability of the word string, log P(S) :",
+        "So, the classical task of statistical language modeling becomes how to effectively and efficiently predict the next word, given the previous words, that is to say, to estimate expressions of the form P(wi I wi-1) .",
+        "For convenience, P(wi I wi-1) is often written as P(wi |h) , where h = w;−1, is called history.",
+        "Traditionally, simple statistical models, known as ngram models, have been widely used in speech recognition.",
+        "Within an ngram model, the probability of a word occurring next is estimated based on the n – 1 previous words.",
+        "That is to say,",
+        "For example, in bigram model (n=2) the probability of a word is assumed to depend only on the previous word:",
+        "And the probability P(wi I wi−1) can be estimated by using maximum likelihood estimation (MLE) principle:",
+        "Given S = w1w2 ... wm , an ngram model estimates the log probability of the word string, log P(S) , by rewriting Equation (2.2):",
+        "where m is the string length, wi is the i -th word in the string S. From the ngram model as in Equation (2.3), we have:",
+        "P(wi−1w ) where MI(w;−1, wi, d =1) =log 1 i",
+        "sequence occurs in the training text.",
+        "In practice, due to the data sparseness problem, some smoothing technique (e.g. Good Turing in [Chen and Goodman 1999]) is applied to get more accurate estimation.",
+        "Obviously, an ngram model assumes that the probability of the next word wi is independent of the word string w;-n in the history.",
+        "The difference between bigram, trigram and other ngram models is the value of n. The parameters of an ngram model are thus the probabilities: P(wi 1)P(wi ) is the mutual information of the word string pair (wi-1, wi) , and MI(MI((w'=1 w. d =1 lo P(w'−n+1wi) is n w'-i'+,, +1� a, ) – g ( i n+1) l a) P wi_ P w. the mutual information of the word string pair (2.5) (w,−n+1, wi) .",
+        "d is the distance of the two word strings in the word string pair and is equal to 1 when the two word strings are adjacent.",
+        "For a pair (A, B) over a distance d where A and B are word strings, the mutual information MI (A, B, d) reflects the degree of preference relationship between the two strings over a distance d. Several properties of the mutual information are apparent:",
+        "• For the same distance d, MI(A,B,d) ≠ MI(B,A,d).",
+        "• For different distances d1 and d 2 , MI(A,B,d1) ≠ MI(A,B,d2).",
+        "• If A and B are independent over a distance d, then MI (A, B, d) = 0.",
+        "MI (A, B, d) reflects the change of the information content when two word strings A and B are correlated.",
+        "That is to say, the higher the value of MI (A, B, d) , the stronger affinity A and B have.",
+        "Therefore, we can use the mutual information to measure the preference relationship degree of a word string pair.",
+        "Using an alternative view of equivalence, an ngram model is one that partitions the data into equivalence classes based on the last n-1 words in the history.",
+        "Viewed in this way, a bigram induces a partition based on the last word in the history.",
+        "A trigram model further refines this partition by considering the next-to-last word and so on.",
+        "As the word trigram model is most widely used in current research, we will mainly consider the word trigram-based model.",
+        "By rewriting Equation (2.2), the word trigram model estimates the log probability of the string log P(S) as:",
+        "By taking a log function to both sides of Equation (3.2), we have",
+        "= logP(wi)+MI(wi,H,1) Now we assume MI(H,wi,d =1) = MI(X,wi,d =1) +MI(w1,wi,d =i) (3.4) where H = w;-1 , X = u;2-1 and i > N. That is to say, the mutual information of the next word with the history is assumed equal to the summation of that of the next word with the first word in the history and that of the next word with the rest word string in the history.",
+        "Then we can rewrite Equation (3.3) by using Equation (3.4),",
+        "By applying Equation (3.6) repeatedly, we have a modified estimation of the conditional probability:",
+        "Obviously, the first item in equation (3.7) contributes to the log probability of the normal word ngram within an N-words window while the second item is the mutual information which contributes to the long distance context dependency of the next word wi with the previous words wj (1≤ j≤ i − N, i > N) outside the n-words window of the normal word ngram model.",
+        "From Equation (3.8), we can see that the first three items are the values computed by the normal word trigram model as shown in Equation (2.9) and the forth item",
+        "summation of the mutual information of the next word with the words in the history W;-n Therefore, we call Equation (3.8) as a MI-Ngram model and rewrite it as:",
+        "As a special case of N=3, the MI-Trigram model estimate the log probability of the string as follows: �r",
+        "Compared with the normal word ngram model, the novel MI-Ngram model also incorporates the long distance context dependency by computing the mutual information of the distance dependent word pairs.",
+        "That is, the MI-Ngram model incorporates the word occurrences beyond the scope of the normal ngram model.",
+        "Since the number of possible distance-dependent word pairs may be very huge, it is impossible for the MI-Ngram model to incorporate all the possible distance-dependent word pairs.",
+        "Therefore, for the MI-Ngram model to be practically useful, how to select a reasonable number of word pairs becomes most important.",
+        "Here two approaches are used (Zhou G.D., et al. 1998): One approach is to restrict the window size of possible word pairs by computing and comparing the conditional perplexities (Shannon C.E.",
+        "1951) of the long distance word bigram models for different distances.",
+        "Conditional perplexity is a measure of the average number of possible choices there are for a conditional distribution.",
+        "The conditional perplexity of a conditional distribution with the conditional entropy H(YI X) is defined to be 2H(Y|X) .",
+        "Given two random variables X and Y, a conditional probability mass function PY|X (y |x) , and a marginal probability mass function PY (y) , the conditional entropy of Y given X, H(Y |X) , is defined as:",
+        "For a large enough corpus, the conditional perplexity is usually an indication of the amount of information conveyed by the model: the lower the conditional perplexity, the more information it conveys and thus a better model.",
+        "This is because the model captures as much as it can of that information, and whatever uncertainty remains shows up in the conditional perplexity.",
+        "Here, the corpus is the XinHua corpus, which has about 57M(million) characters or 29M words.",
+        "For all the experiments, 80% of the corpus is used for",
+        "training while the remaining 20% is used for testing.",
+        "Table 1 shows that the conditional perplexity is lowest for d = 1 and increases significantly as we move through d = 2, 3, 4, 5 and 6.",
+        "For d = 7, 8, 9, the conditional perplexity increases slightly while further increasing d almost does not increase the conditional perplexity.",
+        "This suggests that significant information exists only in the last 6 words of the history.",
+        "In this paper, we restrict the maximum window size to 10.",
+        "Another approach is to adapt average mutual information to select a reasonable number of distance-dependent word pairs:",
+        "Obviously, Equation (3.12) takes the joint probability into consideration.",
+        "That is, those frequently occurring word pairs are more important and have much more potential to be incorporated into the MI-Ngram model than less frequently occurring word pairs."
+      ]
+    },
+    {
+      "heading": "4 Experimentation",
+      "text": [
+        "We have evaluated the new MI-Ngram model in an experimental speaker-dependent continuous Mandarin speech recognition system (Zhou G.D. et al. 1999).",
+        "For base syllable recognition, 14 cepstral and 14 delta-cepstral coefficients, energy(normalized) and delta-energy are used as feature parameters to form a feature vector with dimension 30, while for tone recognition, the pitch period and the energy together with their first order and second order delta coefficients are used to form a feature vector with dimension 6.",
+        "All the acoustic units are modeled by semi-continuous HMMs (Rabiner 1993).",
+        "For base syllable recognition, 138 HMMs are used to model 100 context-dependent INITIALs and 38 context-independent FINALs while 5 HMMs are used to model five different tones in Mandarin Chinese.",
+        "5,000 short sentences are used for training and another 600 sentences (6102 Chinese characters) are used for testing.",
+        "All the training and testing data are recorded by one same speaker in an office-like laboratory environment with a sampling frequency of 16KHZ.",
+        "As a reference, the base syllable recognition rate and the tone recognition rate are shown in Table 2 and Table 3, respectively.",
+        "As the word trigram model is most widely used in current research, all the experiments have been done using a MI-Trigram model which is trained on the XINHUA news corpus of 29 million words(automatically segmented) while the lexicon contains about 28000 words.",
+        "As a result, the perplexities and Chinese character recognition rates of different MI-Trigram models with the same window size of 10 and different numbers of distance-dependent word pairs are shown in Table 4.",
+        "Table 4 shows that the perplexity and the recognition rate rise quickly as the number of the long distance-dependent word pairs in the MI-Trigram model increase from 0 to 800,000, and then rise slowly.",
+        "This suggests that the best 800,000 word pairs carry most of the long distance context dependency and should be included in the MI-Ngram model.",
+        "It also shows that the recognition rate of the MI-Trigram model with 800,000 word pairs is 1.9% higher than the pure word trigram model (the MI-Trigram model with 0 long distance-dependent word pairs).",
+        "That is to say, about 20% of errors can be corrected by incorporating only 800,000 word pairs to the MI-Trigram model compared with the pure word trigram model.",
+        "It is clear that MI-Ngram modeling has much better performance than normal word ngram modeling.",
+        "One advantage of MI-Ngram modeling is that its number of parameters is just a little more than that of word ngram modeling.",
+        "Another advantage of MI-Ngram modeling is that the number of the word pairs can be reasonable in size without losing too much of its modeling power.",
+        "Compared to ngram modeling, MI-Ngram modeling also captures the long distance dependency of word pairs using the concept of mutual information."
+      ]
+    },
+    {
+      "heading": "4. CONCLUSION",
+      "text": [
+        "This paper proposes a novel MI-Ngram modeling approach to capture the context dependency over both a short distance and a long distance.",
+        "This is done by incorporating long distance-dependent word pairs into normal ngram modeling by using the concept of mutual information.",
+        "It is found that MI-Ngram modeling has much better performance than word ngram modeling."
+      ]
+    },
+    {
+      "heading": "REFERENCE",
+      "text": []
+    }
+  ]
+}

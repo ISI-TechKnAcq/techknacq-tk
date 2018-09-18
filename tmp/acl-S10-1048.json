@@ -1,0 +1,197 @@
+{
+  "info": {
+    "authors": [
+      "Andrea Esuli",
+      "Diego Marcheggiani",
+      "Fabrizio Sebastiani"
+    ],
+    "book": "Workshop on Semantic Evaluations (SemEval)",
+    "id": "acl-S10-1048",
+    "title": "ISTI@SemEval-2 Task 8: Boosting-Based Multiway Relation Classification",
+    "url": "https://aclweb.org/anthology/S10-1048",
+    "year": 2010
+  },
+  "references": [
+    "acl-W07-2003",
+    "acl-W09-2415"
+  ],
+  "sections": [
+    {
+      "text": [
+        "ISTI@SemEval-2 Task #8: Boosting-Based Multiway Relation Classification",
+        "Andrea Esuli, Diego Marcheggiani, Fabrizio Sebastiani",
+        "Istituto di Scienza e Tecnologie dell'Informazione Consiglio Nazionale delle Ricerche 56124 Pisa, Italy",
+        "firstname.lastname@isti.cnr.it",
+        "We describe a boosting-based supervised learning approach to the \"Multi-Way Classification of Semantic Relations between Pairs of Nominals\" task #8 of SemEval-2.",
+        "Participants were asked to determine which relation, from a set of nine relations plus \"Other\", exists between two nominals, and also to determine the roles of the two nominals in the relation.",
+        "Our participation has focused, rather than on the choice of a rich set of features, on the classification model adopted to determine the correct assignment of relation and roles."
+      ]
+    },
+    {
+      "heading": "1. Introduction",
+      "text": [
+        "The \"Multi-Way Classification of Semantic Relations between Pairs of Nominals\" (Hendrickx et al., 2010) we faced can be seen as the composition of two sub-tasks:",
+        "1.",
+        "Determining which relation r, from a set of relations R (see Table 1), exists between two entities e\\ and e2.",
+        "2.",
+        "Determining the direction of the relation, i.e., determining which of r(ei,e2) or r(e2,ei) holds.",
+        "The set R is composed by nine \"semantically determined\" relations, plus a special Other relation which includes all the pairs which do not belong to any of the nine previously mentioned relations.",
+        "The two novel aspects of this task with respect to the similar task # 4 of SemEval-2007 (Girju et al., 2007) (\"Classification of Semantic Relations between Nominals\") are (i) the definition of the task as a \"single-label\" classification task and (ii) the",
+        "Table 1 : The nine relations defined for the task.",
+        "need of determining the direction of the relation (i.e., Item 2 above).",
+        "The classification task described can be formalized as a single-label (aka \"multiclass\") text classification (SLTC) task, i.e., as one in which exactly one class must be picked for a given object out of a set of m available classes.",
+        "Given a set of objects D (ordered pairs of nominals, in our case) and a predefined set of classes (aka labels, or categories) C = {c\\,..., cm}, SLTC can be defined as the task of estimating an unknown target function $ : D – > C, that describes how objects ought to be classified, by means of a function $ : D – > C called the classifier.",
+        "In the relation classification task which is the object of this evaluation, the set C of classes is composed of 19 elements, i.e., the nine relations of Table 1, each one considered twice because it may take two possible directions, plus Other."
+      ]
+    },
+    {
+      "heading": "2. The learner",
+      "text": [
+        "As the learner for our experiments we have used a boosting-based learner called MP-Boost (Esuli et al., 2006).",
+        "Boosting is among the classes of supervised learning devices that have obtained the best performance in several learning tasks and, at the same time, have strong justifications from computational learning theory.",
+        "MP-boost is a variant of adaboost.MH (Schapire and Singer, 2000), which has been shown in (Esuli et al., 2006) to obtain considerable effectiveness improvements with respect to adaboost.MH.",
+        "1",
+        "Cause-Effect",
+        "2",
+        "Instrument-Agency",
+        "3",
+        "Product-Producer",
+        "4",
+        "Content-Container",
+        "5",
+        "Entity-Origin",
+        "6",
+        "Entity-Destination",
+        "7",
+        "Component-Whole",
+        "8",
+        "Member-Collection",
+        "9",
+        "Message-Topic",
+        "MP-boost works by iteratively generating, for each class Cj, a sequence $j,..., &s of classifiers (called weak hypotheses).",
+        "A weak hypothesis is a function $^ : D – > R, where D is the set of documents and R is the set of real numbers.",
+        "The sign of $i(di) (denoted by sgn{&s{di))) represents the binary decision of <§{ on whether di belongs to Cj, i.e. sgn{&s{di)) = +1 (resp., – 1) means that di is believed to belong (resp., not to belong) to Cj.",
+        "The absolute value of &s{di) (denoted by \\&s{di)\\) represents instead the confidence that 3^ has in this decision, with higher values indicating higher confidence.",
+        "At each iteration s MP-Boost tests the effectiveness of the most recently generated weak hypothesis 3^ on the training set, and uses the results to update a distribution D{ of weights on the training examples.",
+        "The initial distribution D\\ is uniform by default.",
+        "At each iteration s all the weights D{(di) are updated, yielding Ds+l{di), so that the weight assigned to an example correctly (resp., incorrectly) classified by $| is decreased (resp., increased).",
+        "The weight Ds+1{di) is thus meant to capture how ineffective $\\,..., $S have been in guessing the correct Cj-assignment of di (denoted by $J(di)), i.e., in guessing whether training document di belongs to class Cj or not.",
+        "By using this distribution, MP-Boost generates a new weak hypothesis <&l+1 that concentrates on the examples with the highest weights, i.e. those that had proven harder to classify for the previous weak hypotheses.",
+        "The overall prediction on whether di belongs to Cj is obtained as a sum &(di) = Y,s=i ^i(di) of the predictions made by the weak hypotheses.",
+        "The final classifier & is thus a committee of S classifiers, a committee whose S members each cast a weighted vote (the vote being the binary decision sgn{&s{di)), the weight being the confidence I &s {di) I) on whether di belongs to Cj.",
+        "For the final classifier $J too, sgn{&{di)) represents the binary decision as to whether di belongs to Cj, while I & {di) I represents the confidence in this decision.",
+        "MP-Boost produces a multi-label classifier, i.e., a classifier which independently classifies a document against each class, possibly assigning a document to multiple classes or no class at all.",
+        "In order to obtain a single-label classifier, we compare the outcome of the \\C\\ binary classifiers, and the class which has obtained the highest &{di) value is assigned to di, i.e., <&{di) = arg maxj &{di)."
+      ]
+    },
+    {
+      "heading": "3. Vectorial representation",
+      "text": [
+        "We have generated the vectorial representations of the training and test objects by extracting a number of contextual features from the text surrounding the two nominals whose relation is to be identified.",
+        "An important choice we have made is to \"normalize\" the representation of the two nominals with respect to the order in which they appear in the relation, and not in the sentence.",
+        "Thus, if e2 appears in a relation r(e2, e\\), then e2 is considered to be the first (F) entity in the feature generation process and e\\ is the second (S) entity.",
+        "We have generated a number of features for each term denoting an entity and also for the three terms preceding each nominal (PI, P2, P3) and for the three terms following it (SI, S2, S3):",
+        "T : the term itself;",
+        "S : the stemmed version of the term, obtained using a Porter stemmer;",
+        "P : the POS of the term, obtained using the Brill Tagger;",
+        "H : the hypernym of the term, taken from Word-Net (\"O\" if not available).",
+        "Features are prefixed with a proper composition of the above labels in order to identify their role in the sentence.",
+        "Table 2 illustrates a sentence from the training set and its extracted features.",
+        "_Entity-Destination(el,e2)_",
+        "F_People FS_Peopl FFLgroup FPJSfNP FS1 Jiave FSlSJiave FSlHJiave FS1P_VBP FS2_been FS2S_been FS2H_be FS2P_VBN FP3-moving FP3Sjnove FP3H_travel FP3P_VBG SP3 jnoving SP3S jnove SP3H_travel SP3P_VBG SP2_back SP2S_back SP2FLO SP2P_RB SPlinto SPlSJnto SP1FLO SP1PJN S_downtown SS_downtown SH_city_district SPJNN SS1_.",
+        "SS1S_.",
+        "SS1FL0SS1P_.",
+        "If an entity is composed by k > 1 terms, entity-specific features are generated for all the term n-grams contained in the entity, for all n G [1,k\\.",
+        "E.g., for \"phone call\" features are generated for the n-grams: \"phone\", \"call\", \"phone_call\".",
+        "In all the experiments described in this paper, MP-BOOST has been run for S = 1000 iterations.",
+        "No feature weighting has been performed, since MP-BOOST requires binary input only."
+      ]
+    },
+    {
+      "heading": "4. Classification model",
+      "text": [
+        "The classification model we adopted in our experiments splits the two tasks of recognizing the relation type and the one of determining the direction of the relation in two well distinct phases.",
+        "Given the training set Tr of all the sentences for which the classifier outcome is known, vectorial representations (see Section 3) are built in a way that \"normalizes\" the direction of the relation, i.e.:",
+        "• if the training object belongs to one of the nine relevant relations, the features extracted from the documents are given proper identifiers in order to mark their role in the relation, not the order of appearance in the sentence;",
+        "• if the training object belongs to Other the two distinct vectorial representations are generated, one for relation Other(ei, e?)",
+        "and one for Other(e2,ei).",
+        "The produced training set has thus a larger number of examples than the one actually provided.",
+        "The training set provided for the task yielded 9410 training examples from the original 8000 sentences.",
+        "A 10-way classifier is then trained on the vectorial representation.",
+        "The 10-way classifier is thus able to assign a relation, or the Other relation, to a sentence, but not to return the direction of the relation.",
+        "The direction of the relation is determined at test time, by classifying two instances of each test sentence, and then combining the outcome of the two classifications in order to produce the final classification result.",
+        "More formally, given a test sentence d belonging to an unknown relation r, two vectorial representations are built: one, dip, under the hypothesis that r(ei,e2) holds, and one, d2,i, under the hypothesis that r(e2, e{) holds.",
+        "Both dip and efe.i are classified by",
+        "• if both classifications return Other, then d is assigned to Other;",
+        "• if one classification returns Other and the other returns a relation r, then r, with the proper direction determined by which vectorial representation determined the assignment, is assigned to d;",
+        "• if the two classifications return two relations rip and f2,i different from Other (of the same or of different relation type), then the one that obtains the highest $ value determines the relation and the direction to be assigned to d."
+      ]
+    },
+    {
+      "heading": "5. Experiments",
+      "text": [
+        "We have produced two official runs.",
+        "The ISTI-2 run uses the learner, vectorial representation, and classification model described in the previous sections.",
+        "The ISTI-1 run uses the same configuration of ISTI-2, with the only difference being how the initial distribution D\\ of the boosting method is defined.",
+        "Concerning this, we followed the observations of (Schapire et al., 1998, Section 3.2) on boosting with general utility functions; the initial distribution in the ISTI-1 run is thus set to be equidistributed between the portion Tr+ of positive examples of the training set and the portion Tr~ of negative examples, for each class j, i.e.,",
+        "This choice of initial distribution, which gives more relevance to the less frequent type of elements of the training set (namely, the positive examples), is meant to improve the performance on highly imbalanced classes, thus improving effectiveness at the the macro-averaged level.",
+        "We have also defined a third method for an additional run, ISTI-3; unfortunately we were not able to produce it in time, and there is thus no official evaluation for this run on the test data.",
+        "The method upon which the ISTI-3 run is based relies on a more \"traditional\" approach to the classification task, i.e., a single-label classifier trained",
+        "Table 3: Official results (upper part), and results of the three relation classification methods when used in a 10-fold cross-validation experiment on training data (lower part).",
+        "Precision, recall, and F\\ are reported as percentages for more convenience.",
+        "on the nine relations plus Other, not considering the direction, coupled with nine binary classifiers trained to determined the direction of each relation.",
+        "We consider this configuration as a reasonable baseline to evaluate the impact of the original classification model adopted in the other two runs.",
+        "Table 3 summarizes the experimental results.",
+        "The upper part of the fable reports the official results for the two official runs.",
+        "The lower part reports the results obtained by the three relation classification methods when used in a 10-fold cross-validation experiment on the training data.",
+        "The evaluation measures are precison (tt), recall (p), and the F\\ score, computed both in a microaveraged and a macroaveraged (*M) way (Yang, 1999).",
+        "The results for ISTI-1 and ISTI-2 in the 10-fold validation experiment are similar both in trend and in absolute value to the official results, allowing us to consider the ISTI-3 results in the 10-fold validation experiment as a good prediction of the efficacy of the ISTI-3 method on the test data.",
+        "The classification model of ISTI-2, which uses an initial uniform distribution for the MP-BOOST learner as ISTI-3, improves F^ over ISTI-3 by 9.97%, and by 8.42%.",
+        "The use of a F\\ customized distribution in ISTI-1 results in a F\\ improvement with respect to ISTI-2 {Fi improves by 2.66% in official results, 2.09% in 10-fold validation results), which is mainly due to a relevant improvement in recall.",
+        "Comparing ISTI-1 with ISTI-3 the total improvement is 12.26% for F^ and 10.10% for Ff."
+      ]
+    },
+    {
+      "heading": "6. Conclusion and future work",
+      "text": [
+        "The original relation classification model we have adopted has produced a relevant improvement in efficacy with respect to a \"traditional\" approach.",
+        "We have not focused on the development of a rich set of features.",
+        "In the future we would like to",
+        "apply our classification model to the vectorial representations generated by the other participants, in order to evaluate the distinct contributions of the feature set and the classification model.",
+        "The use of a F\\ customized initial distribution for the MP-Boost learner has also produced a relevant improvement, and it will be further investigated on more traditional text classification tasks.",
+        "Run",
+        "ttI",
+        "if",
+        "7T",
+        "pM",
+        "pM",
+        "Official results",
+        "ISTI-1 ISTI-2",
+        "72.01% 73.55%",
+        "67.08%",
+        "63.54%",
+        "69.46%",
+        "68.18%",
+        "71.12% 72.38%",
+        "66.24%",
+        "62.34%",
+        "68.42%",
+        "66.65%",
+        "10-fold cross-validation",
+        "ISTI-1 ISTI-2 ISTI-3",
+        "73.60% 75.34%",
+        "68.52%",
+        "69.34%",
+        "65.92% 61.58%",
+        "71.41%",
+        "70.32% 64.86%",
+        "72.44% 73.96%",
+        "66.19%",
+        "68.17%",
+        "64.65% 59.75%",
+        "69.95%",
+        "68.52% 62.31%"
+      ]
+    }
+  ]
+}

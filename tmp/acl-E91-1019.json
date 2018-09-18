@@ -1,0 +1,168 @@
+{
+  "info": {
+    "authors": [
+      "Michel Gilloux"
+    ],
+    "book": "Conference of the European Association for Computational Linguistics",
+    "id": "acl-E91-1019",
+    "title": "Automatic Learning of Word Transducers from Examples",
+    "url": "https://aclweb.org/anthology/E91-1019",
+    "year": 1991
+  },
+  "references": [
+    "acl-A88-1028",
+    "acl-C86-1141",
+    "acl-C88-2113",
+    "acl-E89-1007",
+    "acl-E89-1020",
+    "acl-J87-3008"
+  ],
+  "sections": [
+    {
+      "heading": "AUTOMATIC LEARNING OF WORD TRANSDUCERS FROM EXAMPLES",
+      "text": []
+    },
+    {
+      "heading": "ABSTRACT",
+      "text": [
+        "This paper describes the application of markovian learning methods to the inference of word transducers.",
+        "We show how the proposed method dispenses from the difficult design of hand-crafted rules, allows the use of weighed non deterministic transducers and is able to translate words by taking into account their whole rather than by making decisions locally.",
+        "These arguments are illustrated on two examples: morphological analysis and grapheme-tophoneme transcription."
+      ]
+    },
+    {
+      "heading": "INTRODUCTION",
+      "text": [
+        "Several tasks associated with electronic lexicons may be viewed as transduclions between character strings.",
+        "This may be the decomposition of words into morphemes in morpholow or the grapheme-tophoneme transcription in phonology.",
+        "In the first case, one has for example to decompose the French word \"chronornetrage\" into the sequence of affixes \"chrono+rne tre+er+- age\".",
+        "In the second, \"abstertir should be translated into \"absteniR\" or \"apsteniR\"1.",
+        "Most of the proposed methods in the 'These two tasks are in fact closely related In that (1) the correct phoneme transcription may mirror an underlying morphological structure, like for \"asocial\" whose phonemic form is \"asosjal\" rather than \"azosjal\" due to the decomposition \"a+sociar, , and (2) the surface form of a derived word may depend on the pronunciation of its component morphemes, like for \"d6+harnacher which results in \"clharnacher\" and not \"clsharnacher.",
+        "domain (Catach 1984; Danlos et al.",
+        "1986; Koskenniemi 1983; Laporte 1988; Ritchie et al.",
+        "1987; Tufts 1989; Wronis 1988) are based on the availability of local rules whose combination, either through direct interpretation or by being compiled, form the target transducer.",
+        "Although these methods make it possible - at least in theory - to design suitable transducers, provided that the rule description language has the right expressive power, they are complex to use because of the difficulty of writing down rules.",
+        "Moreover, for a given rule language, there may not exist an algorithm for compiling rules into a form better suited to the translation process.",
+        "Lastly, in numerous cases, the translation procedures are improperly deterministic as shown by the example of \"abstenie so that it is not possible to consider several competing hypotheses in parallel not to speak of ranking them according to some certainty factor.",
+        "We have designed a program which allows to construct transducers without retaining the above shortcomings.",
+        "It is no longer necessary to write down translation rules since the transducer is obtained as the result of an automatic learning over a set of examples.",
+        "The transducer is represented into the language of probabilistic finite state automata (Markov models) so that its use is straightforward.",
+        "Lastly, it produces results which are assigned a probability and makes it possible to list them by decreasing order of likelihood.",
+        "After stating the problem of character strings translation and defining the few - 107 - central notions of markovian learning, this paper describes their adaptation to the word translation problem in the learning and translating phases.",
+        "This adaptation is illustrated through two applications: morphological analysis and grapheme-to-phoneme transcription."
+      ]
+    },
+    {
+      "heading": "THE TRANSDUCTION PROBLEM",
+      "text": [
+        "In the context of character strings transduction, we look for an application f: Cs C'* which transforms certain words built over the alphabet C into words over the alphabet C'.",
+        "For example, in the case of grapheme-to-phoneme transcription, C is the set of graphemes and C' that of phonemes.",
+        "It may be appropriate, for example in morphology, to use an auxiliary lexicon (Ritchie et al.",
+        "1987; Ritchie 1989) which allows to discard certain translation results.",
+        "For example, the decomposition \"sage\" ---> \"ser+age\" would not be allowed because \"ser\" is not a verb in the French lexicon, although this is a correct result with respect to the splitting of word forms into affixes.",
+        "The method we propose in this paper is only concerned with describing this last type of regularities leaving aside all non regular phenomena better described on a case-bycase basis such as through a lexicon."
+      ]
+    },
+    {
+      "heading": "MARKOV MODELS",
+      "text": [
+        "A Markov model is a probabilistic finite state automaton M = (S, T, A, si, 5F, g) where S is a finite set of states, A is a finite alphabet, si E S and sir S are two distinguished states called respectively the initial state and the final state, T is a finite set of transitions, and g is a function g: t e T > (0(t), D(t), S(t), p(t)) E SxSxA x10, 11 such that V(s e s), p(t) = 1 ft' 0(0= sl where p(t) is the probability of reaching state D(t) while generating symbol S(t) starting from state 0(t).",
+        "In general, the transition probabilities p(t) are mutually independent.",
+        "Yet, in some contexts, it may be useful to have their values depend on others transitions.",
+        "In this respect, it is possible to define a one to-one correspondence tsee It I 0(t) = s') (t I 0(t) = s) such that p(t) is equal to ,(t)).",
+        "States a and s' are then said to be tier For every word w = a ... an e A*, the set of partial paths compatible with w till 1, Pathi(w), is the set of sequences of 1 transitions t1 ti such that 0(t1) = s, D(ti) = 0(tt\"), for j = 1, ..., 1-1 and S(ti) = a, for j = 1, ..., 1.",
+        "The set of complete paths compatible with w, Path(w), is in turn the set of elements in Pathiun(w), where I w I = n, the length of word Ui I, such that D(t) = sF.",
+        "The probability for the model M of emitting the word w is",
+        "path e Path(w) t e path A Markov model for which there exist at most one complete path for a given word is said to be unifilctr.",
+        "In this case, the above probability is reduced to probt(w)=H p(t), if Path(w) = path t e path",
+        "Thus the probability Pm(w) may be generally computed by adding the probabilities observed along every path compatible with w. In practice, this renders computationally expensive the algorithm for computing Pm(w) and it is tempting to assume that the model is unifilar.",
+        "Practical studies have shown that this suboptimal method Is applicable without great loss (Bahl et al.",
+        "1983).",
+        "Under this hypothesis, the probability Pm(w) may be computed through the Viterbi dynamic programming algorithm.",
+        "Indeed, the probability Pm(w, 1, s), maximal probability of reaching state s with the i first transitions in a path compatible with w",
+        "restriction of T to elements with non null probability which induces the structure of the associated automaton.",
+        "In this case, the model is said to be hidden because it is hard to attach a meaning to the states in S. On the contrary, it is possible to force those states to have a clear-cut interpretation by defining them, for example, as n-grams which are sequences of n elements in A which encode the last n symbols produced by the model to reach the state.",
+        "It is clear that then only some transitions are meaningful.",
+        "In dealing with problems like those studied in the present paper it is preferable to use hidden models which allow states to stand for arbitrarily complex predicates.",
+        "The learning algorithm (Bahl et al.",
+        "1983) is based upon the following remark: given a model M whose transitions probabilities are known a priori, the a posteriori probability of a transition t may be estimated by the relative frequency with which t is used on a training set.",
+        "The number of times a transition t is used on TS is",
+        "It is therefore possible to compute Pm (w, I s) recursively for I = 1, ..., n until ProbM (w)TS isThe relative frequency of using t on Automatic learning of Markov models Given a training set TS made of words In A* and a number N > 2 of states, that is the set S. learning a Markov model consists In finding a set T of transitions such that the joint probability P of the examples in the training set",
+        "Is maximal.",
+        "In general, the set T is composed a priori of all possible transitions between states in S producing a symbol in A.",
+        "The determination of probabilities p associated with these transitions is equivalent to the",
+        "The learning algorithm consists then In setting randomly the probability distribution p(t) and adjusting iteratively its values through the above formula until the adjustment is small enough to consider the distribution as stationary.",
+        "It has been shown (Bahl et al.",
+        "1983) that this algorithm does converge towards a stationary value of the p(t) which maximizes locally' the probability P of the training set depending on the initial random probability distribution.",
+        "1 In order to find a global optimum.",
+        "we used a kind of simulated annealing technique (Kirkpatrick et al.",
+        "1983) during the learning process.",
+        "- 109 - The stationary distribution defines the Markov model induced from the examples in TS1."
+      ]
+    },
+    {
+      "heading": "TRANSDUCTION MODEL",
+      "text": [
+        "To be applied in both illustrative examples, the general structure of Markov models should be related, by means of a shift in representation, to the problem of strings translation.",
+        "The model of two-level morphological analysis (Koskenniemi 1983) suggests the nature of this shift.",
+        "Indeed, this method, which was successfully applied to morphologically rich natural languages (Koskenniemi 1983), is based upon a two-level rule formalism for which there exist a way to compile them into the language of finite state automata (FSA) (Ritchie 1989).",
+        "This result validates the idea that FSAs are reasonable candidates for representing transduction rules, at least in the case of morpholoe.",
+        "The shift in representation is designed so as to define the alphabet A as the set of pairs c:- or -:c' where c e C and C E C', - standing for the null character, - C, - e C'.",
+        "The mapping between the transducer f and the associated Markov model M is now straightforward:",
+        "where the function delete is defined as delete(X) = (X is the empty string), delete(-2) = delete(Z) and delete(zZ) = z.delete(Z) if z E C or z E Given a training set TS = kw, ve> I w E C., w' E C'1, the problem is thus to find the model M that maximizes the probability PHmax(,y)probaxi:y1...xn:y.)",
+        "(w, w' e TS where delete(x) = w and delete(y) = w' This formula makes it clear what is the new difficulty with this type of learning, namely the indetermination of words x and y, that is of the alignment induced by them between w and its translation w'.",
+        "The notions of partial and complete compatible paths should thus be redefined in order to take this into account.",
+        "The partial paths compatible with w and w' till I and j are now the set of sequences t1 tto , Path., j(w, w') such that 0(t1) = 5/, D(tk) =13(tk+1)' for k= 1, ..., i+j1, S(tk) = xic.",
+        ":yk, for k = 1, ..., i+j, = wand delete(y ...yi+j) = w'i...w'i.",
+        "A. partial path is also complete as soon ag I = Iwt, J= lw'l and D(t lAel) = sF.",
+        "As before, we can define the probability Pm(w, I, w', j, s) of reaching state s along a partial path compatible with w and w' and generating the first I symbols in w and j first symbols in w'.",
+        "Here again, this probability is such that Prob(w w') = Pm(w, lwl, w', iw'l, sF) and may be computed through dynamic programming according to the formula It is now possible to compute for every training example the optimal path corresponding to a given probability distribution p(t).",
+        "This path not only defines the crossed states but also the alignment between w and w'.",
+        "The learning algorithm applicable to general markovian models remains valid for adjusting iteratively the probabilities p(t)."
+      ]
+    },
+    {
+      "heading": "EXPERIMENTS Morphological analysis",
+      "text": [
+        "As a preliminary experiment, the morphological analysis automaton was learned on a set of 738 French words ending with the morpheme \"isme\" and associated with their decomposition into two morphemes, the first being a noun, or an adjective.",
+        "For example, we had the pair <\"athltisme\",\"athiete+isme\".",
+        "With.",
+        "a 400 states only automaton, the correct decomposition was found amongst the 10 most probable outputs for 97.6% of the training examples1.",
+        "Grapheme-to-phoneme transcription The case of grapheme-to-phoneme transcription is a straightforward application of the transduction model.",
+        "String w is the graphemic form, e.g. \"abstenie and w' 1We are aware that a more precise assessment of the method would use a test set different from the training set.",
+        "We plan to perform such a test In the near future.",
+        "is its transcription into phonemes, e.g. \"apsteniR\" or \"absteniR\".",
+        "Here the training set may feature such pairs as <w, w'> and <w, w\"> where w' w\".",
+        "The automaton was learned on a set of 1170 acronyms associated to their phonemic form which was described in a coarse phonemic alphabet where, for example, open or closed /o/ are not distinguished.",
+        "Acronyms raise an interesting problem in that some should be spelled letter by letter (\"ACL\") whereas others may be pronounced (\"COLING\").",
+        "This experiment was thus intended to show that the model may take into account its input as a whole.",
+        "With a 400 states only automaton, more than 50% of the training examples were correctly transcribed when only the most probable output was considered.",
+        "This figure may be improved by augmenting the number of states in which case the learning phase becomes much longer."
+      ]
+    },
+    {
+      "heading": "CONCLUSION",
+      "text": [
+        "We have proposed a method for learning transducers for the tasks of morphological analysis and grapheme-to-phoneme transcription.",
+        "This method may be favorably compared to others solutions based upon writing rules in the sense that it does not oblige to identify rules, it provides a result which is directly usable as a transducer and it allows to list translations according to a decreasing order of probability.",
+        "Yet, the learned automaton does not lend itself to an interpretation in the form of symbolic rules - provided that such rules exist -.",
+        "Moreover, some learning parameters are set only as the results of empirical or random choices: number of states, initial probability distribution, etc.",
+        "Yet, other advantages weigh for the proposed method.",
+        "The automaton may take into account the whole word to be translated rather than a limited part of it - this justifies that a set of equivalent symbolic rules is hard to obtain -.",
+        "For example, the grapheme-to-phoneme transcription may recognize the original language of a word while translating it (Oshika et al.",
+        "1988): the \"French\" nouns \"meeting\" and \"carpaccio\" have kept respectively their original English and Italian form",
+        "where (tie {te '11 D(t) =et S(t) =1:- ) and (t2 E t TI D(t) = a et S(t) =I) ) mart Pm(w, 1+ 1, w', j, 0 (t2)) 2 and pronunciation, etc.",
+        "The learned automaton is symmetrical, thus it is also reversible.",
+        "In other words, the morphological analysis automaton may also be used as a generator and the grapheme-to-phoneme automaton may become a phoneme-tographeme transducer.",
+        "Another remark is in order: since the automaton is reversible, it may be composed with its inverse to form, for example, a grapheme-to-grapheme translator that keeps the phonemic form constant without actually computing it.",
+        "Now, it has been shown elsewhere (Reape and Thompson 1988) that the transducer that would result is also describable in the formalism of finite state automata and that its number of states has a upper bound which is the square of the number of states In the base automaton.",
+        "(Reape and Thompson 1988) also describes an algorithm for computing the resulting automaton.",
+        "Lastly, other functions than morphological analysis or grapheme-to-phoneme transcription may be envisioned like, for example, the decomposition of words into syllables or the computation of abbreviations by contraction."
+      ]
+    },
+    {
+      "heading": "REFERENCES",
+      "text": []
+    }
+  ]
+}

@@ -1,0 +1,226 @@
+{
+  "info": {
+    "authors": [
+      "Fred Mailhot"
+    ],
+    "book": "Proceedings of the 11th Meeting of the ACL Special Interest Group on Computational Morphology and Phonology",
+    "id": "acl-W10-2201",
+    "title": "Instance-Based Acquisition of Vowel Harmony",
+    "url": "https://aclweb.org/anthology/W10-2201",
+    "year": 2010
+  },
+  "references": [
+    "acl-J94-3007",
+    "acl-W05-0110"
+  ],
+  "sections": [
+    {
+      "text": [
+        "Instance-based acquisition of vowel harmony",
+        "Frédéric Mailhot",
+        "Institute of Cognitive Science Carleton University Ottawa, ON, Canada",
+        "fmailhot@connect.carleton.ca",
+        "I present LiBPHON, a nonparametric regression-based model of phonological acquisition that induces a generalised and productive pattern of vowel harmony – including opaque and transparent neutrality – on the basis of simplified formant data.",
+        "The model quickly learns to generate harmonically correct morphologically complex forms to which it has not been exposed."
+      ]
+    },
+    {
+      "heading": "1. Explaining phonological patterns",
+      "text": [
+        "How do infants learn the phonetic categories and phonotactic patterns of their native languages?",
+        "How strong are the biases that learners bring to the task of phonological acquis-tion?",
+        "Phonologists from the rationalist tradition that dominated the past half-century of linguistic research typically posit strong biases in acquisition, with language learners using innately-given, domain-specific representations (Chomsky and Halle, 1968), constraints (Prince and Smolensky, 2004) and learning algorithms (Tesar and Smolensky, 2000; Dresher, 1999) to learn abstract rules or constraint rankings from which they can classify or produce novel instances.",
+        "In the last decade, however, there has been a shift toward empiricist approaches to phonological acquisition, use and knowledge.",
+        "In this literature, eager learning algorithms (Aha, 1997), in which training data are used to update intensional representations of functions or categories then discarded, have been the norm.",
+        "However, research in related fields – particularly speech perception – indicates that speakers' knowledge and use of language, both in production and comprehension, is at least partly episodic, or instance-based (Goldinger, 1996; lohnson, 1997).",
+        "Additionally,",
+        "'Daelemans et al.",
+        "(1994) is a notable exception.",
+        "motivation for instance-based models of categorisation has a lengthy history in cognitive psychology (Medin and Schaffer, 1978), and these methods are well-known in the statistical and machine learning literature, having been studied for over half a century (Fix and Hodges, 1951; Cover and Hart, 1967; Hastie et al., 2009).",
+        "Consequently, it seems a worthy endeavour applying an instance-based method to a problem that is of interest to traditional phonologists, the acquisition and use of vowel harmony, while simultaneously effecting a rapprochement with adjacent disicplines in the cognitive sciences.",
+        "In sections 2 and 3 I give some brief background on vowel harmony and instance-based models, respectively.",
+        "Section 4 introduces my model, LiBPHON, and section 5 the languages it learns.",
+        "I discuss some simulations and results in section 6, and conclude in section 7."
+      ]
+    },
+    {
+      "heading": "2. Vowel harmony",
+      "text": [
+        "Vowel harmony is a phonological phenomenon in which there are co-occurrence constraints on vowels within words.",
+        "The vowels in a language with vowel harmony can be classified into disjoint sets, such that words contain vowels from only one of the sets.",
+        "The Finnish system of vowel harmony exemplified by the forms in Table 1 provides a standard example from the literature (van der Hülst and van de Weijer, 1995).",
+        "surface form gloss",
+        "Table 1 : Finnish backness harmony",
+        "Crucially, the elative case marker alternates systematically between front and back vowel variants – as -stä or -sta – depending on whether the stem has front {ü, ä} or back {u, a} vowels.",
+        "In most languages with vowel harmony, there are one or more vowels that systematically fail to alternate.",
+        "These are called neutral vowels, and are typically further subclassified according to whether or not they induce further harmonic alternations in other vowels."
+      ]
+    },
+    {
+      "heading": "3. Instance-based models",
+      "text": [
+        "Instance-based approaches to cognitive processing, also called memory-based, case-based, and exemplar-based models, have their modern origins in psychological theories and models of perceptual categorisation and episodic memory (Medin and Schaffer, 1978; Nosofsky, 1986), although the earliest explicit discussion seems to be (Se-mon, 1921); a theory of memory that anticipates many features of contemporary models.",
+        "The core features of these models are: (i) explicit storage/memorisation {viz. extensional representation) of training data, (ii) classification/processing of novel data via similarity-based computation, and (iii) lazy evaluation (Aha, 1997), whereby all computations are deferred until the model is queried with data.",
+        "Instance-based models were introduced to linguistics via research in speech perception suggesting that at least some aspects of linguistic performance rely on remembered experiential episodes (lohnson and Mullenix, 1997).",
+        "The models implemented to date in phonetics and phonology have largely focused on perception {e.g. speaker normalisation in lohnson (1997)), or on diachronic processes {e.g. lenition in Pierrehumbert (2001), chain shifts in Ettlinger (2007)), leaving the types of phenomena that typically interest \"traditional\" phonologists, viz. productive, generalised patterns, comparatively neglected."
+      ]
+    },
+    {
+      "heading": "4. LiBPHON",
+      "text": [
+        "LIbPhon, the Lazy Instance-based Phonologist, is a lazy learning algorithm whose purpose (in the context of the simulations described here) is to model an instance-based approach to the core aspects of the acquisition and subsequent productive usage of vowel harmony.",
+        "As discussed in (lohnson, 2007), there are some decisions that need to be made in implementing an instance-based model of phonological knowledge involving the basic units of analysis {e.g. their size), the relevant type of these units {e.g. discrete or continuous), and the mechanisms for similarity-matching and activation spread in the lexicon.",
+        "Units The arguments given by lohnson (2007) and Välimaa-Blum (2009) for the \"word-sized\" (rather than e.g. segmental) experience of language, suggest that \"words\" are the correct basic unit of analysis in instance-based langugage models {a fortiori in LiBPHON).",
+        "Stronger evidence comes from the wealth of psycholinguistic data (reviewed in (Lodge, 2009)) showing that illiterates and literates of non-alphabetic writing systems have poor phonemic (or at least segmental) awareness, both in monitoring and manipulation.",
+        "On this basis, I take meaning-bearing unanalysed acoustic chunks to be the relevant units of representation for LiBPHON.",
+        "Feature type Having determined the size of LiBPHON's basic unit, I move now to its embedding space, where distinctive features present themselves as obvious candidate dimensions.",
+        "Since the middle of the 20th century {ca.",
+        "Chomsky and Halle (1968)), phonological theories have nearly all supposed that lexical representations are stored in terms of articulatory features {cf. (Halle, 1997) for explicit discussion of this viewpoint).",
+        "Coleman (1998), citing evidence from the neuro-scientific and psycholinguistic literatures on lexical representation, claims that evidence for this position {e.g. from speech perception and phoneme monitoring experiments) is weak at best, and that lexical representations are more likely to be acoustic than articulatory.",
+        "In addition, Phillips et al.",
+        "(2000) review neurolinguistic evidence for the role of acoustic cortex in phonetics and phonology, and",
+        "Mielke (2008) discusses several aspects of the induction of distinctive phonological features from acoustic representations.",
+        "Recognising that the issue is far from resolved, for the purposes of the simulations run here, I take LiBPHON's instance space to be acoustically-based, and use formant values as the embedding dimension.",
+        "Vowels are specified by their midpoint formant values, and consonants are specified by so-called \"locus\" values, which can be identified by inspecting the trajectories of consonant-vowel transitions in speech (Sussman et al., 1998).",
+        "Since I am modelling palatal harmony in particular, and F2 magnitude is the primary acoustic correlate of vowel palatality, I omit F3 and FA, restricting LiBPHON's acoustic representations to sequences of (F1,F2) values, henceforth trajectories.",
+        "Similarity Given that LIbPhon's instance-space is continuous, and has a fairly intuitive metric, I take simple Euclidean distance to be LiBPHON's similarity (or rather, dissimilarity) function.",
+        "Fixed-rate representations For the simulations described here, I use fixed-rate trajectories, in which consonants and vowels are represented in a temporally coarse-grained manner with single (F1,F2) tuples.",
+        "Evidently, consonants and vowels in actual human speech unfold in time, but modelling segments at this level introduces the problem of temporal variability; repeated tokens of a given word – both within and across speakers – vary widely in duration.",
+        "This variability is one of the main obstacles in the development of instance-based models of speech production, due to the difficulty of aligning variable-length forms.",
+        "Although algorithms exist for aligning variable-length sequences, these require cognitively implausible dynamic programming algorithms, e.g. dynamic time warping (DTW) and hidden Markov models (Rabiner and luang, 1993).",
+        "Even as proofs of concept, these may be empirically inadequate; Kirchner and Moore (2009) use DTW to good effect in an instance-based production model of spirantisation using real, temporally variable, speech signals.",
+        "However, their inputs were all the same length in terms of segmental content, and the model was only required to generalise within a word type.",
+        "I am currently investigating whether DTW can function as a proof of concept in a problem domain like that addressed here, which involves learning about variably-sized \"pieces\" of morphology across class labels.",
+        "LIbPhon's method of perception/categorisation of inputs is a relatively standard nearest-neighbour-based classification algorithm.",
+        "See Algorithm 1 for a description in pseudocode.",
+        "Algorithm 1 PERCElVE(input, k) Require: input as (label g [lex](pl)[nom |",
+        "if label is not empty then if label ^ lexicon then",
+        "Create label in lexicon end if",
+        "Associate(instance, label) neighbours < – fc-nearest neighbours of",
+        "instance",
+        "label < – majority class label of neighbours",
+        "Associate( instance,label) end if",
+        "If LABEL is not empty, LiBPHON checks its lexicon to see whether it knows the word being presented to it, i.e. whether it exists as a class label.",
+        "If so, it simply appends the input acoustic form to the set of forms associated with the input meaning/label.",
+        "If it has no corresponding entry, a new lexical entry is created for the input meaning, and the input trajectory is added as its sole associated acoustic form.",
+        "If LABEL is empty, LiBPHON assigns instance to the majority class of its k nearest neighbours in acoustic space.",
+        "In production, LiBPHON is provided with a LABEL and has to generate a suitable instance for it.",
+        "LABELS are decomposable, signalling an arbitrary \"lexical\" meaning, an optional plural morpheme, pl, and an obligatory case marker from {nom, acc}.",
+        "Thus, there are several different possibilities to consider in generating output for some queried meaning.",
+        "In the two simplest cases, either the full queried meaning (viz. lexical label with all inflections) is already in the lexicon, or else there are no class labels with the same lexical meaning (i.e. LIbPhon is being asked to produce a word that it doesn't know).",
+        "In the former case, a stored trajectory is uniform randomly selected from the list of acoustic forms associated with the queried label as a seed token, the entire set of associated acoustic forms is used as the analogical set, and an output is generated by taking a distance-weighted mean over the seed's k nearest neighbours.",
+        "In the case where the lexical meaning of the queried label is unknown, the query is ignored.",
+        "In the more interesting cases, LIbPhon has a label in its lexicon with the same lexical meaning, but with differing inflectional specification.",
+        "Consider the case in which LiBPHON knows only the singular nom form of a query label that is specified as pl acc.",
+        "A seed instance is (uniform) randomly selected from the set of trajectories associated to the nom entry in the agent's lexicon, as this is the only entry with the corresponding lexical meaning, and it is a variant of this meaning that LiBPHON must produce.",
+        "In this case the analogical set, the set of instances from which the final output is computed, is composed of the seed's nearest neighbours in the set of all trajectories associated with labels of the form [lex pl acc].",
+        "Once again, the output produced is a distance-weighted mean of the analogical set.",
+        "This general procedure (viz. seed from a known item with same lexical meaning, analogical set from all items with desired inflection) is carried out in parallel cases with all other possible label mismatches, e.g. a singular label queried, but only a plural label in the lexicon, a NOM query with only an acc form in the lexicon, etc.",
+        "In the cases where the lexicon contains multiple entries with the same lexical meaning, but not the query, the seed is selected from the label with the closest \"semantic\" match.",
+        "Algorithm 2 gives pseudocode for LiBPHON's production algorithm.",
+        "Algorithm 2 Produce(label, k) Require: labele [lex](pl)[nom | acc], k eZ if label g lexicon then seed < – uniform random selection from instances associated to label cloud < – all instances associated to label else if 3 label' g lexicon s.t.",
+        "lex(label') = lex(label) then seed < – uniform random selection from instances associated to label') cloud < – all instances associated to plural(label) u case(label)",
+        "pass end if neighbours < – fc-nearest neighbours of seed in cloud return distance-weighted mean of neighbours",
+        "The final steps in LiBPHON's production algorithm, finding the analogical set and computing the output as a weighted average, together constitute a technique known in the statistical learning literature as kernel-smoothed nearest-neighbour regression, and in particular are closely related to the well-known Nadaraya-Watson estimator (Hastie et al., 2009):",
+        "with inverse-distance as the kernel smoother, K, and the bandwidth function, h\\ (x) determined by the number k of nearest neighbours.",
+        "This link to the statistical learning literature puts LiBPHON on sound theoretical footing and opens the door to a variety of future research paths, e.g. experimenting with different kernel shapes, or formal analysis of LIbPhon's expected error bounds."
+      ]
+    },
+    {
+      "heading": "5. The languages",
+      "text": [
+        "On the view taken here, phonological knowledge is taken to emerge from generalisation over lexical items, and so the key to acquiring some phonological pattern lies in learning a lexicon (Jusczyk, 2000).",
+        "Consequently, the languages learned in LIbPhon abstract away from sentence-level phenomena, and the training data are simply labelled formant trajectories, (label, instance).",
+        "In order to get at the essence of the problem (viz. the acquisition of vowel harmony as characterised by morphophonological alternations), and in the interests of computational tractability/efficiency, the artificial languages learned by LIbPhon are highly simplified, displaying only enough structure to capture the phenomena of interest.",
+        "The phonological inventory consists of three consonants, {b, d, g}, and four vowels – two with high F2 and two with low F2 – which I label {i, e, u, o}, for convenience.",
+        "The formant values used were generated from formant synthesis equations in (de Boer, 2000), and from the locus equations for CV-transitions in (Sussman et al., 1998).",
+        "LiBPHON's lexicon is populated with instance trajectories consisting of four-syllable \"roots\" with zero, one or two one-syllable \"affixes\".",
+        "These trajectories have associated class labels, which from a formal point of view are contentless indices.",
+        "Rather than employing e.g. natural numbers as labels, I use character strings which correspond more or less to the English pronounciations of their associated trajectories.",
+        "Labels function, metaphorically-speaking, as \"meanings\".",
+        "These are compositional, comprising a \"lexical meaning\" (arbitrary cvcvcvcv string from the phoneme set listed above), one of two obligatorily present \"case markers\" (nom|acc), and an optionally present \"plural marker\" (pl).",
+        "Hence, word categories in the artificial languages come in four forms, nom-sg, nom-pl, acc-sg, and acc-pl.",
+        "gidegebi gidegebibe",
+        "Figure 1 gives examples of the singular nom and acc forms of a high-F2 word.",
+        "The nom-labelled trajectory has no suffixal morphology, and corresponds to a bare form.",
+        "The trajectory is eight segments long, and the vowels in this case have all high F2 (as in lexical front/back vowel harmony).",
+        "Note also that acc is realised with high F2, in agreement with the root vowels.",
+        "The harmony processes seen thus far are in some sense \"local\", being describable in terms of vowel adjacency e.g. adjacency on a hypothesised au-tosegmental tier (although the presence of intervening consonants still renders the harmony process \"nonlocal\" in some more concrete articulatory sense).",
+        "One of the hallmarks of vowel harmony, as discussed in subsection 2.1, is the phenomenon of neutral vowels.",
+        "These vowels fail to alternate, and may or may not induce harmonic alternations in vowels that precede or follow them.",
+        "To introduce a neutral vowel, I added a category label, pl, whose realisation corresponds roughly to [gu], and which is treated as being either opaque or transparent in the simulations described below.",
+        "Figures 2 and 3 show the \"plural inflected\" forms of the same root as in 1.",
+        "We see that the",
+        "The even-numbered indices on the a;-axis correspond to consonants and the odd-numbered indices, the \"pinches\" in the graphs, correspond to vowels.",
+        "realisation of pl has fixed, low F2, and that the realisation of acc has alternating F2, which realisations corresponding roughly to [be] (high F2) and [bo] (low F2).",
+        "Figure 2: Graphical representation of plural forms of gidegebi, as produced by teacher agent, with opaque pl realisation.",
+        "gorisation of inputs is a poor indicator of the extent to which it has learned a productive \"rule\" of vowel harmony.",
+        "In lieu of this measure, I have opted to pursue two difference courses of evaluation.",
+        "For the harmony cases, LiBPHON is queried on a held-out test set of 500 previously unseen labels and its output is compared to the mean value of the teacher's stored trajectories for the same labels.",
+        "In particular, given some label which was not in the training data, we can query LiBPHON at various stages of acquisition {viz. with lexicons of increasing size) by having it produce an output for that label, and track the change in its performance over time.",
+        "The actual measure of error taken is the root-mean-squared deviation between the learner's output, y and the mean, t, of the teacher's stored forms for some label, I, over all of the consonants and vowels within a word, averaged across the remaining unseen items of the test set:",
+        "Figure 3: Graphical representation of plural forms of gidegebi, as produced by teacher agent, with transparent pl realisation.",
+        "These figures also illustrate the difference between languages with opaque versus transparent pl, as reflected in the realisation of the word-final acc marker in the two lower graphs, which agrees in F2 with the realised form of the pl or root, respectively."
+      ]
+    },
+    {
+      "heading": "6. The experiments",
+      "text": [
+        "Assessing successful learning/generalisation in a computational model requires some measurable outcome that can be tracked over time.",
+        "Because LIbPhon is an output-oriented model, its cate-",
+        "Figures 4 and 5 show RMSE vs. lexicon size for both opaque and transparent neutrality (cf. the cases in Figures 2 and 3), for five simulation runs each.",
+        "We can see clearly that error drops as the lexicon grows, hence that LiBPHON is learning to make its outputs more like those of the teacher, but the informativity of this measure stops there.",
+        "From a linguistic point of view, we are interested in what LIbPhon's outputs look like, viz. has it learned vowel harmony?",
+        "■.f.f.f,",
+        "2500",
+        "GIDEGEBI NOM",
+        "gidegebigu",
+        "- .",
+        "F2",
+        "2000",
+        "____",
+        "1500",
+        "1000",
+        "500",
+        "2 4",
+        "6 S",
+        "10",
+        "1",
+        "-.......",
+        "2500",
+        "GIDEGEBI ACC",
+        "gidegebigubo",
+        " – Fl",
+        "- .",
+        "F2",
+        "2000",
+        "•........,",
+        "1500",
+        "*",
+        "1000",
+        "500",
+        "Figures 6 and 7 show that vowel harmony is learned, and moreover quite quickly, after going through a brief initial phase of spurious outputs.",
+        "In these figures, LIbPhon is being asked to produce outputs for all forms of the label gubogobu.",
+        "For the particular run shown here, at the 10-word stage (i.e. when LIbPhon had seen tokens from 10 labels), the only tokens marked pl-acc were from high F2 (\"front\") trajectories.",
+        "Hence the nearest neighbour calculation in the production algorithm resulted in a fronted form being output.",
+        "Although acquisition research in vowel harmony languages is relatively rare, or inaccessible to us due to language barriers, what research there is seems to indicate that harmony is mastered very quickly, with virtually no errors by 2 years of age, hence it is unclear what status to assign to output patterns like the one discussed here.",
+        "Moreover, given the well-known facts that (i) comprehension precedes production, and (ii) infants avoid saying unfamiliar words, it is unlikely that an infant could be coaxed into producing an output form for such an early-stage class."
+      ]
+    },
+    {
+      "heading": "7. Discussion and future work",
+      "text": [
+        "The experiments discussed here show that on the basis of limited input data, LIbPhon, an instance-based learner that produces output via kernel-smoothed nearest-neighbour regression, learns to produce harmonically correct novel outputs.",
+        "In particular, it is able to generalise and produce correct morphologically complex forms to which it has not been exposed in its training data, i.e. a previously unseen case-marked form will be output with harmonically correct F2, including neutrality (opaque or transparent).",
+        "In ongoing research I am (i) evaluating LIbPhon's performance with respect to more traditional measures, in particular F-score, on held-out data as the lexicon grows, and (ii) assessing the viability of DTW-based alignment for preprocessing real speech tokens as inputs to LiBPHON."
+      ]
+    },
+    {
+      "heading": "Acknowledgments",
+      "text": [
+        "Many thanks to Ash Asudeh, Lev Blumenfeld, Andrea Gormley, Jeff Mielke, Alan Hogue and Andy Wedel for discussion and comments on this line of research, and to three anonymous referees for feedback that greatly improved this paper.",
+        "This work carried out with the support of NSERC Discovery Grant 371969 to Dr. Ash Asudeh."
+      ]
+    }
+  ]
+}

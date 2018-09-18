@@ -1,0 +1,138 @@
+{
+  "info": {
+    "authors": [
+      "T. Daniel Midgley",
+      "Shelly P. Harrison",
+      "Cara MacNish"
+    ],
+    "book": "SIGdial Workshop on Discourse and Dialogue",
+    "id": "acl-W06-1315",
+    "title": "Empirical Verification of Adjacency Pairs Using Dialogue Segmentation",
+    "url": "https://aclweb.org/anthology/W06-1315",
+    "year": 2006
+  },
+  "references": [
+    "acl-J97-1002",
+    "acl-P03-2009"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "A problem in dialogue research is that of finding and managing expectations.",
+        "Adjacency pair theory has widespread acceptance, but traditional classification features (in particular, ‘previous-tag’ type features) do not exploit this information optimally.",
+        "We suggest a method of dialogue segmentation that verifies adjacency pairs and allows us to use dialogue-level information within the entire segment and not just the previous utterance.",
+        "We also use the χ2 test for statistical significance as ‘noise reduction’ to refine a list of pairs.",
+        "Together, these methods can be used to extend expectation beyond the traditional classification features."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Adjacency pairs have had a long history in dialogue research.",
+        "The pairs of question/answer, inform/backchannel, and others have been well-known ever since they were proposed by Sacks and Schegloff in 1973.",
+        "They have been used by dialogue researchers to assist in knowing ‘what comes next’ in dialogue.",
+        "Unfortunately, this dialogue information has been difficult to leverage.",
+        "Most dialogue act (DA) classification research uses some kind of dialogue history, but this usually takes the form of some kind of ‘previous tag’ feature, perhaps even ‘two-previous tag’.",
+        "Dialogue information from three or more utterances previous is not normally used because, in the words of one researcher, “[n]o benefit was found from using higher-order dialog grammars” (Venkataraman et al.",
+        "2002).",
+        "This could be due to the sparse data problem; more permutations means fewer repetitions.",
+        "Part of the problem, then, may lie in the way the ‘previous tag’ feature is used.",
+        "Consider the following example from the Verbmobil-2 corpus (Verbmobil 2006)1: how does does November SUGGEST fourteenth and fifteenth look no REJECT Here, the second pair part occurs directly after the first pair part that occasioned it.",
+        "But sometimes performance factors intervene as in the following example, where B is engaging in floor-holding using a dialogue act annotated here as DELIBERATE: so that maybe I if I need to if I SUGGEST need to order like a limo or something <hes> let us see DELIBERATE B: the this is the <hes> wrong DELIBERATE month B: the third DELIBERATE B: let us see DELIBERATE B: I don't have anything scheduled INFORM that morning and we are leaving at one The response (INFORM) finally comes, but the forgetful ‘previous tag’ feature is now looking for what comes after DELIBERATE.",
+        "What is needed is a way to not only determine what is likely to happen next, but to retain that expectation over longer distances when unfulfilled, until that expectation is no longer needed.",
+        "Such information would conform more closely to this description of a conversational game (but which could be applied to any communicative subgoal):",
+        "Sydney, July 2006. c�2006 Association for Computational Linguistics A conversational game is a sequence of moves starting with an initiation and encompassing all moves up until that initiation’s purpose is either fulfilled or abandoned.",
+        "(Carletta 1997, italics mine.)"
+      ]
+    },
+    {
+      "heading": "2 Dialogue segmentation",
+      "text": [
+        "This work grew out of related research into finding expectations in dialogue, but we were also interested in dialogue segmentation.",
+        "Dialogues taken as a whole are very different from each other, so segmentation is necessary to derive meaningful information about their parts.",
+        "The question is, then, how best to segment dialogues so as to reveal dialogue information or to facilitate some language task, such as DA classification?",
+        "Various schemes for dialogue segmentation have been tried, including segmentation based on fulfilment of expectation (Ludwig et al.",
+        "1998), and segmenting by propositionality (Midgley 2003).",
+        "One answer to the question of how to segment dialogue came from the pioneering work of Sacks and Schegloff (1973) article.",
+        "A basic rule of adjacency pair operation is: given the recognizable production of a first pair part, on its first possible completion its speaker should stop and a next speaker should start and produce a second pair part from the same pair type of which the first is recognizably a member.",
+        "(p. 296, italics mine.)",
+        "Thus, if a speaker stops speaking, it is likely that such a handover has just taken place.",
+        "The last utterance of a speaker’s turn, then, will be the point at which the first speaker has issued a first pair part, and is now expecting a second pair part from the other speaker.",
+        "This suggests a natural boundary.",
+        "This approach was also suggested by Wright (1998), who used a “most recent utterance by previous speaker” feature in her work on DA tagging.",
+        "This feature alone has boosted classification accuracy by about 2% in our preliminary research, faring better than the traditional ‘previous tag’ feature used in much DA tagging work.",
+        "We collected a training corpus of 40 English-speaking dialogues from the Verbmobil-2 corpus, totalling 5,170 utterances.",
+        "We then segmented the dialogues into chunks, where a chunk included everything from the last utterance of one speaker’s turn to the last-but-one utterance of the next speaker."
+      ]
+    },
+    {
+      "heading": "3 Results of segmentation",
+      "text": [
+        "This segmentation revealed some interesting patterns.",
+        "When ranked by frequency, the most common chunks bear a striking resemblance to the adjacency pairs posited by Schegloff and Sacks.",
+        "Here are the 25 most common chunks in our training corpus, with the number of times they appeared.",
+        "The full list can be found at http:/ /www.csse.uwa.edu.au/~fontor/research/chi/",
+        "The data suggest a wide variety of language behaviour, including traditional adjacency pairs (e.g.",
+        "SUGGEST: ACCEPT), acknowledgement (INFORM: BACKCHANNEL), formalised"
+      ]
+    },
+    {
+      "heading": "exchanges (POLITENESS _FORMULA:",
+      "text": [
+        "FEEDBACK_POSITIVE) offers and counteroffers (SUGGEST: SUGGEST), and it even hints at negotiation subdialogues (SUGGEST: REQUEST_CLARIFY).",
+        "However, there are some drawbacks to this list.",
+        "Some of the items are not good examples of adjacency pairs because the presence of the first does not create an expectation for the second half (e.g. NOT_CLASSIFIABLE: INFORM).",
+        "In",
+        "some cases they appear backwards (ACCEPT: SUGGEST).",
+        "Legitimate pairs appear further down the list than more-common bogus ones.",
+        "For example, SUGGEST: REJECT is a well-known adjacency pair, but it does not appear on the list until after several less-worthy-seeming pairs.",
+        "Keeping the less-intuitive chunks may help us with classification, but it falls short of providing empirical verification for pairs.",
+        "What we need, then, is some kind of noise reduction that will strain out spurious pairs and bring legitimate pairs closer to the top of the list.",
+        "We use the well-known X2 test for statistical significance."
+      ]
+    },
+    {
+      "heading": "4 The X2 test",
+      "text": [
+        "The X2 test tells how the observed frequency of an event compares with the expected frequency.",
+        "For our purposes, it tells whether the observed frequency of an event (in this case, one kind of speech act following a certain other act) can be attributed to random chance.",
+        "The test has been used for such tasks as feature selection (Spitters 2000) and translation pair identification (Church and Gale 1991).",
+        "The X2value for any two speech acts A and B can be calculated by counting the times that an utterance marked as tag A (or not) is followed by an utterance marked as tag B (or not), as in",
+        "These counts (as well as N, the total number of utterances) are plugged into a variant of the X2 equation used for 2x2 tables, as in Schiitze et al.",
+        "(1995).",
+        "We trained the X2 method on the aforementioned chunks.",
+        "Rather than restrict our focus to only adjacent utterances, we allowed a match for pair A:B if B occurred anywhere within the chunk started by A.",
+        "By doing so, we hoped to reduce any acts that may have been interfering with the adjacency pairs, especially hesitation noises (usually classed as DELIBERATE) and abandoned utterances (NOT_CLASSIFIABLE)."
+      ]
+    },
+    {
+      "heading": "5 Results for X2",
+      "text": [
+        "Here are the 25 pairs with the highest X2 scores.",
+        "With tail probability p = .0001, a X2 value > 10.83 is statistically significant.",
+        "The full list can be found at http://www.csse.uwa.edu.au/~fontor/ research/chi/fullchi.txt.",
+        "Using X2 normalises the list; low-frequency acts like REJECT and EXPLAINED_REJECT now appear as a part of their respective pairs.",
+        "These results give empirical justification for Sacks and SchegloffÕs adjacency pairs, and reveals more not mentioned elsewhere in the literature, such as DEFER:ACCEPT.",
+        "As such, it gives a good idea of what kinds of speech acts are expected within a chunk.",
+        "In addition, these results can be plotted into a directed acyclic graph (seen in Figure 1).",
+        "This graph can be used as a sort of conversational map."
+      ]
+    },
+    {
+      "heading": "6 Conclusions and Future Work",
+      "text": [
+        "We can draw some tentative conclusions from this work.",
+        "First of all, the dialogue segmentation combined with the X2 test for significance yields information about what is likely to happen, not just for the next utterance, but somewhere in the next chunk.",
+        "This will help to overcome the limitations imposed by the traditional ‘previous X2--- X",
+        "tag’ feature.",
+        "We are working to implement this information into a model where the expectations inherent in a first pair part are retained when not immediately fulfilled.",
+        "The expectations will also decay with time.",
+        "Second, this approach provides empirical evidence for adjacency pairs mentioned in the literature on conversation analysis.",
+        "The noise reduction feature of the χ2 test gives more weight to legitimate adjacency pairs where they appear in the data.",
+        "An intriguing possibility for the chunked data is that of chunk matching.",
+        "Nearest-neighbour algorithms are already used for classification tasks (including DA tagging for individual utterances), but once segmented, the dialogue chunks could be compared against each other as a classification tool as in a nearest-neighbour algorithm."
+      ]
+    }
+  ]
+}

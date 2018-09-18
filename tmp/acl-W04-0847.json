@@ -1,0 +1,151 @@
+{
+  "info": {
+    "authors": [
+      "Zhengyu Niu",
+      "Ji Donghong",
+      "Chew Lim Tan"
+    ],
+    "book": "SENSEVAL International Workshop on the Evaluation of Systems for the Semantic Analysis of Text",
+    "id": "acl-W04-0847",
+    "title": "Optimizing Feature Set for Chinese Word Sense Disambiguation",
+    "url": "https://aclweb.org/anthology/W04-0847",
+    "year": 2004
+  },
+  "references": [
+    "acl-C02-1143",
+    "acl-J98-1005",
+    "acl-J98-1006",
+    "acl-N01-1011",
+    "acl-P96-1006",
+    "acl-W96-0208"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "This article describes the implementation of I2R word sense disambiguation system (I2R − W5D) that participated in one senseval3 task: Chinese lexical sample task.",
+        "Our core algorithm is a supervised Naive Bayes classifier.",
+        "This classifier utilizes an optimal feature set, which is determined by maximizing the cross validated accuracy of NB classifier on training data.",
+        "The optimal feature set includes part-of-speech with position information in local context, and bag of words in topical context."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Word sense disambiguation (WSD) is to assign appropriate meaning to a given ambiguous word in a text.",
+        "Corpus based method is one of the successful lines of research on WSD.",
+        "Many supervised learning algorithms have been applied for WSD, ex.",
+        "Bayesian learning (Leacock et al., 1998), exemplar based learning (Ng and Lee, 1996), decision list (Yarowsky, 2000), neural network (Towel and Voorheest, 1998), maximum entropy method (Dang et al., 2002), etc..",
+        "In this paper, we employ Naive Bayes classifier to perform WSD.",
+        "Resolving the ambiguity of words usually relies on the contexts of their occurrences.",
+        "The feature set used for context representation consists of local and topical features.",
+        "Local features include part of speech tags of words within local context, morphological information of target word, local collocations, and syntactic relations between contextual words and target word, etc.. Topical features are bag of words occurred within topical context.",
+        "Contextual features play an important role in providing discrimination information for classifiers in WSD.",
+        "In other words, an informative feature set will help classifiers to accurately disambiguate word senses, but an uninformative feature set will deteriorate the performance of classifiers.",
+        "In this paper, we optimize feature set by maximizing the cross validated accuracy of Naive Bayes classifier on sense tagged training data."
+      ]
+    },
+    {
+      "heading": "2 Naive Bayes Classifier",
+      "text": [
+        "Let C = {c1, c2, ..., cL} represent class labels, F = { f1, f2, ..., fm} be a set of features.",
+        "The value of fj, 1 < j < M, is 1 if fj is present in the context of target word, otherwise 0.",
+        "In classification process, the Naive Bayes classifier tries to find the class that maximizes P(cz IF), the probability of class cz given feature set F, 1 < i < L. Assuming the independence between features, the classification procedure can be formulated as:",
+        "where p(cz), p(fj Icz) and p(fj) are estimated using maximum likelihood method.",
+        "To avoid the effects of zero counts when estimating p(fj Icz), the zero counts of p(fj Icz) are replaced with p(cz)/N, where N is the number of training examples."
+      ]
+    },
+    {
+      "heading": "3 Feature Set",
+      "text": [
+        "For Chinese WSD, there are two strategies to extract contextual information.",
+        "One is based on Chinese characters, the other is to utilize Chinese words and related morphological or syntactic information.",
+        "In our system, context representation is based on Chinese words, since words are less ambiguous than characters.",
+        "We use two types of features for Chinese WSD: local features and topical features.",
+        "All of these features are acquired from data at senseval3 without utilization of any other knowledge resource."
+      ]
+    },
+    {
+      "heading": "3.1 Local features",
+      "text": [
+        "Two sets of local features are investigated, which are represented by LocalA and LocalB.",
+        "Let nl denote the local context window size.",
+        "LocalA contains only part of speech tags with position information: PO5_nl, ..., PO5_1, PO50, PO5+1, ..., PO5+nl, where PO5_z (PO5+z) is the part of speech (POS) of the i-th words to the left (right) of target word w, and PO50 is the POS of w.",
+        "LocalB enriches the local context by including the following features: local words with position information (W_,,,,, ..., W_1, W+1, ..., W+,,,,), bigram templates ((W_,,,,, W_(,,,,_1)), ..., (W_1, W+1), ..., (W+(,,,,_1), W+,,,,)), local words with POS tags (W POS) (position information is not considered), and part of speech tags with position information.",
+        "All of these POS tags, words, and bigrams are gathered and each of them contributed as one feature.",
+        "For a training or test example, the value of some feature is 1 if it occurred in local context, otherwise it is 0.",
+        "In this paper, we investigate two values of nl for LocalA and LocalB, 1 and 2, which results in four feature sets."
+      ]
+    },
+    {
+      "heading": "3.2 Topical features",
+      "text": [
+        "We consider all Chinese words within a context window size nt as topical features.",
+        "For each training or test example, senseval3 data provides one sentence as the context of ambiguous word.",
+        "In sense-val3 Chinese training data, all contextual sentences are segmented into words and tagged with part of speech.",
+        "Words which contain non-Chinese character are removed, and remaining words occurred within context window size nt are gathered.",
+        "Each remaining word is considered as one feature.",
+        "The value of topical feature is 1 if it occurred within window size nt, otherwise it is 0.",
+        "In later experiment, we set different values for nt, ex.",
+        "1, 2, 3, 4, 5, 10, 20, 30, 40, 50.",
+        "Our experimental result indicated that the accuracy of sense disambiguation is related to the value of nt.",
+        "For different ambiguous words, the value of nt which yields best disambiguation accuracy is different.",
+        "It is desirable to determine an optimal value, ˆnt, for each ambiguous word by maximizing the cross validated accuracy."
+      ]
+    },
+    {
+      "heading": "4 Data Set",
+      "text": [
+        "In Chinese lexical sample task, training data consists of 793 sense-tagged examples for 20 ambiguous Chinese words.",
+        "Test data consists of 380 untagged examples for the same 20 target words.",
+        "Table 1 shows the details of training data and test data."
+      ]
+    },
+    {
+      "heading": "5 Criterion for Evaluation of Feature Sets",
+      "text": [
+        "In this paper, five fold cross validation method was employed to estimate the accuracy of our classifier, which was the criterion for evaluation of feature sets.",
+        "All of the sense tagged examples of some target word in senseval3 training data were shuffled and divided into five equal folds.",
+        "We used four folds as training set and the remaining fold as test set.",
+        "This procedure was repeated five times under different division between training set and test set.",
+        "The average accuracy over five runs is defined as the accuracy of our classifier."
+      ]
+    },
+    {
+      "heading": "6 Evaluation of Feature Sets",
+      "text": [
+        "Four feature sets were investigated: FEATUREA1: LocalA with nl = 1, and topical feature within optimal context window size ˆnt; FEATUREA2: LocalA with nl = 2, and topical feature within optimal context window size ˆnt; FEATUREB 1: LocalB with nl = 1, and topical feature within optimal context window size ˆnt; FEATUREB2: LocalB with nl = 2, and topical feature within optimal context window size ˆnt.",
+        "We performed training and test procedure using exactly same training and test set for each feature set.",
+        "For each word, the optimal value of topical context window size ˆnt was determined by selecting a minimal value of nt which maximized the cross validated accuracy.",
+        "Table 2 summarizes the results of Naive Bayes classifier using four feature sets evaluated on sen-seval3 Chinese training data.",
+        "Figure 1 shows the accuracy of Naive Bayes classifier as a function of topical context window size on four nouns and three verbs.",
+        "Several results should be noted specifically: If overall accuracy over 20 Chinese characters is used as evaluation criterion for feature set, the four feature sets can be sorted as follows: FEAT UREA1 > FEAT UREA2 FEATUREB1 > FEATUREB2.",
+        "This indicated that simply increasing local window size or enriching feature set by incorporating bigram templates, local word with position information, and local words with POS tags did not improve the performance of sense disambiguation.",
+        "In table 2, it showed that with FEATUREA1, the optimal topical context window size was less than 10 words for 13 out of 20 target words.",
+        "Figure 1 showed that for most of nouns and verbs, Naive Bayes classifier achieved best disambiguation accuracy with small topical context window size (<1 0 words).",
+        "This gives the evidence that for most of Chinese words, including nouns and verbs, the near distance context is more important than the long distance context for sense disambiguation."
+      ]
+    },
+    {
+      "heading": "7 Experimental Result",
+      "text": [
+        "The empirical study in section 6 showed that FEA-TUREA1 performed best among all the feature sets.",
+        "A Naive Bayes classifier with FEATUREA1 as feature set was learned from all the senseval3 Chinese training data for each target word.",
+        "Then we used",
+        "this classifier to determine the senses of occurrences of target words in test data.",
+        "The official result of I2R – W 5D system in Chinese lexical sample task is listed below: Precision: 60.40% (229.00 correct of 379.00 attempted).",
+        "Recall: 60.40% (229.00 correct of 379.00 in total).",
+        "Attempted: 100.00% (379.00 attempted of 379.00 in total)."
+      ]
+    },
+    {
+      "heading": "8 Conclusion",
+      "text": [
+        "In this paper, we described the implementation of I2R – W5D system that participated in one sen seval3 task: Chinese lexical sample task.",
+        "An optimal feature set was selected by maximizing the cross validated accuracy of supervised Naive Bayes classifier on sense-tagged data.",
+        "The senses of occurrences of target words in test data were determined using Naive Bayes classifier with optimal feature set learned from training data.",
+        "Our system achieved 60.40% precision and recall in Chinese lexical sample task."
+      ]
+    }
+  ]
+}

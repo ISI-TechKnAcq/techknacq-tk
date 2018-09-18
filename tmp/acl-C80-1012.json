@@ -1,0 +1,159 @@
+{
+  "info": {
+    "authors": [
+      "Burghard B. Rieger"
+    ],
+    "book": "International Conference on Computational Linguistics",
+    "id": "acl-C80-1012",
+    "title": "Fuzzy Word Meaning Analysis and Representation in Linguistic Semantics. An Empirical Approach to the Reconstruction of Lexical Meanings in East-And West-German Newspaper Texts",
+    "url": "https://aclweb.org/anthology/C80-1012",
+    "year": 1980
+  },
+  "references": [],
+  "sections": [
+    {
+      "text": [
+        "Arbeitsgruppe f. mathem.-empirische Systemforschung (MESY) German Department, Technical University of Aachen, Germany Summary Word semantics is gaining increasing interest within linguistics in view of both, more adequate representational structures of the semantic system and methods and procedures to analyse it empirically.",
+        "Due to the fact formal and operational means have been devised to describe and represent word connotation and/or denotation, this paper discusses some of the empirical problems connected with natural languages' varying and vague meanings, how these can be analysed statistically from discourse data, and represented formally as fuzzy system of vocabulary mappings.",
+        "Some examples computed from East and West-German newspaper texts will be given at the end to illustrate the approaches feasibility."
+      ]
+    },
+    {
+      "heading": "1. Introduction",
+      "text": [
+        "When we look up linguistic theories of sentence or even of text-semantics to see what they can offer in respect to word-meaning, we will be confronted with basically two types FILLMORE /3/ has referred to as checklist-semantics and prototype-semantics.",
+        "According to this distinction, checklist-semantics provides listings of meaning components, semantic markers, or semantic descriptors which must be satisfied for a term to be (grammatically, truth-functionally, or else) interpretable within a linguistic expression; whereas prototype-semantics allows for the (paradigF5=1, syntagmatical, or else) identification of a term as part of a linguistic expression within a network structure of labeled nodes and relations.",
+        "Examining how these listings and networks are assembled, i.e. questioning from which sources and by what procedures the data necessary for their composition were acquired, we will invariably come accross the individual analysts', or group of analysts' own assumedly comprehensive and reliable knowledge of the world and/or the natural language system concerned.",
+        "In the majority of cases, these will not have been made accessible by inter-subjectively defined operations but rather by way of intuitive introspection.",
+        "In doing so, linguists tend to make use of word-meaning instead of analysing it when they set up matrices for componential analysis or define semantic networks.",
+        "Apart from tentative departures within generative semantics or statistical indexing, there have no operational procedures yet been devised for the semantic analysis and description of natural language terms as a result of which - when applied to natural language discourse - a lexical structure may be obtained.",
+        "Now, this is what word-semantics should and could do, and where exactly the problems begin."
+      ]
+    },
+    {
+      "heading": "2. Epistomology",
+      "text": [
+        "If we agree that linguistics is, or at least ought to be, an empirical discipline, then the paradigm of empirical sciences should be followed, although it needs modification in view of the scope of natural language semantics.",
+        "To adopt the paradigm of empirical sciences for linguistic research is tantamount to at least two postulates: a) not to rely on ready-made theories or models taken from another domain, because these may be inadequate in respect to the phenomena under investigation; and",
+        "b) not to rely on the introspective exploration of one's own knowledge and competence as the allegedly inexhaustible datasource although valuable initial ideas might be produced that way.",
+        "Instead, the investigation of linguistic problems in general, and that of word semantics in particular, should start with hypotheses formulated for continuous estimation and/or testing against observable data, then proceed to incorporate the findings tentatively in some preliminary theoretical set up which finally may perhaps get formalized to become part of an encompassing theory.",
+        "Within such a set up, the formal expressions which give an abstract representation of the domain, and the numerical expressions which give a quantitative account of the observable data, are normally to be complemented by correspondence rules.",
+        "These allow for the operational interpretation of formal notations and theoretical constructs in terms of empirical methods of counting and measuring observable data.",
+        "Linguistic theory has not been interested too much in developing correspondence rules of that kind so far /15/.",
+        "Following the line of LABOV /9/ and LEECH /10/, prevailing linguistic theory and linguistic semantics in particular is dominated by what has been called the \" categorial view \".",
+        "According to it, linguistic entities are at least implicitly asserted to be discrete, invariant, qualitatively distinct, conjunctively definable, and composed of atomic primes.",
+        "Membership in categories, and relations of inclusion and exclusion among units and categories, are established by a deterministic type of rule that allows only for binary ( positive or negative ) or triple ( positive, negative, or optional ) assignment, but has no means to represent probable and/or possible degrees of transition.",
+        "This type of rule - particularly when employed for meaning representation purposes - has come under severe criticism from as seemingly disparate disciplines like cognitive theory ( e.g. / 12 / ) and experimental psychology ( e.g. /20/ ), information and computer science ( e.g. /23/, /4/), psycholinguistics ( e.g. /16/, /11/) , sociolinguistics ( e.g. /8/, /7/, computational semantics ( e.g. /14/), and artificial intelligence ( e.g. /22/, /5/).",
+        "From the increasing amount of strong empirical evidence piling up in favour of some re-adjustment, a (meta-theoretical) modification appears to be overdue.",
+        "Accordingly, it may be argued that - contrary to the experimentally and simulatively well established (object-theoretical) fuzziness of cognitive categorizing and its linguistic correspondences - any formal representation of it using only binary systems' notations will inevitably result in inadequately sharp-edged lattices.",
+        "When imposed upon the varying and vague structures constituted and modified continuously during the process of verbal communication observed to be modelled, this will render formal representations of discrete entities with clear-cut boundaries where blurred margins and continuous transitions would be adequate.",
+        "The modifications suggested so far may be summarized to concern both, the observable manifestation and/or formal representation of discourse, allowing gradual rather than abrupt transitions to account for imprecise phenomena in a precise way.",
+        "This can be achieved, as I see it, formally by means of fuzzy set theoretical notations /24/, and operationally by means of empirical procedures assigned to them /19/.",
+        "Applied to natural language data, they will interrelate observable but essentially fuzzy language phenomena on the one hand, and formal but finally categorial notations of their linguistic descriptions on the other.",
+        "Thus, findings and/or hypotheses on either side may become testable against each other, allowing for mutual modifications in the course of gradual improvement and increasing adequacy of the model and what it represents."
+      ]
+    },
+    {
+      "heading": "3. Structure of Meaning",
+      "text": [
+        "What makes the analysis of natural language meaning so intricate a problem depends on the particular nature of what has to be represented as its results, namely, a representational structure in its own.",
+        "It is this representational aspect of language which theories of semantics and cognition have been, and still are focussed on in particular.",
+        "According to the more traditional theories, natural language meaning can be characterized by its denotative and connotative aspects.",
+        "Denotation is understood to constitute referential meaning as a system of relations between words or sentences of a",
+        "language and the objects or processes they refer to.",
+        "Connotation is defined to constitute structural meanings as a system by which words or sentences of a language are conceptually related to one another.",
+        "Referential semantic theory is truth-functional and formally elaborated but as such not prepared to account satisfactorily for the vagueness of natural language meaning; whereas structural semantics has considered vagueness somewhat fundamental of language but, being based mainly upon intuitive introspection, it has not achieved the theoretical or methodological consistency of formal theories.",
+        "In the course of recent, more procedural approaches to cognition and language comprehension, the former distinction of referential and structural meaning was embedded in what became to be known as frame semantics /17/.",
+        "The central notion of it is that of memory which serve as a paradigm for the operational aspects of both, world system structures and language system structures.",
+        "The basic distinction of what may propositionally be formulated as opposed to what may only prototypically be realized in some system structure of stored experiences, is reflected in the great variety of notional pairings which different disciplines have produced facing a similar, if not identical research problem.",
+        "Thus, their notions of formal vs. experiential knowledge /2/, semantic vs. episodic memory /21/, frame vs. scene /3/, description vs. schema /1/, etc.",
+        "show a striking resemblance: although their approaches differ in what they consider natural language meaning to be, they nontheless converge on the central notion of it, being a relation between a representation (i.e. the body of discourse) and that which it represents (i.e. a referentially and/or prototypically defined system structure).",
+        "4.",
+        "A formal approach",
+        "It is this throughout relational structure of meaning that obviously allowed the concept of fuzzy sets and relations to be employed to incorporate vagueness into formal theories of semantics.",
+        "The most recent, and at that most comprehensive approach (at least I know of) to tackle the problem of natural language meaning, is that of L.A. Zadeh /24/.",
+        "Under the acronym PRUF for 'Possibilistic, Relational, Universal, Fuzzy' he has devised a meaning representation language for natural languages which is possibilistic instead of truth-functional, and whose dictionary provides linguistically labelled fuzzy subsets of the universe, instead of sets of semantic markers under word-headings.",
+        "The basic idea, upon which this approach hinges, is that a referential meaning may be explicated as a fuzzy correspondence between language terms and a universe of discourse.",
+        "This correspondence, L, is formally defined to be a fuzzy binary relation from a set of language terms, T, to a universe of discourse, U.",
+        "As a fuzzy relation, L is characterized by a membership-function",
+        "which associates with each ordered pair (x,z) its grade of membership44- L (x\" z) / being a numeric value between 0 and 1, in L, so that",
+        "The fuzzy relation L now induces a bilateral correspondence according to which a) the referencial meaning of an element x' in T may be explicated as the fuzzy subset M(x') in U, assigned to it by the membership function /AL conditioned on x',",
+        "b) the linguistic description of an element z' in U may be given as a fuzzy subset D(z') in T assigned to it by the membership function",
+        "The definitions given in fuzzy sets theory for equality, containment, complement, intersection , and union allow for an application both, to referential meanings M(x) as subsets of elements in U and to linguistic descriptions D(z) as subsets of units in T. This corresponds to the distinction between scenic, or conceptual relations on the one hand, and frame, or semantic relations on the other - the latter of which only will be introduced here.",
+        "Thus, synonymy of two terms x,x1E.T may be given as the equality of the two fuzzy subsets M(x) and M(x') repre",
+        "senting the referential meaning in U x = x' iff ►l,(z,x)= frli,(z,x1) for all z (5)",
+        "Partial synonymy may be defined by a similarity formula introducing some threshold-value s",
+        "Hyponymy of a term x relative to x' may be explicated as containment of the meaning representing fuzzy sets concerned",
+        "In so far as the operations of complement, intersection and union are concerned which correspond to negation, conjunction and adjunction respectively, there has been some critical discussion lately, particularly on the grounds of experimental results.",
+        "These suggest that different definitions of operations should be maintained according to and comparable with the scene-frame-distinction aluded to above.",
+        "For the generation of new meanings which denote possible but not yet labeled elements (or sets of elements) in U, it can well be argued that the following definitions should operate on both, referential meanings M(x) and linguistic descriptions D(z) the former of which only are given here.",
+        "Although formally satisfactory - as outlined and illustrated by PRUF - the approach's basic assumption concerning the referential nature of natural meaning proves to be crucial for its empirical applicability: in order to determine the membership-grades of a fuzzy set, or fuzzy relation respectively, one has to have access to relevant empirical data defined to constitute the sets, and some operational means to calculate the numerical values from these data.",
+        "As the domain of the fuzzy relation tk contain L not only the set of terms of a language, T, but also the set of objects and/or processes these terms are believed to denote in the universe, U, both these sets should be accessible in order to let an empirical procedure be devised that could be assigned to IUT.",
+        "All that Zadeh /24/ is offering in that respect, stays empirically rather vague.",
+        "He assumes that \"each of the symbols or names in T may be defined ostensively or by exemplification.",
+        "That is by pointing or otherwise focussing on a real or abstract object in U and indicating the degree - on the scale from 0 to 1 - to which it is compatible with the symbol in question\".",
+        "This cannot be considered a solution which may be called both adequate and operational in the above sense.",
+        "Taken to be executable, Zadeh's suggestion necessarily involves probands' questioning about what they think or believe a term denotes.",
+        "Thus, the procedure would again have to rely on the individual introspection of a multitude of competent speakers, instead of making these speakers employ the term's denotational and/or connotational function in the course of communicative verbal interaction.",
+        "However, experimental psychology has taught us to expect considerable differences between what people think they would do under certain presupposed conditions, and what in fact they will do when these conditions are real.",
+        "And there is every reason to assume that this difference is found in cases of language performance, too.",
+        "So, it would appear more appropriate to make natural language use the basis for identifying those language regularities, which under certain communication frame conditions real speakers/ hearers follow and/or establish in discourse.",
+        "These will consequently allow natural language meaning (whatever that may be) not only to be intended and understood, but also to be analysed and represented.",
+        "As this apparently is the only certainty about meaning anyway, namely that it can only be constituted by means of natural language texts, these should also be able to provide the necessary data with the advantage of being empirically accessible.",
+        "Assembled in a pragmatically homogeneous corpus, the usage regularities which the lexical items produce, may thus be",
+        "analysed statistically with the numerical values obtained to define fuzzy vocabulary mappings /16/.",
+        "5.",
+        "An empirical reconstruction Following this line of argument is to ask for a connotational supplement to the denotational approach Zadeh forwarded so far.",
+        "This goes along with a necessary reinterpretation of what the sets T and U (1) in the referential meaning relation possibly stand for.",
+        "From a structural point-of-view, T is not just a set of terms of a language any more, but a system of lexical units the usage regularities of which induce a relational structure of its own.",
+        "So, this structure does not just allow for a set of objects and/or processes in U to be denoted, but it constitutes them as a system of concept-points, which is dependent on, but not identical with the one induced by the usage regularities of terms as employed and identified in natural language discourse /17/.",
+        "Thus, being a non-symmetric, fuzzy, binary relation, /AL can empirically be reconstructed only on the basis of natural language discourse data.",
+        "So far, statistical procedures have been used for the reconstruction by a consecutive mapping in three stages from T to U, providing the membership-grades for #L On the first stage co-occurrences of terms are not just counted but the intensities of co-occurring terms in the texts of the database are calculated.",
+        "This is done by a modified correlation-coefficient oc that measures mutual (positive) affinity or (negative) repugnancy of pairs of terms x,x'ET by real numbers from the interval [-1, +1].",
+        "o( can therefore be considered a fuzzy relation in the Cartesian-product of the set of terms T used in the texts analysed",
+        "By conditioning this fuzzy relation oc on the x.,ET, we get a non-fuzzy mapping",
+        "This mapping assigns to each xET one and only one so-called corpus-point y defined by the n-tupel of membership-gradesoc(xi,x) in the corpus space C Each corpus-point y'E C may thus be considered a formal notation of the usage regularities, measured by grades of intensity, any one term x' shows against all the other terms x.E T. On the second stage the differences of usage are calculated .",
+        "This is done by a distance measure di, which yields real, non-negative, numerical values from an interval standardized to [0,1] to denote the distances between any two corpus-points y,y'E C. ai can also be considered a fuzzy, binary relation in the set of all corpus-points yi defined to constitute the corpus space C",
+        "By conditioning this fuzzy relation on the y, (or - following (13) - the x. respectively) we get a non-fuzzy mapping",
+        "This mapping assigns to each yEC (or xET respectively) one and only one so-called meaning or concept-point z defined by the n-tupel of distance-values in the semantic space U, di(Yi,x) = dOyi,y) := zEiU (16) Each concept-point z'C U may thus be considered a formal notation of all the differences of all usage regularities, as a function of which the meaning of a term xleT can be characterized.",
+        "Therefore it can be identified according to (13) - with (4) , i.e. the linguistic description, D(z'), of a concept-point z' which is a fuzzy subset in T d(x z') := D(z')C T 1 i' (17) On the third stage of the consecutive mapping, there will topological environments of concept-points be calculated - in analogy to (14) - by a distance measure c2 which specifies the distances between any two z,z'EU.",
+        "Thus again, a2 may also be interpreted as a fuzzy, binary relation in the set of all concept-points zi defined to constitute the semantic space U",
+        "which assigns to each zcEU (and - following (16) - xET respectively) one and only one n-tupel of distances that - scaled according to decreasing values-will constitute the environment E(z)",
+        "Any such environment E(z') can be considered a formal means to describe the position of a concept point z' by its adjacent neighbours in the semantic space which is constituted by functions of differences of language usage regularities.",
+        "E(z') can therefore be identified - following (16) and (20) - with (3) the conceptual meaning, M(x'), of a term x' which is a fuzzy subset in U",
+        "We are now in the position to assign to the fuzzy relation",
+        "and the two-sided correspondence (3) and (4) induced by it, the following operations.",
+        "The two distance measures 61(14) and c9 (18), operating an numerical data obtained from the correlational analysis (11) of lexical items employed in a corpus of natural language texts, will determine the membership-grades to be associated with (22), namely for the correspondence (4) induced byL accord/ ing to (15) inserting = ID(z)/ G T (23) and for its inversion the Correspondence (3) according to (19) inserting",
+        "This concludes the empirical reconstruction, leaving open only the coefficients alluded to above.",
+        "Given the lemmatized vocabulary V as a proper subset of T of lexical units",
+        "is the sum S of all text-lengths st measured by the number of lexical units (tokens) in the corpus, and",
+        "is the total frequency H of a lexical unit x (type) computed over all texts in the corpus, then the modified correlation-coefficient ex to be inserted into (11) reads -14,x(x,x1) +1 (27) with = s and h'k= (28)",
+        "The distances have been calculated according to the following measures which for d1 (14) reads",
+        "- o d1 (y'y') 4 2 (29) and (92(18) reads employed in a corpus K of natural lan- d2(z,z')= 1/ guage texts as specified above di (Y,Yi)-di (17',Yi))2 2 ; K t ; t=1,...,m where",
+        "As these distance measures satisfying the conditions are to be considered the metric of the corpus space C and the semantic space U respectively, it should be noted here that so far the assumption of it being Euclidean (30) is nothing but a fist (although operational) guess.",
+        "Experiments with different distance measures one of which is (29) are currently undertaken.",
+        "Eventually, these might prove to be more adequate one day in modelling word-semantic systems' structures."
+      ]
+    },
+    {
+      "heading": "6. Examples",
+      "text": [
+        "To show the feasibility of the em-prirical approach and to leave you not completely empty-handed at the end, the following examples of linguistic description D(z) and of conceptual meanings M(x) may serve as an illustration.",
+        "They are taken from the data of a pilot-study on semantic differences in lexical structure /18/ that has been done within a major project on East",
+        "West-German language comparison.",
+        "So far, two samples from corpora consisting of texts from the East-German newspaper 'Neues Deutschland' and the West-German newspaper 'Die Welt' have been analysed according to the procedures outlined.",
+        "Although the samples analysed are rather small - approximately 3000 running words (tokens) of roughly 300 lemmatized words (types) the results look quite promising to the native speaker of German.",
+        "In mapping the connotational difference which some morphologically identical German lexical entries have developed almost simultaneously after twenty years of usage in a devided country's rather strictly separated population, the pilot-study's results seem to indicate that - linguistically - an additional analysis of comparable text-corpora of earlier and/or later years could provide the diachronic complement to the so far synchronic investigation into the lexical structures concerned, allowing for the empirical reconstruction not only of their instantaneous word-meanings, but of their time-dependent procdural changes that Nowakowska /13/ aims at.",
+        "Being induced by varying language usages, these can operationally be analysed as regularities followed and/or established by language users to differing degrees, which hence may formally be represented as functions that constitute dynamic systems to model semiotic structures.",
+        "In the above Tables 1 and 2 the linguistic description D(z) of a concept point z is given as well as the conceptual meaning M(x) of a vocabulary term x from both of the newspaper corpora further details of which may be found in /18/.",
+        "Acknowledgement This paper an earlier version of which was presented under the title \"Fuzzy Representation Systems in Linguistic Semantics\" at the 8th European Meeting on Cybernetics and Systems Research (EMCSR/8) in Vienna, Austria, in April 1980, is in some parts identical with /19/.",
+        "It takes up the model construction resulting from a project in Empirical Semantics supported by the Northrhine-Westphalia Ministry of Science and Research, applied to the language data provided by the German Research Foundation's project on East-West-German language comparison.",
+        "I would like to thank Dr. H.M. Dannhauer for providing his programming abilities to process these language data so efficiently at the Technical University of"
+      ]
+    },
+    {
+      "heading": "Aachen Computing Centre. References",
+      "text": []
+    }
+  ]
+}

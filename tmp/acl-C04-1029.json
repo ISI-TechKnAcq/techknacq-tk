@@ -1,0 +1,240 @@
+{
+  "info": {
+    "authors": [
+      "Wojciech Skut",
+      "Stefan Ulrich",
+      "Kathrine Hammervold"
+    ],
+    "book": "International Conference on Computational Linguistics",
+    "id": "acl-C04-1029",
+    "title": "A Bimachine Compiler for Ranked Tagging Rules",
+    "url": "https://aclweb.org/anthology/C04-1029",
+    "year": 2004
+  },
+  "references": [
+    "acl-E99-1017",
+    "acl-J94-3001",
+    "acl-J95-2004",
+    "acl-J95-4004",
+    "acl-J97-2003",
+    "acl-P96-1031",
+    "acl-W98-1301"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "This paper describes a novel method of compiling ranked tagging rules into a deterministic finite-state device called a bimachine.",
+        "The rules are formulated in the framework of regular rewrite operations and allow unrestricted regular expressions in both left and right rule contexts.",
+        "The compiler is illustrated by an application within a speech synthesis system."
+      ]
+    },
+    {
+      "heading": "1 Motivation",
+      "text": [
+        "In rule-based tagging, linguistic objects (e.g. phonemes, syllables, or words) are assigned linguistically meaningful labels based on the context.",
+        "Each instance of label assignment is licensed by a tagging rule typically specifying that label �b can be assigned to item 0 if 0 is preceded by a pattern A and followed by a pattern p. The patterns A and p are usually formulated as regular expressions over the input alphabet, but may also range over output labels.",
+        "The nature of the tagging task suggests a formalisation in terms of finite-state transducers (FSTs).",
+        "More precisely, the task can be viewed as an instance of string rewriting.",
+        "In this framework, a tagging rule is interpreted as a regular rewrite rule 0 4 �b/a _ p. Several methods have been proposed for the compilation of such rules into FSTs (Kaplan and Kay, 1994; Mohri and Sproat, 1996; Gerde-mann and van Noord, 1999).",
+        "A rewrite rule is converted into a number of transducers, which are combined by means of transducer composition, yielding an FST that implements the actual rewrite operation.",
+        "Typically, tagging is carried out by a set of rules Ri : Oi 4 �bz/Az _p2, i = 1... n, which may overlap and/or conflict.",
+        "A regular rule compiler should not just convert the rules into separate transducers Tl ... Tn.",
+        "For efficiency reasons, it is highly desirable to convert them into a single machine in a way that determines how rule conflicts should be resolved.",
+        "There are two basic options as to how the rule transducers can be combined.",
+        "• The rules can be associated with numerical costs, which translate as transition weights in the compilation step.",
+        "In this formalisa-tion, the union Tl U ... U Tn is a weighted finite-state transducer (WFST).",
+        "This transducer is typically non-deterministic, but the weights make it possible to find the optimal path efficiently (as an instance of the single-source shortest paths problem).",
+        "• The rules can be explicitly ranked.",
+        "In such a case, priority union (Karttunen, 1998), or an equivalent operator, can be used to combine Tl, ... , Tn into a single unambiguous FST which is then turned into a deterministic device (Skut et al., 2004).",
+        "The work reported here pursues the latter strategy.",
+        "Although less powerful and flexible than e.g. probabilistic approaches, it has the advantage of efficiency: once the rules have been compiled, rewriting an input sequence of t symbols boils down to t lookups in a transition table (2t in case of a bimachine, see below).'",
+        "Several compilation methods have been proposed for creating a deterministic machine out of a set of rules (Laporte, 1997; Roche and Schabes, 1995; Hetherington, 2001).",
+        "However, most of them impose strong restrictions on the form of contextual constraints: A and p are restricted to single symbols (Hetherington, 2001), or acyclic regular expressions (Laporte, 1997).",
+        "Skut et al.",
+        "(2004) describe a more powerful rewrite rule compiler that does not impose such constraints on 0, A and p. Each rule Ri is compiled into an unambiguous FST Ti that inserts a marker #i at the beginning of every match of 'With handwritten rules, the simple ranking is actually an advantage since a more complex rule interaction typically affects the transparency of the system.",
+        "OZ preceded by an instance of AZ and followed by an instance of p2.",
+        "While p2 and AZ may contain markers inserted by other rules, Oz must be marker-free.",
+        "The composition T1 o ... o T,,, of the rule transducers yields an FST that inserts rule markers into the input string, resolving rule conflicts according to the explicit ranking of rules.",
+        "Composed with a transducer that performs the actual rewrite operation, it produces an unambiguous FST which implements the required combination of rules.",
+        "Two problems arise with this approach.",
+        "• Although the resulting FST is unambiguous (i.e., implements a function), it may be non-determinisable (Mohri, 1997a; Laporte, 1997).",
+        "• The composition operation used to combine the ranked rule transducers quickly creates large non-deterministic FSTs, resulting in slow compilation and high memory requirements.",
+        "The remedy to the first problem is straightforward: since the resulting FST implements a function, it can be compiled into a bimachine, i.e. an aggregate of a left-to-right and a right-to-left deterministic finite-state automaton (FSA) associated with an output function.",
+        "The application of such a bimachine to a string involves running both automata (in the respective directions) and determining the symbols emitted by the output function (cf. section 2.1).",
+        "The simplest option is thus first to create the rule transducers, then compose them into a (non-deterministic) FST, and finally apply a bimachine construction method (1996).",
+        "However, such a solution will not eliminate the inefficiency caused by expensive rule composition.",
+        "Thus, we have developed a compilation method that constructs the left-to-right and the right-to-left automaton of the resulting bimachine directly from the patterns without having to construct and then to compose the rule transducers.",
+        "The efficiency of the compiler is increased by employing finite-state automata instead of FSTs, since algorithms used to process FSAs are typically faster than the corresponding transducer algorithms.",
+        "Furthermore, the resulting (intermediate) structures are significantly smaller than in the case of FSTs.",
+        "This leads to much faster compilation and smaller finite-state machines."
+      ]
+    },
+    {
+      "heading": "2 Formalization",
+      "text": []
+    },
+    {
+      "heading": "2.1 Definitions and Notation",
+      "text": [
+        "In the following definitions, E denotes a finite input alphabet.",
+        "A is a finite output alphabet.",
+        "A deterministic finite-state automaton (DFSA) is a quintuple A = (E, Q, q0i 6, F) such that: Q is a finite set of states; q0 E Q is the initial state of A; 6 : Q x E 4 Q is the transition function of A; F C Q is a non-empty set of final states.",
+        "A sequential transducer (ST) is defined as a 7-tuple T = (E, 07 Q, qo, S, a, F) such that (E, Q, qo, S, F) is a DFSA, and or(q, a) is the output associated with the transition from state q via symbol a to state 6(q, a).",
+        "The functions 6 and a can be extended to the domain Q x E* by the recursive definition:",
+        "Applied to a string u = al ... at, B produces a string v = b1 ... bt, such that b2 E A* is defined as follows:",
+        "An unambiguous finite-state transducer can always be converted into a bimachine (Berstel, 1979; Roche and Schabes, 1996).",
+        "This property makes bimachines an attractive tool for deterministic processing, especially since not all unambiguous transducers are determinisable (sequentiable)."
+      ]
+    },
+    {
+      "heading": "2.2 Rules, Rule Ordering and Priorities",
+      "text": [
+        "As mentioned in section 1, the tagging rule formalism is formulated in the framework of regular rewrite rules (Kaplan and Kay, 1994).",
+        "Input to the rule compiler consists of a set of rules.",
+        "A rule 0 4 �b/A _ p states that label �b is assigned to object 0 (called the focus of the rule) if 0 is preceded by a left context A and followed by a right context p. The context descriptions A, p and 0 are formulated as regular expressions over the input alphabet E. The rules may conflict, in which case the ambiguity is resolved based on the order of the rules in the grammar.",
+        "If a rule RZ fires for an object skin the input sequence sl ... st, it blocks the application of all rules Rj, j > i, to sk.",
+        "Thus the operational semantics of the rules may be stated as follows: A rule RZ fires if: (a) no other rule Rj, j < i, is applicable in the same context; the substring 81 ... sk_1 matches the regular expression E*AZ; the substring sk ... st matches the regular expression OipZE*.",
+        "This basic formalism imposes two conditions on the rules:",
+        "• A and p are regular expressions over E; • 0 E E is a single object.",
+        "These two assumptions restrict the expressive power of the formalism compared to general regular rewrite rules (Kaplan and Kay, 1994; Mohri and Sproat, 1996) in that they do not allow output symbols on either side of the context and only admit rule foci of length one.",
+        "Although these restrictions are essential for the initial basic formalism, we show in section 3 how to extend it so that the compiler can accept rules with both input and output symbols in the left context.",
+        "As for the length of the focus, it is important to bear in mind that the formalism is primarily intended for tagging rules which usually do not cover longer foci."
+      ]
+    },
+    {
+      "heading": "2.3 Matching of Context Patterns",
+      "text": [
+        "The basic idea in the new compilation method is to convert the patterns AZ and pioi7 i = I.... n, directly into the left-to-right and right-to-left acceptor of a bimachine without having to perform the fairly expensive operations required by the transducer-based approaches.",
+        "Key to the solution is the function SimultMatchal...a,a : Et 4 (2N)t+1 t E N, which, given a collection f �1, ... , , n} of regular expressions, maps a sequence of symbols sl ... st to a sequence of t + 1 sets of indices corresponding to the matching patterns at the respective position (position 0 corresponds to the beginning of the string, I denotes the set",
+        "tomaton that encodes in its states (Q) information about the matching patterns.",
+        "A to sets of indices corresponding to matching regular expressions: T(6*(q0iw)) _ {j E I : E*�j matches w}.",
+        "In order to construct SimultMatchol...O., we introduce a marker symbol $j ¢ E for each �j .",
+        "Let E$ = E U Ujcl f$j} be the extended alphabet.",
+        "Let A �= (E$, Q, qo, 6, F) be a deterministic finite acceptor for the regular expressions E* UjE1 �j$j.",
+        "An important property of the automaton A is that w E E* is an instance of a pattern E*�i if and only if q = V (qo, w) is defined and there exists a transition from q by $j to a final state: S(S* (qo, w), $j) E F. Now we can define the function T Q -421: T(q) _ {j E I : (q, $j) E Dom (6) n 6(q, $j) E F} Obviously, if A �enters state q after consuming a string w E E*, T(q) is the set of all indices j such that w matches E*�i.",
+        "The automaton A0,...0, _ (E, Q, qo, 6, Q) can now be constructed from A �by restricting it to the alphabet E (which includes trimming away the unreachable states) and making all its states final so that it accepts all strings w E E*:",
+        "possible to simultaneously match a collection of regular expressions."
+      ]
+    },
+    {
+      "heading": "2.4 Bimachine Compilation",
+      "text": [
+        "Using the construct SimultMatch, we can determine all the matching left and right contexts at any position k in a string w = al ... at.",
+        "The value of SimultMatchal...a.",
+        "(w) [k – 1] is the set of all rule indices i such that Ai matches the string al ... ak-1.",
+        "SimultMatch(o,p1)-i ... (0�p�)-1(w-1)[t – k] is the set of all rule indices i such that Oipi matches the remainder sk ... St of w. Obviously, the intersection SimultMatchal ... A.",
+        "(w) [k – 1] n SimultMatch(olpl)-i ... (0,ap,a)-1(w-1)[t – k] is exactly the set of all matching rules at position k. The minimal element of this set is the index of the firing rule.2",
+        "The output function can be either precompiled (e.g., into a hash table), or - if the resulting table is too large - the intersection operation can be performed at runtime, e.g. using a bitset encoding of sets.3"
+      ]
+    },
+    {
+      "heading": "3 Extensions",
+      "text": [
+        "The compiler introduced in the previous section can be extended to handle more sophisticated rules and search/control strategies."
+      ]
+    },
+    {
+      "heading": "3.1 Output Symbols in Left Contexts",
+      "text": [
+        "The rule formalism can be extended by including output symbols in the left context of a rule.",
+        "This extra bit is added in the form of a regular expression 7r ranging over the output symbols, which can be represented by rule IDs rk E I.",
+        "The rules then look as follows:",
+        "2 I order to ensure that the above formula is always valid, we assume that the rule with the highest index (R.) matches all left and right contexts (i.e., A.",
+        "= p� E*, �� = UoEE{a}), and -%, is a vacuous action.",
+        "If none of the other rules fire, the formalism defaults to R.. 3 In the actual implementation of the tagger, h has been replaced by a function g : Q x Q --� 0* defined as:",
+        "The translation of the k-th symbol in a string w al ... at is then determined by the formula g(S(go,al ... ak-1) S(go,at ... ak)) which is easier to compute.",
+        "Such a rule fires at a position k in string sl ... st if an extra condition (d) holds in addition to the conditions (a)-(c), formulated in section 2.2: (d) The IDs rl ... rk-1 of the firing rules match I*7Z.",
+        "In order to enforce condition (d), we use the SimultMatch construct introduced in section 2.3.",
+        "For that, the patterns 7r – {7r1, ... , 70 are compiled into an instance of SimultMatch,r = (A,7 T,r).",
+        "A,r is an FSA, so A,r = (I, Q,r, qo, S,r).",
+        "It follows from the construction of SimultMatch,r that the function T': Q,r 4 21 has the following property:",
+        "In other words, an action irk is admissible at position k if rk E T,r(S;r(go, rl ...rk– 1)).",
+        "Thus, the tagging task (according to the extended strategy (a)-(d)) is performed by the formal",
+        "as in section 2.4, and h:QxQ,rxExQ-4O* is defined as follows:4 h(q, q', a, q') = brk where := min(T(q) n T,,(e) n T (S (q' a))) In this formula, q and q are as in the basic bimachine introduced in section 2.4. q'r is the state of A,r after consuming the rule IDs rl ... rk-1: q' := S* qo, rl ...rk-1).",
+        "In order to determine the tagging actions for an input sequence w = al ... at, the automaton A is first run on w-1.",
+        "Then both A and A,r are run on w in parallel.",
+        "In each step k, the states S (q o, al .",
+        ".",
+        ".",
+        "ak-1), S (q o, at ... a) as well as the sequence rl ... rk-1 of already executed actions are known, so that the brk's can be determined incrementally from left to right."
+      ]
+    },
+    {
+      "heading": "3.2 Alternative Control Strategies",
+      "text": [
+        "Our rule compilation method is very flexible with respect to control strategies.",
+        "By intersecting the sets of rule IDs T (S (q o, al ... ak-1)) 4 In order to make sure the definition of h is always valid, we assume that the rule with the highest index (n) matches all possible contexts (i.e., -ir, = P, A� = p� E* and 0.",
+        "= UoEE{a}).",
+        "rk and T (S (q p, at ... ad), 1 < k < t, one can determine the set of all matching rules for each position in the input string.",
+        "In the formalism presented in section 2.4, only one rule is selected, namely the one with the minimal ID.",
+        "This is probably the most common way of handling rule conflicts, but the formalism does not exclude other control strategies."
+      ]
+    },
+    {
+      "heading": "Simultaneous matching of all rules:",
+      "text": [
+        "This strategy is particularly useful in the machine-learning scenario, e.g. in computing scores in transformation-based learning (Brill, 1995).",
+        "Note that the simple context rules used by Brill (1995) may be mixed with more sophisticated handwritten heuristics formulated as regular expressions while still being subject to scoring.",
+        "As shown in section 2.2, taggers using unrestricted regular context constraints are not sequentiable, and thus cannot be implemented using ST-based rule compilation methods (Roche and Schabes, 1995).",
+        "N-best/Viterbi search: Instead of a strict ranking, the rules may be associated with probabilities or scores such that the best sequence of actions is picked based on global, per-sequence, optimisation rather than on a sequence of greedy local decisions.",
+        "In order to implement this, we can use the extended formalism introduced in section 3.1 with a slight modification: in each step, we keep N best-scoring paths rather than just the one determined by the selection of the locally optimal action irk for 1 < k < t."
+      ]
+    },
+    {
+      "heading": "4 An Application",
+      "text": [
+        "In this section, we describe how our bimachine compiler has been applied to the task of homograph disambiguation in the rVoice speech synthesis system.",
+        "Each module in the system adds information to a structured relation graph (HRG), which represents the input sentence or utterance to be spoken (Taylor et al., 2001).",
+        "The HRG consists of several relations, which are structures such as lists or trees over a set of items.",
+        "The homograph tagger works on a list relation, where the items represent words.",
+        "Each item has a feature structure associated with it, the most relevant features for our application being the name feature representing the normalised word and the pos feature representing the part-of-speech (POS) of the word.",
+        "The assignment of POS tags is done by a statistical tagger (a trigram HMM).",
+        "Its output is often sufficient to disambiguate homographs, but in some cases POS cannot discriminate between two different pronunciations, as in the case of the word lead: they took a 1-0 lead vs. a lead pipe (both nouns).",
+        "Furthermore, the statistical tagger turns out to be less reliable in certain contexts.",
+        "The rule-based homograph tagger is a convenient way of fixing such problems.",
+        "The grammar of the homograph tagger consists of a set of ordered rules that define a mapping from an item to a sense ID, which uniquely identifies the phonetic transcription of the item in a pronunciation lexicon.",
+        "For better readability, we have changed the rule syntax.",
+        "Instead of 0 4 �b/A _ p, we write: A/O/p 4 �b where A, 0 and p are regular expressions over feature structures.",
+        "The feature structures are written [fl = vl ... A = vk], where f2 is a feature name and v2 an atomic value or a disjunction of atomic values for that feature.",
+        "Each attribute-value pair constitutes a separate input alphabet symbol.",
+        "The alphabet also contains a special default symbol that denotes feature-value pairs not appearing in the rules.",
+        "The symbol �b stands for the action of setting the sense feature of the item to a particular sense ID.",
+        "The following are examples of some of the rules that disambiguate between the different senses of suspects (sense=1 is the noun reading, sense=2 the verb reading):",
+        "Note that the last rule is a default one that sets sense to 1 for all instances of the word suspects where none of the other rules fire.",
+        "To explain the interaction of the rules, we will look at the following example: thel terror2 suspects3 that4 were5 in6 court?",
+        "We can see that the second and the third rule match the context of word 3.",
+        "The rule associated with the lower index fires, resulting in the value of sense being set to 1 on the item.",
+        "5 Performance Evaluation To evaluate the performance of the new compilation method, we measured the compilation time and the size of the resulting structures for a set of homograph disambiguation rules in the format described in section 4.",
+        "The results were compared to the results achieved using a compiler that converts each rule into an FST and then composes the FSTs and determinises the transducer created by composition (Skut et al., 2004).",
+        "Both algorithms were implemented in C++ using the same library of FST/FSA classes, so the results solely reflect the difference between the algorithms.",
+        "The figures (la)–(lc) on page 6 show the results of running both implementations on a Pentium 4 1.7 GHz processor for rule sets of different sizes.",
+        "Figure (la) shows the number of states, (lb) the number of transitions, and (lc) the compilation time.",
+        "The numbers of states and transitions for A2, the bimachine-based approach proposed in this paper, are the sums of the states and transitions, respectively, for the left-to-right and right-to-left acceptors.",
+        "The left-to-right FSA typically has a much smaller number of states and transitions than the right-to-left FSA (only 10% of its states and 2-5% of its transitions) since it does not contain the regular expression for the rule focus.",
+        "While the figures show a substantial decrease in runtime for the bimachine construction method (A2) compared to the FST-based approach Al (only 6.48 seconds instead of 115.29 seconds for the largest set of 40 rules in (lc)), the numbers of states and transitions are slightly larger for the bimachine.",
+        "Typically the FSAs have about 25% more states and 35% more transitions than the corresponding STs in our test set.",
+        "However, an FSA takes up less memory than an FST as there are no emissions associated with transitions and the output function h can be encoded in a very space-efficient way.",
+        "As a result, the size of the compiled structure in RAM was down by almost 30% compared to the size of the original transducer."
+      ]
+    },
+    {
+      "heading": "6 Conclusion",
+      "text": [
+        "The rule compiler described in this paper presents an attractive alternative to compilation methods that use FST composition and complement in order to convert rewrite rules into finite-state transducers.",
+        "The direct combination of context patterns into an acceptor with final outputs makes it possible to avoid the use of relatively costly FST algorithms.",
+        "In the present implementation, the only potentially expensive routine is the creation of the deterministic acceptors for the context patterns.",
+        "However, if the task is to create a deterministic device, determinisation (in its more expensive version for FSTs) is also required in the FST-based approaches (Skut et al., 2004).",
+        "The experimental results presented in section 5 show that compilation speed is not a problem in practice.",
+        "Should it become an issue, there is still room for optimisation.",
+        "The potential bottleneck due to DFSA determinisation can be eliminated if we use a generalisation of the Aho-Corasick string matching algorithm (Aho and Corasick, 1975) in order to construct the deterministic acceptor for the language E* Ujcl �j$j while creating the SimultMatch construct (Mohri, 1997b).",
+        "By constructing a single deterministic device, we pursue a strategy similar to the compilation algorithms described by Laporte (1997) and Hetherington (2001).",
+        "Our method shares some of their properties such as the restriction of the rule focus 0 to one input symbol.5 However, it is more powerful as it allows unrestricted (also cyclic) regular expressions in both the left and the right rule context.",
+        "The practical significance of this extra feature is substantial: unlike phonological rewrite rules (the topic of both Laporte and Hetherington's work), homograph disambiguation does involve inspecting non-local contexts, which often pose a difficulty to the 3-gram HMM tagger used to assign POS tags in our system.",
+        "Although the use of our compiler is currently restricted to handwritten rules, the extensions sketched in section 3.2 make it possible to use it in a machine learning scenario (for both training and runtime application).",
+        "Our rule compiler has been applied successfully to a range of tasks in the domain of speech synthesis, including homograph resolution, post-lexical processing and phrase break prediction.",
+        "In all these applications, it has proved to be a useful and reliable tool for the development of large rule systems."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,107 @@
+{
+  "info": {
+    "authors": [
+      "David R. Traum"
+    ],
+    "book": "Workshop on Intentionality and Structure in Discource Relations",
+    "id": "acl-W93-0235",
+    "title": "Rhetorical Relations, Action and Intentionality in Conversation",
+    "url": "https://aclweb.org/anthology/W93-0235",
+    "year": 1993
+  },
+  "references": [
+    "acl-H93-1033",
+    "acl-J86-3001",
+    "acl-W93-0211",
+    "acl-W93-0217",
+    "acl-W93-0220",
+    "acl-W93-0225",
+    "acl-W93-0232"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "This paper contains an investigation of the relationship between rhetorical relations and intentions.",
+        "Rhetorical relations are claimed to be actions, and thus the proper objects of intentions, although some relations may occur be independent of intentions.",
+        "Explicit identification of particular relations is shown to be not always necessary when this information can be captured in other ways, nevertheless, relations are often useful both in planning and recognition."
+      ]
+    },
+    {
+      "heading": "Rhetorical Relations and Intentions",
+      "text": [
+        "There are a number of different types of relationships between proximate segments of language, as well as a number of terms used to differentiate groups of these types.",
+        "For the present purposes I make no distinction (as (1o, e.g. [Sidner; Moser and Moore]) between affective and other types of discourse coherence relations.",
+        "Since my primary interest is in conversation (rather than, say, single producer text), I also include relations between utterances by different speakers.",
+        "Another dimension along which a distinction could be made is what exactly is king related'?",
+        "Are relations between explicit spans of language text or between elements of the expressed contents of texts or perhaps mixes between these categories?",
+        "Again, I will not make any such distinctions here, and simply use the term rhetorical relations to refer to any of these relations.",
+        "As with other types of linguistic meaning, there are both Semantic and Pragmatic views of rhetorical relations.",
+        "Semantic views concentrate on whether or not a relationship can be inferred from features of the discourse and what other information can be inferred when the relation holds or does not.",
+        "Pragmatic.",
+        "views are more concerned with how a relationship is established and what effects this relationship (or lack of relationship) has on the context) For the purposes of engaging in conversation and relating rhetorical relations to intentions, I take the pragmatic viewpoint as more central, although both are important.",
+        "From the pragmatic viewpoint, rhetorical relations are the same general kind of thing as speech acts or actions in general: abstra.ctions of agent-directed change in the world, in this case change in the conversational and metal state of the conversants.",
+        "The cmly difference between speech acts and rhetorical relations is that the latter are explicitly concerned with the linkage of separate segments of language.",
+        "[Traum and Hinkelmau, 1992] presents a multistratal theory of Conversation Acts,",
+        "which includes both traditional speech acts and several kinds of rhetorical acts.",
+        "There are low level acts which link together utterances into turns and content into units which are acknowledged and understood together, as well as a level of argumentation acts which link together proposition level and larger illocutionary acts.",
+        "Argumentation acts include act types such as answering a question, as well as most traditional rhetorical relations.",
+        "Actions play a useful role as a conceptual intermediary between bundles of observed features on the one hand, and stereotypical causes and effects.",
+        "They are also the proper objects of intentions, and play a central role in planning, plan execution and plan recognition.",
+        "Planning is the process of selecting a set of actions which, when performed under the proper conditions will lead to a desired state of affairs, or goal.",
+        "Plan execution is the process of performing the designated actions, monitoring them for desired effect and repairing or replanning in case of a problem.",
+        "Plan recognition is the process of reasoning about an agent's mental state (including intentions, beliefs, and goals) based on observed actions in context.",
+        "Intentions are commitments towards a course of action.",
+        "[Bratman, 1990] discusses three roles that intention plays in deliberative behavior: serving as a motivation for planning, a \"filter of admissibility\" on plans and further intentions, and a controller of conduct, motivating execution monitoring and repair and replanning when necessary.",
+        "Rhetorical relations are thus actions in the world distinguished by conditions on their occurrence and effects, which will generally be changes to the conversational state and the beliefs of the conversants.",
+        "Relations can also lie planned, intended, performed, and recognized.",
+        "As with other actions, relations can be performed intentionally or incidentally.",
+        "Of intentional actions, it is also possible to draw the distinction made in speech act theory between illocutionary acts, those in which part of the intended effect includes an awareness on the part of the hearer of this intention, and perlocutionary acts, in which it is only the effect that matters and not recognition of the intention [Austin, 1962].",
+        "For non-illocutionary acts, the intention of the speaker is not relevant - these actions can be produced as side-effects of the speaker's intention, so that a determination of the intention is not necessary to determining whether the act was performed.",
+        "For example, the evidence relation of [Mann and Thompson, 1987] may hold between two text spans even if the speaker did not intend such a relation, all that is required is that the hearer's belief in the nucleus is increased though the understanding of the satellite.",
+        "For an illocutionary act, on the other hand, the recognition of communicative intention is crucial to understanding.",
+        "For example, the answer relation can only be recognized by attributing to the speaker the intention to answer the question."
+      ]
+    },
+    {
+      "heading": "Is Identification of Rhetorical Relations Necessary?",
+      "text": [
+        "It is on the following point that the main criticism of bounded sets of speech acts or rhetorical relations (e.g. [Cohen and Levesque, 1990; Grosz and Sidner, 1986; Lochbaum; hughes and McCoy]) is centered: intuitively, all that is needed for successful communication is that the hearer understand the speaker's end intentions, not that the act types themselves be recognized.",
+        "This intuition, along with the lack of general agreement on the precise set of acts or relations lead some to reject the utility of relations altogether and concentrate only On intentions.",
+        "While I have some sympathy for this view, relations are often convenient for inferential purposes.",
+        "It is not so important that the particular set of relations used be the \"right\" set, or even that the set be shared by the discourse participants, as long as both participants can reach a. basic agreement cm the intended effects.",
+        "Still, relations prove to be a convenient intermediary between reasoning about high level intentions and actual surface forms.",
+        "In light of the preceding discussion, the question of whether rhetorical relations must be ideal",
+        "fled can be broken down into two subquestions.",
+        "On the one hand, if we are talking about whether the semantic relationship is inferable from the resulting discourse representation, the answer must be yes for illocutionary relations.",
+        "On the other hand, it may not lw necessary to explicitly recognize the act itself in the interpretation process - this knowledge may be implicit within the representation.",
+        "As an example, [Moser and Moore] discuss a co-specification relation which holds between two propositions which refer to the same entity.",
+        "They only consider relations which \"must be recognized in order to understand the discourse\", yet it seems perfectly plausible to claim that an agent could recognize that the propositions pl and 1)2 refer to the same entity E without necessarily representing or noticing any relationship between pl and p2 (though this relationship would be deducible from the individual designations of pl and 1)2).",
+        "In the TRAINS Conversation System implementation [Allen and Schubert, 1991], we take a fairly pragmatic approach towards rhetorical relations.",
+        "Those relations that are conventionally signalled by surface features (e.g. by clue words such as \"so\", \"no\", \"okay\", purpose clauses) are hypothesized by the Speech Act Interpreter [Heeman, 1993] and used by the Dialogue Manager [Traum, 1993] to guide further interpretation.",
+        "In the case of more implicit relationships we often do not identify the precise relation, merely operating on the speech act level forms.",
+        "Of course, relations could be identified based on how the content is treated with respect to previous content, but that doesn't seem helpful presently.",
+        "This is particularly true for subject matter relations.",
+        "For example, a. purpose clause is useful for the domain plan recognizer [Ferguson and Allen, 1993] in incorporating new content into an existing (partial) plan, but in the absence of such a cue, the recognizer will still try to connect the new content to previous content.",
+        "It would then be possible to deduce the relations that this item holds with previous items, but we currently see no need to do this.",
+        "As an example, consider the following possible pair of utterances in a situation in which the expressed content is not already in the current plan; but is easily incorporated:",
+        "(1) Move Engine El to Dansville to pick up the boxcar there, ... (2a) Move Engine El to Dansville, (21)) pick up the boxcar there, ...",
+        "In (1), the \"to\" clause would lead the speech act interpreter to propose a PURPOSE relation, while no such relation would be proposed for (2).",
+        "(1) might have wider applicability (e.g. in a case in which it is already known that the boxcar at Dansville will be moved) and may be easier to incorporate into a current plan structure (e.g. for (2a) the planner might choose a different reason for moving El), but in the current case these utterances would end up with identical plan structures.",
+        "Now if relation identification were an explicit task of the system, we could say that a purpose relation was deduced (there are of course other possibilities, such as SEQUENCE), though currently we see no need to assign a particular relation or set of relations."
+      ]
+    },
+    {
+      "heading": "Conclusions",
+      "text": [
+        "Summing up, rhetorical relations, like speech acts, are abstract actions and thus the proper object of intentions.",
+        "They may realize intentions, although, like other actions, some may be performed without having been intended (e.g. as side effects of actual intentions).",
+        "Rhetorical acts have",
+        "as their direct effect a change in hearer's belief (and speaker's belief about hearer's belief, etc.).",
+        "The conversational and mental state will also be crucial in determining whether relations actually hold between segments of language.",
+        "Identification of relations can often be useful in discourse understanding, but is not always strictly necessary, as several sets of relations might lead to the same results, and often it is not possible to identify the particular relation until after calculating effects, in which case there is no further need for labelling the relation.",
+        "Which set of relations should be part of the working ontology is still an open question, although I would suggest that an approach toward this question would be to use only those relations which seem useful in interpreting and producing text."
+      ]
+    }
+  ]
+}

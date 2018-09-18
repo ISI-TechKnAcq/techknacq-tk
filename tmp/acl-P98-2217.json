@@ -1,0 +1,232 @@
+{
+  "info": {
+    "authors": [
+      "Eric Villemonte De La Clergerie",
+      "Miguel Alonso Pardo"
+    ],
+    "book": "COLING-ACL",
+    "id": "acl-P98-2217",
+    "title": "A tabular interpretation of a class of 2-Stack Automata",
+    "url": "https://aclweb.org/anthology/P98-2217",
+    "year": 1998
+  },
+  "references": [],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "The paper presents a tabular interpretation for a kind of 2-Stack Automata.",
+        "These automata may be used to describe various parsing strategies, ranging from purely top-down to purely bottom-up, for LIGs and TAGs.",
+        "The tabular interpretation ensures, for all strategies, a time complexity in 0(n6) and space complexity in 0(n5) where n is the length of the input string."
+      ]
+    },
+    {
+      "heading": "Introduction",
+      "text": [
+        "2-Stack automata [2SA] have been identified as possible operational devices to describe parsing strategies for Linear Indexed Grammars [LIG] or Tree Adjoining Grammars [TAG] (mirroring the traditional use of Push-Down Automata [PDA] for Context-Free Grammars [CFG]).",
+        "Different variants of 2SA (or not so distant Embedded Push-Down Automata) have been proposed, some to describe top-down strategies (Vijay-Shanker, 1988; Becker, 1994), some to describe bottom-up strategies (Rambow, 1994; Nederhof, 1998; Alonso Pardo et al., 1997), but none (that we know) that are able to describe both kinds of strategies.",
+        "The same dichotomy also exists in the different tabular algorithms that has been proposed for specific parsing strategies with complexity ranging from 0(70) for bottom-up strategies to 0(n9) for prefix-valid top-down strategies (with the exception of a 0(n6) tabular interpretation of a prefix-valid hybrid strategy (Nederhof, 1997)).",
+        "It must also be noted that the different tabular algorithms may be difficult to understand and it is often unclear to know if the algorithms still hold for different strategies.",
+        "This paper overcomes these problems by (a) introducing strongly-driven 2SA [SD-2SAI that may be used to describe parsing strategies for TAGs and LIGs, ranging from purely top-down to purely bottom-up, and (b) presenting a tabular interpretation of these automata in time complexity 0(n6) and space complexity 0(0).",
+        "The tabular interpretation follows the principles of Dynamic Programming: the derivations are broken into elementary sub-derivations that may (a) be combined in different contexts to retrieve all possible derivations and (b) be represented in a compact way by items, allowing tabulation.",
+        "The strongly-driven 2SA are introduced and motivated in Section 1.",
+        "We illustrate in Sections 2 and 3 their power by describing several parsing strategies for LIGs and TAGs.",
+        "Items are presented in Section 4.",
+        "Section 5 lists the rules to combine items and transitions and establishes correctness theorems."
+      ]
+    },
+    {
+      "heading": "1 Strongly-driven 2-Stack Automata",
+      "text": [
+        "2SA are natural extensions of Push-Down Automata working on a pair of stacks.",
+        "However, it is known that unrestricted 2SA have the power of a Turing Machine.",
+        "The remedy is to consider asymmetric stacks, one being the Master Stack MS where most of the work is done and the other being the Auxiliary Stack AS mainly used for restricted \"bookkeeping\".",
+        "The following remarks are intended to give an idea of the restrictions we want to enforce.",
+        "The first ones are rather standard and may be found under different forms in the literature.",
+        "The last one justifies the qualification of \"strongly-driven\" for our automata.",
+        "[Session] AS should actually be seen as a stack of session stacks, each one being associated to a session.",
+        "Only the topmost session stack may be consulted or modified.",
+        "This idea is closely related to the notion of Embedded Push-Down Automata (Rambow, 1994, 96-102).",
+        "[Linearity] A session starts in mode write w and switches at some point in mode erase e. In mode w (resp.",
+        "e), no element can be popped from (resp.",
+        "pushed to) the master stack MS.",
+        "Switching back from e to w is not allowed.",
+        "This requirement is related to linearity because it means that a same session stack is never used twice by \"descendants\" of an element in MS. [Soft Session Exit] Exiting a session is only possible when reaching back, with an empty session stack and in mode erase, the MS element that initiated the session.",
+        "took place on the session stack.",
+        "The popping of this mark (in erase mode) will guide which action should take place on the session stack.",
+        "In other words, we want the erasing actions to faithfully retrace the writing actions.",
+        "Formally, a SD-2SA A is specified by a tuple (E, M, X, $o, $, 0) where E denotes the finite set of terminals, M the finite set of master stack elements and X the finite set of auxiliary stack elements.",
+        "The init symbol $0 and final symbol $f are distinguished elements of M. 0 is a finite set of transitions.",
+        "The master stack MS is a word in (DM)* where D denotes the set {/, \\„ -4, of action marks used to remember which action (w.r.t.",
+        "the auxiliary stack AS) takes place when pushing the next master stack element.",
+        "The empty master stack is noted c and a non-empty master stack 61A1 (57,A,, where An denotes the topmost element.",
+        "The meaning of the action marks is:",
+        "/ Pushing of an element on AS.",
+        "\\ Popping of the topmost element of AS.",
+        "No action on AS.",
+        "• Creation of a new session (with a new empty",
+        "session stack on AS).",
+        "The auxiliary stack AS is a word of (/CX*)* where = v is a set of two elements used to delimit session stacks in AS.",
+        "Delimiter Wv (resp.",
+        "e) is used to start a new session from a session which is in writing (resp.",
+        "erasing) mode.",
+        "The empty auxiliary stack is noted e. Given some input string x1 ... x1 E E*, a configuration of A is a tuple (m, u, E, 6) where m E { w, e} denotes a mode (writing or erasing), u a string position in [0, AFL the master stack and e the auxiliary stack.",
+        "Modes are ordered by w e to capture the fact that no switching from e to w is possible.",
+        "The initial configuration of A is (w, 0, N'v) and the final one (e, A transition is given as a pair (p, 6) (q, 0,9) where p, q are modes (or, with some abuse, variables ranging over modes), z in E*, E. and 0 suffixes of master stacks in M(DM)*, and 6,0 suffixes of auxiliary stacks in X*(iCX*)* = (Xu/C)*.",
+        "Such a transition applies on any configuration (p, u, W,//)6) such that xu+i ...xv = z and returns (q, v , , /PO).",
+        "We restrict the kind of allowed transitions:",
+        "\\ WRITE (w, A, a) 1--z-■ (w,A\\B,E) \\ ERASE (e, A \\ B, e) 1-L■ (e, C, c) Figure 1 graphically outlines the different kinds of transitions using a 2D representation where the X-axis (Y-axis) is related to the master (resp.",
+        "auxiliary) stack.",
+        "Figure 1 also shows the two forms of derivations we encounter (during a same session).",
+        "2 Using 2SA to parse LIGs Indexed Grammars (Aho, 1968) are an extension of Context-free Grammars in which a stack of indices is associated with each non-terminal symbol.",
+        "Linear Indexed Grammars (Gazdar, 1987) are a restricted form of Indexed Grammars in which the index stack of at most one body non-terminal (the child) is related with the stack of the head non-terminal (the father).",
+        "The other stacks of the production must have a bounded stack size.",
+        "Formally, a LIG G is a 5-tuple (VT ,VN P) where VT is a finite set of terminals, VN is a finite set of non-terminals, S E VN is the start symbol, V1 is a finite set of indices and P is a finite set of productions.",
+        "Following (Gazdar, 1987) we consider productions in which at most one element can be pushed on or popped from a stack of indices:",
+        "To each production k of type PUSH, POP or HOR, we associate a characteristic tuple t(k) = (d, (5, a, )3) where d is the position of the child and the other arguments given by the following table:",
+        "We introduce symbols Vrk,t as a shortcut for dotted productions [Ak,o – )Ak,i .",
+        "• .",
+        "Ak,t • Ak,i+i • • • Ak,nki• In order to design a broad class of parsing strategies ranging from pure top-down to pure bottom-up, we parameterize the automaton to be presented by a call projection from V to V\"11 and a return projection from V to wet where V = VN U and Vcall and V' are two sets of elements.",
+        "We require V\"./1 fl V\"t = 0 and ( – +, \") to be invertible, i.eVX,YE V, , = (r, v) x Y The projections extend to sequences by taking = X?, and – e e (similarly for ').",
+        "Given a LIG G and a choice of projections, we define the 2SA A(G ,') = (VT, M, X where .A4 = {Vk,i}UVTUV7-, X = V;U, and whose transitions are built using the following rules.",
+        "• Call/Return of a non child CALL: f) (WI HAk,i+1 1.n) RET : (e, Ak,i-1-1 7 rn (77/7 f) • Call/Return of a child for t(k) = (i+ 1, 6, a, 13).",
+        "CALL(6) : (w, (w, Vk,i6Ak,i+i, RET(6) : (e, Vk,i5Ak,i+i, # ) (e, • Production Selection SEL : (w,Ak,o, E) (W, Vk,0 7 f) • Production Publishing PUB : (e, Vk,nk e) (e,4-711, e) • Scanning (for terminal productions) SCAN: (w, Ak,0 Hm)/(e, Ak,07",
+        "The reader may easily check that A(G, ,') recognizes L(G).",
+        "The choice of the call and return elements for the MS (71r*,„ and Ak,i) and the AS (-7-y' and <7.-y-) defines a parsing strategy, by controlling how information flow between the phases of prediction and propagation.",
+        "The following table lists the choices corresponding to the main parsing strategies (but others are definable).",
+        "It is also worth to note that the description of A(G,' could be simplified.",
+        "Indeed, for every configuration (Tri, u, derivable with A(G,' ,'), we can show that E = Hvki ,ei 81 • • • V k.,1„871X, and that 5/ only depends on Vk1,1.",
+        "That means that we could use a master stack without action marks, these marks being implicitly given by the elements Vko.•"
+      ]
+    },
+    {
+      "heading": "3 Using 2SA to parse TAGs",
+      "text": [
+        "Tree Adjoining Grammars are a extension of CFG introduced by Joshi in (Joshi, 1987) that use trees instead of productions as primary representing structure.",
+        "Formally, a TAG is a 5-tuple g (ITN ,VT , S , , A), where VN is a finite set of nonterminal symbols, VT a finite set of terminal symbols, S the axiom of the grammar, I a finite set of initial trees and A a finite set of auxiliary trees.",
+        "I U A is the set of elementary trees.",
+        "Internal nodes are labeled by non-terminals and leaf nodes by terminals or E, except for exactly one leaf per auxiliary tree (the foot) which is labeled by the same non-terminal used as label of its root node.",
+        "New trees are derived by adjoining: let be a a tree containing a node v labeled by A and let be /(3 an auxiliary tree whose root and foot nodes are also labeled by A.",
+        "Then, the adjoining of [3 at the adjunction node v is obtained by excising the subtree av of a with root v, attaching f3 to v and attaching the excised subtree to the foot of l3 (See Fig. 2).",
+        "An elementary tree a may be represented by a set P (a) of context free productions, each one being either of the form",
+        "• vk,o vk, • • • where vk,,a denotes some",
+        "i vk,n,,, non-leaf node k of a and vk,, the ith son of k.",
+        "• vk,o ak, where vk,o denotes some leaf node k",
+        "of a with terminal label ak • As done for LIGs, we introduce symbols Vo to denote dotted productions and consider projections and to define the narameterized 2SA A(G,',') = (VT, .M, .A4, vo,o, vo,o, 0) where M = {V} U {ITC} U {4,i}.",
+        "The transitions are given by the following rules (and illustrated in Figure 2).",
+        "• Call / Return for a node not on a spine.",
+        "The call starts a new session, exited at return.",
+        "CALL: (771, E) (w, RET : (e, Wn) (M, Vk,i+17 6) • Call / Return for a node vk,i+i on a spine.",
+        "The adjunction stack is propagated unmodified along the spine.",
+        "SCALL : (w, E) (W, E) SRET : (e, Vk,i-411k,i+17 e) (e, f) • Call / Return for an adjunction on node Vk,O• The computation is diverted to parse some acceptable auxiliary tree 0 (with root node r), and a continuation point is stored on the auxiliary stack.",
+        "ACALL : (w, vk,o, E)1-0 (w, vk,0/773, Vk,o) ARET : (e,V1c,0/731Vk,nk) (e,vk,o,e) • Call / Return for a foot node fp.",
+        "The continuation stored by the adjunction is used to parse the excised subtree.",
+        "FCALL : (w, j;,A) (w, 7;\\A,c) FRET: (e, J\\ A, c) (e, b, A) Note: These two transitions use a variable A over M. This is a slight extension of 2SA that preserves correctness and complexity.",
+        "• Production Selection SEL : • Production Publishing PUB: (M7 Vk,nk E) • Scanning",
+        "SCAN: (w, fli -)Fa-14(e, vi+-707), Wn) Different parsing strategies can be obtained by choosing the call (it) and return (vk,i) elements: Strategy v 4--v prefix-valid Top-Down ii 1 Bottom-Up 1 ii prefix-valid Earley v v' Non prefix-valid variants of the top-down and Earley-like strategies can also be defined, by tak-ing77'3 = J._ and = r for every root node rp of an auxiliary tree 0 (the projections being unmodified on the other elements).",
+        "In other words, we get a full prediction on the context-free backbone of G but no prediction on the adjunctions."
+      ]
+    },
+    {
+      "heading": "4 Items",
+      "text": [
+        "We identify two kinds of elementary derivations, namely Context-Free [CF] and escaped Context-Free [xCF] derivations, respectively represented by CF and xCF items.",
+        "An item keeps the pertinent information relative to a derivation, which allows to apply the sequence of transitions associated with the derivation in different contexts.",
+        "Before presenting these items, we introduce the following classification about derivations.",
+        "A derivation (p,u,A,e)1--17 (q,v,0,0) is said rightward if no element of E is accessed (even for consultation) during the derivation and if A is only consulted.",
+        "Then EA is a prefix of 0.",
+        "Similarly, a derivation (p, u, (q, v, 0,0) is said upward if no element of e is accessed (even for consultation).",
+        "Then e is a prefix of 0.",
+        "We also note w[q/p] the prefix substitution of p by q for all words w, p, q on some vocabulary such that p is prefix of w."
+      ]
+    },
+    {
+      "heading": "4.1 Context-Free Derivations",
+      "text": [
+        "A Context-Free [CF] derivation only depends on the topmost element A of the initial stack MS. That means that no element of the initial AS and no element of MS below element A is needed: (o, u, EA, e)l-- (w, v, OB, 09)1 (m, w, ()BSC, ec) d2 where",
+        "• d1 and di d2 are both rightward and upward.",
+        "• d2 is rightward.",
+        "• either (6 o = w, and c E X) or (6 = and c =",
+        "For such a derivation, we have: Proposition 4.1 For all prefix stacks",
+        "where 0' = O[I/E] and 0' = g].",
+        "The proposition suggests representing the CF derivation by a CF item of the form"
+      ]
+    },
+    {
+      "heading": "AB (5C m",
+      "text": [
+        "where A = (u, A) and B = (v, B) are micro configurations and C = (w, C, c) a mini configuration."
+      ]
+    },
+    {
+      "heading": "4.2 Escaped Context-Free Derivations",
+      "text": [
+        "An escaped Context-Free [xCF] derivation is almost a CF derivation, except for an escape sub-derivation that accesses deep elements of AS.",
+        "where",
+        "• d1 and d1d2 are both rightward and upward.",
+        "• d2 and dx are rightward.",
+        "• d3 is upward.",
+        "• 6 0 and d,c E X.",
+        "Proposition 4.2 For all prefix stacks E' and e , stack 4\", and rightward derivation",
+        "The proposition suggests representing the xCF derivation by an xCF item of the form ABS[DE]be where A = (u, A), B (v, B), D (s, D , d), E = (t, E) and C = (w, C, c).",
+        "In order to homogenize notations, we also use the alternate notation ABS[oo]Cm, to represent CF item ABSCm, introducing a dummy symbol o.",
+        "The specific forms taken by CF and xCF items for the different actions 6 are outlined in Figure 3."
+      ]
+    },
+    {
+      "heading": "5 Combining items and transitions",
+      "text": [
+        "We provide the rules to combine items and transitions in order to retrieve all possible 25A derivations.",
+        "These rules do not explicit the scanning constraints and suppose that the string z may be read between positions w and k of the input string.",
+        "They use holes * to denote slots that not need be consulted.",
+        "For any mini configuration A = (u, A, a), we note A° = (u, A) its micro projection.",
+        "where C = (w, C, c), f3 = (v, B ,b), F (k, F,c), and (when D o) D = (s, D ,b).",
+        "where -6' (w, C, c), B = (v, B ,b), P = (k,F,b), and (when 0 o) 0 = (1, 0,b).",
+        "[SWAP] T = (p, C,) (q, F, AB(5[D.E]Cm ABO[D.E]Fm (10) where C = (w, C, c), F = (k,F,c), and either c = W' or = c. The best way to apprehend these rules is to visualize them graphically as done for the two most complex ones (Rules 6 and 9) in Figures 4 and 5."
+      ]
+    },
+    {
+      "heading": "5.1 Reducing the complexity",
+      "text": [
+        "An analysis of the time complexity to apply each rule gives us polynomial complexities 0(nu) with u < 6 except for Rule 9 where u = 8.",
+        "However, by adapting an idea from (Nederhof, 1997), we replace Rule 9 by the alternate and equivalent Rule 11.",
+        "where C = (w, C, c), B = (v, B , b), F = F,b), and (when 0 0 o) 0 = (1,0,b).",
+        "Rule 11 has same complexity than Rule 9, but may actually be split into two rules of lesser complexity 0(n6), introducing an intermediary pseudo-item BB/[[0.11Ce (intuitively assimilable to a \"deeply escaped\" CF derivation).",
+        "Rule 12 collects these pseudo-items (independently from any transition) while Rule 13 combines them with items (given a /–ERASE transition r).",
+        "Theorem 5.1 The worst time complexity of the application rules (1,2,3,4,5,6,7,8,10,12,13) is 0(n6) where n is the length of the input string.",
+        "The worst space complexity is 0(n5)."
+      ]
+    },
+    {
+      "heading": "5.2 Correctness results",
+      "text": [
+        "Two main theorems establish the correctness of derivable items w.r.t.",
+        "derivable configurations.",
+        "A derivable item is either the initial item Or an item resulting from the application of a combination rules on derivable items.",
+        "The initial item (0, e)(0, c)H[00] (0, so, Wv)w stands for the virtual derivation step (w, 0, C7 C)I- (NV) 03 $r1 WV)*",
+        "Proof: By induction on the configuration derivation length and by case analysis of the different application rules.",
+        "We also need the following \"Extraction Lemma\".",
+        "g"
+      ]
+    },
+    {
+      "heading": "5.3 Illustration",
+      "text": [
+        "In the context of TAG parsing (Sect.",
+        "3), we can provide some intuition of the items that are built with A(G,','), using some characteristic points encountered during the traversal of an adjunction (Fig.",
+        "6).",
+        "after CALL before RET on ADJ il1A1/[oo]Riw A1it1/[F1A4]R2e on SPINE Ai Si -4[oolFi w Ai Si -[Fi A4]F2e on FOOT Bi Pi \\ [0.01A3w Bi Fi \\,[Gi B4pLie"
+      ]
+    },
+    {
+      "heading": "6 Conclusion",
+      "text": [
+        "This paper unifies different results about TAGs and LIGs in an uniform setting and illustrates the advantages of a clear distinction between the use of an operational device and the evaluation of this device.",
+        "The operational device (here SD-2SA) helps us to focus on the description of parsing strategies (for LIGs and TAGs), while, independently, we design an efficient evaluation mechanism for this device (here tabular interpretation with complexity 0(n6)).",
+        "Besides illustrating a methodology, we believe our approach also opens new axes of research.",
+        "For instance, even if the tabular interpretation we have presented has (we believe) the best possible complexity, it is still possible (using techniques outside the scope of this paper, (Barthelemy and Villemonte de la Clergerie, 1996)) to improve its efficiency by refining what information should be kept in each kind of items (hence increasing computation sharing and reducing the number of items).",
+        "To handle TAGs or LIGs with attributes, we also plan to extend SD-2SA to deal with first-order terms (rather than just symbols) using unification to apply transitions and subsumption to check items."
+      ]
+    }
+  ]
+}

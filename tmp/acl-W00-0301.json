@@ -1,0 +1,110 @@
+{
+  "info": {
+    "authors": [
+      "Candace L. Sidner",
+      "Carolyn Boettner",
+      "Charles Rich"
+    ],
+    "book": "Workshop on Conversational Systems",
+    "id": "acl-W00-0301",
+    "title": "Lessons Learned in Building Spoken Language Collaborative Interface Agents",
+    "url": "https://aclweb.org/anthology/W00-0301",
+    "year": 2000
+  },
+  "references": [
+    "acl-J86-3001",
+    "acl-J98-4001"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "This paper reports on the development of two spoken language collaborative interface agents built with the Collagen system.",
+        "It presents sample dialogues with the agents working with email applications and meeting planning applications, and discusses how these applications were created.",
+        "It also discusses limitations and benefits of this approach."
+      ]
+    },
+    {
+      "heading": "1 Collaborative Agents",
+      "text": [
+        "The underlying premise of the Collagen\" (for Collaborative agent) project is that software agents, when they interact with people, should be governed by the same principles that govern human-to-human collaboration.",
+        "To determine the principles governing human collaboration, we have relied on research in computational linguistics on collaborative discourse, specifically within the SharedPlan framework of Grosz and Sidner (1986, 1990) (Grosz and Kraus, 1996, Lochbaum, 1998).",
+        "This work has provided us with a computationally-specified theory that has been empirically validated across a range of human tasks.",
+        "We have implemented the algorithms and information structures of this theory in the form of a Java middleware component, a collaboration manager called Collagen, which software developers can use to implement a collaborative interface agent for any Java application.",
+        "In the collaborative interface agent paradigm, illustrated abstractly in Figure 1, a software agent is able to both communicate with and observe the actions of a user on a shared application interface, and vice versa.",
+        "The software agent in this paradigm takes an active role in joint problem solving, including advising the user when he gets stuck, suggesting what to do next when he gets lost, and taking care of low-level details after a high-level decision is made.",
+        "The screenshot in Figure 2 shows how the collaborative interface agent paradigm is concretely realized on a user's display.",
+        "The large window in the background is the shared application, in this case, the Lotus eSuiteTM email program.",
+        "The two smaller overlapping windows",
+        "in the corners of the screen are the agent's and user's home windows, through which they communicate with each other.",
+        "A key benefit of using Collagen to build an interface agent is that the collaboration manager automatically constructs a structured history of the user's and agent's activities.",
+        "This segmented interaction history is hierarchically organized according to the goal structure of the application tasks.",
+        "Among other things, this history can help reorient the user when he gets confused or after an extended absence.",
+        "It also supports high-level, task-oriented transformations, such as returning to an earlier goal.",
+        "Figure 3 shows a sample segmented interaction history for the an email interaction.",
+        "To apply Collagen to a particular application, the application developer must provide an abstract model of the tasks for which the application software will be used.",
+        "This knowledge is formalized in a recipe library, which is then automatically compiled for use by the interface agent.",
+        "This approach also allows us to easily vary an agent's level of initiative from very passive to very active, using the same task model.",
+        "For more details on the internal architecture of Collagen, see (Rich and Sidner, 1998).",
+        "We have developed prototype interface agents using Collagen for several applications, including air travel planning (Rich and Sidner, 1998), resource allocation, industrial control, and common PC desktop activities."
+      ]
+    },
+    {
+      "heading": "2 A Collaborative Email Agent",
+      "text": [
+        "The email agent (Gruen et al., 1999) is the first Collagen-based agent we have built that supports spoken-language interaction.",
+        "Our other agents avoided the need for natural language understanding by presenting the user with a dynamically-changing menu of expected utterances, which was generated from the current discourse state according to the predictions of the SharedPlan theory.",
+        "Sample menus are displayed in Figure 2.",
+        "The email agent, however, incorporates a speech and natural language understanding system developed by IBM Research, allowing users to collaborate either entirely in speech or with a mixture of speech and interface actions, such as selecting a message.",
+        "More recently we have developed the Lotus NotesTM meeting planning agent, which incorporates speech and sentence level understanding using the Java Speech API, as implemented by IBM.",
+        "The JSAPI toolkit provides a parser, which we use with a vocabulary and grammar we developed for the domain of meeting planning.",
+        "The tags produced by the Java Speech parser are interpreted with a set of semantic rules that produce internal structures used by the Collagen agent.",
+        "With the email application, the user can read, compose and send messages as one typically does with email.",
+        "The Collagen email agent, called Daffy, performs actions requested by the user with speech and watches user interface actions.",
+        "It can perform a few email actions on its own (such as opening and closing windows, and filling in the user's signature on email) and can also undertake actions that the user requests in spoken utterances.",
+        "In the sample session shown in Figure 4, the agent keeps a todo list for the user, explains how to accomplish email tasks for a user who is new to email, answers user questions about what actions were taken in the interaction and offers suggestions about what to do next in the interaction as well as forming user requests.",
+        "To create the email agent, we built a recipe library about email, as required for the Collagen architecture, of about 55 actions and 32 recipes for doing those actions; the actions included GUI primitives such as sending a message, and high level actions such as reacting to a message."
+      ]
+    },
+    {
+      "heading": "3 A Collaborative Agent for",
+      "text": []
+    },
+    {
+      "heading": "Planning Meetings",
+      "text": [
+        "Our experience with Daffy convinced us that collaborative agents would be more useful if they not only understood what the user was doing in the interface but could undertake more of the user's sub-goals and thus offload some of the burden from the user.",
+        "To explore this notion, we built Dotty, a Collagen agent, that works with a user who is planning a meeting with a customer, using Lotus Notes.",
+        "As the dialogue in Figure 5 demonstrates, Dotty is able to take over many of the details of planning the meeting.",
+        "Dotty uses a library that is far smaller than Daffy's: 19 actions and 5 recipes.",
+        "This dialogue begins with an overall goals of managing sales contacts and several sub-goals,",
+        "including creating a profile for Miles White (which is displayed to the user as a Notes document), scheduling a meeting with Miles White (which the agent undertakes by itself using facilities in Lotus Notes), finding information about Dover Hospital (which is displayed as a Notes document), and a brief discussion about planning a presentation."
+      ]
+    },
+    {
+      "heading": "4 Current Limitations",
+      "text": [
+        "The spoken interaction of our two Collagen agents is limited by the range of utterances that the utterance understanding components can interpret.. More significantly, we feel these agents are limited in dealing with spoken conversational errors, i.e. errors that arise either because the recognition system produces an error, or the semantic interpretation is faulty (even given the correct choice of words).",
+        "Errors resulting from semantic misinterpretation are especially important because often the content of the faulty interpretation is something that the agent can respond to and does, which results in the conversation going awry.",
+        "In such cases we have in mind using the history based transformations possible in Collagen (c.f.",
+        "(Rich and Sidner, 1998)) to allow the user to turn the conversation back to before where the error occurred.",
+        "Whether communicating by speech or menus, our agents are limited by their inability to negotiate with their human partner.",
+        "For example, whenever one of our agents propose an action to perform that the user rejects (as in the email conversation in Figure 4, where the agent proposes filling in the cclist and the user says no), the agent currently does not have any strategies for responding in the conversation other than to accept the rejection and turn the conversation back to the user.",
+        "We are in present exploring how to use a set of strategies for negotiation of activities and beliefs that we have identified from corpora of human-human collaborations.",
+        "Using these strategies in the Collagen system will give interface agents a richer set of negotiation capabilities critical for collaboration.",
+        "Finally, our agents need a better model of conversational initiative.",
+        "We have experimented in the Collagen system with three initiative modes, one dominated by the user, one by the agent and one that gives each some control of the conversation.",
+        "The dialogues presented in this paper are all from agent initiative.",
+        "None of these modes is quite right.",
+        "The user dominated mode is characterized by an agent that only acts when specifically directed to or when explicitly told to take a turn in the conversation, while the agent dominated mode has a very chatty agent that constantly offers next possible actions relevant to the collaboration.",
+        "We are currently investigating additional modes of initiative.",
+        "The collaborative agent paradigm that we have implemented has several original features.",
+        "The conversation and collaboration model is general and does not require tuning or the implementation of special dialogue steps for the agent to participate.",
+        "The model tracks the interaction and treats both the utterances of both participants and the GUI level actions as communications for the discourse; it relates these to the actions and recipes for actions.",
+        "The model has facilities for richer interpretation of discourse level phenomena, such as reference and anaphora, through the use of the focus stack.",
+        "Finally, when we began this research, we were not certain that the Collagen system could be used to create agents that would interact with users for many different applications.",
+        "Our experience with five different applications indicates that the model has the flexibility and richness to make human and computer collaboration possible in many circumstances."
+      ]
+    }
+  ]
+}

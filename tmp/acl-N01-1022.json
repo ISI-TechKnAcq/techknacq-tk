@@ -1,0 +1,166 @@
+{
+  "info": {
+    "authors": [
+      "Eric Villemonte De La Clergerie"
+    ],
+    "book": "Meeting of the North American Association for Computational Linguistics",
+    "id": "acl-N01-1022",
+    "title": "Refining Tabular Parsers for TAGs",
+    "url": "https://aclweb.org/anthology/N01-1022",
+    "year": 2001
+  },
+  "references": [
+    "acl-P98-1061",
+    "acl-P98-2217"
+  ],
+  "sections": [
+    {
+      "text": [
+        "As illustrated in Figure 2, we associate to each node v the following information, in order to describe a top-down prefix-valid3 left-to-right parsing strategy :",
+        "• left and right position variables •P, and Pv' (resp.",
+        "•P, and Pv,) delimiting the span of v, possibly with adjunction (resp.",
+        "without adjunction).",
+        "When no adjunction is done on v, we will have to ensure that •P„ = ,P, and = • dotted nodes 'v and v' (resp.",
+        "and v,) denoting computation points associated to entering and exiting v, possibly with adjunction (resp.",
+        "without adjunction).",
+        "As shown in Figure 2, each dotted node is implicitly associated to a position variable.",
+        "• call and return terms 'T„ = v('Pu) and",
+        "= ret( Pv') (resp.",
+        "•B, = lv( „P v) and B„ = ret( Pv,)) used as pieces of information when starting or resuming a suspension for the node, possibly with adjunction (resp.",
+        "without adjunction) .4 Note that there are many implicit congruences between positions variables and dotted nodes.",
+        "For instance, for a node IL visited just after v, we have v* E 'ft and P,' E • Pp.",
+        "In order to simplify notation and because the case of adjunction will come again and again, we also omit most subscripts when possible, assuming the following equalities (for a successful adjunction of",
+        "Intuitively, when reaching the entry point •v with left position •P, and deciding to perform an adjunction, the current traversal is suspended and the call information 'T, is used to fetch some auxiliary tree and to start its traversal.",
+        "When reaching foot \"6, the traversal of is suspended and • v is resumed and leads to ,v at position ,Pv.",
+        "When reaching v, at position P. (denoting the recognition of v without adjunction), a new suspension occurs and the traversal of /3 is resumed on the left of its spine.",
+        "When the traversal of /3 is finished, v „ is resumed and leads to v' at position P,• (denoting the recognition of v with adjunction).",
+        "As illustrated by Figure 3, these various steps may naturally be described using two stacks, a master stack MS used to record the tree traversals and an auxiliary stack AS used to keep the information needed to resume suspensions due to adjunctions.",
+        "We have chosen to take v = v (the name of the node) and v = _L (the null information) as pieces of information recorded on AS, but other choices are possible for other parsing strategies.' In Figure 3, we also use composite stack elements of the form ,B, -H7 (transition FCALL) to compose information relative to a node ( ,B, E .Bfi, for the footnode fo.)",
+        "and information relative to an adjunction (P for the adjunction node v).",
+        "More formally, the parsing steps may be expressed as transitions of a 2-stack automaton (Becker, 1994; Villemonte de la Clergerie and Alonso Pardo, 1998).",
+        "A transition T of the form (E, (0,19) applies on any configuration (MS, AS) = (TE, qg) and returns (WO, 00).",
+        "Some of the steps of the parsing strategies are explicited by the following transitions, with X , Y denoting free variables, instantiated by matching during transition application.6",
+        "In practice, the transitions may be grouped in meta-transitions by (a) grouping pairs of related call and return transitions such as ACALL and ARET and (b) considering dotted nodes such as v* as continuations.",
+        "For instance, figure 4 shows the skeleton of a meta-transition representing the traversal of an auxiliary tree with root r and some adjoinable node v. The typed feature-structure representation of the meta-transitions has no special signification, except that it closely corresponds to the internal representation used by our compiler.",
+        "Meta-transitions are important for the rest of the paper, because they explicit some particularities of TAGs (and of the parsing strategy).",
+        "There is one meta-transition per tree, possibly including disjunctive values to handle non mandatory adjunction nodes.",
+        "Actually, it is theoretically possible to merge into some disjunctive meta-transition the traversal of several trees.8"
+      ]
+    },
+    {
+      "heading": "4 Strong DP interpretation",
+      "text": [
+        "The strong Dynamic Programming interpretation of 2SAs is based on the identification of elementary 2SA derivations that may be reused and that may be represented by items.",
+        "Application rules are provided to combine together items and transitions in order to retrieve all possible 2SA derivations.",
+        "We just introduce minimal background about the interpretation and readers are invited to consult (Villemonte de la Clergerie and Alonso Pardo, 1998; Alonso Pardo et al., 2000).",
+        "The interpretation considers two kinds of items, namely Context-Free [CF] Items A/B/C (also represented by A/B/[oo]C) and Escaped Context-7Actually, we have considered the case of a mandatory adjunction at v. To handle non mandatory ones, we add disjunction points in the meta-transitions and share common continuations between alternatives.",
+        "8 There are relationships to investigate between the meta-transitions and the finite-state automata used in (Evans and Weir, 1998; Carroll et al., 1998).",
+        "Free [xCF] Items A/B/[DE]C representing sub-derivations passing by configurations A, B, C, D and E.9 The items keep only projections of the configurations, and the less information is kept, the better computation sharing will potentially be.",
+        "Practically, for a configuration X = (EX, .x), only the topmost elements X and z of each stack need to be kept in a mini configuration (X, x) or a micro configuration (X).",
+        "One can further reduce the amount of information by keeping for X only the \"triggering\" fraction of information e(X) that is consulted to start some computation above X (on the stack MS).",
+        "dotted node X v V, V. e(X) •T,, •B, B. Tv• Finally, for TAGs, Table 1 displays the patterns for the various items related to an adjunction on node v in a tree rooted at r. If v dominates some foot g in an adjunction on [DE] = [( •Bg, a) ( Bg• +0] and (a, b) = (A, it); otherwise [DE] = [o<>] and (a, b) = (0,0).",
+        "There are several generic rules used to combine items and transitions, some of them being rather complex.",
+        "More precisely, when parsing TAGs, the most complex case corresponds to returning from a fully recognized auxiliary tree to the adjunction node v. In first approximation, this step requires combining three items (start of the adjunction, recognition of the subtree and recognition of )3) with a transition ARET.",
+        "However, a straightforward application does not ensure an optimal worst-case time complexity in 0(r/8) and this step is actually split into the rules of Figure 5, with the introduction of an intermediary structure with superscript L. Furthermore, still to ensure optimal worst-case complexity, projections of items have to be considered with some components removed (marked by *)",
+        "in the rules.",
+        "In particular, three projections are needed for the recognition of t,,, the subtree rooted at v, in the context of an adjunction on v. For TAGs, these remarks lead to the execution model illustrated in Figure 6, obviously complex to decrypt' and implement.",
+        "This model also incorporates the notions of partial applications and immediate applications.",
+        "Partial applications decompose a complex application rule into a cascade of elementary applications, which combine only an item and a transition or some intermediary object (close to a transition).",
+        "Immediate application is a (partial) application done as soon as a dotted node X is reached, in order to avoid tabulating an item relative to X.",
+        "Immediate application is made possible because the transitions have been grouped into meta-transitions.",
+        "For instance, when reaching an adjunction node v with dotted computation point •v, one can immediately install:",
+        "• an item CAI to fetch and start the recognition of some auxiliary tree.",
+        "• an intermediary transition CFI > preparing the recognition of the subtree t,, rooted at v. • a projection item 1-a preparing the return from t, to the auxiliary tree.",
+        "• an intermediary transition RAI > preparing the return from the auxiliary tree to the adjunction node.",
+        "10To help the reading, object names follow the model Call/Return Aux/Foot (Item or transition I >) plus indices for projections (1, 2, 3, ... ) and intermediary objects (a, b, c ), giving for instance CAI, RFIb, RFI >1• • • Looking at Figure 6, we observe the three projections RFI{a,b,c} needed to record the recognition of subtree tv and the two complex cascades of (partial) applications required to return to the auxiliary tree and to the adjunction node."
+      ]
+    },
+    {
+      "heading": "5 Weak DP interpretation",
+      "text": [
+        "The strong DP interpretation derives from a generic view of 2SAs, independently from TAGs.",
+        "Efforts have been made to ensure an optimal worst-case complexity but they lead to a complex model.",
+        "Furthermore, it is not proven that these efforts are worthwhile in practice.",
+        "Therefore, we tried to exploit the properties of TAGs to simplify the strong DP interpretation into two directions:",
+        "1.",
+        "Removing more information from items.",
+        "2.",
+        "Relaxing tabulation, possibly increasing worst-case complexity, but still ensuring polynomial worst-case complexity."
+      ]
+    },
+    {
+      "heading": "FSEL",
+      "text": [
+        "To remove information, we can note that parsing an auxiliary tree /3 does not depend on the node v that started the adjunction.",
+        "The only pertinent information (needed at the root and foot nodes) is given by •T, T•, .B, and B..",
+        "The node name v is needed only when leaving the foot node to parse the subtree t, rooted at v. But for TAGs, the meta-transition indicates, as soon as •v is reached, the continuation •v to follow.",
+        "By immediate application, one can prepare an intermediary transition waiting for a compatible foot node to be reached.",
+        "Practically, this idea means that P and v may be removed and that we can use micro configurations (X)",
+        "in place of mini ones (X, x).",
+        "We can also simplify composite terms X + x into X. Tabulation may be relaxed by changing the way the subtree tv is traversed.",
+        "The strong DP interpretation traverses tu independently of the adjunctions that have been started (but not yet finished) for nodes on the path 71, from v to the root of a (if v belongs to a), hence allowing to share the traversal of for different adjunctions on v starting at the same position but occurring in different contexts.",
+        "In a way, the strong DP interpretation does not consider tv as a subtree of a but rather as a tree of its own.",
+        "We decided to relax this condition by requiring that the traversal of tv be done in the context of a larger traversal of a, including in particular the ongoing adjunctions on 7v.",
+        "Here again, this choice is possible because, when reaching dotted node v. at the end of tv, we know of course that we must suspend the computation (to finish traversing /3) but also that, when resuming the computation, we can directly jump to v*.",
+        "This difference of point of view leads to a revised version of meta-transitions, as illustrated by Figure 7 where v' is now seen as the next continuation of vo (to be compared with Figure 4 for dotted nodes •v, and v.).",
+        "The new meta-transition does not correspond to a set of new transitions but rather to a different organization of the original set.",
+        "Applying these various ideas leads to CF items AlArle and xCF items AINI[DE]C, where Ar denotes a stack of pairs ( •T,,)( •Bp).",
+        "We can show that A = ('Tr) where r is the root of some elementary tree a and C is some dotted node or information relative to a node v of a.",
+        "The micro configuration ( •Tv,) records starting an adjunction at ft and leaving a while ( .B4) records leaving a foot node and coming back to a.",
+        "Therefore, an item records the list of all adjunctions that are still under completion on 7r,, for some node v and tree a.",
+        "Table 2 displays",
+        "different patterns for weak items (to be compared with Table 1).",
+        "Some of the application rules for the weak DP interpretation are provided in Figure 8 and are illustrated by the execution model of Figure 9.",
+        "Clearly, the execution model is simpler than the one for the strong DP interpretation (Figure 6).",
+        "Analyzing worst-case complexity, we find that it remains polynomial but now depends on the maximal depth d of elementary trees.",
+        "More precisely, worst-case complexities are 0 (7-0±2d) for time\" and 0(n4±2d) for space.",
+        "These complexities suggest that the weak DP interpretation is maybe not very efficient for deep elementary trees.",
+        "We can also analyze worst-case complexities w.r.t.",
+        "the size G of the grammar (given for instance by the number of elementary trees).",
+        "We find space and time complexities in 0(G2) for the strong DP interpretation and in 0(G) for the weak one (because of the removing of V and v from items).",
+        "More precisely, each item provides information about nodes on some path of a single elementary tree and while some application rules (say rule [ARET]) combine items relative to two different trees, one easily checks that the information of one of the item (RAI) is fully constrained by the information coming from the other item and the transition (K and T• = e( v*)).",
+        "These complexities suggest that the weak interpretation is useful for large grammars, which is generally the case for linguistic grammars."
+      ]
+    },
+    {
+      "heading": "6 Results",
+      "text": [
+        "We have modified the original implementation in DyALog' to encode the weak DP interpretation.",
+        "We have then used it on a small Feature TAG for French of about 50 trees, organized following the XTAG architecture (The XTAG Research",
+        "Group, 1995).",
+        "We have built and compared different parsers', for the strong and weak DP interpretations but also for two different parsing strategies.",
+        "The strategy TD corresponds to the top-down prefix-valid strategy mentioned in this paper, while the strategy Hybrid uses top-down prediction on the syntactic categories but bottom-up checking on the node feature arguments.",
+        "Note that we do not assume the grammar to be lexicalized and we do not use any notion of lexicalization or tree filtering to speed-up parsing (Alonso Pardo et al., 2000).",
+        "The results of these experiments (Table 3) clearly show the efficiency of the weak DP interpretation for standard sentences and for a small but realistic linguistic grammar.",
+        "In this table, the line 0 indicates the loading time of each parser, time that we have subtracted from the running time for the sentences.",
+        "We have also tried the parsers on \"pathological\" sentences, keeping the same grammar.",
+        "We have considered 4 kinds of recursive constructions indexed by some integer n and used them to build larger and larger sentences (and getting more and more ambiguities).",
+        "Table 4 shows that the weak interpretation remains faster than the strong one (and it holds true for all the values of n that we have tried).",
+        "Of course, we are aware that some \"pathological\" grammars may give better results with the strong interpretation.",
+        "For example, for the grammar of Figure 10 which generate language a*, we get the results of Figure 11.",
+        "Now the question is to know if linguistic grammars and sentences exhibit this kind of behaviour."
+      ]
+    },
+    {
+      "heading": "7 Conclusion",
+      "text": [
+        "We have presented a new Dynamic Programming interpretation of 2SAs specialized to build simple and efficient tabular parsers for TAGs.",
+        "The preliminary experiments done on a small but realistic linguistic grammar have justified the interest of our approach, even if the optimal worst-case complexity is not en",
+        "sured w.r.t.",
+        "the length of the input string.",
+        "Of course, more experiments remain to be conducted on a wider range of grammars.",
+        "Beside efficiency, the other advantages of our interpretation are its simplicity and the predominance of the notion of continuation.",
+        "We feel that these ideas could be fruitful in order to design simple tabular parsers satisfying the valid prefix property for other formalisms than TAGs and still running in polynomial time (for instance for mildly context-sensitive formalisms or Linear Context Free Rewrit",
+        "ing Systems).",
+        "In particular, reasoning in terms of continuations and suspensions seems interesting when parsing interleaved constituents (even if the pattern of suspensions is more complex than the one used for TAGs).",
+        "It is also interesting to note (once again) that tabulation and parsing strategies are (largely) orthogonal issues: for a parsing strategy expressed by a set of 2SA transitions, we have at least two ways to interpret it using tabulation.",
+        "Beside the original \"strong\" interpretation and our \"weak\" one, there actually exists a whole range of intermediary interpretations corresponding to different levels of tabulation.",
+        "For instance, by increasing tabulation and using items of the form il/( •T) ( .13) I[D v.), the weak DP interpretation becomes very similar to the Earley prefix-valid algorithm of (Schabes, 1991), with time complexity 0(n9) and space complexity 0(n6).",
+        "Again, increasing tabulation and using items A/( .13)I[DE]( v.) leads to a DP interpretation close to the strong one but without keeping information relative to the Auxiliary Stack AS in the items.",
+        "The strong DP interpretation may also be relaxed by not using some projections or the intermediary object L (Figure 5).",
+        "There is also the possibility not to check subsumption on some objects.",
+        "Some of these possibilities should be investigated, noting that, with some care, several of them can be made to coexist in a single parser."
+      ]
+    }
+  ]
+}

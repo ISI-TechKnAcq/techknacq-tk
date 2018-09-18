@@ -1,0 +1,226 @@
+{
+  "info": {
+    "authors": [
+      "Hiroaki Saito"
+    ],
+    "book": "International Conference on Computational Linguistics",
+    "id": "acl-C90-3042",
+    "title": "Bi-Directional LR Parsing from an Anchor Word for Speech Recognition",
+    "url": "https://aclweb.org/anthology/C90-3042",
+    "year": 1990
+  },
+  "references": [
+    "acl-C86-1138",
+    "acl-C88-1040",
+    "acl-C88-2118"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "This paper introduces a new technique of parsing sentences from an arbitrary word which is highly reliable or semantically important.",
+        "This technique adopts an efficient LR parsing method and uses a reverse LR table constructed besides a standard LR table.",
+        "This technique is particularly suitable in parsing a lattice of words hypothesized by a speech recognition module.",
+        "If we choose anchor symbols in such a way that they are almost always acoustically reliable, the bidirectional LR parsing performs better against misrecognized words than the regular left-to-right LR parser, while most of the LR efficiency is preserved.",
+        "A pilot implementation shows a 43 % reduction of the error rate against the left-to-right LR method in parsing the speech input."
+      ]
+    },
+    {
+      "heading": "1. Introduction",
+      "text": [
+        "Parsing a word lattice produced by a speech recognition module requires much more search than conventional sentence parsing, and therefore an extremely efficient parsing algorithm is needed.",
+        "A word lattice is a set of words hypothesized by a speech recognition system from an utterance.",
+        "A typical word lattice consists of 30 - 200 words for a 10 word utterance, and each word has a score indicating probability of its having been actually uttered.",
+        "Not only are there many junk words which were never uttered, some actually uttered words may not be present in the lattice (missing words).",
+        "An island growing parsing in ATN mechanism presented the serious maintenance and practical problems [10].",
+        "The first promising attempt to parse an incomplete word lattice was made by Hayes et al.",
+        "[2], using semantic caseframes.",
+        "This attempt revealed that, while the semantic caseframes can provide a reasonable degree of robustness, a very efficient algorithm is required to be practical.",
+        "Good efforts were made by Poesio et al.",
+        "[4] and Giachin et al.",
+        "[1] to make the semantic caseframe approach more efficient and robust.",
+        "Meanwhile, Tomita modified the generalized LR parsing algorithm (GLR) [8] to handle word lattices [9].",
+        "The GLR algorithm is a very efficient, table-driven, nondeterministic context-free parsing algorithm, and it has been applied in speech recognition projects with further modification of the algorithm to handle missing words [5].",
+        "It requires heavy search, however, especially when a word is missed in the beginning part of the utterance, since the parser guesses missing words only from its left context.",
+        "Thus, the strict left-to-right-ness sometimes suffers inefficiency, and it is desired to parse occasionally backwards from an acoustically reliable word called an anchor word [10], Bidirectionality also plays an important role in Head-Driven parsing and a method of bidirectional parsing was presented by San et al. [7], This paper describes a technique, called bidirectional GLR parsing, to parse a word lattice occasionally backwards without loss of the table-driven efficiency.",
+        "A reverse LR table is constructed as well as a standard LR table.",
+        "Section 2 reviews the generalized LR parsing algorithm.",
+        "Section 3 then describes how to construct reverse LR tables and how to use them in word lattice parsing.",
+        "Section 4 discusses the robustness of bidirectional GLR parsing, and finally concluding remarks are made in Section 5."
+      ]
+    },
+    {
+      "heading": "2. Background: Generalized LR Parsing",
+      "text": [
+        "The LIZ parsing technique was originally developed for compilers of programming languages and has been extended for Natural Language Processing [8], The LR parsing analyzes the input sequence from left to right with no backtracking by looking at the parsing table constructed from the context-free grammar rules in advance.",
+        "An example grammar and its parsing table are shown in Figure 2-1 and Figure 2-2 respectively.",
+        "Entries \"s n\" in the action table (the left part of the table) indicate the action \"shift one word from input buffer onto the stack and go to state n\".",
+        "Entries \"r n\" indicate the action \"reduce constituents on the stack using rule n\".",
+        "The entry \"ace\" stands for the action \"accept\", and blank spaces represent \"error\".",
+        "'$' in the action table is the end-of-input symbol.",
+        "The goto table (the right part of the table) decides to which state the parser should go after a reduce action.",
+        "The LR parsing table in Figure 2-2 is different from the regular LR tables utilized by compilers of programming",
+        "languages in that there are multiple entries, called conflicts, on the row of state 9.",
+        "While the encountered entry has only one action, parsing proceeds exactly the same way as the normal LR parsing.",
+        "In case there are multiple actions in one entry, it executes all the actions with the graph-structured stack [8].",
+        "The bidirectional GLR parsing method begins at an arbitrary spot of the input, while the conventional GLR parsing analyzes the input sequence only from left to right.",
+        "(1) S --> NP VP (2) NP --> n (3) NP --> NP PP (4) VP v NP (5) PP --> p NP"
+      ]
+    },
+    {
+      "heading": "3. Bidirectional GLR parsing",
+      "text": [
+        "In this section we describe the bidirectional GLR parsing algorithm and an example of parsing a word lattice."
+      ]
+    },
+    {
+      "heading": "3.1. Reverse LR table",
+      "text": [
+        "Bidirectional GLR parsing uses a reverse LR table besides a standard LR table.",
+        "The reverse LR table is constructed from the context-free grammar in which the order of right-hand-side symbols is reversed in each rule.",
+        "For example, the grammar in Figure 3-1 is the set of reverse rules built from the example grammar in Figure 2-1.",
+        "Its parsing table (Figure 3-2), which is a reverse LR table, is constructed from the reversed grammar in Figure 3-1.",
+        "(1) S --> VP NP (2) NP n (3) NP --> PP NP (4) VP --> NP v (5) PP --> NP p"
+      ]
+    },
+    {
+      "heading": "3.2. Parsing from the Anchor Word in Both Directions",
+      "text": [
+        "Here we describe the algorithm for parsing the lattice starting from an anchor symbol and expanding in both left and right directions."
+      ]
+    },
+    {
+      "heading": "Parsing Procedure:",
+      "text": [
+        "1.",
+        "Choose the anchor symbol A from the lattice.",
+        "2.",
+        "Because A is a terminal symbol, the initial state(s) are determined from the action table.",
+        "Note that only the states in which the shift action(s) are performed are valid.",
+        "There are two kinds of starting states: • initial states for left-to-right parsing from the standard LR table • initial states for right-to-left parsing from the reverse LR table",
+        "Start GLR parsing from the initial states in both directions independently until the reduce action is suspended due to the lack of the reduce constituents.",
+        "(Since the parsing starts in the middle of the input, this could happen unless A is located on the edge of the lattice.)",
+        "The standard LR table is used when the parsing proceeds from left to right and the reverse LR table is used when the parse proceeds in the opposite direction.",
+        "3.",
+        "Perform the suspended reduce action when the same number reduce action from the other direction is ready.",
+        "Here we show how this procedure works in parsing the 238 2 lattice in Figure 3-3 using the grammars and the tables in Figures 2-1, 2-2, 3-1 and 3-2.",
+        "In parsing a lattice, the juncture verifier JUNCT(Wi, W i) should be prepared which returns TRUE if Wi and Wi can abut.1",
+        "First we choose the most probable word from the lattice, i.e. W-2 (v).",
+        "The standard LR table indicates that v is expected at the states 2, 3, 8, and 9.",
+        "Only the state 3 is valid because the other states require reduce actions which need previous words.",
+        "Thus the parse starts from state 3.",
+        "The current word v is shifted and the next state 6 is determined which is expecting n. Figure 3-4 shows this situation.",
+        "We consult the reverse LR table in the same way.",
+        "Namely the right-to-left parse starts from the state 2 and the next state 7 is decided after v is shifted.",
+        "(Figure 3-5.",
+        "States numbers and the expecting terminals for the left-bound parsing are written in italic fonts with underscore bars.)",
+        "Here we perform the right-to-left parse first.",
+        "State 7 is ready for the reduce action 4 by n. But the action \"reduce 4\" can not be performed now even on the assumption that JUNCT(W-1, W-2) returns TRUE, because the current stack does not contain enough reduce constituents.",
+        "That means the reduce action 4 is suspended until the left-to-right parsing is ready for the.reduce action 4.",
+        "Therefore we proceed with the right-bound parsing now.",
+        "NV-3 (n) is expected by state 6.",
+        "On the assumption that JUNCT(W-2, W-3) returns TRUE, n is shifted and the new state 2 is determined from the left-to-right action table (Figure 3-6).",
+        "The new state 2 is ready for the reduce action 2 (NP > n) by v, p, $.",
+        "On the assumption that JUNCT(W-3, W-4) returns TRUE, this reduce action is performed.",
+        "The left-to-right goto table indicates that the new state is 10.",
+        "(Figure 3-7) The next word W-4 is expected by state 10.",
+        "On the assumption that JUNCT(W-3, W-4) returns TRUE, W-4 is tin practice the juncture verifier should return the probability of juncture instead of just TRUE / FALSE.",
+        "shifted and the new state 5 is determined (Figure 3-8).",
+        "The parse continues in this way (Figure 3-9 – Figure 3-12).",
+        "In Figure 3-12 the new state 10 is ready for the reduce action by $ according to the left-to-right action table.",
+        "Thus",
+        "the action \"reduce 4\" is performed.",
+        "The next state 7 is also ready for the reduce action by $.",
+        "But this reduce action (S NP VP) is interrupted because the parsing stack does not have enough constituents.",
+        "At this point the suspended right-to-left parse can be resumed because the suspended action \"reduce 4\" is done.",
+        "The new state number 5 is determined from the right-to-left goto table.",
+        "(Figure 3-13) The first word W-1 is expected by state 5.",
+        "On the assumption that JUNCT(W-1, W-2) returns TRUE, W-1 is shifted and the new state number 3 is determined from the reverse LR table.",
+        "(Figure 3-14) The new state 3 is ready for the reduce action by v, p and S. Since W-1 is the first word in the lattice, the action \"reduce 2 (NP --> n)\" is performed.",
+        "(Figure 3-15)",
+        "State 10 is ready for the reduce action by $.",
+        "Thus the action \"reduce 1 (S VP NP)\" is performed, which indicates that the suspended left-to-right action \"reduce 1\" is also done.",
+        "(Figure 3-16 shows the end of parsing.)",
+        "240 4"
+      ]
+    },
+    {
+      "heading": "3.3. Ili-directional CLLR from Multiple Anchors",
+      "text": [
+        "We have considered the parse from one anchor word in the previous example.",
+        "The bidirectional GLR can be started from more than one word in the following way.",
+        "[1] Provide each word with its starting states for both right-bound and left-bound parsing from the action tables.",
+        "[2] Start bidirectional GLR parsing from each word in parallel.",
+        "[3] At the reached state si, check if there any nonterminals already exist which si is expecting according to the goto table [along the row of state si under the column labeled with the nonterminal symbol].",
+        "(Since parsing proceeds in parallel, the nonterminal may have been created already.)",
+        "if JUNCT(current-word,previously-creatednonterminal) returns TRUE, shift this nonterminal onto the current word just the same way as the standard \"shift action\" for terminals.",
+        "Note that this \"nonterminal shift action\" does not prevent the regular shift/reduce/accept actions at state si.2"
+      ]
+    },
+    {
+      "heading": "3.4. Parsing Words in Order of Probability",
+      "text": [
+        "In the previous section we showed that the parsing can start from multiple anchors.",
+        "This assures that the parse can start from any word in any order.",
+        "This parsing method is very suitable for speech recognition, because the parsing can proceed in the order of probability of each word in the lattice."
+      ]
+    },
+    {
+      "heading": "3.5., Parsing Incomplete Lattice",
+      "text": [
+        "In the previous example the lattice contained every necessary word.",
+        "If the lattice is complete, the generalized LR parsing method suffices [9].",
+        "It is often the case, however, that some words are missing in the output from the speech recognizer.",
+        "In an attempt to use the generalized LR parsing technique for parsing an incomplete lattice [6] or for parsing a noisy input sequence [5], all possibly viable symbols are checked.",
+        "Especially, handling missing symbols in the early stage of parsing requires a lot of search.",
+        "The bidirectional GLR parsing can handle missing words more elegantly in that only highly plausible missing candidates are explored as follows.",
+        "Suppose W-4(\"p\") is missing from the lattice in Figure 3-3:3.",
+        "In parsing the lattice in the order of probability, the 21n practice, however, regular shift actions do not have to be performed in many cases, because the nonterrninals previously created are likely to have a high score due to the fact that the parse starts with anchor symbols.",
+        "This heuristic method can reduce search.",
+        "3Such function words as prepositions and articles are likely to be missing in speech recognition.",
+        "parse is suspended after W-3 is shifted.",
+        "At this moment the left-to-right parsing is expecting \"p\" as the following word of W-3 and the right-to-left parsing is expecting \"p\" as the previous word of W-5.",
+        "Therefore we can assuredly predict \"p\" is missing between W-3 and W-5.",
+        "In case more than one word is missed in the gap, creating expected dummy words tentatively from one side or both from left side and from right side can solve the problem.",
+        "A top-down speech input verifier which checks the likelihood of dummy words should be incorporated, because search may grow significantly by indiscreet creation of dummy words."
+      ]
+    },
+    {
+      "heading": "4. Parsing Noisy Speech Input",
+      "text": [
+        "Saito et al.",
+        "implemented the system which parses the noisy speech input [5].",
+        "In that system the parser analyzes the phoneme sequence from left to right as exploring the possibilities of substituted, inserted, and missing phonemes.",
+        "Consequently a much bigger search was required than conventional text parsing.",
+        "Thus the efficient GLR parsing technique was adopted.",
+        "Since the parse proceeds strictly from left to right pruning the low-scored partial parses, it is sometimes hard to parse the speech input whose beginning part is very noisy.",
+        "For example, the speech input \"ROFAIBIGAZUZIQKISURU\" (the correct phoneme sequence is \"OYAYUBIGAZUKIZUKISURU\" which means \"I have a burning pain in the thumb.\") can not be parsed correctly by the GLR parser, because of the noisy initial part.",
+        "To apply the bidirectional parsing technique to this problem, we need to make a word lattice from the phoneme sequence, because * The current speech recognition device [3] does not give us the probability of each phoneme in the sequence.",
+        "® A single phoneme is too primitive to be an anchor symbol.",
+        "The word lattice built from the phoneme sequence \"ROEAIBIGAZUZIQKISURU\" is shown in Figure 4-1.",
+        "This lattice clearly shows that the correct parse \"OYAYUBI GA ZUKIZUKI SURU\" can be obtained.",
+        "We tested 125 sentences (5 speakers spoke 25 sentences.)",
+        "in the domain of doctor-patient conversation.",
+        "111 sentences were parsed correctly by the regular GLR method (recognition rate: 89.6 c/o).",
+        "6 more sentences were parsed correctly by the bidirectional parsing of the word lattice (recognition rate: 93.6 %).",
+        "The remaining 8 sentences were very badly pronounced, in which content words are missing.",
+        "It is necessary to ask the speaker to say the sentence again or to only speak the unclear portion."
+      ]
+    },
+    {
+      "heading": "5. Concluding Remarks",
+      "text": [
+        "We have introduced the bidirectional GLR parsing as a robust parsing technique and how the method is applied, especially for parsing the lattice of words hypothesized by the speech recognizer using the strong power of handling missing words.",
+        "The prototype parser has been implemented.",
+        "Preliminary results show that the robustness power is very effective especially for the lattice where missing words exist in the beginning part."
+      ]
+    },
+    {
+      "heading": "Acknowledgements",
+      "text": [
+        "The author is grateful to Dr. Masaru Tomita for the useful comments on this work.",
+        "The author also thanks the members of the Center for Machine Translation for comments and advice."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,178 @@
+{
+  "info": {
+    "authors": [
+      "Yusuke Miyao"
+    ],
+    "book": "Annual Meeting of the Association for Computational Linguistics",
+    "id": "acl-P99-1075",
+    "title": "Packing of Feature Structures for Efficient Unification of Disjunctive Feature Structures",
+    "url": "https://aclweb.org/anthology/P99-1075",
+    "year": 1999
+  },
+  "references": [
+    "acl-C86-1018",
+    "acl-C90-2018",
+    "acl-C96-1076",
+    "acl-C96-2160",
+    "acl-P86-1038",
+    "acl-P91-1040",
+    "acl-P98-1019",
+    "acl-P98-2132"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "This paper proposes a method for packing feature structures, which automatically collapses equivalent parts of lexical/phrasal feature structures of HPSG into a single packed feature structure.",
+        "This method avoids redundant repetition of unification of those parts.",
+        "Preliminary experiments show that this method can significantly improve a unification speed in parsing."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Efficient treatment of syntactic/semantic ambiguity is a key to making efficient parsers for wide-coverage grammars.",
+        "In feature-structure-based grammarsl, such as HPSG (Pollard and Sag, 1994), ambiguity is expressed not only by manually-tailored disjunctive feature structures, but also by enumerating non-disjunctive feature structures.",
+        "In addition, there is ambiguity caused by non-determinism when applying lexical/grammar rules.",
+        "As a result, a large number of lexical/phrasal feature structures are required to express ambiguous syntactic/semantic structures.",
+        "Without efficient processing of these feature structures, a sufficient parsing speed is unattainable.",
+        "This paper proposes a method for packing feature structures, which is an automatic optimization method for parsers based on feature structure unification.",
+        "This method automatically extracts equivalent parts of feature structures and collapses them into a single packed feature structure.",
+        "A packed feature structure can be processed more efficiently because we can avoid redundant repetition of unification of the equivalent parts of original feature structures.",
+        "There have been many studies on efficient",
+        "unification of disjunctive feature structures (Kasper and Rounds, 1986; Hasida, 1986; Diirre and Eisele, 1990; Nakano, 1991; Blache, 1997; Blache, 1998).",
+        "All of them suppose that disjunctive feature structures should be given by grammar writers or lexicographers.",
+        "However, it is not practical to specify all ambiguity using only manually-tailored disjunctive feature structures in grammar development.",
+        "Where disjunctive feature structures cannot be given explicitly those algorithms lose their advantages.",
+        "Hence, an automatic conversion method, such as the packing method described hereafter, is required for further optimization of those systems.",
+        "In addition, this packing method converts general feature structures to a suitable form for a simple and efficient unification algorithm which is also described in this paper.",
+        "Griffith (Griffith, 1995; Griffith, 1996) points out the same problem and proposes a compilation method for feature structures called modularization.",
+        "However, modularization is very time-consuming, and is not suitable for optimizing feature structures produced during parsing.",
+        "An earlier paper of myself (Miyao et al., 1998) also discusses the same problem and proposes another packing method.",
+        "However, that method can pack only pre-specified parts of input feature structures, and this characteristic limits the overall efficient gain.",
+        "The new method in this paper can pack any kind of feature structures as far as possible, and is more general than the previous method."
+      ]
+    },
+    {
+      "heading": "2 Data Structure and Algorithms",
+      "text": [
+        "This section describes the data structure of packed feature structures, and the algorithms for packing and unification of packed feature structures.",
+        "Through of this section, I will refer to examples from the XHPSG system (Tateisi",
+        "et al., 1998), an HPSG-based grammar for English."
+      ]
+    },
+    {
+      "heading": "2.1 Packed Feature Structure",
+      "text": [
+        "Figure 1 shows 4 out of 37 lexical entries which the XHPSG system assigns to the word \"credited\".",
+        "These lexical entries have various equivalent parts in their respective feature structures.",
+        "In Figure 1, equivalent parts are shaded with the same pattern.",
+        "Figure 2 shows a packed feature structure for the lexical entries shown in Figure 1.",
+        "Note that the equivalent parts of the original feature structures are collapsed into a feature structure segment, which is denoted by Si in Figure 2.",
+        "So is a special segment called the root segment, which describes the root nodes of all original feature structures.",
+        "Each segment can have disjunctive nodes, which are denoted by Ai.",
+        "For example, 53 has two disjunctive nodes, 6.5 and A6.",
+        "A dependency function, denoted by Di, is a mapping from a disjunctive node to a segment, and each Di corresponds to one original feature structure.",
+        "We can obtain each original feature structure by replacing each disjunctive node with the output of the respective dependency function.",
+        "For applying the unification algorithm described in Section 2.3, we introduce a condition on segments: a segment cannot have inter or intra-segment shared nodes.",
+        "For example, the disjunctive node Ai in Figure 2 must be introduced for satisfying this condition, even though the value of this node is the same in all the original feature structures.",
+        "This is because this path is structure-shared with another path (SYNSEMILOCALICONT1 ARG1 and SYNSEMILOCALICONTIARG2).",
+        "Structure-sharing in original feature structures is instead expressed by letting the dependency function return the same value for different inputs.",
+        "For example, result values of applying D1 to Ai and A7 are both Si.",
+        "The reason why we introduce this condition is to guarantee that a disjunctive node in the",
+        "result of unification will appear only at a path where a disjunctive node appears in either of the input feature structures at the same path.",
+        "For example, suppose we unify the top feature structure in Figure 1 with the packed feature structure in Figure 3.",
+        "In the result of unification, a new disjunctive node must appear at SYNSEMI LOCALICATIVALISUBJIFIRSTICONT, while no disjunctive nodes appear in either of the input feature structures at this path.",
+        "By introducing such a disjunctive node in advance, we can simplify the algorithm for unification described in Section 2.3.",
+        "Below I first describe the algorithm for packing feature structures, and then the algorithm for unification of packed feature structures."
+      ]
+    },
+    {
+      "heading": "2.2 Algorithm for Packing",
+      "text": [
+        "The procedure pack_feature_structures in Figure 4 describes the algorithm for packing two packed feature structures, denoted by (8', D') and (8\" ,D'').",
+        "S' and 8\" denote sets of segments, and D' and D\" denote sets of dependency functions.",
+        "We start from comparing the types of the root nodes of both feature structures.",
+        "If either of the nodes is a disjunctive node (Case 1), we compare the type of the other feature structure with the type of each disjunct, and recursively pack nodes with the same type if they exist (Case 1.1).",
+        "Otherwise, we just add the other feature structure to the disjunctive node as a new disjunct (Case 1.2).",
+        "If the types of the nodes are equivalent (Case 2), we collapse them into one node, and apply packing recursively to all of their subnodes.",
+        "If they are not equivalent (Case 3), we create a new disjunctive node at this node, and let each original",
+        "feature structure from this node become a new segment.",
+        "For simplicity, Figure 4 omits the algorithm for introducing disjunctive nodes into shared nodes.",
+        "We can easily create disjunctive nodes in such places by preprocessing input feature structures in the following way.",
+        "First each input feature structure is converted to a packed feature structure in advance by converting shared nodes to disjunctive nodes.",
+        "Then the above algorithm can be applied to these converted packed feature structures."
+      ]
+    },
+    {
+      "heading": "2.3 Algorithm for Unification",
+      "text": [
+        "Below I describe the algorithm for unification of packed feature structures, referring to the example in Figure 2.",
+        "Suppose that we are unifying this packed feature structure with the feature structure in Figure 5.",
+        "This example considers unification of a non-packed feature structure with a packed feature structure, although this algorithm is capable of unifying two packed feature structures.",
+        "The process itself is described by the procedure unify_packed_feature_structures in Figure 6.",
+        "It is quite similar to a normal uni",
+        "fication algorithm.",
+        "The only difference is the part that handles disjunctive nodes.",
+        "When we reach a disjunctive node, we put it onto a stack (segment _st ack), and postpone further unification from this node ((5) in Figure 6).",
+        "In this example, we put Ai, 2, A3, and 6,4 onto the stack.",
+        "At the end of the entire unification, we",
+        "D2 apply a dependency function to each member of the stack, and unify every resulting segment with a corresponding part of the other feature structure ((1) in Figure 6).",
+        "In this example, we apply Di to Ai, which returns segment Si.",
+        "We therefore unify Si with the feature structure tagged as a in Figure 5.",
+        "Disjunction is expressed by non-determinism when applying the dependency functions.",
+        "Figure 7 shows the intermediate data structure after unifying Ai with a.",
+        "We are now focusing on the disjunctive node A2 which is now on the top of segment_stack.",
+        "When we are applying we unify 52 with the corresponding feature structure b .",
+        "Should we instead apply D2, 53 would be unified.",
+        "A benefit of this unification algorithm is that we can skip unification of feature structure segments whose unification is already computed ((2) in Figure 6).",
+        "For example, we unify segment So with the other feature structure only once.",
+        "We can also skip unification of Si and Sio for D2, because the result is already computed",
+        "for D1.",
+        "This operation preserves the validity of unification because each segment does not have inter or intra-segment shared nodes, because of the condition we previously introduced.",
+        "Note that this method can correctly unify feature structures with reentrancies.",
+        "For example, Figure 8 shows the intermediate data structure after unifying A4, and the process currently reached Z.7 and B.",
+        "The result of the application of D1 to A7 is the result of unifying Si with a , because Si is overwritten with the result of this previous unification ((3) and (4) in Figure 6).",
+        "Hence, we unify la with this result.",
+        "Above unification algorithm is applied to every combination of dependency functions.",
+        "The result of the entire unification is shown in Figure 9."
+      ]
+    },
+    {
+      "heading": "3 Experiments",
+      "text": [
+        "I implemented the algorithms for packing and unification in LiLFeS (Makin° et al., 1998).",
+        "LiLFeS is one of the fastest inference engines for processing feature structure logic, and efficient parsers have already been realized using this system.",
+        "For performance evaluation I measure the execution time for a part of application of grammar rules (i.e. schemata) of XHP SG.",
+        "Table 1 shows the execution time for unifying the resulting feature structure of apply",
+        "ing schemata to lexical entries of \"Mary\" as a left daughter, with lexical entries of \"credited\"/\"walked\" as right daughters.",
+        "Unification of packed feature structures achieved a speedup by a factor of 6.4 to 8.4, compared to the naive approach.",
+        "Table 2 shows the number of unification routine calls.",
+        "NODE_UNIFY shows the number of nodes for which unification of types is computed.",
+        "As can be seen, it is significantly reduced.",
+        "On the other hand, SEGMENT_UNIFY shows the number of check operations whether unification is already computed.",
+        "It shows that the number of node unification operations is significantly reduced by the packing method, and segment unification operations account for most of the time taken by the unification.",
+        "These results indicate that a unification speed can be improved furthermore by reducing the number of the segment unification.",
+        "The data structure of dependency functions has to be improved, and dependency functions can be packed.",
+        "I observed that at least a quarter of the segment unification operations can be suppressed.",
+        "This is one of the future works."
+      ]
+    },
+    {
+      "heading": "4 Conclusion",
+      "text": [
+        "The packing method I described in this paper automatically extracts equivalent parts from feature structures and collapses them into a single packed feature structure.",
+        "It reduces redundant repetition of unification operations on the",
+        "shows the number of lexical entries assigned to the word.",
+        "Naive shows the time for unification with a naive method.",
+        "PFS shows the time for unification of packed feature structures (PFS).",
+        "Improvement shows the ratio (Naive)I(PFS).",
+        "Test data Naive NODE_UNIFY SEGMENT_UNIFY credited 30929 256 5095 walked 65709 265 10603 equivalent parts.",
+        "I implemented this method in LiLFeS, and achieved a speed-up of the unification process by a factor of 6.4 to 8.4.",
+        "For realizing efficient NLP systems, I am currently building an efficient parser by integrating the packing method with the compilation method for HPSG (Torisawa and Tsujii, 1996).",
+        "While the compilation method reduces the number of unification operations during parsing, it cannot prevent inefficiency caused by ambiguity.",
+        "The packing method will overcome this problem, and will hopefully enable us to realize practical and efficient NLP systems."
+      ]
+    }
+  ]
+}

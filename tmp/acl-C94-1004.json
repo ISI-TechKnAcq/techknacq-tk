@@ -1,0 +1,238 @@
+{
+  "info": {
+    "authors": [
+      "Barbara Gawronska-Werngren",
+      "Anders Nordner",
+      "Christer Johansson",
+      "Caroline Willners"
+    ],
+    "book": "International Conference on Computational Linguistics",
+    "id": "acl-C94-1004",
+    "title": "Interpreting Compounds for Machine Translation",
+    "url": "https://aclweb.org/anthology/C94-1004",
+    "year": 1994
+  },
+  "references": [
+    "acl-C90-2040",
+    "acl-C90-3030"
+  ],
+  "sections": [
+    {
+      "heading": "INTERPRETING COMPOUNDS FOR MACHINE TRANSLATION BARBARA GAWRONSKA ANDERS NORDNER CI-IRISTER JOHANSSON CAROLINE WILLNERS",
+      "text": [
+        "of Linguistics, University of Lund, Helgonahacken 12, 5-223 62 LUND, Sweden SUMMARY: The paper presents a procedure for interpretation of English compounds and for automatic translation of such compounds into Slavic languages and French.",
+        "In the target languages, a compound nominal is as a rule to be rendered by an NP with an adjective or genitive attribute, or with an attributive participle construction.",
+        "The model is based on Bierwisch's theory of word formation, which in turn is inspired by categorial grammar.",
+        "The procedure is applied to a specific domain (asthma research)."
+      ]
+    },
+    {
+      "heading": "0. INTRODUCTION",
+      "text": [
+        "The need of a component interpreting complex lexical items in an MT system translating from Germanic languages into e.g. French or Slavic languages is obvious.",
+        "Many rules (or patterns) of word formation are highly productive, which makes it impossible to store all complex lexical entries in a static lexicon.",
+        "An effective MT system must also he able to match the interpretation of a complex entry with the correct morphosyntactic pattern in the target language.",
+        "For example, a program translating from German into Polish must distinguish the relations between the parts of a compound like Universitatslehrer (university teacher) from the relations holding between Musik and Lehrer in Musiklehrer (teacher of music).",
+        "The first mentioned compound is to be translated as a noun followed by an adjective (nauczyciel unhversY-tecki–'teacher university+adjective, ending'), the later one as a noun and a genitive attribute (no-uczyciel muzyki--`teacher music-t-gen').",
+        "Similar problems occur when translating into French or Czech: cf. Musikabend–Fr.",
+        "soiree musicale (n a), Cz.",
+        "hudebni' veer (a n), Musiklehrer--Fr.",
+        "professeur de musique (1 prep n), Cz.",
+        "hudby (n n+gen).",
+        "The models for compound interpretation and generation proposed by general linguists (cf. Lees 1960, Selkirk 1982, Fanselow 1988, Bierwisch 1989) require as a rule several modifications in order to he applicable in an MT system.",
+        "Since, in our opinion, a model aimed to serve as an efficient tool for N1,1' and MT must be linguistically valid, we will discuss a number of theoretical questions and relate our model to general linguistics before presenting our experimental procedure for domain-restricted compound translation."
+      ]
+    },
+    {
+      "heading": "1. THE STATUS OF WORD FORMATION RULES",
+      "text": []
+    },
+    {
+      "heading": "1.1. 'Where's morphology?'",
+      "text": [
+        "The above question, put by Stephen Anderson 1982, is still waiting for a definitive answer.",
+        "Word formation rules have been claimed to obey syntactic principles and hence being a part of UG (Lees 1960, Pesetsky 1985), to form a grammatical level on their own (Di Sciullo & Williams 1987), to he explainable in semantic terms solely (Fanselow 1988) or to belong to the lexicon (Chomsky 1970, Jacken-doff 1975, Bierwisch 1989).",
+        "We will propose a quite simple answer to Anderson's question: morphology shall he seen as a component of the grammar, the notion `grammar' to be understood as an integrated model where no borders are drawn between syntax, morphology, and semantics."
+      ]
+    },
+    {
+      "heading": "1.2. Towards an integration of syntax, semantics and morphology",
+      "text": [
+        "Fanselow (1985, 1988) argues, on the basis of psycholinguistic evidence, for treating word formation rules not as generative processes, hut as a 'primitive' process of concatenating mor-phematic items, a very easily learnable procedure.",
+        "His argumentation is restricted to morphology in the traditional sense of the term.",
+        "We would like to go even further and claim that the grammar as a whole can he regarded as a sot of patterns for concatenation or coocurrence of lexical items, each concatenation pattern associated with principles of semantic interpretation.",
+        "This approach is to some extent inspired by (but far from identical to) categorial grammar and Bierwisch's lexicon theory (Bierwisch 1989).",
+        "At the same time, it is in its very essence not incompatible with Constraint Grammar (Karls-son 1990, Koskenniemi 1990)."
+      ]
+    },
+    {
+      "heading": "1.3. Compounds as collocations",
+      "text": [
+        "English compounds provide an argument in favour of our approach to grammar.",
+        "It seems impossible to draw a clear-cut borderline between strings traditionally labelled as",
+        "compounds and those classified as noun phrases.",
+        "CL the following examples, taken from a corpus of medical abstraus: ragweed allergic rhiniti.v house-dust-allergic asthma house dust asthma patient daily symptom diary cards fluticasone propionate aqueous nasal spray In most grammatical descriptions, strings consisting of nouns (like house dust asthma) are treated as compound nouns, whereas a complex including an adjective followed by a' noun is normally labelled as an NP.",
+        "The above examples show, however, that such a distinction is not unproblematic.",
+        "Phrases like house-dust-allergic asthma and .fluticasone propionate aqueous nasal spray may he analysed either as NPs containing a compound adjective and a head noun, or as compounds including optional adjective constituents (house dust asthma and fluticasone spray are perfectly well-formed).",
+        "Furthermore, parts of an English compound may provide referents for elliptic constructions, as in the following examples: The variations in provocation concentrations ... were small during both placebo and active drug treatment the difference between a single allergen provocation and continuous exposure...",
+        "Thus, a noun included in a compound can still have a referent on its own, an ability normally associated with nominal phrases.",
+        "Such facts indicate that there is no absolute distinction to be drawn between compound nominals and complex nominal phrases in English.",
+        "It seems more appropriate to talk about more or less lexicalized collocations.",
+        "However, in the following the traditional term 'compound' will he used."
+      ]
+    },
+    {
+      "heading": "2. AUTOMATIC INTERPRE'TA'TION AND TRANSLATION OF COMPOUNDS",
+      "text": []
+    },
+    {
+      "heading": "2.1. The theoretical foundation",
+      "text": [
+        "Bierwisch (1989; cf also Olsen 1991) regards the process of compounding as a functional application, where one of the thematic roles of the head noun becomes `absorbed'.",
+        "For example, a noun like payer is supposed to have the following interpretation: XyXx[zINST[xPAYy]], where y is the external theta-role, x the internal one, and z represents the 'referential role'.",
+        "In a compound like bill payer, the internal role of pay becomes instantiated:"
+      ]
+    },
+    {
+      "heading": "Xx[zINST[xPAY BIM].",
+      "text": [
+        "Our analysis of compounds is not incompatible with Bierwisch's approach.",
+        "However, for the purpose of MT, a classification of valency in terms of three kinds of theta roles only (external, internal and referential) seems insufficient.",
+        "A procedure for compound interpretation must also take into account optional thematic roles, e.g. location (university teacher).",
+        "It must in addition be able to deal with compounds that do not include deverbal components.",
+        "Hence, we decided to modify the theory proposed by Bierwisch at two main points: a. the valency of a verbal stem is to be represented not in terms of external and internal theta roles, hut in terms of the components of the event or situation the verb may refer to b. the interpretation of compounds that do not contain deverbal elements is based on tnorpho-semantic patterns specifying the default readings of combinations that include members of different semantic categories."
+      ]
+    },
+    {
+      "heading": "2.2 An experimental procedure for",
+      "text": [
+        "understanding derived nouns and compounds In an experimental program, implemented in LPA MacProlog, we structured a very restricted lexicon of Swedish stems and affixes (basal lexical entries, BLA) according to the approach outlined above.",
+        "Each verbal stem was provided with a list of elements of its typical event referent, e.g.: lex(Iliiril,m(teach,stem),v,vt,[agent, sem_object,domain,place,time,result],11).",
+        "Affixes were specified with respect to the following features: 0 the category or categories of stems the affix may he combined with 0 the resulting category, including the morphosyntactic specification 0 the default semantic interpretation of the affix.",
+        "For example, the Swedish agentive suffix are was represented as: slexaaretsuff(n,agr(sg,re,inde 0),v,agen t, [D. Underived nouns got a quite simplified semantic specil'cation ki-imitated in traditional terms like 'human', 'animate', 'abstract', 'concrete', `potential location' etc.",
+        "On this basis, the interpretation procedure tried to match the semantic specification of the affix or of the noun and associate the morphematic entries attached to the verb stem with the most probable elements of",
+        "the stern's semantic valency.",
+        "The program distinguished correctly between compounds like grammatikkirare (teacher of grammar) and toll-versitetsliimre (university teacher), as shown in the following outprint.",
+        "analyseagrammatikliirard madomain(grammar), head(maagent(suff), head(teach)1))1) category: n agr(sg, re, indef) constituents lg,rammatik, liirare, are analyseguniversitetslitrarel) maplace(university), head(maagent(su f head(teach)])) I) category: n agr(sg, re, indef) constituents [universitet, arell The program was also able to interpret somewhat unusual, but fully possible compounds like universitetsmOrdare (university killer), In the case of 'university killer', three alternative interpretations were given, all of them acceptable in Swedish: I) a person who kills in university buildings, 2) somebody who causes destruction of a university, 3) somebody who uses a university for destructive purposes.",
+        "The flexibility of the quite simple interpretation procedure and its ability to 'understand' even unusual complex words encouraged us to apply the method tested by means of the toy program for a more serious goal, viz. for interpretation and translation of medical abstracts dealing with asthma and allergy research."
+      ]
+    },
+    {
+      "heading": "2.3. Translation of compounds within a",
+      "text": [
+        "restricted domain (medical texts on asthma and allergy research)"
+      ]
+    },
+    {
+      "heading": "2.3.1. Domain-related requirements",
+      "text": [
+        "In order to construct a domain specific lexicon and to design appropriate parsing and translation algorithms, we investigated a corpus of about 140 medical abstracts.",
+        "Already the preliminary inspection provided evidence for the need of a special procedure for compound interpretation.",
+        "The frequency of compounds in the texts was extremely high.",
+        "Cf. the following sample: A large-scale multicenter investigation was undertaken in 3 cities with comparable pollen seasons and atmospheric pollen concentrations in order to obtain more definite information about.",
+        "the safety and efficacy a cromolyn sodium in the treatment of pollen-induced seasonal rhinitis.",
+        "Complex names of chemical substances, as cromolyn sodium, do not pose especially great problems to an MT system, since chemical symbols may be efficiently used as interlingual representations.",
+        "Highly lexicalized and highly idiosyncratic compounds, like airways or hay fever, may also be stored in the basic lexicon.",
+        "The main difficulty lies rather in the translation of productive compounds referring to different allergic syndroms, types of medical treatment and patient groups (ragweed pollen asthma, late-summer rhinitis, flunisolide test, llunisolide patient group etc.).",
+        "In different texts, the same syndrom may be referred to by different phrases, e.g. ragwood asthma, ragwood-in&Iced asthma, ragwood pollen asthma, rag-wood-allergic asthma etc.",
+        "A correct interpretation of the semantic relations between the constituents of such collocations is necessary for correct translation.",
+        "Otherwise, a phrase like childhood asthma would he translated into French not as asthme des enfants, hut as asthme induit par enfance (lit.",
+        "asthma induced by childhood-by analogy to e.g. pyrethrum.",
+        "asthma.",
+        "asthme induit par pvi'ethrines).",
+        "A procedure for interpretation of compounds and complex NPs must therefore include a kind of domain knowledge, preferably encoded in the lexicon.",
+        "An MT system aimed at translation of scientific texts should give the user a possibility of adding new entries to the lexicon in a simple way.",
+        "A system for medical abstract translation would not he really useful, if the user could not introduce names of new medicines, new terms denoting syndroms, symptoms, treatment methods etc.",
+        "Since the users of such a system would, with a high degree of probability, he a non-linguist, the linguist designing the method for lexicon extension must adapt the form of interactions to the expected competence of the user.",
+        "It would he naive to belive that a non-linguist could manage to specify the lexical items in terms of internal and external theta-roles.",
+        "Even terms like agent, theme and semantic object would probably cause confusion.",
+        "Hence, it seems most reasonable to formulate the semantic classification in domain-specific texts (in our case, in terms like allergen, syndrom, body-part etc.).",
+        "There are actually linguistic reasons for this solution, as scientific suhlanguages differ semantically from each other as well as from the everyday conversation language.",
+        "For a botanist, pyrethrum is primarily 'a plant belonging to the chrysanthemum family, whereas an allergy re",
+        "searcher regards pyrethrum as an allergy-inducing factor, having much in common with grass pollen and house dust.",
+        "In the preliminary model of the lexicon developed until now we classify nouns as members of the following categories:",
+        "- syndrom (asthma, rhinitis) - symptom (sneezing, irritation) - allergen (pyrethrum, ragwood) - body part (airways, skin) - body function (inhalation) - chemical substance: medicine (antihistamine) or not used as medicine (histamine) - medical treatment (injection) - scientific method (measurement, test) - time period (season, childhood) - human: patient or not (the later distinction is needed for correct interpretation of e.g. asthma patient and asthma researcher) - amount: mass or countable (dose, group) - others: concrete or abstract 2.3.3.",
+        "Interactive lexicon extension",
+        "The user has the possibility to classify new nouns to he added to the lexicon by marking the desired alternative in an interaction window.",
+        "The same entry may he marked as belonging to several categories.",
+        "For example, inhalation may be regarded as both body function and medical treatment (house dust inhalation/steroid inhalation).",
+        "When adding a compound, the user is asked to specify its constituents according to the category list above.",
+        "New words may he typed in by the user or read in from a text file.",
+        "It is assumed that the lexical entries to be added will belong to open lexical classes: nouns, verbs and adjectives.",
+        "To distinguish between these three classes is not an impossible task for a non-linguist, especially if an appropriate instruction is provided.",
+        "Adjectives are classified in a way similar to nouns, e.g. nasal, bronchial–denoting body part; sniffy, runny (as in stuffy nose)–denoting symptom and attribute of body part.",
+        "A user-adapted classification of verbs is more difficult to achieve.",
+        "In our preliminary model, the user is presented questions combined with example patterns, for instance: `Does the verb take an object, like investigate the effects?'",
+        "`Does it also take a complement with a certain preposition like: shield the patient from house dust?'",
+        "'What preposition is required?'",
+        "If the verb in question turns out to he transitive, a further question is asked about the semantic category of the typical object, according to the standard category list.",
+        "The specification of verbs takes more time than the one of nouns and adjectives.",
+        "However, the need of introducing new verbs is usually not as great as the need of adding new nouns.",
+        "2.3.4.",
+        "Compound interpretation and generation of target equivalents The present program covers the most frequent types of compounds found in the corpus.",
+        "After having filtered out the most frequent verbs (auxiliaries, modals) and items belonging to closed lexical classes (pronouns, articles, prepositions etc.",
+        "), we first investigated word frequencies, and then the (unfiltered) environment of about the thirty most frequent words.",
+        "On this basis, we could state that the most usual compounds containing the most frequent nouns (disregarding names of chemical substances) display the following patterns: i.",
+        "(attribute, concrete)-allergen-(adj)-syndrom house dust (allergic) asthma (grass) pollen (seasonal) asthma ii.",
+        "medicine/allergen-medical treatment antigen injection allergen injection steroid treatment iii.",
+        "(time period)-adj/allergen/medicine(body part)-scientific method allergen (skin) test 9 week double-blind study iv.",
+        "syndrom-patient-(countable amount) hay fever patient group v. medicine-(patient)-countable amount steroid patient group flunisolide group vi.",
+        "holy part-body function/symptom skin hyperresponsiveness airway patency vii.",
+        "(attribute, concrete)-allergen-time period grass pollen season",
+        "viii.",
+        "(medicine/allergen)-medical treatment/body function-time period steroid treatment period house dust inhalation period The procedure for compound interpretation is based on a Prolog formalization of the most frequent patterns.",
+        "The following program fragment shows what the format for basal lexical entries looks like and how the interpretation rules are constructed.",
+        "le.xffasthmal,n,Isyndrona_,_,:).",
+        "lexapollen kn, allergen 1,_, – )• lexa patientbn,I patienth__, lexaseasoni,n,1 time_peri lex([steroinn,Imedicine],__,_).",
+        "lex(Dis,n,[syndrom],A,B,C), append(DisAbecause_oll,New), appond(New,Iallergen(A11)I,Cotnplex).",
+        "/* pattern: allergen,complex- (a) - syndrom: grass pollen (allergic) asthma */",
+        "append(New,I allergen(' Attr,All 1)1, Complex)); appendgAttr,AU,Disl,Next,Tlex), lex(Next,n,Isyndrom"
+      ]
+    },
+    {
+      "heading": "tlexa Attr,All allergen",
+      "text": [
+        "append( attr(D is) I,Next,1 lead), append(Flead,Ihecause_.ofI,New), append(New,I allergena Attr,All D(,Complex)).",
+        "lex basic lexical entry tlex temporary lexical entry The rules simply specify the default interpretation of a sequence of nouns and deliver a semantic representation coded in `Machinese English', as shown in the outprints below: interpret([_house, dust, asthma, patient]) meanGpatient, suffering_from, syndrom ([asthma, because_of,allergen([house, dust1)1)0 grammatical category : n semantic category : [patient] interpret([house, dust, inhalation]) mean(] inhalation, or_ohject, allergen([ house, dustp1) grammatical category : n semantic category : [body junction] The Machinese representations can without difficulties be matched with the appropriate target morphosyntactic patterns.",
+        "For example, the semantic representation of grass pollen asthma patient becomes associated with the Polish pattern (simplified notation): patient,sullering_from, syndrom(IX,hecause_of,allergen(Attr,A11)1) --> n(patient,Agr,nom), prtact(suffer,Agr,nom), prep(sulThr,Prep,Case), n(X,Agr2,Case), prtpass(cause,Agr2,Case), n(allergy,Agr3,ins), prep(_,na,ack), n(All,Agr3,ack), n(Attr,agr(Gen,p1),gen).",
+        "ins the instrumental case The pattern above correctly generates the Polish equivalent of grass pollen asthma patient: pacjent cietpiacy nn astral: patient suffering prep asthma-acc",
+        "In a similar way, the program disambiguates ragwood asthma and childhood asthma when translating into French, Still, certain ambiguities may remain: the present program can, for example, not decide whether grass pollen asthma should he translated into French as asthme in",
+        "duit par pollen des graminees or par pollen de l'herbe.",
+        "The decision has to be made by the user.",
+        "Translation of frequent compounds of the type noun+past participle (allergen-shielded, allergen-tested, placebo controlled) is handled in a way similar to the one used in the prototype program when translating compounds like university teacher and university killer.",
+        "The semantic category of the noun is compared with the semantic specification of the valency of the verb stem and the noun is associated with the most probable verbal argument.",
+        "Thus, .allergen shielded room.",
+        "is interpreted as 'a room shielded from allergen', while allergen tested skin gets the reading 'skin tested by exposure to aller-gen'."
+      ]
+    },
+    {
+      "heading": "3. CONCLUSIONS AND IMPLICATIONS FOR FURTHER RESEARCH",
+      "text": []
+    },
+    {
+      "heading": "3.1. Remaining problems",
+      "text": [
+        "The method proposed here has so far led to good translation results.",
+        "However, the problem lies not only in interpreting a compound, hut also in identifying an English word sequence as a compound.",
+        "For the time heing, we use a parsing procedure based on a combination of dependency grammar and categorial grammar.",
+        "The main parsing difficulty, when dealing with an English input, is to decide whether a lexical stem functions as a finite predicate or as a nominal.",
+        "We try to remove the ambiguity by starting the parsing by a procedure called `verhfinder', searching for possible candidates for the predicate function.",
+        "The function of ambiguous items, like result, control etc., may often be identified on the basis of their eviromnent: if the word in question is immediately preceded by a preposition and/or an article, it can be easily identified as a nominal element.",
+        "The parsing procedure may still he made more efficient by utilizing results of statistic investigations of the corpus (Steier & Belew 1991, Johansson 1993)."
+      ]
+    },
+    {
+      "heading": "3.2. Future plans",
+      "text": [
+        "The advantage of the model outlined here lies in the fact that the general approach to the grammar underlying the translation system may be adapted to different domains without violating any theoretical assumptions.",
+        "However, the theory solely does not guarantee a high-quality translation.",
+        "The preliminary system outlined above is to be developed and improved along the following lines: 0 statistical methods will he used in order to reduce ambiguities and to discover coocurrence patterns on the basis of larger corpora 0 the medical vocabulary will he enlarged by using large computational medical databases (e.g. MEDLINE) and by consulting specialists who are native speakers of the languages involved in the system 0 the interactive procedures will he evaluated and refined by testing their usefulness in experiments with non-linguists.",
+        "The results of the corpus investigations and the experiments with translation of abstracts are to be used in a system for automatic abstracting and multilingual abstract generation."
+      ]
+    },
+    {
+      "heading": "REFERENCES:",
+      "text": []
+    }
+  ]
+}

@@ -1,0 +1,223 @@
+{
+  "info": {
+    "authors": [
+      "Nina Dethlefs",
+      "Heriberto Cuayáhuitl"
+    ],
+    "book": "Proceedings of the 49th Annual Meeting of the Association for Computational Linguistics: Human Language Technologies",
+    "id": "acl-P11-2115",
+    "title": "Hierarchical Reinforcement Learning and Hidden Markov Models for Task-Oriented Natural Language Generation",
+    "url": "https://aclweb.org/anthology/P11-2115",
+    "year": 2011
+  },
+  "references": [
+    "acl-C00-1007",
+    "acl-D10-1049",
+    "acl-E06-1040",
+    "acl-E06-1045",
+    "acl-P10-1008",
+    "acl-P10-1103",
+    "acl-P97-1035",
+    "acl-P98-1116",
+    "acl-W00-0306",
+    "acl-W11-2011"
+  ],
+  "sections": [
+    {
+      "text": [
+        "Nina Dethlefs Heriberto Cuayahuitl",
+        "dethlefs@uni-bremen.de heriberto.cuayahuitl@dfki.de",
+        "Surface realisation decisions in language generation can be sensitive to a language model, but also to decisions of content selection.",
+        "We therefore propose the joint optimisation of content selection and surface realisation using Hierarchical Reinforcement Learning (HRL).",
+        "To this end, we suggest a novel reward function that is induced from human data and is especially suited for surface realisation.",
+        "It is based on a generation space in the form of a Hidden Markov Model (HMM).",
+        "Results in terms of task success and human-likeness suggest that our unified approach performs better than greedy or random baselines."
+      ]
+    },
+    {
+      "heading": "1. Introduction",
+      "text": [
+        "Surface realisation decisions in a Natural Language Generation (NLG) system are often made according to a language model of the domain (Langkilde and Knight, 1998; Bangalore and Rambow, 2000; Oh and Rudnicky, 2000; White, 2004; Belz, 2008).",
+        "However, there are other linguistic phenomena, such as alignment (Pickering and Garrod, 2004), consistency (Halliday and Hasan, 1976), and variation, which influence people's assessment of discourse (Levelt and Kelter, 1982) and generated output (Belz and Reiter, 2006; Foster and Oberlander, 2006).",
+        "Also, in dialogue the most likely surface form may not always be appropriate, because it does not correspond to the user's information need, the user is confused, or the most likely sequence is infelicitous with respect to the dialogue history.",
+        "In such cases, it is important to optimise surface realisation in a unified fashion with content selection.",
+        "We suggest to use Hierarchical Reinforcement Learning (HRL) to achieve this.",
+        "Reinforcement Learning (RL) is an attractive framework for optimising a sequence of decisions given incomplete knowledge of the environment or best strategy to follow (Rieser et al., 2010; Janarthanam and Lemon, 2010).",
+        "HRL has the additional advantage of scaling to large and complex problems (Dethlefs and Cuayahuitl, 2010).",
+        "Since an HRL agent will ultimately learn the behaviour it is rewarded for, the reward function is arguably the agent's most crucial component.",
+        "Previous work has therefore suggested to learn a reward function from human data as in the PARADISE framework (Walker et al., 1997).",
+        "Since PARADISE-based reward functions typically rely on objective metrics, they are not ideally suited for surface realisation, which is more dependend on linguistic phenomena, e.g. frequency, consistency, and variation.",
+        "However, linguistic and psychological studies (cited above) show that such phenomena are indeed worth modelling in an NLG system.",
+        "The contribution of this paper is therefore to induce a reward function from human data, specifically suited for surface generation.",
+        "To this end, we train HMMs (Rabiner, 1989) on a corpus of grammatical word sequences and use them to inform the agent's learning process.",
+        "In addition, we suggest to optimise surface realisation and content selection decisions in a joint, rather than isolated, fashion.",
+        "Results show that our combined approach generates more successful and human-like utterances than a greedy or random baseline.",
+        "This is related to Angeli et al.",
+        "(2010), who also address interdependent decision making, but do not use an opt-misation framework.",
+        "Since language models in our approach can be obtained for any domain for which corpus data is available, it generalises to new domains with limited effort and reduced development",
+        "Utterance",
+        "string=\"tuni around and go out\", time='20:54:55' UtteranceJype content='orientation,destination' [straight, path, direction]",
+        "navigation_level='low' [high] User user_reaction='perform_desired_action' [perform_undesired_action, wait, request_help] user_position='on_track' [offJrack]",
+        "time.",
+        "For related work on using graphical models for language generation, see e.g., Barzilay and Lee (2002), who use lattices, or Mairesse et al.",
+        "(2010), who use dynamic Bayesian networks."
+      ]
+    },
+    {
+      "heading": "2. Generation Spaces",
+      "text": [
+        "We are concerned with the generation of navigation instructions in a virtual 3D world as in the GIVE scenario (Koller et al., 2010).",
+        "In this task, two people engage in a 'treasure hunt', where one participant navigates the other through the world, pressing a sequence of buttons and completing the task by obtaining a trophy.",
+        "The GIVE-2 corpus (Gargett et al., 2010) provides transcripts of such dialogues in English and German.",
+        "For this paper, we complemented the English dialogues of the corpus with a set of semantic annotations, an example of which is given in Figure 1.",
+        "This example also exemplifies the type of utterances we generate.",
+        "The input to the system consists of semantic variables comparable to the annotated values, the output corresponds to strings of words.",
+        "We use HRL to optimise decisions of content selection ('what to say') and HMMs for decisions of surface realisation ('how to say it').",
+        "Content selection involves whether to use a low-, or high-level navigation strategy.",
+        "The former consists of a sequence of primitive instructions ('go straight', 'turn left'), the latter represents contractions of sequences of low-level instructions ('head to the next room').",
+        "Content selection also involves choosing a level of detail for the instruction corresponding to the user's information need.",
+        "We evaluate the learnt content selection decisions in terms of task success.",
+        "For surface realisation, we use HMMs to inform the HRL agent's learning process.",
+        "Here we address the one-to-many relationship arising between a semantic form (from the content selection stage) and its possible realisations.",
+        "Semantic forms of instructions have an average of 650 surface realisations, including syntactic and lexical variation, and decisions of granularity.",
+        "We refer to the set of alternative realisations of a semantic form as its 'generation space'.",
+        "In surface realisation, we aim to optimise the tradeoff between alignment and consistency (Pickering and Garrod, 2004; Halliday and Hasan, 1976) on the one hand, and variation (to improve text quality and readability) on the other hand (Belz and Reiter, 2006; Foster and Oberlander, 2006) in a 50/50 distribution.",
+        "We evaluate the learnt surface realisation decisions in terms of similarity with human data.",
+        "Note that while we treat content selection and surface realisation as separate NLG tasks, their optimisation is achieved jointly.",
+        "This is due to a tradeoff arising between the two tasks.",
+        "For example, while surface realisation decisions that are optimised solely with respect to a language model tend to favour frequent and short sequences, these can be inappropriate according to the user's information need (because they are unfamiliar with the navigation task, or are confused or lost).",
+        "In such situations, it is important to treat content selection and surface realisation as a unified whole.",
+        "Decisions of both tasks are inextricably linked and we will show in Section 5.2 that their joint optimisation leads to better results than an isolated optimisation as in, for example, a two-stage model."
+      ]
+    },
+    {
+      "heading": "3. NLG Using HRL and HMMs",
+      "text": [
+        "The idea of language generation as an optimisation problem is as follows: given a set of generation states, a set of actions, and an objective reward function, an optimal generation strategy maximises the objective function by choosing the actions leading to the highest reward for every reached state.",
+        "Such states describe the system's knowledge about the generation task (e.g. content selection, navigation strategy, surface realisation).",
+        "The action set describes the system's capabilities (e.g. 'use high level navigation strategy', 'use imperative mood', etc.).",
+        "The reward function assigns a numeric value for each action taken.",
+        "In this way, language gen-",
+        "Figure 2: Hierarchy of learning agents (left), where shaded agents use an HMM-based reward function.",
+        "The top three layers are responsible for content selection (CS) decisions and use HRL.",
+        "The shaded agents in the bottom use HRL with an HMM-based reward function and joint optimisation of content selection and surface realisation (SR).",
+        "They provide the observation sequence to the HMMs.",
+        "The HMMs represent generation spaces for surface realisation.",
+        "An example HMM, representing the generation space of 'destination' instructions, is shown on the right.",
+        "eration can be seen as a finite sequence of states, actions and rewards {s0, a0, ri,si,ai,rt_1, st}, where the goal is to find an optimal strategy automatically.",
+        "To do this we use RL with a divide-and-conquer approach to optimise a hierarchy of generation policies rather than a single policy.",
+        "The hierarchy of RL agents consists of L levels and N models per level, denoted as Mj, where j G {0,N – 1} and i G {0, ...,L – 1}.",
+        "Each agent of the hierarchy is defined as a Semi-Markov Decision Process (SMDP) consisting of a 4-tuple < Sj, Aj ,Tj, Rj >.",
+        "Sj is a set of states, Aj is a set of actions, Tj is a transition function that determines the next state s from the current state s and the performed action a, and Rj is a reward function that specifies the reward that an agent receives for taking an action a in state s lasting t time steps.",
+        "The random variable t represents the number of time steps the agent takes to complete a subtask.",
+        "Actions can be either primitive or composite.",
+        "The former yield single rewards, the latter correspond to SMDPs and yield cumulative discounted rewards.",
+        "The goal of each SMDP is to find an optimal policy that maximises the reward for each visited state, according to n* j (s) = argmaxa€Ai Q* j (s,a), where Qj(s,a) specifies the expected cumulative reward for executing action a in state s and then following policy n* j.",
+        "We use HSMQ-Learning (Dietterich, 1999) to learn a hierarchy of generation policies.",
+        "The idea of representing the generation space of a surface realiser as an HMM can be roughly defined as the converse of POS tagging, where an input string of words is mapped onto a hidden sequence of POS tags.",
+        "Our scenario is as follows: given a set of (specialised) semantic symbols (e.g., 'actor', 'process', 'destination'), what is the most likely sequence of words corresponding to the symbols?",
+        "Figure 2 provides a graphic illustration of this idea.",
+        "We treat states as representing words, and sequences of states i0...in as representing phrases or sentences.",
+        "An observation sequence o0...on consists of a finite set of semantic symbols specific to the instruction type (i.e., 'destination', 'direction', 'orientation', 'path', 'straight').",
+        "Each symbol has an observation likelihood 6j(ot), which gives the probability of observing o in state i at time t. The transition and emission probabilities are learnt during training using the Baum-Welch algorithm.",
+        "To design an HMM from the corpus data, we used the ABL algorithm (van Zaanen, 2000), which aligns strings based on Minimum Edit Distance, and induces a context-free grammar from the aligned examples.",
+        "Subsequently, we constructed the HMMs from the CFGs, one for each instruction type, and trained them on the annotated data.",
+        "Due to its unique function in an RL framework, we suggest to induce a reward function for surface realisation from human data.",
+        "To this end, we create and train HMMs to represent the generation space of a particular surface realisation task.",
+        "We then use the forward probability, derived from the Forward algorithm, of an observation sequence to inform the agent's learning process.",
+        "0 for reaching the goal state +1 for a desired semantic choice or maintaining an equal distribution of alignment and variation 2 for executing action a and remaining in the same state s = s' P(w0...wn) for for reaching a goal state corresponding to word sequence w0...wn-1 otherwise.",
+        "Whenever the agent has generated a word sequence w0...wn, the HMM assigns a reward corresponding to the likelihood of observing the sequence in the data.",
+        "In addition, the agent is rewarded for short interactions at maximal task success and optimal content selection (cf.",
+        "Section 2).",
+        "Note that while reward P(w0...wn) applies only to surface realisation agents M°_4, the other rewards apply to all agents of the hierarchy."
+      ]
+    },
+    {
+      "heading": "4. Experimental Setting",
+      "text": [
+        "We test our approach using the (hand-crafted) hierarchy of generation subtasks in Figure 2.",
+        "It consists of a root agent (M°°), and subtasks for low-level (Mq ) and high-level (M ) navigation strategies (M\\), and for instruction types 'orientation' (Mq), 'straight' (Mf), 'direction' (M2), 'path' (M3) and destination' (M|).",
+        "Models Mq_4 are responsible for surface generation.",
+        "They will be trained using HRL with an HMM-based reward function induced from human data.",
+        "All other agents use hand-crafted rewards.",
+        "Finally, subtask M0 can repair a previous system utterance.",
+        "The states of the agent contain all situational and linguistic information relevant to its decision making, e.g., the spatial environment, discourse history, and status of grounding.",
+        "Due to space constraints, please see Dethlefs et al.",
+        "(2011) for the full state-action space.",
+        "We distinguish primitive actions (corresponding to single generation decisions) and composite actions (corresponding to generation subtasks (Fig.",
+        "2))."
+      ]
+    },
+    {
+      "heading": "5. Experiments and Results",
+      "text": [
+        "The simulated environment contains two kinds of uncertainties: (1) uncertainty regarding the state of the environment, and (2) uncertainty concerning the user's reaction to a system utterance.",
+        "The first aspect is represented by a set of contextual variables describing the environment, and user behaviour.Altogether, this leads to 115 thousand different contextual configurations, which are estimated from data (cf.",
+        "Section 2).",
+        "The uncertainty regarding the user's reaction to an utterance is represented by a Naive Bayes classifier, which is passed a set of contextual features describing the situation, mapped with a set of semantic features describing the utterance.",
+        "From these data, the classifier specifies the most likely user reaction (after each system act) of performjlesiredjaction, perform jmdesiredjjction, wait and request-help} The classifier was trained on the annotated data and reached an accuracy of 82% in a cross-corpus validation using a 60%-40% split.",
+        "We trained three different generation policies.",
+        "The learnt policy optimises content selection and surface realisation decisions in a unified fashion, and is informed by an HMM-based generation space reward function.",
+        "The greedy policy is informed only by the HMM and always chooses the most likely sequence independent of content selection.",
+        "The valid sequence policy generates any grammatical sequence.",
+        "All policies were trained for 20000 episodes.",
+        "Figure 3, which plots the average rewards of all three policies (averaged over ten runs), shows that the 'learnt' policy performs best in terms of task success by reaching the highest overall rewards over time.",
+        "An absolute comparison of the average rewards (rescaled from 0 to 1) of the last 1000 training episodes of each policy shows that greedy improves 'any valid sequence' by 71%, and learnt improves greedy by 29% (these differences are significant at p < 0.01).",
+        "This is due to the learnt policy showing more adaptation to contextual features than the greedy or 'valid sequence' policies.",
+        "To evaluate human-likeness, we compare instructions (i.e. word sequences) using Precision-Recall based on the F-Measure score, and dialogue similarity based on the Kulback-Leibler (KL) divergence (Cuayahuitl et al., 2005).",
+        "The former shows how the texts generated by each of our generation policies compare to human-authored texts in terms of precision and recall.",
+        "The latter shows how similar they are to human-authored texts.",
+        "Table 1 shows results of the comparison of two human data sets 'Reall' vs 'Real2' and both of them together against our different policies.",
+        "While the greedy policy receives higher F-Measure scores, the learnt policy is most similar to the human data.",
+        "This is due to variation: in contrast to greedy behaviour, which always exploits the most likely variant, the learnt policy varies surface forms.",
+        "This leads to lower F-Measure scores, but achieves higher similarity with human authors.",
+        "This ultimately is a desirable property, since it enhances the quality and naturalness of our instructions."
+      ]
+    },
+    {
+      "heading": "6. Conclusion",
+      "text": [
+        "We have presented a novel approach to optimising surface realisation using HRL.",
+        "We suggested to inform an HRL agent's learning process by an HMM-based reward function, which was induced",
+        "Figure 3: Performance of 'learnt', 'greedy', and 'any valid sequence' generation behaviours (average rewards).",
+        "from data and in which the HMM represents the generation space of a surface realiser.",
+        "We also proposed to jointly optimise surface realisation and content selection to balance the tradeoffs of (a) frequency in terms of a language model, (b) alignment/consistency vs variation, (c) properties of the user and environment.",
+        "Results showed that our hybrid approach outperforms two baselines in terms of task success and human-likeness: a greedy baseline acting independent of content selection, and a random 'valid sequence' baseline.",
+        "Future work can transfer our approach to different domains to confirm its benefits.",
+        "Also, a detailed human evaluation study is needed to assess the effects of different surface form variants.",
+        "Finally, other graphical models besides HMMs, such as Bayesian Networks, can be explored for informing the surface realisation process of a generation system."
+      ]
+    },
+    {
+      "heading": "Acknowledgments",
+      "text": [
+        "Thanks to the German Research Foundation DFG and the Transregional Collaborative Research Centre SFB/TR8 'Spatial Cognition' and the EU-FP7 project ALIZ-E (ICT-248116) for partial support of this work.",
+        "A»h««rH",
+        " – ^",
+        "- 'ri -'",
+        "Valid S",
+        "quence",
+        "h",
+        "■ Greedy",
+        " – t...",
+        "t t",
+        "if........",
+        "Compared Policies",
+        "F-Measure",
+        "KL-Divergence",
+        "Reall - Real2",
+        "0.58",
+        "1.77",
+        "Real - 'Learnt'",
+        "0.40",
+        "2.80",
+        "Real - 'Greedy'",
+        "0.49",
+        "4.34",
+        "Real - 'Valid Seq.'",
+        "0.0",
+        "10.06"
+      ]
+    }
+  ]
+}

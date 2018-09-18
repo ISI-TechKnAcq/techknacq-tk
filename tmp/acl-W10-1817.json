@@ -1,0 +1,176 @@
+{
+  "info": {
+    "authors": [
+      "Matthias Buch-Kromann",
+      "Iørn Korzen"
+    ],
+    "book": "Proceedings of the Fourth Linguistic Annotation Workshop",
+    "id": "acl-W10-1817",
+    "title": "The Unified Annotation of Syntax and Discourse in the Copenhagen Dependency Treebanks",
+    "url": "https://aclweb.org/anthology/W10-1817",
+    "year": 2010
+  },
+  "references": [
+    "acl-J05-2005",
+    "acl-L08-1050",
+    "acl-L08-1093",
+    "acl-W01-1605",
+    "acl-W05-0305"
+  ],
+  "sections": [
+    {
+      "text": [
+        "The unified annotation of syntax and discourse in the Copenhagen Dependency Treebanks",
+        "Matthias Buch-Kromann I0rn Korzen",
+        "Center for Research and Innovation in Translation and Translation Technology",
+        "Copenhagen Business School",
+        "We propose a unified model of syntax and discourse in which text structure is viewed as a tree structure augmented with anaphoric relations and other secondary relations.",
+        "We describe how the model accounts for discourse connectives and the syntax-discourse-semantics interface.",
+        "Our model is dependency-based, ie, words are the basic building blocks in our analyses.",
+        "The analyses have been applied cross-linguistically in the Copenhagen Dependency Treebanks, a set of parallel treebanks for Danish, English, German, Italian, and Spanish which are currently being annotated with respect to discourse, anaphora, syntax, morphology, and translational equivalence."
+      ]
+    },
+    {
+      "heading": "1. Introduction",
+      "text": [
+        "The Copenhagen Dependency Treebanks, CDT, consist of five parallel open-source treebanks for Danish, English, German, Italian, and Spanish.The treebanks are annotated manually with respect to syntax, discourse, anaphora, morphology, as well as translational equivalence (word alignment) between the Danish source text and the target texts in the four other languages.",
+        "The treebanks build on the syntactic annotation in the 100,000-word Danish Dependency Treebank (Kromann 2003) and Danish-English Parallel Dependency Treebank (Buch-Kromann et al.",
+        "2007).",
+        "Compared to these treebanks, which are only annotated for syntax and word alignment, the new treebanks are also annotated for discourse, anaphora, and morphology, and the syntax annotation has been revised with a much more fine-grained set of adverbial relations and a number of other adjustments.",
+        "The underlying Danish PAROLE text corpus (Keson and Norling-Christensen 1998) consists of a broad mixture of 200-250 word excerpts from general-purpose texts.",
+        "The texts were translated into the other languages by professional translators who had the target language as their native language.",
+        "The final treebanks are planned to consist of approximately 480 fully annotated parallel texts for Danish and English, and a subset of approximately 300 fully annotated parallel texts for German, Italian, and Spanish, with a total of approximately 380,000 (2-100,000 + 3'60,000) annotated word or punctuation tokens in the five treebanks in total.",
+        "So far, the annotators have made complete draft annotations for 67% of the texts for syntax, 40% for word alignments, 11% for discourse and anaphora, and 3% for morphology.",
+        "The annotation will be completed in 2010.",
+        "In this paper, we focus on how the CDT treebanks are annotated with respect to syntax and discourse, and largely ignore the annotation of anaphora, morphology, and word alignments.",
+        "In sections 2 and 3, we present the syntax and discourse annotation in the CDT.",
+        "In section 4, we present our account of discourse connectives.",
+        "In section 5, we briefly discuss the syntax-discourse-semantics interface, and some criticisms against tree-based theories of discourse."
+      ]
+    },
+    {
+      "heading": "2. The syntax annotation of the CDT",
+      "text": [
+        "The syntactic annotation of the CDT treebanks is based on the linguistic principles outlined in the dependency theory Discontinuous Grammar (Buch-Kromann 2006) and the syntactic annotation principles described in Kromann (2003), Buch-Kromann et al.",
+        "(2007), and Buch-Kromann et al. (2009).",
+        "All linguistic relations are represented as directed labelled relations between words or morphemes.",
+        "The model operates with a primary dependency tree structure in which each word or morpheme is assumed to act as a complement or adjunct to another word or morpheme, called the governor (or head), except for the top node",
+        "cerpts that have a coherent discourse structure, which includes 80% of the excerpts in our text corpus.",
+        "Moreover, given the upper limit on the corpus size that we can afford to annotate, small text excerpts allow our corpus to have a diversity in text type and genre that may well offset the theoretical disadvantage of working with reduced texts.",
+        "of the sentence or unit, typically the finite verb.",
+        "This structure is augmented with secondary relations, e.g., between non-finite verb forms and their subjects, and in antecedent-anaphor relations.",
+        "Primary relations are drawn above the nodes and secondary below, all with directed arrows pointing from governor to dependent.",
+        "The relation label is written at the arrow tip, or in the middle of the arrow if a word has more than one incoming arrow.",
+        "Figure 1.",
+        "Primary dependency tree (top) and secondary relations (bottom) for the sentence \"It had forced her to give up all she had worked for\".",
+        "An example is given in Figure 1 above.",
+        "Here, the arrow from \"had2\" to \"It/' identifies \"It\" as the subject of \"had\", and the arrow from \"forced/' to \"W identifies the phrase headed by \"to\" as the prepositional object of \"forced\".",
+        "Every word defines a unique phrase consisting of the words that can be reached from the head word by following the downward arrows in the primary tree.",
+        "For example, in Figure 1, \"worked11\" heads the phrase \"worked11 for12\", which has a secondary noun object nobj in \"all/'; \"had^\" heads the phrase \"she9 had10 workedn for^\"; and \"It/' heads the phrase \"It1\".",
+        "Examples of secondary dependencies include the coreferential relation between \"her/' and \"slW, and the anaphoric relation in Figure 2.",
+        "Part-of-speech functions are written in capital letters under each word.",
+        "The inventory of relations is described in detail in our annotation manual (posted on the CDT web site).",
+        "Dependency arrows are allowed to cross, so discontinuous word orders such as topicalisations and extrapositions do not require special treatment.",
+        "This is exemplified by the discontinuous dependency tree in Figure 2, in which the relative clause headed by \"was/' has been extraposed from the direct object and placed after the time adverbial \"today/'.",
+        "We discussed a book today which was written by Chomsky .",
+        "N V NNAdNVVP NPn 1 2 3456789 10 11",
+        "Figure 2.",
+        "Primary dependency tree and secondary relations for the sentence \"We discussed a book today which was written by Chomsky\".",
+        "Buch-Kromann (2006) provides a detailed theory of how the dependency structure can be used to construct a word-order structure which provides fine-grained control over the linear order of the sentence, and how the dependency structure provides an interface to compositional semantics by determining a unique functor-argument structure given a particular modifier scope (ie, a specification of the order in which the adjuncts are applied in the meaning construction)."
+      ]
+    },
+    {
+      "heading": "3. The discourse annotation of the CDT",
+      "text": [
+        "Just like sentence structures can be seen as dependency structures that link up the words and morphemes within a sentence (or, more precisely, the phrases headed by these words), so discourse structures can be viewed as dependency structures that link up the words and morphemes within an entire discourse.",
+        "In Figures 1 and 2, the top nodes of the analysed sentences (the only words without incoming arrows) are the finite verbs \"had2\" and \"discussed2\" respectively, and these are shown in boldface.",
+        "Basically, the CDT discourse annotation consists in linking up each such sentence top node with its nucleus (understood as the unique word within another sentence that is deemed to govern the relation) and labelling the relations between the two nodes.",
+        "The inventory of discourse relations in CDT is described in the CDT manual.",
+        "It borrows heavily from other discourse frameworks, in particular Rhetorical Structure Theory, RST (Mann and Thompson, 1987; Tabaoda and Mann, 2006; Carlson et al., 2001) and the Penn Discourse Treebank, PDTB (Webber 2004; Dinesh et al., 2005, Prasad et al., 2007, 2008), as well as (Korzen, 2006, 2007), although the inventory had to be extended to accommodate the great",
+        "in relative clauses, the relative verb functions as the head, i.e., the arrow goes from \"a (book)\" to \"was (written)\".",
+        "In terms of their formal semantics, complements function as arguments to their governor, whereas adjuncts function as modifiers; i.e., semantically, the governor (type X) acts as an argument with the modifier (type X/X) as its functor.",
+        "The prosecuting authority has also reserved the possibility of appeal .",
+        "The chairman of the board received a year in jail and a",
+        "PI NC SP NC CC PI",
+        "nobj pobj attr numm nobj cause attr nobj pobj nobj pnct subj nobj possd CONJ/(and) dobj nobj loc nobj coord conj nobj pobj nobj nobj pnct fine of DKK one million for fraudulent abuse of authority .",
+        "The bank's director received 6 months in jail and a fine of DKK 90,000 .",
+        "variety of text types in the CDT corpus other than news stories.",
+        "The inventory allows relation names to be formed as disjunctions or conjunctions of simple relation names, to specify multiple relations or ambiguous alternatives.",
+        "One of the most important differences between the CDT framework and other discourse frameworks lies in the way texts are segmented.",
+        "In particular, CDT uses words as the basic building blocks in the discourse structure, while most other discourse frameworks use clauses as their atomic discourse units, including RST, PDTB, GraphBank (Wolf and Gibson, 2005), and the Pottsdam Commentary Corpus, PCC (Stede 2009).",
+        "This allows the nucleus and satellite in a discourse relation to be identified precisely by means of their head words, as in the example (1) below from the CDT corpus, where the second paragraph is analyzed as an elaboration of the de-verbal noun phrase \"their judgment\" (words that are included in our condensed CDT analysis in Figure 4 are indicated with boldface and subscripted with numbers that identify them):",
+        "(1) Two convicted executives of the July 6 Bank appealed!",
+        "their2 judgment on the spot from the Copenhagen Municipal Court with a demand for acquittal.",
+        "The prosecuting authority has3 also reserved the possibility of appeal.",
+        "The chairman of the board received4 a year in jail and a fine of DKK one million for fraudulent abuse of authority [...].",
+        "The bank's director re-ceiveds 6 months in jail and a fine of DKK 90,000.",
+        "(Text 0531)",
+        "The full CDT analysis of (1) is given in Figure 3, a more readable condensed version in Figure 4.",
+        "The last sentence of the first paragraph, \"The prosecuting authority has3 also reserved the possibility of appeal\", is a conjunct to the first sentence, and its top node \"has3\" is linked to the top node of the first sentence, \"appealed/'.",
+        "The slash after a relation name indicates an explicit or implicit discourse connective used by the annotators to support their choice of relation type.",
+        "As in CDT's syntax annotation, the primary syntax and discourse relations must form a tree that spans all the words in the text, possibly supplemented by secondary relations that encode anaphoric relations and other secondary dependencies.",
+        "Apart from this, CDT does not place any restrictions on the relations; in particular, a word",
+        "...appealedl... their(judgment)2 ...has3......received4......received5...",
+        "may function as nucleus for several different satellites, discourse relations may join non-adjacent clauses, and are allowed to cross; and secondary discourse relations are used to account for the distinction between story line level and speech level in attributions."
+      ]
+    },
+    {
+      "heading": "4. Discourse connectives",
+      "text": [
+        "Discourse connectives play a prominent role in PDTB, and inspire the analysis of connectives in CDT.",
+        "However, there are important differences in analysis, which affect the way discourse structures are construed.",
+        "In a construction of the form \"X C Y\" where X and Y are clauses and C is a discourse connective (such as \"because\", \"since\", \"when\"), three dependency analyses suggest themselves, as summarized in Table 5.",
+        "When analyzed as the head of the construction, C takes X and Y as its (discourse) complements; semantically, the meaning C of C acts as functor, and the meanings X,Y of X,Y act as arguments of C. When analyzed as a subordinating conjunction, C subcategorizes for Y and modifies X; semantically, C computes a meaning C(F) from Y, which acts as functor with X as argument.",
+        "Finally, analyzed as a marker, C modifies Y which in turn modifies X; semantically, Y selects its meaning Y(C') based on the marker C (i.e., the marker merely helps disambiguate Y); Y(C) then acts as functor with argument X\".",
+        "The three analyses are markedly different in terms of their headedness, but quite similar in terms of their semantics.",
+        "CDT opts for the marker analysis, with the obvious benefit that there is no need to postulate the presence of a phonetically empty head for implicit connectives.",
+        "This analysis also implies that since discourse markers always modify the satellite, explicit and implicit discourse markers can be used to determine the discourse relation and its direction.",
+        "It is interesting that almost all theories of discourse structure, including RST, PDTB, GraphBank, PCC, and the dependency-based discourse analysis proposed by Mladovâ (2008), seem to analyze connectives as heads - even in the case where C+Y is an adverbial clause modifying X, where virtually all mainstream theories of syntax opt for one of the two other analyses.",
+        "Perhaps current theories of discourse structure perceive discourse structure as a semantic rather than syntactic structure.",
+        "In any case, it is not clear that this is the most fruitful analysis.",
+        "A clear distinction between syntactic structure and semantic structure has proved crucial to the understanding of headedness in syntax (e.g. Croft 1995, Manning 1995), and it is one of the hardwon insights of syntax that semantic centrality or prominence is not directly reflected in the syntactic surface structure.",
+        "Something similar might be true for discourse structure as well."
+      ]
+    },
+    {
+      "heading": "5. Syntax-discourse-semantics interface",
+      "text": [
+        "CDT models discourse structure as a primary dependency tree supplemented by secondary relations.",
+        "We believe that a tree-based view of discourse provides many important benefits, most importantly a clear interface to syntax and compositional semantics.",
+        "There has been several attempts to refute the tree hypothesis on empirical grounds, though, including Wolf and Gibson",
+        "Stede (2009), who have put forward important criticisms.",
+        "Our framework addresses many of these objections, including the many problems related to attribution verbs, which do require a complicated treatment in our framework with secondary dependencies.",
+        "A full discussion of this topic is, however, beyond the scope of this paper."
+      ]
+    },
+    {
+      "heading": "6. Conclusion",
+      "text": [
+        "In this paper, we have presented a dependency-based view of discourse and syntax annotation where the syntax and discourse relations in a text form a primary dependency tree structure linking all the words in the text, supplemented by anaphoric relations and other secondary dependencies.",
+        "The framework forms the basis for the annotation of syntax, discourse, and anaphora in the Copenhagen Dependency Treebanks.",
+        "In future papers, we will address some of the criticisms that have been raised against tree-based theories of discourse."
+      ]
+    },
+    {
+      "heading": "7. Acknowledgments",
+      "text": [
+        "This work was supported by a grant from the Danish Research Council for the Humanities.",
+        "Thanks to Bonnie Webber, Henrik H0eg Müller, Per Anker Jensen, Peter Colliander, and our three reviewers for their valuable commments.",
+        "Head",
+        "Conjunction",
+        "Marker",
+        "Syntax",
+        "comp comp",
+        "X C Y",
+        "mod comp",
+        "X C Y",
+        "mod mod",
+        "X C Y",
+        "Semantics",
+        "C(X\\Y)",
+        "[C'(F)] (X)",
+        "[F(C')] (X')"
+      ]
+    }
+  ]
+}

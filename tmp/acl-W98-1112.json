@@ -1,0 +1,226 @@
+{
+  "info": {
+    "authors": [
+      "Raquel Martínez",
+      "Joseba Abaitua",
+      "Arantza Casillas"
+    ],
+    "book": "Workshop on Very Large Corpora",
+    "id": "acl-W98-1112",
+    "title": "Aligning Tagged Bitexts",
+    "url": "https://aclweb.org/anthology/W98-1112",
+    "year": 1998
+  },
+  "references": [
+    "acl-A94-1006",
+    "acl-E93-1015",
+    "acl-J96-1001",
+    "acl-P93-1003",
+    "acl-P97-1031",
+    "acl-P98-2134"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "This paper describes how complementary techniques can be employed to align multiword expressions in a parallel corpus or bitext.",
+        "The bitext used for experimentation has two main features: (i) it contains bilingual documents from a dedicated domain of legal and administrative publications rich in specialized jargon; (ii) it involves two languages, Spanish and Basque, which are typologically very distinct (both lexically and morpho-syntactically).",
+        "The former feature provides a good basis for testing techniques of collocation detection.",
+        "The latter presents quite a challange to a number of reported algorithms, in particular to the alignment of sentence internal segments.",
+        "1 Tagged bitexts as large language resources Much literature has been produced in the area of sentence alignment of parallel biligual corpora or bitexts.",
+        "Fewer references concern the alignment of intra-sentential segments such as word or multiword collocations (Eijk 93), (Kupiek 93), (Dagan & Church 94), and (Smadja et al.",
+        "96).",
+        "The difficulty of aligning bitexts depends of a number of factors such as the quality of the bitext (whether is truely parallel or not), the proximity between the languages (either structurally, morpho-syntactically or alphabetically), the additional coded information that bitexts may have (richer or poorer markup), among others.",
+        "While stuying bitext alignment techniques it was decided that an optimal approach was to tag the corpus.",
+        "Descriptive annotations can account for linguistic information at all levels, from discourse structure to phonetic features, as well as semantics, syntax and morphology.",
+        "The process of annotating the corpus in this manner is very labour intensive, even when largely automated, however it produces rewarding results.",
+        "Thoroughly tagged bitexts become rich and productive language resources (Abaitua et al.",
+        "98).",
+        "SGML based TEI conformant mark-up (Ide & Veronis 95) has been the adopted markup option and it was discussed in (Martinez et al.",
+        "97).",
+        "Continuing with the work of (Martinez et al.",
+        "98), where sentence alignment based on rich mark-up was described, we present here two further achievements.",
+        "Section 2 shows how proper names have been aligned, and Section 3 presents the techniques employed in attempting the aligning of multiword collocations.",
+        "Results are evaluated in Section 4 and Section 5 offers some discussion."
+      ]
+    },
+    {
+      "heading": "2 Proper name alignment",
+      "text": []
+    },
+    {
+      "heading": "2.1 Proper name tagging",
+      "text": [
+        "The module for the recognition of proper names relies on patterns of typography (capitalisation and punctuation) and on contextual information.",
+        "It also makes use of lists with most common person, organisation, law, publication and place names.",
+        "The tagger annotates a multiword chain as a proper name <rs> when each word in the chain is uppercase initial.",
+        "A closed list of functional words (prepositions, conjunctions, determiners, etc.)",
+        "is allowed to appear",
+        "percase initial words in sentence initial position or in other exceptional cases.",
+        "Just us (Smadja et al.",
+        "96) distinguished between two types of collocations, we too distinguish between:",
+        "• Fixed names: Compound proper names labeled 'fixed', such as Boletin Oficial de Bizkaia, are rigid compounds.",
+        "Spanish proper names all correspond to this type.",
+        "• Flexible names: Compound proper names labeled 'flexible' are compounds that can be separated by intervening text elements such as in Administrazio Publikoetarako Ministeritzaren <date>.. </date> Agindua, where a date splits the tokens within the compound.",
+        "There is a small but significative number of these in Basque, as has been previously noted by (Aduriz et al.",
+        "96b).",
+        "After proper names have been successfully identified (Table 2), the next step is their alignment.",
+        "Two types of alignment can take place: • 1 to 1 alignment: one to one correspondence between fixed names in the source and target documents.",
+        "• 1 to N alignment: one to none or more than one correspondences between fixed names in the source language and flexible names in the target language.",
+        "Alignment has been achieved by resorting to: 1.",
+        "Proper name categorization, as shown in Table 1.",
+        "2.",
+        "Reduction of the alignment space to previously aligned sentences.",
+        "3.",
+        "Identification of cognate nouns, aided by a set of phonological rules that apply when Basque loan terms are directly derived from Spanish terms.",
+        "4.",
+        "The application of the TasC algorithm (Martinez et al.",
+        "98) adapted to proper name alignment."
+      ]
+    },
+    {
+      "heading": "LPL t..e.,61.1.cabca",
+      "text": [
+        "Points one and two above may suffice to work up the alignment of fixed proper names belonging to a single category that shows up only once in the alignment space (i.e. in the sentence).",
+        "Nevertheless, there can be sentences with flexible proper names or more than one fixed proper name belonging to the same category.",
+        "Therefore it may be necessary to determine the correct alignment among possible candidates.",
+        "As additional criteria in these cases we reinforce the identification of lexical cognates with a set of phonological correlation rules.",
+        "These are two examples of phonological correlation rules: (i) The Spanish prefix 'rel-' always correlates with the prefix 'en-' in Basque loans (e.g. reloj / erloju; relaciOn / erlazio) (ii) The Spanish suffix '-ciOn' often correlates with the suffix '-zio' in Basque loans (e.g.",
+        "We use a set of up to 33 rules of this type.",
+        "For some loan terms in Basque e.g. universidad / unibertsitate), several of these rules may apply:",
+        "Although the application of these phonological rules for identifying Basque loan words is quite regular, not every new term in Basque is derived in this way.",
+        "In many other cases a Spanish term has a genuine Basque counterpart, (e.g. sociedad / elkarte).",
+        "In any case, this set of phonological rules provides a very efficient aid for the identification of a high proportion of Spanish/Basque cognates (86.45 % on average, as shown in Table 3).",
+        "Therefore, when aligning proper names, cognate identification will help not only in obvious cases such as personal or place names, but also in categories of proper names such as organization, law or title."
+      ]
+    },
+    {
+      "heading": "2.3 Calculating the similarity between Basque and Spanish proper names",
+      "text": [
+        "In order to determine whether two proper names belonging to the same category are translation equivalencies of each other, Dice's coefficient (Dice 45) is applied in two phases: first at token level and then, at proper name level.",
+        "1.",
+        "In the first level, each token in the source proper name is compared with all the tokens in the target proper name.",
+        "In order to determine whether two tokens are cognates, bigrams are compared trying to apply, if they are not equal, the rules of phonological derivation.",
+        "Only when the resulting coefficient is bigger than a threshold, the tokens are considered cognates.",
+        "The threshold has been established in 0.5 as a result of different experimental tests.",
+        "2.",
+        "In the second level, given a source and a target proper name, their similarity is determined according to the number of cognate tokens that exist between them.",
+        "Figure 2 we illustrates an instance of the application of Dice's coefficient at both levels.",
+        "Spanish proper name Basque proper name"
+      ]
+    },
+    {
+      "heading": "2.4 Algorithm for proper name alignment",
+      "text": [
+        "After similarity metrics have been set between candidate proper names, the alignment algo",
+        "• rithm can be applied.",
+        "The alignment algorithm has been borrowed from (Martinez et al.",
+        "98) with minor differences.",
+        "• The first difference is the criteria by means of which the similarity amongst alignable candidates is determined.",
+        "While sentences are aligned on the basis of the similarity of the annotations they contain, proper names are aligned on the basis of their belonging to the same category as well as by matching cognate tokens.",
+        "• The second difference is the relevance of the order of alignable elements in the bitext.",
+        "While in sentence alignment there are constraints regarding ordering and grouping to reduce the number of cases to be evaluated, in the aligning of proper names constraints cannot be applied because ordering is not predictable.",
+        "Due to non-literal translations, 12% of the identified proper names have no exact counterpart in the other language (see Figure 1).",
+        "In this case, the Basque sentence does not have the proper name of the law Orden Ford but the anaphoric nominal honako erabakia, 'this reso-lution'.",
+        "In the corpus, there are 6% more proper name in the Spanish side of the bitext than in the Basque side.",
+        "Table 3 shows the accuracy of this alignment strategy.",
+        "Proper names with no counterpart have not been considered.",
+        "Figure 3 illustrates an instance of how aligned proper names are tagged in the bitext."
+      ]
+    },
+    {
+      "heading": "3 Alignment of collocations",
+      "text": [
+        "(Smadja et al.",
+        "96), (Dagan & Church 94), (Kupiek 93) and (Eijk 93) approach the alignment of multiword collocations resorting to a number of complementary techniques:",
+        "(i) Noun phrase collocations: All but Smadja narrow the scope of collocations to noun phrases.",
+        "Smadja is the only one that attempts to treat other phrases (such as verb phrases as well what he labels 'flexible phrases').",
+        "(ii) Delimited search space: All but Church delimit the search space to already aligned sentences.",
+        "Church in turn departs from a corpus of aligned words.",
+        "(iii) POS tagging: All but Smadja employ Part of Speech (POS) taggers.",
+        "We also employ techniques (ii) and (iii), but we introduce three additional resources: A bilingual glossary, a bilingual contrastive grammar, as well as the structural markup which alredy exists in the bitext.",
+        "In addition, we also consider verb prases.",
+        "The approach discribed below illustrates work in progress on how we try to optimize the alignment process by combining those techniques.",
+        "Collocations are aligned in six steps.",
+        "The first three steps are meant to detect candidate collocations in both languages.",
+        "The last three are directly involved in the alignment.",
+        "1.",
+        "Word cooccurrence frequency: Due to the specialized nature of the bitext, any word cooccurrence that superates a given threshold is considered to be a collocation candidate.",
+        "This threshold depends on the size of the corpus, but even a low figure as 2 can be considered significative enough.",
+        "A tool for word cooccurrence detection has been implemented.",
+        "This tool is sensitive to SGML tags and it uses a window of maximum ten words.",
+        "From a subcorpus of 150,000 words, with a threshold of 3 and a windows size of 7, 2,095 candidate collocations",
+        "in Spanish and 1,483 in Basque have been detected .",
+        "2.",
+        "POS tagging: A tagged version of the Spanish text was supplied by the Natural Language Research Group at the Univer-sitat Politecnica de Catalunya (Marquez & Padr6 97).",
+        "The Basque text was tagged by the IXA group from the Euskal Herriko Unibertsitatea (Aduriz et al.",
+        "96a), (see Figure 5).",
+        "3.",
+        "NP, VP grammars: Simple noun phrase and verb phrase patterns have been used to detect candidate collocations and to filter out inapproppriate word cooccurrences.",
+        "By means of this technique, 80% of the detected word cooccurrences are discarded.",
+        "Basque and Spanish phrases show great divergences, and for the alignment procedure to succed, it has been necessary to implement an additional resource: a correspondence table with grammatical patterns for Spanish and Basque phrases (see Table 4).",
+        "4.",
+        "Bilingual glossary lookup: This is a very useful resource containing over 15,000 aligned entries.",
+        "The glossary was developed by the same translators that were in",
+        "charge of the corpus we are working with.",
+        "Yet, the glossary, although it is available on-line, translators have not applied it systematically and frequent divergences arise (compare Figure 4 with Figure 6).",
+        "5.",
+        "Search within aligned sentences: Aligned senteces delimit the search space thereby reducing the complexity of the alignment.",
+        "6.",
+        "Human validation: The final step involves human intervention, so that detected",
+        "collocations can be validated and thus incorporated into the glossary.",
+        "The posibility of enriching the glossary with contextual information has not yet been implemented, but holds great potentiallity ( <doctype>, <div>, <p> and <s> tags could be used to locate collocations in context and index them through their correspondig id tag attributes)."
+      ]
+    },
+    {
+      "heading": "4 Evaluation",
+      "text": [
+        "Scores of proper name alignment are shown in Table 3 and are very satisfactory.",
+        "With regards to collocations, we expected that those candidate collocations found in the bilingual glossary would show high alignment scores, which has",
+        "been the case.",
+        "We still do not have definite estimations on the performance of collocations not present in the glossary.",
+        "As we discuss below, we are still sceptic about the results of the correspondence table with current version of the Basque lemmatizer."
+      ]
+    },
+    {
+      "heading": "5 Discussion",
+      "text": [
+        "We have not yet calculated how many detected collocations are included in the glossary, although it has become clear that a high proportion of these detected collocations have not been considered by the translators who created the dictionary.",
+        "These tend to include only collocations which have a clear terminological appearance.",
+        "It is hard to discriminate between general language collocations and domain specific terminology and this discussion is beyond the scope of this paper.",
+        "The correspondence table with Spanish and Basque grammatical patterns is at present problematic.",
+        "This is due to the lack of morphological information in the output of the Basque lemmatizer.",
+        "Basque is an aglutinative language which has postpositions and other functional elements added as suffixes.",
+        "The information such suffixes provide is not shown by the lemmatizer and this inevitably hinders the efficiency of the correspondence table.",
+        "However we are confident that future versions of both the Basque and Spanish lemmatizers will become closer because they are currently developed within the same project team.",
+        "When their output becomes more homogeneous, the efficiency of the correspondence table will be greately increased."
+      ]
+    },
+    {
+      "heading": "6 Acknowledgements",
+      "text": [
+        "This research is being partially supported by the Spanish Research Agency, project ITEM, TIC-96-1243-0O3-01.",
+        "We greately appreciate the help given to us by Felisa Verdejo, director of the project.",
+        "We are particulary endebeted",
+        "to developers of the Spanish (Mirquez & Padr6 97) and the Basque (Aduriz et al.",
+        "96a) lemmatizers.",
+        "We thank CRL for allowing us the use of their premises and to Begofia Farwell for the reviewing of the text."
+      ]
+    },
+    {
+      "heading": "References",
+      "text": [
+        "<p> <s> Contra dicha <rs type=law id=LES546 corresp=LEU540> Orden Fora!",
+        "</rs>, que agota la <term id=X1 corresp=X1> via administrativa </t erm> <term id=X2 corresp=X3> podrá interponerse </term> <term id=X3 corresp=X2>recurso contencioso-administrativo </term> ante la <rs type=organization id=0ES867 corre sp=0EU856> Sala de to Contencioso-Administrativo del Tribunal Superior de Justicia del Pais Vasco </rs>, en el plazo de dos mines, eentado desde el dia siguiente a esta notia-caciOn, sin perjuicio de la utilizaciOn de otros <term id=X4 corresp=X4>medios de defensa </term> que estime oportunos.",
+        "</s> </p> <p> <s> <rs type=law id=LEU540 corresp=LES546> Fort& Agindu </rs> horrek amaiera eman dio <term id=-X1 corresp=X1> administrazio bideari </t erm>; eta be-raren aurka <term id=X2 cor-resp=X3> ad-rninistrazioarekiko auzibide-errekurtsoa </t erm> <term id=X3 corresp=X2>jarri ahal izango zaio </term> <rs type=law id=0EU856 corresp=0ES867> Euskal Herriko Justizi Auzitegi Nagusiko Administrazioarekiko Auzibideetarako Salon </rs>, bi hilabeteko epean; jakinarazpen hau egiten den egunaren biharamunetik zenbatuko da epe hori; hala eta guztiz ere, egokiesten diren beste <term id=X4 corresp=X4> defentsabideak </t erm> ere erabil litezke.",
+        "</s> </p>"
+      ]
+    },
+    {
+      "heading": "Spanish lemmatization output:",
+      "text": [
+        "que que B3323 PR3CN000 agota agotar 6202030 VMIP3S0 La la 810 TDFSO via via 010 NCFS000 administrativa administrativo 110 AQOFS00 podra poder 6202330 VMIF3S0 interponerse interponer 6223503 VMN0000 recurs() recurs() 000 NCMS000 contencioso-administrativo contencioso-administrativo NOMASK AQ00000 ante ante Al SPS00 /a la 810 TDFSO sin-perjuicio-de sin-perjuicio-de Al SPS00 La la 810 TDFSO utilizacidn utilizacicin 010 NCFS000 de de Al SPS00 otros otro 3012 DI3MPOO medios medio 001 NCMP000 de de Al SPS00 defensa defensa 010 NCFS000 que que B3323 PR3CN000 estime estimar 6202032 VMMP3S0 oportunos oportuno 101 AQOMPOO"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,436 @@
+{
+  "info": {
+    "authors": [
+      "Anil Kumar Nelakanti",
+      "Cedric Archambeau",
+      "Julien Mairal",
+      "Francis Bach",
+      "Guillaume Bouchard"
+    ],
+    "book": "EMNLP",
+    "id": "acl-D13-1024",
+    "title": "Structured Penalties for Log-Linear Language Models",
+    "url": "https://aclweb.org/anthology/D13-1024",
+    "year": 2013
+  },
+  "references": [
+    "acl-D11-1003",
+    "acl-D11-1139",
+    "acl-N04-1039",
+    "acl-P04-1007"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "Language models can be formalized as log-linear regression models where the input features represent previously observed contexts up to a certain length m. The complexity of existing algorithms to learn the parameters by maximum likelihood scale linearly in nd, where n is the length of the training corpus and d is the number of observed features.",
+        "We present a model that grows logarithmically in d, making it possible to efficiently leverage longer contexts.",
+        "We account for the sequential structure of natural language using tree-structured penalized objectives to avoid over-fitting and achieve better generalization."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Language models are crucial parts of advanced natural language processing pipelines, such as speech recognition (Burget et al., 2007), machine translation (Chang and Collins, 2011), or information retrieval (Vargas et al., 2012).",
+        "When a sequence of symbols is observed, a language model predicts the probability of occurrence of the next symbol in the sequence.",
+        "Models based on so-called back-off smoothing have shown good predictive power (Goodman, 2001).",
+        "In particular, Kneser-Ney (KN) and its variants (Kneser and Ney, 1995) are still achieving state-of-the-art results for more than a decade after they were originally proposed.",
+        "Smoothing methods are in fact clever heuristics that require tuning parameters in an ad-hoc fashion.",
+        "Hence, more principled ways of learning language models have been proposed based on maximum entropy (Chen and Rosenfeld, 2000) or conditional random fields (Roark et al., 2004), or by adopting a Bayesian approach (Wood et al., 2009).",
+        "In this paper, we focus on penalized maximum likelihood estimation in log-linear models.",
+        "In contrast to language models based on unstructured norms such as `2 (quadratic penalties) or `1 (absolute discounting), we use tree-structured norms (Zhao et al., 2009; Jenatton et al., 2011).",
+        "Structured penalties have been successfully applied to various NLP tasks, including chunking and named entity recognition (Martins et al., 2011), but not language modelling.",
+        "Such penalties are particularly well-suited to this problem as they mimic the nested nature of word contexts.",
+        "However, existing optimizing techniques are not scalable for large contexts m. In this work, we show that structured tree norms provide an efficient framework for language modelling.",
+        "For a special case of these tree norms, we obtain an memory-efficient learning algorithm for log-linear language models.",
+        "Furthermore, we aslo give the first efficient learning algorithm for structured `?",
+        "tree norms with a complexity nearly linear in the number of training samples.",
+        "This leads to a memory-efficient and time-efficient learning algorithm for generalized linear language models.",
+        "The paper is organized as follows.",
+        "The model and other preliminary material is introduced in Section 2.",
+        "In Section 3, we review unstructured penalties that were proposed earlier.",
+        "Next, we propose structured penalties and compare their memory and time requirements.",
+        "We summarize the characteristics of the proposed algorithms in Section 5 and experimentally validate our findings in Section 6."
+      ]
+    },
+    {
+      "heading": "2.3 3",
+      "text": [
+        "operators applied to them.",
+        "Weight values are written inside the node.",
+        "Subfigure (a) shows the complete trie S and Subfigure (b) shows the corresponding collapsed tree T .",
+        "The number in the brackets shows the number of nodes collapsed.",
+        "Subfigure (c) shows vector after proximal projection for `T2 norm (which cannot be collapsed), and Subfigure (d) that of `T?-norm proximal projection which can be collapsed."
+      ]
+    },
+    {
+      "heading": "2 Log-linear language models",
+      "text": [
+        "Multinomial logistic regression and Poisson regression are examples of log-linear models (McCullagh and Nelder, 1989), where the likelihood belongs to an exponential family and the predictor is linear.",
+        "The application of log-linear models to language modelling was proposed more than a decade ago (Della Pietra et al., 1997) and it was shown to be competitive with state-of-the-art language modelling such as Knesser-Ney smoothing (Chen and Rosenfeld, 2000)."
+      ]
+    },
+    {
+      "heading": "2.1 Model definition",
+      "text": [
+        "Let V be a set of words or more generally a set of symbols, which we call vocabulary.",
+        "Further, let xy be a sequence of n+1 symbols of V , where x ?",
+        "V n and y ?",
+        "V .",
+        "We model the probability that symbol y succeeds x as",
+        "where W = {wv}v?V is the set of parameters, and ?m(x) is the vector of features extracted from x, the sequence preceding y.",
+        "We will describe the features shortly.",
+        "Let x1:i denote the subsequence of x starting at the first position up to the ith position and yi the next symbol in the sequence.",
+        "Parameters are estimated by minimizing the penalized log-loss:",
+        "a convex set representing the constraints applied on the parameters.",
+        "Overfitting is avoided by adjusting the regularization parameter ?, e.g., by cross-validation."
+      ]
+    },
+    {
+      "heading": "2.2 Suffix tree encoding",
+      "text": [
+        "Suffix trees provide an efficient way to store and manipulate discrete sequences and can be constructed in linear time when the vocabulary is fixed (Giegerich and Kurtz, 1997).",
+        "Recent examples include language models based on a variable-length Markovian assumption (Kennington et al., 2012) and the sequence memoizer (Wood et al., 2011).",
+        "The suffix tree data structure encodes all the unique suffixes observed in a sequence up to a maximum given length.",
+        "It exploits the fact that the set of observed contexts is a small subset of all possible contexts.",
+        "When a series of suffixes of increasing lengths are",
+        "1 Input: ?",
+        "regularization parameter , L Lipschitz constant of ?f , ?",
+        "coefficient of strong-convexity of f + ?",
+        "?, X design matrix, Y label set 2 Initialize: W = Z = 0, ?",
+        "= ?",
+        "= 1, ?",
+        "= L+ ?",
+        "3 repeat until maximum iterations 4 #estimate point for gradient update",
+        "always observed in the same context, the successive suffixes are collapsed into a single node.",
+        "The uncollapsed version of the suffix tree T is called a suffix trie, which we denote S. A suffix trie also has a tree structure, but it potentially has much larger number of nodes.",
+        "An example of a suffix trie S and the associated suffix tree T are shown in Figures 1(a) and 1(b) respectively.",
+        "We use |S |to denote the number of nodes in the trie S and |T |for the number of nodes in the tree T .",
+        "Suffix tree encoding is particularly helpful in applications where the resulting hierarchical structures are thin and tall with numerous non-branching paths.",
+        "In the case of text, it has been observed that the number of nodes in the tree grows slower than that of the trie with the length of the sequence (Wood et al., 2011; Kennington et al., 2012).",
+        "This is a significant gain in the memory requirements and, as we will show in Section 4, can also lead to important computational gains when this structure is exploited.",
+        "The feature vector ?m(x) encodes suffixes (or contexts) of increasing length up to a maximum length m. Hence, the model defined in (1) is similar tom-gram language models.",
+        "Naively, the feature vector ?m(x) corresponds to one path of length m starting at the root of the suffix trie S. The entries in W correspond to weights for each suffix.",
+        "We thus have a trie structure S on W (see Figure 1(a)) con-straining the number of free parameters.",
+        "In other words, there is one weight parameter per node in the trie S and the matrix of parameters W is of size |S|.",
+        "In this work, however, we consider models where the number of parameters is equal to the size of the suffix tree T , which has much fewer nodes than S. This is achieved by ensuring that all parameters corresponding to suffixes at a node share the same parameter value (see Figure 1(b)).",
+        "These parameters correspond to paths in the suffix trie that do not branch i.e. sequence of words that always appear together in the same order."
+      ]
+    },
+    {
+      "heading": "2.3 Proximal gradient algorithm",
+      "text": [
+        "The objective function (2) involves a smooth convex loss f and a possibly non-smooth penalty ?.",
+        "Sub-gradient descent methods for non-smooth ?",
+        "could be used, but they are unfortunately very slow to converge.",
+        "Instead, we choose proximal methods (Nesterov, 2007), which have fast convergence rates and can deal with a large number of penalties ?, see (Bach et al., 2012).",
+        "Proximal methods iteratively update the current estimate by making a generalized gradient update at each iteration.",
+        "Formally, they are based on a lin-earization of the smooth function f around a parameter estimate W , adding a quadratic penalty term to keep the updated estimate in the neighborhood of W .",
+        "At iteration t, the update of the parameter W is given by",
+        "where L > 0 is an upper-bound on the Lipschitz constant of the gradient ?f .",
+        "The matrix W could either be the current estimate W t or its weighted combination with the previous estimate for accelerated convergence depending on the specific algorithm used (Beck and Teboulle, 2009).",
+        "Equation (3) can be rewritten to be solved in two independent steps: a gradient update from the smooth part followed by a projection depending only on the non-smooth penalty:",
+        "ficiently computing the proximal step is crucial to maintain the fast convergence rate of these methods."
+      ]
+    },
+    {
+      "heading": "2.4 Stochastic proximal gradient algorithm",
+      "text": [
+        "In language modelling applications, the number of training samples n is typically in the range of 105 or larger.",
+        "Stochastic version of the proximal methods (Hu et al., 2009) have been known to be well adapted when n is large.",
+        "At every update, the stochastic algorithm estimates the gradient on a mini-batch, that is, a subset of the samples.",
+        "The size of the mini-batches controls the trade-off between the variance in the estimate of gradient and the time required for compute it.",
+        "In our experiments we use mini-batches of size 400.",
+        "The training algorithm is summarized in Algorithm 1.",
+        "The acceleration is obtained by making the gradient update at a specific weighted combination of the current and the previous estimates of the parameters.",
+        "The weighting is shown in step 6 of the Algorithm 1."
+      ]
+    },
+    {
+      "heading": "2.5 Positivity constraints",
+      "text": [
+        "Without constraining the parameters, the memory required by a model scales linearly with the vocabulary size |V |.",
+        "Any symbol in V observed in a given context is a positive example, while any symbols in V that does not appear in this context is a negative example.",
+        "When adopting a log-linear language model, the negative examples are associated with a small negative gradient step in (4), so that the solution is not sparse accross multiple categories in general.",
+        "By constraining the parameters to be positive (i.e., the set of feasible solutions K is the positive orthant), the projection step 2 in Algorithm 1 can be done with the same complexity, while maintaining sparse parameters accross multiple categories.",
+        "More precisely, the weights for the category k associated to a given context x, is always zeros if the category k never occured after context x.",
+        "A significant gain in memory (nearly |V |-fold for large context lengths) was obtained without loss of accuracy in our experiments."
+      ]
+    },
+    {
+      "heading": "3 Unstructured penalties",
+      "text": [
+        "Standard choices for the penalty function ?",
+        "(W ) include the `1-norm and the squared `2-norm.",
+        "The former typically leads to a solution that is sparse and easily interpretable, while the latter leads to a non-sparse, generally more stable one.",
+        "In particular, the squared `2 and `1 penalties were used in the context of log-linear language models (Chen and Rosenfeld, 2000; Goodman, 2004), reporting performances competitive with bi-gram and tri-gram interpolated Kneser-Ney smoothing."
+      ]
+    },
+    {
+      "heading": "3.1 Proximal step on the suffix trie",
+      "text": [
+        "For squared `2 penalties, the proximal step",
+        "These projections have linear complexity in the number of features."
+      ]
+    },
+    {
+      "heading": "3.2 Proximal step on the suffix tree",
+      "text": [
+        "When feature values are identical, the corresponding proximal (and gradient) steps are identical.",
+        "This can be seen from the proximal steps (7) and (6), which apply to single weight entries.",
+        "This property can be used to group together parameters for which the feature values are equal.",
+        "Hence, we can collapse successive nodes that always have the same values in a suffix trie (as in Figure 1(b)), that is to say we can directly work on the suffix tree.",
+        "This leads to a proximal step with complexity that scales linearly with the number of symbols seen in the corpus (Ukkonen, 1995) and logarithmically with context length."
+      ]
+    },
+    {
+      "heading": "4 Structured penalties",
+      "text": [
+        "The `1 and squared `2 penalties do not account for the sequential dependencies in the data, treating suffixes of different lengths equally.",
+        "This is inappropriate considering that longer suffixes are typically observed less frequently than shorter ones.",
+        "Moreover, the fact that suffixes might be nested is disregarded.",
+        "Hence, we propose to use the tree-structured",
+        "fixes from the suffix tree T by depth-first traversal in the order prescribed by Order.",
+        "b wx is the weights corresponding to the suffix x from the weight vector w and children(x) returns all the immediate children to suffix x in the tree.",
+        "norms (Zhao et al., 2009; Jenatton et al., 2011), which are based on the suffix trie or tree, where sub-trees correspond to contexts of increasing lengths.",
+        "As will be shown in the experiments, this prevents the model to overfit unlike the `1- or squared `2- norm."
+      ]
+    },
+    {
+      "heading": "4.1 Definition of tree-structured `Tp norms",
+      "text": [
+        "We specifically consider the cases p = 2,?",
+        "for which efficient optimization algorithms are available.",
+        "The `Tp norms can be viewed as a group sparsity-inducing norms, where the groups are organized in a tree.",
+        "This means that when the weight associated with a parent in the tree is driven to zero, the weights associated to all its descendants should also be driven to zero.",
+        "Algorithm 3 w := ?`T?",
+        "(w, ?)",
+        "Proximal projection step for `T?",
+        "on grouping G. Input: T suffix tree, w=[v c] tree-structured vector v with corresponding number of suffixes collapsed at each node in c, ?",
+        "threshold",
+        "suffix tree T by depth-first traversal in the order prescribed by Order.",
+        "For structured `Tp -norm, the proximal step amounts to residuals of recursive projections on the `q-ball in the order defined by G (Jenatton et al., 2011), where `q-norm is the dual norm of `p-norm1.",
+        "In the case `T2 norm this comes to a series of projections on the `2-ball.",
+        "For `T?-norm it is instead projections on the `1-ball.",
+        "The order of projections defined by G is generated by an upward pass of the suffix trie.",
+        "At each node through the upward pass, the subtree below is projected on the dual norm ball of size ?, the parameter of proximal step.",
+        "We detail the projections on the norm ball below."
+      ]
+    },
+    {
+      "heading": "4.2 Projections on `q-ball for q = 1, 2",
+      "text": [
+        "Each of the above projections on the dual norm ball takes one of the following forms depending on the choice of the norm.",
+        "Projection of vector w on the `2-ball is equivalent to thresholding the magnitude of w by ?",
+        "units while retaining its direction:",
+        "This can be performed in time linear in size of w, O(|w|).",
+        "Projection of a non-negative vectorw on the",
+        "by a value such that the entries in the resulting vector add up to ?, otherwise w remains the same:",
+        "of size ?",
+        "with ||w||1 < ?, leaving w intact.",
+        "In the other case, the threshold ?",
+        "is to be computed such that after thresholding, the resulting vector has an `1-norm of ?.",
+        "The simplest way to achieve this is to sort by descending order the entries w = sort(w) and pick the k largest values such that the (k + 1)th largest entry is smaller than ?",
+        ":",
+        "We refer to wk as the pivot and are only interested in entries larger than the pivot.",
+        "Given a sorted vector, it requires looking up to exactly k entries, however, sorting itself take O(|w |log |w|)."
+      ]
+    },
+    {
+      "heading": "4.3 Proximal step",
+      "text": [
+        "Naively employing the projection on the `2-ball described above leads to an O(d2) algorithm for `T2 proximal step.",
+        "This could be improved to a linear algorithm by aggregating all necessary scaling factors while making an upward pass of the trie S and applying them in a single downward pass as described in (Jenatton et al., 2011).",
+        "In Algorithm 2, we detail this procedure for trie-structured vectors.",
+        "The complexity of `T?-norm proximal step depends directly on that of the pivot finding algorithm used within its `1-projection method.",
+        "Naively sorting vectors to find the pivot leads to an O(d2 log d) algorithm.",
+        "Pivot finding can be improved by randomly choosing candidates for the pivot and the best known algorithm due to (Bruckner, 1984) has amortized linear time complexity in the size of the vector.",
+        "This leaves us with O(d2) complexity for `T?-norm proximal step.",
+        "(Duchi et al., 2008) proposes a method that scales linearly with the number of non-zero entries in the gradient update (s) but logarithmically in d. But recursive calls to `1-projection over subtrees will fail the sparsity assumption (with s ?",
+        "d) making proximal step quadratic.",
+        "Procedure for ?`T?",
+        "on trie-structured vectors using randomized pivoting method is described in Algorithm 3.",
+        "We next explain how the number of `1-projections can be reduced by switching to the tree T instead of trie S which is possible due to the good properties of `T?-norm.",
+        "Then we present a pivot finding method that is logarithmic in the feature size for our application."
+      ]
+    },
+    {
+      "heading": "4.4 `T?-norm with suffix trees",
+      "text": [
+        "We consider the case where all parameters are initialized with the same value for the optimization procedure, typically with zeros.",
+        "The condition that the parameters at any given node continue to share the same value requires that both the gradient update (4) and proximal step (5) have this property.",
+        "We modify the tree structure to ensure that after gradient updates parameters at a given node continue to share a single value.",
+        "Nodes that do not share a value after gradient update are split into multiple nodes where each node has a single value.",
+        "We formally define this property as follows: Definition 3.",
+        "A constant value non-branching path is a set of nodes P ?",
+        "P(T,w) of a tree structure T w.r.t.",
+        "vector w if P has |P |nodes with |P |?1 edges between them and each node has at most one child and all nodes i, j ?",
+        "P have the same value in vector w as wi = wj .",
+        "The nodes of Figure 1(b) correspond to constant value non-branching paths when the values for all parameters at each of the nodes are the same.",
+        "Next we show that this tree structure is retained after proximal steps of `T?-norm.",
+        "Proposition 1.",
+        "Constant value non-branching paths P(T,w) of T structured vector w are preserved under the proximal projection step ?`T?",
+        "(w, ?).",
+        "Figure 1(d) illustrates this idea showing `T?",
+        "projection applied on the collapsed tree.",
+        "This makes it memory efficient but the time required for the proximal step remains the same since we must project each subtree of S on the `1-ball.",
+        "The sequence of projections at nodes of S in a non-branching path can be rewritten into a single projection step using the following technique bringing the number of pro",
+        "defined by G. The composition of projections can be rewritten into a single projection step with ?",
+        "scaled by the number of projections |P |as,",
+        "The above propositions show that `T?-norm can be used with the suffix tree with fewer projection steps.",
+        "We now propose a method to further improve each of these projection steps."
+      ]
+    },
+    {
+      "heading": "4.5 Fast proximal step for `T?-norm",
+      "text": [
+        "Let k be the cardinality of the set of values larger than the pivot in a vector to compute the threshold for `1-projection as referred in (11).",
+        "This value varies from one application to another, but for language applications, our experiments on 100K en-glish words (APNews dataset) showed that k is generally small: its value is on average 2.5, and its maximum is around 10 and 20, depending on the regularization level.",
+        "We propose using a max-heap data structure (Cormen et al., 1990) to fetch the k-largest values necessary to compute the threshold.",
+        "Given the heap of the entries the cost of finding the pivot is O(k log(d)) if the pivot is the kth largest entry and there are d features.",
+        "This operation is performed d times for `T?-norm as we traverse the tree bottom-up.",
+        "The heap itself is built on the fly during this upward pass.",
+        "At each subtree, the heap is built by merging those of their children in constant time by using Fibonacci heaps.",
+        "This leaves us with a O(dk log(d)) complexity for the proximal step.",
+        "This procedure is detailed in Algorithm 4."
+      ]
+    },
+    {
+      "heading": "5 Summary of the algorithms",
+      "text": [
+        "Table 1 summarizes the characteristics of the algorithms associated to the different penalties: 1.",
+        "The unstructured norms `p do not take into account the varying sparsity level with context length.",
+        "For p=1, this leads to a sparse solution and for p=2, we obtain the classical quadratic penalty.",
+        "The suffix tree representation leads to an efficient memory usage.",
+        "Furthermore, to make the training algorithm time efficient, the parameters corresponding to contexts which always occur in the same larger Algorithm 4 w := ?`T?",
+        "(w, ?)",
+        "Proximal projection step for `T?",
+        "on grouping G using heap data structure.",
+        "Input: T suffix tree, w=[v c] tree-structured vector v with corresponding number of suffixes collapsed at each node in c, ?",
+        "threshold",
+        "a. Heap structure on vector w holds three values (v, c, ?)",
+        "at each node.",
+        "v, c being value and its count, ?",
+        "is the `1-norm of the sub-vector below.",
+        "Tuples are ordered by decreasing value of v and Hj refers to heap with values in sub-tree rooted at j.",
+        "Merge operation merges the heaps passed.",
+        "OrderedIterator returns values from the heap in decreasing order of v. context are grouped.",
+        "We will illustrate in the experiments that these penalties do not lead to good predictive performances.",
+        "2.",
+        "The `T2 norm nicely groups features by subtrees which concurs with the sequential structure of sequences.",
+        "This leads to a powerful algorithm in terms of generalization.",
+        "But it can only be applied on the uncollapsed tree since there is no closure property of the constant value non-branching path for its proximal step making it less amenable for larger tree depths."
+      ]
+    },
+    {
+      "heading": "3. The `T?-norm groups features like the ` T 2 -norm",
+      "text": [
+        "while additionally encouraging numerous feature groups to share a single value, leading to a substantial reduction in memory usage.",
+        "The generalization properties of this algorithm is as good as the generalization obtained with the `T2 penalty, if not better.",
+        "However, it has the constant value non-branching path property, which",
+        "Penalty good generalization memory efficient time efficient unstructured `1 and `22 no yes O(|T |) yes O(|T |) struct.",
+        "`T2 yes no O(|S|) no O(|S|) `T?",
+        "rand.",
+        "pivot yes yes O(|T |) no O(|T |2) `T?",
+        "heap yes yes O(|T |) yes O(|T |log |T |)",
+        "their performance with increasing context length.",
+        "Memory efficiency is measured by the number of free parameters of W in the optimization.",
+        "Note that the suffix tree is much smaller than the trie (uncollapsed tree): |T |<< |S|.",
+        "Time complexities reported are that of one proximal projection step.",
+        "gram on four different 100K-20K train-test splits.",
+        "(b) plot compares the same with appropriate feature weighting.",
+        "(c) compares model complexity for weighted structured penalties w`T2 and w` T ?",
+        "measure by then number of parameters.",
+        "means that the proximal step can be applied directly to the suffix tree.",
+        "There is thus also a significant gain of performances."
+      ]
+    },
+    {
+      "heading": "6 Experiments",
+      "text": [
+        "In this section, we demonstrate empirically the properties of the algorithms summarized in Table 1.",
+        "We consider four distinct subsets of the Associated Press News (AP-news) text corpus with train-test sizes of 100K-20K for our experiments.",
+        "The corpus was preprocessed as described in (Bengio et al., 2003) by replacing proper nouns, numbers and rare words with special symbols ?",
+        "?proper noun?",
+        "?, ?#n?",
+        "and ??unknown??",
+        "respectively.",
+        "Punctuation marks are retained which are treated like other normal words.",
+        "Vocabulary size for each of the training subsets was around 8,500 words.",
+        "The model was reset at the start of each sentence, meaning that a word in any given sentence does not depend on any word in the previous sentence.",
+        "The regularization parameter ?",
+        "is chosen for each model by cross-validation on a smaller subset of data.",
+        "Models are fitted to training sequence of 30K words for different values of ?",
+        "and validated against a sequence of 10K words to choose ?.",
+        "We quantitatively evaluate the proposed model using perplexity, which is computed as follows:",
+        "sured for varying depth of the suffix trie with different penalties.",
+        "Interpolated Kneser-Ney results were computed using the openly available SRILM toolkit (Stolcke, 2002).",
+        "Figure 2(a) shows perplexity values averaged over four data subsets as a function of the language model order.",
+        "It can be observed that performance of unstructured `1 and squared `2 penalties improve until a relatively low order and then degrade, while `T2 penalty does not show such degradation, indicating",
+        "that taking the tree-structure into account is beneficial.",
+        "Moreover, the log-linear language model with `T2 penalty performs similar to interpolated Kneser-Ney.",
+        "The `T?-norm outperforms all other models at order 5, but taking the structure into account does not prevent a degradation of the performance at higher orders, unlike `T2 .",
+        "This means that a single regularization for all model orders is still inappropriate.",
+        "To investigate this further, we adjust the penalties by choosing an exponential decrease of weights varying as ?m for a feature at depth m in the suffix tree.",
+        "Parameter ?",
+        "was tuned on a smaller validation set.",
+        "The best performing values for these weighted models w`22, w`1, w`"
+      ]
+    },
+    {
+      "heading": "T 2 and w` T",
+      "text": [
+        "?",
+        "are 0.5, 0.7, 1.1 and 0.85 respectively.",
+        "The weighting scheme further appropriates the regularization at various levels to suit the problem's structure.",
+        "Perplexity plots for weighted models are shown in Figure 2(b).",
+        "While w`1 improves at larger depths, it fails to compare to others showing that the problem does not admit sparse solutions.",
+        "Weighted `22 improves considerably and performs comparably to the unweighted tree-structured norms.",
+        "However, the introduction of weighted features prevents us from using the suffix tree representation, making these models inefficient in terms of memory.",
+        "Weighted `T?",
+        "is corrected for overfitting at larger depths and w`T2 gains more than others.",
+        "Optimal values for ?",
+        "are fractional for all norms except w`T2 norm showing that the unweighted model `T2 norm was over-penalizing features at larger depths, while that of others were under-penalizing them.",
+        "Interestingly, perplexity improves up to about 9-grams with w`T2 penalty for the data set we considered, indicating that there is more to gain from longer dependencies in natural language sentences than what is currently believed.",
+        "Figure 2(c) compares model complexity measured by the number of parameters for weighted models using structured penalties.",
+        "The `T2 penalty is applied on trie-structured vectors, which grows roughly at a linear rate with increasing model order.",
+        "This is similar to Kneser-Ney.",
+        "However, the number of parameters for the w`T?",
+        "penalty grows logarithmically with the model order.",
+        "This is due to the fact that it operates on the suffix tree-structured vectors instead of the suffix trie-structured vectors.",
+        "These results are valid for, both, weighted and unweighted penalties.",
+        "Next, we compare the average time taken per iteration for different implementations of the `T?",
+        "proximal step.",
+        "Figure 3(a) shows this time against increasing depth of the language model order for random pivoting method with and without the collapsing of parameters at different constant value non-branching paths.",
+        "The trend in this plot resembles that of the number of parameters in Figure 2(c).",
+        "This shows that the complexity of the full proximal step is sublinear when accounting for the suffix tree data structure.",
+        "Figure 3(b) plots time per iteration random pivoting and k-best heap against the varying size of training sequence.",
+        "The two algorithms are operating directly on the suffix tree.",
+        "It can be observed that the heap-based method are superior with",
+        "increasing size of training data."
+      ]
+    },
+    {
+      "heading": "7 Conclusion",
+      "text": [
+        "In this paper, we proposed several log-linear language models.",
+        "We showed that with an efficient data structure and structurally appropriate convex regularization schemes, they were able to outperform standard Kneser-Ney smoothing.",
+        "We also developed a proximal projection algorithm for the tree-structured `T?-norm suitable for large trees.",
+        "Further, we showed that these models can be trained online, that they accurately learn the m-gram weights and that they are able to better take advantage of long contexts.",
+        "The time required to run the optimization is still a concern.",
+        "It takes 7583 minutes on a standard desktop computer for one pass of the of the complete AP-news dataset with 13 million words which is little more than time reported for (Mnih and Hinton, 2007).",
+        "The most time consuming part is computing the normalization factor for the log-loss.",
+        "A hierarchical model in the flavour of (Mnih and Hinton, 2008) should lead to significant improvements to this end.",
+        "Currently, the computational bottleneck is due to the normalization factor in (1) as it appears in every gradient step computation.",
+        "Significant savings would be obtained by computing it as described in (Wu and Khundanpur, 2000)."
+      ]
+    },
+    {
+      "heading": "Acknowledgements",
+      "text": [
+        "The authors would like to thank anonymous reviewers for their comments.",
+        "This work was partially supported by the CIFRE grant 1178/2010 from the French ANRT."
+      ]
+    }
+  ]
+}

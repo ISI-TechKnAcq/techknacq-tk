@@ -1,0 +1,155 @@
+{
+  "info": {
+    "authors": [
+      "Nobo Komagata"
+    ],
+    "book": "Annual Meeting of the Association for Computational Linguistics",
+    "id": "acl-P97-1069",
+    "title": "Generative Power of CCGs With Generalized Type-Raised Categories",
+    "url": "https://aclweb.org/anthology/P97-1069",
+    "year": 1997
+  },
+  "references": [
+    "acl-E93-1039",
+    "acl-J91-3003",
+    "acl-P90-1001",
+    "acl-P91-1010",
+    "acl-P93-1045",
+    "acl-P95-1028"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "This paper shows that a class of Combinatory Categorial Grammars (CCGs) augmented with a linguistically-motivated form of type raising involving variables is weakly equivalent to the standard CCGs not involving variables.",
+        "The proof is based on the idea that any instance of such a grammar can be simulated by a standard CCG."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "The class of Combinatory Categorial Grammars (CCG-Std) was proved to be weakly equivalent to Linear Index Grammars and Tree Adjoining Grammars (Joshi, Vijay-Shanker, and Weir, 1991; Vijay-Shanker and Weir, 1994).",
+        "But CCG-Std cannot handle the generalization of type raising that has been used in accounting for various linguistic phenomena including: coordination and extraction (Steedman, 1985; Dowty, 1988; Steedman, 1996), prosody (Prevost and Steedman, 1993), and quantifier scope (Park, 1995).",
+        "Intuitively, all of these phenomena call for a non-traditional, more flexible notion of constituency capable of representing surface structures including \"(Subj V) (Obj)\" in English.",
+        "Although lexical type raising involving variables can be introduced to derive such a constituent,' unconstrained use of variables can increase the power.",
+        "For example, a grammar involving (T\\x) /(T\\y) can generate a language AnBnC'D'En which CCG-Std cannot (Hoffman, 1993).",
+        "This paper argues that there is a class of grammars which allows the use of linguistically-motivated form of type raising involving variables while it is still weakly equivalent to CCG-Std.",
+        "A class of grammars, CCG-GTRC, is introduced in the next section as an extension to CCG-Std.",
+        "Then we show that CCG-GTRC can actually be simulated by a CCG-Std, proving the equivalence."
+      ]
+    },
+    {
+      "heading": "2 CCGs with Generalized Type-Raised Categories",
+      "text": [
+        "In languages like Japanese, multiple NPs can easily form a non-traditional constituent as in \"[(Subj Obji) & (Subj2 Obj2)] Verb\".",
+        "The proposed grammars (CCG-GTRC) admit lexical type-raised categories (LTRC) of the form T/ (T\\ a) or T\\ (T/a) where T is a variable over categories and a is a constant category (Const).2 Then, composition of LTRCs can give rise to a class of categories having the form T/ (T\\ an... \\ al) or T\\ (T/an.../a1), representing a multiple-NP constituent exemplified by \"Subji Obi \".",
+        "We call these categories generalized type-raised categories (GTRC) and each a; of a GTRC an argument (of the G'TRC).",
+        "The introduction of GTRCs affects the use of combi-natory rules: functional application \">: xly+ y x\" and generalized functional composition \">Bk (x) xly+ ylzi...lzk iz,...lzk\" where k is bounded by a grammar-dependent kniaz as in CCG-Std.3 This paper assumes two constraints defined for the grammars and one condition stipulated to control the formal properties.",
+        "The following order-preserving constraint, which follows more primitive directionality features (Steedman, 1991), limits the directions of the slashes in GTRCs.",
+        "(1) In a GTRC Tja (Tina...dial), the direction of lo must be the opposite to any of In ,",
+        "This prohibits functional composition '>B' on `GTRC+GTRC' pairs so that \"T/ (T\\ A \\ B) U\\ (U/C/D)\" does not result in T\\ (T\\A\\B/C/D) or U/ (U/C/D\\A\\B).",
+        "That is, no movement of arguments across the functor is allowed.",
+        "The variable constraint states that: (2) Variables are limited to the defined positions in GTRCs.",
+        "This prohibits >Bk () ' with k > 1 on the pair 'Categories are in the \"result-leftmost\" representation and associate left.",
+        "Thus alblc should be read as (a/b) /c and returns a/b when an argument c is applied to its right.",
+        "A,...,Z stand for nonterminals and a, ..., z for complex, constant categories.",
+        "3 There are also backward rules (<) that are analogous to forward rules (>).",
+        "Crossing rules where z, is found in the direction opposite of that of y are labelled with x 'k' represents the number of arguments being passed.",
+        "'I' stands for a directional metavariable for {/, \\}.",
+        "In order to assure the expected generative capacity, we place a condition on the use of rules.",
+        "The condition can be viewed in a way comparable to those on rewriting rules to define, say, context-free grammars.",
+        "The bounded argument condition ensures that every argument category is bounded as follows:",
+        "(3) `>B (x)' should not apply to the pair 'Const+GTRC'.",
+        "For example, this prohibits \"AIB + T/ (T\\ C.... \\ CI) – A/ (B\\C....\\C1)\", where the underlined argument can be unboundedly large.",
+        "These constraints and condition also tell us how we can implement a CCG-GTRC system without overgeneration.",
+        "The possible cases of combinatory rule application are summarized as follows:",
+        "(4) a.",
+        "For 'Const+Conse , the same rules as in CCG-Std are applicable.",
+        "b.",
+        "For `GTRC+Conse , the applicable rules are: (i) >: e.g., \"T/ (T\\A\\B) + S\\A\\B 5\" (ii) >Bk (x): e.g., \"T/ (T \\ A \\ B) + S\\A\\B\\C I D S\\C I D\" c. For 'Const+GTRC', only '>' is possible: e.g., \"S/ (Si (S\\B)) +T/ (T \\ B) S\" d. For `GTRC+GTRC', the possibilities are: (i) >: e.g., \"T/ (T\\ (S/A/B)) + T (T/A/B) S\" (ii) >B: e.g., \"T/ (T \\ A \\ B) + T/ (T\\C\\D) – T/ (T\\A\\B\\C\\D)\"",
+        "CCG-GTRC is defined below where g,t, and ggt„ represent the classes of the instances of CCG-Std and CCG-GTRC, respectively: Definition 1 ggt„ is the collection of G's (extension of a G E gstd) such that: I.",
+        "For the lexical function f of G (from terminals to sets of categories), if a E f (a), f' may additionally include { (a, T/ (T \\ a)) , (a, T (T/a) )1.",
+        "2.",
+        "G' may include the rule schemata in (4).",
+        "The main claim of the paper is the following: Proposition 1 gor, is wealdy equivalent with g3 td.",
+        "We show the non-trivial direction: for any G' E gorc, there is a G\" E gstd such that L (G') = L (G\").",
+        "As G' corresponds to a unique G E Cs td, we extend G\" from G to simulate G', then show that the languages are exactly the same."
+      ]
+    },
+    {
+      "heading": "3 Simulation of CCG-GTRC",
+      "text": [
+        "Consider a fragment of CCG-GTRC with a lexical function f such that f (a) = {A, T/ (T\\ A) } , f (b) = { A. T/ (T \\ A) } , f (c) = {S\\A\\B}.",
+        "This fragment can generate the following two permutations:",
+        "Notice that (50 cannot be generated by the original CCG-Std where the lexicon does not involve GTRCs.",
+        "In order to (statically)simulate (5b) by a CCG-Std, we add S\\B\\A to the value of f\" (c) in the lexicon of G\".",
+        "Let us call this type of relation between the original S\\A\\B and the new S\\B wrapping, due to its resemblance to the operation of the same name in (Bach, 1979).",
+        "There are two potential problems with this simple augmentation.",
+        "First, wrapping may affect unboundedly long chunks of categories as exemplified in (6).",
+        "Second, the simulation may overgenerate.",
+        "We discuss these issues in turn.",
+        "We need S\\CI\\A\\B...\\A\\B , which can be the result of unboundedly-long compositions, to simulate (6) without depending on the GTRCs.",
+        "Intuitively, this situation is analogous to long-distance movement of C from the position left of S\\A\\B ...\\C to the sentence-initial position.",
+        "In order to deal with the first problem, the following key properties of CCG-GTRC must be observed:",
+        "(7) a.",
+        "Any derived category is a combination of lexical categories.",
+        "For example,",
+        "b. Wrapping can occur only when GTRCs are involved in the use of '> B' and can only cross at most kmar arguments.",
+        "Since there are only finitely-many argument categories, the argument(s) being passed can be encoded in a finite store.",
+        "For derivable categories bounded by the maximum number of arguments of a lexical category, we add all the instances of wrapping required for simulating the effect of GTRC into the lexicon of G\".",
+        "For the unbounded case, we extend the lexicon as in the following example:",
+        "(8) a.",
+        "For a category S\\A\\B\\C, add S{\\c}\\A\\B to the lexicon.",
+        "b.",
+        "For S\\A\\B\\S, add S{\\c}\\A\\B\\S{\\c},",
+        "[1-wrap] and/or the new categories of the form 'x{. '",
+        "which record the argument(s) being passed.",
+        "As before, we need sublemmas to handle each case.",
+        "The proof of the sublemma involving the `xf ..} ' form can be done by induction on the length of the category.",
+        "category in (b), after a possibly unbounded number of compositions as follows:",
+        "Now, both of the permutations in (5) can be derived in this extension of CCG-Std.",
+        "The finite lexicon with finite extension assures the termination of the process.",
+        "This covers the case (4bii).",
+        "Case (4c) can be characterized by a general pattern \"c/ (b1 (b\\ak T/ {T\\ ak... \\ al) c\" where T = b.",
+        "Since any argument category is bounded, we can add b/ (b\\a k ...\\ct E f (al ...a,‘) in the lexicon as an idiom.",
+        "The other cases do not require simulation as the same string can be derived in the original grammar.",
+        "The second problem of overgeneration calls for another step.",
+        "Suppose that the lexicon includes",
+        "by wrapping.",
+        "To avoid generating an illegal string \"c e\" (in addition to the legal \"d e\"), we label the state of wrapping as S \\ Bf.f.rapi \\ ilf+wrop] .",
+        "The original entries can be labelled as S Br – wrapAAI – wrapl and E\\ (S\\B(_,.0,„„)\\At_wropi).",
+        "The lexical, argument categories, e.g., A, are underspecified with respect to the feature.",
+        "Since finite features can be folded into a category, this can be written as a CCG-Std without features."
+      ]
+    },
+    {
+      "heading": "4 Equivalence of the Two Languages",
+      "text": [
+        "Proposition 1 can be proved by the following lemma (as a special case where c = S): Lemma 1 For any G' E Ggtrc (an extension of G), there is a G\" E gitd such that a string w is derivable from a constant category c in G' if (4-4) w is derivable from c in G\".",
+        "The sketch of the proof goes as follows.",
+        "First, we construct G\" from G' as in the previous section.",
+        "Both directions of the lemma can be proved by induction on the height of derivation.",
+        "Consider the direction of `,'.",
+        "The base (lexical) case holds by definition of the grammars.",
+        "For the induction step, we consider each case of rule application in (4).",
+        "Case (4a) allows direct application of the induction hypothesis for the substructure of smaller height starting with a constant category.",
+        "Other cases involve GTRC and require sublemmas which can be proved by induction on the length of the GTRC.",
+        "Cases (46i, di) have a differently-branching derivation in G\" but can be derived without simulation.",
+        "Cases (46ii, c) depend on the simulation of the previous section.",
+        "Case (4dii) only appears in sublemmas as the result category is GTRC.",
+        "In each sublemma, the induction hypothesis of Lemma 1 is applied (mutually recursively) to handle the derivations of the smaller substructures from a constant category.",
+        "A similar proof is applicable to the other direction.",
+        "The special cases in this direction involves the feature"
+      ]
+    },
+    {
+      "heading": "5 Conclusion",
+      "text": [
+        "We have shown that CCG-GTRC as formulated above is weakly equivalent to CCG-Std.",
+        "The results support the use of type raising involving variables in accounting for various linguistic phenomena.",
+        "Other related results to be reported in the future include: (i) an extension of the polynomial parsing algorithm of (Vijay-Shanker and Weir, 1990) for CCG-Std to CCG-GTRC (Komagata, 1997), (ii) application to a Japanese parser which is capable of handling non-traditional constituents and information structure (roughly, topic/focus structure).",
+        "An extension of the formalism is also being studied, to include lexical type raising of the form T/ (T \\c) for English prepositions/articles and Japanese particles."
+      ]
+    }
+  ]
+}

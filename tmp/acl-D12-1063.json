@@ -1,0 +1,528 @@
+{
+  "info": {
+    "authors": [
+      "Valentin I. Spitkovsky",
+      "Hiyan Alshawi",
+      "Daniel Jurafsky"
+    ],
+    "book": "EMNLP",
+    "id": "acl-D12-1063",
+    "title": "Three Dependency-and-Boundary Models for Grammar Induction",
+    "url": "https://aclweb.org/anthology/D12-1063",
+    "year": 2012
+  },
+  "references": [
+    "acl-D07-1096",
+    "acl-D10-1120",
+    "acl-D11-1005",
+    "acl-D11-1006",
+    "acl-D11-1117",
+    "acl-H01-1014",
+    "acl-J00-1004",
+    "acl-J03-4003",
+    "acl-J04-4004",
+    "acl-J93-2003",
+    "acl-J93-2004",
+    "acl-N09-1009",
+    "acl-N09-1012",
+    "acl-N10-1083",
+    "acl-N12-1087",
+    "acl-P04-1061",
+    "acl-P10-1131",
+    "acl-P10-1152",
+    "acl-P11-2120",
+    "acl-P92-1017",
+    "acl-P97-1003",
+    "acl-P99-1059",
+    "acl-W06-2920",
+    "acl-W10-2901",
+    "acl-W11-0303",
+    "acl-W11-1109"
+  ],
+  "sections": [
+    {
+      "text": [
+        "Proceedings of the 2012 Joint Conference on Empirical Methods in Natural Language Processing and Computational Natural Language Learning, pages 688?698, Jeju Island, Korea, 12?14 July 2012. c?2012 Association for Computational Linguistics Three Dependency-and-Boundary Models for Grammar Induction"
+      ]
+    },
+    {
+      "heading": "Abstract",
+      "text": [
+        "We present a new family of models for unsupervised parsing, Dependency and Boundary models, that use cues at constituent boundaries to inform head-outward dependency tree generation.",
+        "We build on three intuitions that are explicit in phrase-structure grammars but only implicit in standard dependency formulations: (i) Distributions of words that occur at sentence boundaries ?",
+        "such as English determiners ?",
+        "resemble constituent edges.",
+        "(ii) Punctuation at sentence boundaries further helps distinguish full sentences from fragments like headlines and titles, allowing us to model grammatical differences between complete and incomplete sentences.",
+        "(iii) Sentence-internal punctuation boundaries help with longer-distance dependencies, since punctuation correlates with constituent edges.",
+        "Our models induce state-of-the-art dependency grammars for many languages without special knowledge of optimal input sentence lengths or biased, manually-tuned initializers."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Natural language is ripe with all manner of boundaries at the surface level that align with hierarchical syntactic structure.",
+        "From the significance of function words (Berant et al2006) and punctuation marks (Seginer, 2007; Ponvert et al2010) as separators between constituents in longer sentences ?",
+        "to the importance of isolated words in children's early vocabulary acquisition (Brent and Siskind, 2001) ?",
+        "word boundaries play a crucial role in language learning.",
+        "We will show that boundary information can also be useful in dependency grammar induction models, which traditionally focus on head rather than fringe words (Carroll and Charniak, 1992)."
+      ]
+    },
+    {
+      "heading": "DT NN VBZ IN DT NN",
+      "text": [
+        "[The check] is in [the mail].",
+        "Consider the example in Figure 1.",
+        "Because the determiner (DT) appears at the left edge of the sentence, it should be possible to learn that determiners may generally be present at left edges of phrases.",
+        "This information could then be used to correctly parse the sentence-internal determiner in the mail.",
+        "Similarly, the fact that the noun head (NN) of the object the mail appears at the right edge of the sentence could help identify the noun check as the right edge of the subject NP.",
+        "As with jigsaw puzzles, working inwards from boundaries helps determine sentence-internal structures of both noun phrases, neither of which would be quite so clear if viewed separately.",
+        "Furthermore, properties of noun-phrase edges are partially shared with prepositional-and verb-phrase units that contain these nouns.",
+        "Because typical head-driven grammars model valence separately for each class of head, however, they cannot see that the left fringe boundary, The check, of the verb-phrase is shared with its daughter?s, check.",
+        "Neither of these insights is available to traditional dependency formulations, which could learn from the boundaries of this sentence only that determiners might have no left-and that nouns might have no right-dependents.",
+        "We propose a family of dependency parsing models that are capable of inducing longer-range implications from sentence edges than just fertilities of their fringe words.",
+        "Our ideas conveniently lend themselves to implementations that can reuse much of the standard grammar induction machinery, including efficient dynamic programming routines for the relevant expectation-maximization algorithms."
+      ]
+    },
+    {
+      "heading": "2 The Dependency and Boundary Models",
+      "text": [
+        "Our models follow a standard generative story for head-outward automata (Alshawi, 1996a), restricted to the split-head case (see below),1 over lexical word classes {cw}: first, a sentence root cr is chosen, with probability PATTACH(cr |?",
+        "; L); ?",
+        "is a special start symbol that, by convention (Klein and Manning, 2004; Eisner, 1996), produces exactly one child, to its left.",
+        "Next, the process recurses.",
+        "Each (head) word ch generates a left-dependent with probability 1 ?",
+        "PSTOP( ?",
+        "|L; ?",
+        "?",
+        "?",
+        "), where dots represent additional parameterization on which it may be conditioned.",
+        "If the child is indeed generated, its identity cd is chosen with probability PATTACH(cd |ch; ?",
+        "?",
+        "?",
+        "), influenced by the identity of the parent ch and possibly other parameters (again represented by dots).",
+        "The child then generates its own subtree recursively and the whole process continues, moving away from the head, until ch fails to generate a left-dependent.",
+        "At that point, an analogous procedure is repeated to ch's right, this time using stopping factors PSTOP( ?",
+        "|R; ?",
+        "?",
+        "?",
+        ").",
+        "All parse trees derived in this way are guaranteed to be projective and can be described by split-head grammars.",
+        "Instances of these split-head automata have been heavily used in grammar induction (Paskin, 2001b; Klein and Manning, 2004; Headden et al2009, inter alia), in part because they allow for efficient implementations (Eisner and Satta, 1999, ?8) of the inside-outside re-estimation algorithm (Baker, 1979).",
+        "The basic tenet of split-head grammars is that every head word generates its left-dependents independently of its right-dependents.",
+        "This assumption implies, for instance, that words?",
+        "left-and right-valences ?",
+        "their numbers of children to each side ?",
+        "are also independent.",
+        "But it does not imply that descendants that are closer to the head cannot influence the generation of farther dependents on the same side.",
+        "Nevertheless, many popular grammars for unsupervised parsing behave as if a word had to generate all of its children (to one side) ?",
+        "or at least their count ?",
+        "before allowing any of these children themselves to recurse.",
+        "For example, Klein and Manning's (2004) dependency model with valence (DMV) could be imple1Unrestricted head-outward automata are strictly more powerful (e.g., they recognize the language anbn in finite state) than the split-head variants, which process one side before the other.",
+        "mented as both head-outward and head-inward automata.",
+        "(In fact, arbitrary permutations of siblings to a given side of their parent would not affect the likelihood of the modified tree, with the DMV.)",
+        "We propose to make fuller use of split-head automata's head-outward nature by drawing on information in partially-generated parses, which contain useful predictors that, until now, had not been exploited even in featurized systems for grammar induction (Cohen and Smith, 2009; Berg-Kirkpatrick et al2010).",
+        "Some of these predictors, including the identity ?",
+        "or even number (McClosky, 2008) ?",
+        "of already-generated siblings, can be prohibitively expensive in sentences above a short length k. For example, they break certain modularity constraints imposed by the charts used in O(k3)-optimized algorithms (Paskin, 2001a; Eisner, 2000).",
+        "However, in bottom-up parsing and training from text, everything about the yield ?",
+        "i.e., the ordered sequence of all already-generated descendants, on the side of the head that is in the process of spawning off an additional child ?",
+        "is not only known but also readily accessible.",
+        "Taking advantage of this availability, we designed three new models for dependency grammar induction."
+      ]
+    },
+    {
+      "heading": "2.1 Dependency and Boundary Model One",
+      "text": [
+        "DBM-1 conditions all stopping decisions on adjacency and the identity of the fringe word ce ?",
+        "the currently-farthest descendant (edge) derived by head chin the given head-outward direction (dir ?",
+        "{L, R}): PSTOP( ?",
+        "|dir; adj, ce).",
+        "In the adjacent case (adj = T), ch is deciding whether to have any children on a given side: a first child's subtree would be right next to the head, so the head and the fringe words coincide (ch = ce).",
+        "In the non-adjacent case (adj = F), these will be different words and their classes will, in general, not be the same.2 Thus, non-adjacent stopping decisions will be made independently of a head word's identity.",
+        "Therefore, all word classes will be equally likely to continue to grow or not, for a specific proposed fringe boundary.",
+        "For example, production of The check is involves two non-adjacent stopping decisions on the left: one by the noun check and one by the verb is, both of which stop after generating a first child.",
+        "In DBM-1, 2Fringe words differ also from other standard dependency features (Eisner, 1996, ?2.3): parse siblings and adjacent words."
+      ]
+    },
+    {
+      "heading": "DT NN VBZ IN DT NN ?",
+      "text": [
+        "The check is in the mail .",
+        "?",
+        "(1?",
+        "PSTOP( ?",
+        "|L; T, VBZ)) ?",
+        "PATTACH(NN |VBZ; L) ?",
+        "(1?",
+        "PSTOP( ?",
+        "|R; T, VBZ)) ?",
+        "PATTACH(IN |VBZ; R) ?",
+        "PSTOP( ?",
+        "|L; F, DT) // VBZ ?",
+        "PSTOP( ?",
+        "|R; F, NN) // VBZ ?",
+        "(1?",
+        "PSTOP( ?",
+        "|L; T, NN))2 ?",
+        "P2ATTACH(DT |NN; L) ?",
+        "(1?",
+        "PSTOP( ?",
+        "|R; T, IN)) ?",
+        "PATTACH(NN |IN; R) ?",
+        "P2STOP( ?",
+        "|R; T, NN) ?",
+        "P2STOP( ?",
+        "|L; F, DT) // NN ?",
+        "PSTOP( ?",
+        "|L; T, IN) ?",
+        "PSTOP( ?",
+        "|R; F, NN) // IN ?",
+        "P2STOP( ?",
+        "|L; T, DT) ?",
+        "P2STOP( ?",
+        "|R; T, DT) ?",
+        "PSTOP(?",
+        "|L; F)",
+        "its unlabeled dependency parse structure's probability, as factored by DBM-1; highlighted comments specify heads associated to non-adjacent stopping probability factors.",
+        "this outcome is captured by squaring a shared parameter belonging to the left-fringe determiner The: PSTOP( ?",
+        "|L; F, DT)2 ?",
+        "instead of by a product of two factors, such as PSTOP( ?",
+        "|L; F, NN) ?",
+        "PSTOP( ?",
+        "|L; F, VBZ).",
+        "In these grammars, dependents?",
+        "attachment probabilities, given heads, are additionally conditioned only on their relative positions ?",
+        "as in traditional models (Klein and Manning, 2004; Paskin, 2001b): PATTACH(cd |ch; dir).",
+        "Figure 2 shows a completely factored example."
+      ]
+    },
+    {
+      "heading": "2.2 Dependency and Boundary Model Two",
+      "text": [
+        "DBM-2 allows different but related grammars to coexist in a single model.",
+        "Specifically, we presuppose that all sentences are assigned to one of two classes: complete and incomplete (comp ?",
+        "{T, F}, for now taken as exogenous).",
+        "This model assumes that word-word (i.e., head-dependent) interactions in the two domains are the same.",
+        "However, sentence lengths ?",
+        "for which stopping probabilities are responsible ?",
+        "and distributions of root words may be different.",
+        "Consequently, an additional comp parameter is added to the context of two relevant types of factors: PSTOP( ?",
+        "|dir; adj, ce, comp); and PATTACH(cr |?",
+        "; L, comp).",
+        "For example, the new stopping factors could capture the fact that incomplete fragments ?",
+        "such as the noun-phrases George Morton, headlines Energy and Odds and Ends, a line item c - Domestic car, dollar quantity Revenue: $3.57 billion, the time 1:11am, and the like ?",
+        "tend to be much shorter than complete sentences.",
+        "The new root-attachment factors could further track that incomplete sentences generally lack verbs, in contrast to other short sentences, e.g., Excerpts follow:, Are you kidding?, Yes, he did., It's huge., Indeed it is., I said, ?NOW?",
+        "?, ?Absolutely,?",
+        "he said., I am waiting., Mrs. Yeargin declined., McGraw-Hill was outraged., ?It happens.",
+        "?, I'm OK, Jack., Who cares?, Never mind.",
+        "and so on.",
+        "All other attachment probabilities PATTACH(cd |ch; dir) remain unchanged, as in DBM-1.",
+        "In practice, comp can indicate presence of sentence-final punctuation."
+      ]
+    },
+    {
+      "heading": "2.3 Dependency and Boundary Model Three",
+      "text": [
+        "DBM-3 adds further conditioning on punctuation context.",
+        "We introduce another boolean parameter, cross, which indicates the presence of intervening punctuation between a proposed head word ch and its dependent cd.",
+        "Using this information, longer-distance punctuation-crossing arcs can be modeled separately from other, lower-level dependencies, via PATTACH(cd |ch; dir, cross).",
+        "For instance, in Continentals believe that the strongest growth area will be southern Europe., four words appear between that and will.",
+        "Conditioning on (the absence of) intervening punctuation could help tell true long-distance relations from impostors.",
+        "All other probabilities, PSTOP( ?",
+        "|dir; adj, ce, comp) and"
+      ]
+    },
+    {
+      "heading": "2.4 Summary of DBMs and Related Models",
+      "text": [
+        "Head-outward automata (Alshawi, 1996a; Alshawi, 1996b; Alshawi et al2000) played a central part as generative models for probabilistic grammars, starting with their early adoption in supervised split-head constituent parsers (Collins, 1997; Collins, 2003).",
+        "Table 1 lists some parameterizations that have since been used by unsupervised dependency grammar inducers sharing their backbone split-head process."
+      ]
+    },
+    {
+      "heading": "3 Experimental Set-Up and Methodology",
+      "text": [
+        "We first motivate each model by analyzing the Wall Street Journal (WSJ) portion of the Penn English",
+        "grammar induction experiments.",
+        "Although motivating solely from this treebank biases our discussion towards a very specific genre of just one language, it has the advantage of allowing us to make concrete claims that are backed up by significant statistics.",
+        "In the grammar induction experiments that follow, we will test each model's incremental contribution to accuracies empirically, across many disparate languages.",
+        "We worked with all 23 (disjoint) train/test splits from the 2006/7 CoNLL shared tasks (Buch-holz and Marsi, 2006; Nivre et al2007), spanning 19 languages.4 For each data set, we induced a baseline grammar using the DMV.",
+        "We excluded all training sentences with more than 15 tokens to create a conservative bias, because in this set-up the baseline is known to excel (Spitkovsky et al2009).",
+        "Grammar inducers were initialized using (the same) uniformly-at-random chosen parse trees of training sentences (Cohen and Smith, 2010); thereafter, we applied ?add one?",
+        "smoothing at every training step.",
+        "To fairly compare the models under consideration ?",
+        "which could have quite different starting perplexities and ensuing consecutive relative likelihoods ?",
+        "we experimented with two termination strategies.",
+        "In one case, we blindly ran each learner through 40 steps of inside-outside re-estimation, ignoring any convergence criteria; in the other case, we ran until numerical convergence of soft EM's objective function or until the likelihood of resulting Viterbi parse trees suffered ?",
+        "an ?early-stopping la-teen EM?",
+        "strategy (Spitkovsky et al2011a, ?2.3).",
+        "We evaluated against all sentences of the blind test sets (except one 145-token item in Arabic ?07 data).",
+        "Table 2 shows experimental results, averaged over 1999), discarding any empty nodes, etc., as is standard practice.",
+        "4We did not test on WSJ data because such evaluation would not be blind, as parse trees from the PTB are our motivating examples; instead, performance on WSJ serves as a strong baseline in a separate study (Spitkovsky et al2012a): bootstrapping of DBMs from mostly incomplete inter-punctuation fragments.",
+        "all 19 languages, for the DMV baselines and DBM-1 and 2.",
+        "We did not test DBM-3 in this set-up because most sentence-internal punctuation occurs in longer sentences; instead, DBM-3 will be tested later (see ?7), using most sentences,5 in the final training step of a curriculum strategy (Bengio et al2009) that we will propose for DBMs.",
+        "For the three models tested on shorter inputs (up to 15 tokens) both terminating criteria exhibited the same trend; lateen EM consistently scored slightly higher than 40 EM iterations."
+      ]
+    },
+    {
+      "heading": "4 Dependency and Boundary Model One",
+      "text": [
+        "The primary difference between DBM-1 and traditional models, such as the DMV, is that DBM-1 conditions non-adjacent stopping decisions on the identities of fringe words in partial yields (see ?2.1)."
+      ]
+    },
+    {
+      "heading": "4.1 Analytical Motivation",
+      "text": [
+        "Treebank data suggests that the class of the fringe word ?",
+        "its part-of-speech, ce ?",
+        "is a better predictor of (non-adjacent) stopping decisions, in a given direction dir, than the head's own class ch.",
+        "A statistical analysis of logistic regressions fitted to the data shows that the (ch, dir) predictor explains only about 7% of the total variation (see Table 3).",
+        "This seems low, although it is much better compared to direction alone (which explains less than 2%) and slightly better than using the (current) number of the head's de",
+        "information criteria (AIC), both adjusted for the number of parameters, for several single-predictor logistic models of non-adjacent stops, given direction dir; ch is the class of the head, n is its number of descendants (so far) to that side, and ce represents the farthest descendant (the edge).",
+        "scendants on that side, n, instead of the head's class.",
+        "In contrast, using ce in place of ch boosts explanatory power to 24%, keeping the number of parameters the same.",
+        "If one were willing to roughly square the size of the model, explanatory power could be improved further, to 33% (see Table 3), using both ce and ch.",
+        "Fringe boundaries thus appear to be informative even in the supervised case, which is not surprising, since using just one probability factor (and its complement) to generate very short (geometric coin-flip) sequences is a recipe for high entropy.",
+        "But as suggested earlier, fringes should be extra attractive in unsupervised settings because yields are observable, whereas heads almost always remain hidden.",
+        "Moreover, every sentence exposes two true edges (Ha?nig, 2010): integrated over many sample sentence beginnings and ends, cumulative knowledge about such markers can guide a grammar inducer inside long inputs, where structure is murky.",
+        "Table 4 shows distributions of all part-of-speech (POS) tags in the treebank versus in sentence-initial, sentence-final and sentence-root positions.",
+        "WSJ often leads with determiners, proper nouns, prepositions and pronouns ?",
+        "all good candidates for starting English phrases; and its sentences usually end with various noun types, again consistent with our running example."
+      ]
+    },
+    {
+      "heading": "4.2 Experimental Results",
+      "text": [
+        "Table 2 shows DBM-1 to be substantially more accurate than the DMV, on average: 38.8 versus 33.5% after 40 steps of EM.7 Lateen termination improved both models?",
+        "accuracies slightly, to 39.0 and 34.0%, respectively, with DBM-1 scoring five points higher.",
+        "7DBM-1's 39% average accuracy with uniform-at-random initialization is two points above DMV's scores with the ?ad-hoc harmonic?",
+        "strategy, 37% (Spitkovsky et al2011a, Table 5).",
+        "of-speech tags in WSJ, ordered by overall frequency, as well as distributions for sentence boundaries and for the roots of complete and incomplete sentences.",
+        "(A uniform distribution would have 1/36 = 2.7% for all POS-tags.)",
+        "tributions over POS-tags shown in Table 4 and the uniform distribution; the BC (or Hellinger) distance (Bhattacharyya, 1943; Nikulin, 2002) between discrete distributions p and q (over x ?",
+        "X ) ranges from zero (iff p = q) to one (iff p ?",
+        "q = 0, i.e., when they do not overlap at all)."
+      ]
+    },
+    {
+      "heading": "5 Dependency and Boundary Model Two",
+      "text": [
+        "DBM-2 adapts DBM-1 grammars to two classes of inputs (complete sentences and incomplete fragments) by forking off new, separate multinomials for stopping decisions and root-distributions (see ?2.2)."
+      ]
+    },
+    {
+      "heading": "5.1 Analytical Motivation",
+      "text": [
+        "Unrepresentative short sentences ?",
+        "such as headlines and titles ?",
+        "are common in news-style data and pose a known nuisance to grammar inducers.",
+        "Previous research sometimes took radical measures to combat the problem: for example, Gillenwater et al2009) excluded all sentences with three or fewer tokens from their experiments; and Marec?ek and Zabokrtsky?",
+        "(2011) enforced an ?anti-noun-root?",
+        "policy to steer their Gibbs sampler away from the undercurrents caused by the many short noun-phrase fragments (among sentences up to length 15, in Czech data).",
+        "We refer to such snippets of text as ?incomplete sentences?",
+        "and focus our study of WSJ on non-clausal data (as signaled by top-level constituent annotations whose first character is not S).8 Table 4 shows that roots of incomplete sentences, which are dominated by nouns, barely resemble the other roots, drawn from more traditional verb and modal types.",
+        "In fact, these two empirical root distributions are more distant from one another than either is from the uniform distribution, in the space of discrete probability distributions over POS-tags (see Table 5).",
+        "Of the distributions we considered, only sentence boundaries are as or more different from 8I.e., separating top-level types {S, SINV, SBARQ, SQ, SBAR} from the rest (ordered by frequency): {NP, FRAG, X, PP, .",
+        ".",
+        ".}.",
+        "(complete) roots, suggesting that heads of fragments too may warrant their own multinomial in the model.",
+        "Further, incomplete sentences are uncharacteristically short (see Figure 3).",
+        "It is this property that makes them particularly treacherous to grammar inducers, since by offering few options of root positions they increase the chances that a learner will incorrectly induce nouns to be heads.",
+        "Given that expected lengths are directly related to stopping decisions, it could make sense to also model the stopping probabilities of incomplete sentences separately."
+      ]
+    },
+    {
+      "heading": "5.2 Experimental Results",
+      "text": [
+        "Since it is not possible to consult parse trees during grammar induction (to check whether an input sentence is clausal), we opted for a proxy: presence of sentence-final punctuation.",
+        "Using punctuation to divide input sentences into two groups, DBM-2 scored higher: 40.9, up from 39.0% accuracy (see Table 2).",
+        "After evaluating these multilingual experiments, we checked how well our proxy corresponds to actual clausal sentences in WSJ.",
+        "Table 6 shows the binary confusion matrix having a fairly low (but positive) Pearson correlation coefficient.",
+        "False positives",
+        "include parenthesized expressions that are marked as noun-phrases, such as (See related story: ?Fed Ready to Inject Big Funds?",
+        ": WSJ Oct. 16, 1989); false negatives can be headlines having a main verb, e.g., Population Drain Ends For Midwestern States.",
+        "Thus, our proxy is not perfect but seems to be tolerable in practice.",
+        "We suspect that identities of punctuation marks (Collins, 2003, Footnote 13) ?",
+        "both sentence-final and sentence-initial ?",
+        "could be of extra assistance in grammar induction, specifically for grouping imperatives, questions, and so forth."
+      ]
+    },
+    {
+      "heading": "6 Dependency and Boundary Model Three",
+      "text": [
+        "DBM-3 exploits sentence-internal punctuation contexts by modeling punctuation-crossing dependency arcs separately from other attachments (see ?2.3)."
+      ]
+    },
+    {
+      "heading": "6.1 Analytical Motivation",
+      "text": [
+        "Many common syntactic relations, such as between a determiner and a noun, are unlikely to hold over long distances.",
+        "(In fact, 45% of all head-percolated dependencies in WSJ are between adjacent words.)",
+        "However, some common constructions are more remote: e.g., subordinating conjunctions are, on average, 4.8 tokens away from their dependent modal verbs.",
+        "Sometimes longer-distance dependencies can be vetted using sentence-internal punctuation marks.",
+        "It happens that the presence of punctuation between such conjunction (IN) and verb (MD) types serves as a clue that they are not connected (see Table 7a); by contrast, a simpler cue ?",
+        "whether these words are adjacent ?",
+        "is, in this case, hardly of any use (see Table 7b).",
+        "Conditioning on crossing punctuation could be of help then, playing a role similar to that of comma-counting (Collins, 1997, ?2.1) ?",
+        "and ?verb intervening?",
+        "(Bikel, 2004, ?5.1) ?",
+        "in early head-outward models for supervised parsing.",
+        "a) r?",
+        "?",
+        "?0.40 Attached not Attached Total"
+      ]
+    },
+    {
+      "heading": "6.2 Experimental Results Postponed",
+      "text": [
+        "As we mentioned earlier (see ?3), there is little point in testing DBM-3 with shorter sentences, since most sentence-internal punctuation occurs in longer inputs.",
+        "Instead, we will test this model in a final step of a staged training strategy, with more data (see ?7.3)."
+      ]
+    },
+    {
+      "heading": "7 A Curriculum Strategy for DBMs",
+      "text": [
+        "We propose to train up to DBM-3 iteratively ?",
+        "by beginning with DBM-1 and gradually increasing model complexity through DBM-2, drawing on the intuitions of IBM translation models 1?4 (Brown et al., 1993).",
+        "Instead of using sentences of up to 15 tokens, as in all previous experiments (?4?5), we will now make use of nearly all available training data: up to length 45 (out of concern for efficiency), during later stages.",
+        "In the first stage, however, we will use only a subset of the data with DBM-1, in a process sometimes called curriculum learning (Bengio et al2009; Krueger and Dayan, 2009, inter alia).",
+        "Our grammar inducers will thus be ?starting small?",
+        "in both senses suggested by Elman (1993): simultaneously scaffolding on model-and data-complexity."
+      ]
+    },
+    {
+      "heading": "7.1 Scaffolding Stage #1: DBM-1",
+      "text": [
+        "We begin by training DBM-1 on sentences without sentence-internal punctuation but with at least one trailing punctuation mark.",
+        "Our goal is to avoid, when possible, overly specific arbitrary parameters like the ?15 tokens or less?",
+        "threshold used to select training sentences.",
+        "Unlike DBM-2 and 3, DBM-1 does not model punctuation or sentence fragments, so we instead explicitly restrict its attention to this cleaner subset of the training data, which takes advantage of the fact that punctuation may generally correlate with sentence complexity (Frank, 2000).9 Aside from input sentence selection, our experimental set-up here remained identical to previous training of DBMs (?4?5).",
+        "Using this new input data, DBM-1 averaged 40.7% accuracy (see Table 8).",
+        "This is slightly higher than the 39.0% when using sentences up to length 15, suggesting that our heuristic for clean, simple sentences may be a useful one.",
+        "with a curriculum strategy, and state-of-the-art results for systems that: (i) are also POS-agnostic and monolingual, including SCAJ (Spitkovsky et al2011a, Tables 5?6) and SAJ (Spitkovsky et al2011b); (ii) rely on gold POS-tag identities to discourage noun roots (Marec?ek and Zabokrtsky?, 2011, MZ) or to encourage verbs (Rasooli and Faili, 2012, RF); and (iii) transfer delexicalized parsers (S?gaard, 2011a, S) from resource-rich languages with translations (McDonald et al2011, MPH).",
+        "DMV and DBM-1 trained on simple sentences, from uniform; DBM-2 and 3 trained on most sentences, from DBM-1 and 2, respectively; +inference is DBM-3 with punctuation constraints."
+      ]
+    },
+    {
+      "heading": "7.2 Scaffolding Stage #2: DBM-2? DBM-1",
+      "text": [
+        "Next, we trained on all sentences up to length 45.",
+        "Since these inputs are punctuation-rich, in both remaining stages we used the constrained Viterbi EM set-up suggested by Spitkovsky et al2011b) instead of plain soft EM; we employ an early termination strategy, quitting hard EM as soon as soft EM's objective suffers (Spitkovsky et al2011a).",
+        "Punctuation was converted into Viterbi-decoding constraints during training using the so-called loose method, which stipulates that all words in an inter-punctuation fragment must be dominated by a single (head) word, also from that fragment ?",
+        "with only these head words allowed to attach the head words of other fragments, across punctuation boundaries.",
+        "To adapt to full data, we initialized DBM-2 using Viterbi parses from the previous stage (?7.1), plus uniformly-at-random chosen dependency trees for the new complex and incomplete sentences, subject to punctuation-induced constraints.",
+        "This approach improved parsing accuracies to 41.7% (see Table 8)."
+      ]
+    },
+    {
+      "heading": "7.3 Scaffolding Stage #3: DBM-3? DBM-2",
+      "text": [
+        "Next, we repeated the training process of the previous stage (?7.2) using DBM-3.",
+        "To initialize this model, we combined the final instance of DBM-2 with uniform multinomials for punctuation-crossing attachment probabilities (see ?2.3).",
+        "As a result, average performance improved to 42.2% (see Table 8).",
+        "Lastly, we applied punctuation constraints also in inference.",
+        "Here we used the sprawl method ?",
+        "a more relaxed approach than in training, allowing arbitrary words to attach inter-punctuation fragments (provided that each entire fragment still be derived",
+        "by one of its words) ?",
+        "as suggested by Spitkovsky et al2011b).",
+        "This technique increased DBM-3's average accuracy to 42.9% (see Table 8).",
+        "Our final result substantially improves over the baseline's 33.6% and compares favorably to previous work.10 8 Discussion and the State-of-the-Art DBMs come from a long line of head-outward models for dependency grammar induction yet their generative processes feature important novelties.",
+        "One is conditioning on more observable state ?",
+        "specifically, the left and right end words of a phrase being constructed ?",
+        "than in previous work.",
+        "Another is allowing multiple grammars ?",
+        "e.g., of complete and incomplete sentences ?",
+        "to coexist in a single model.",
+        "These improvements could make DBMs quick-and-easy to bootstrap directly from any available partial bracketings (Pereira and Schabes, 1992), for example capitalized phrases (Spitkovsky et al2012b).",
+        "The second part of our work ?",
+        "the use of a curriculum strategy to train DBM-1 through 3 ?",
+        "eliminates having to know tuned cut-offs, such as sentences with up to a predetermined number of tokens.",
+        "Although this approach adds some complexity, we chose conservatively, to avoid overfitting settings of sentence length, convergence criteria, etc.",
+        ": stage one's data is dictated by DBM-1 (which ignores punctuation); subsequent stages initialize additional pieces uniformly: uniform-at-random parses for new data and uniform multinomials for new parameters.",
+        "Even without curriculum learning ?",
+        "trained with vanilla EM ?",
+        "DBM-2 and 1 are already strong.",
+        "Further boosts to accuracy could come from employing more sophisticated optimization algorithms, e.g., better EM (Samdani et al2012), constrained Gibbs sampling (Marec?ek and Zabokrtsky?, 2011) or locally-normalized features (Berg-Kirkpatrick et al. 2010).",
+        "Other orthogonal dependency grammar induction techniques ?",
+        "including ones based on universal rules (Naseem et al2010) ?",
+        "may also benefit in combination with DBMs.",
+        "Direct comparisons to previous work require some care, however, as there are several classes of systems that make different assumptions about training data (see Table 8).",
+        "10Note that DBM-1's 39% average accuracy with standard training (see Table 2) was already nearly a full point higher than that of any single previous best system (SCAJ6 ?",
+        "see Table 8)."
+      ]
+    },
+    {
+      "heading": "8.1 Monolingual POS-Agnostic Inducers",
+      "text": [
+        "The first type of grammar inducers, including our own approach, uses standard training and test data sets for each language, with gold part-of-speech tags as anonymized word classes.",
+        "For the purposes of this discussion, we also include in this group trans-ductive learners that may train on data from the test sets.",
+        "Our DBM-3 (decoded with punctuation constraints) does well among such systems ?",
+        "for which accuracies on all sentence lengths of the evaluation sets are reported ?",
+        "attaining highest scores for 8 of 19 languages; the DMV baseline is still state-of-the-art for one language; and the remaining 10 bests are split among five other recent systems (see Table 8).11 Half of the five came from various lateen EM strategies (Spitkovsky et al2011a) for escaping and/or avoiding local optima.",
+        "These heuristics are compatible with how we trained our DBMs and could potentially provide further improvement to accuracies.",
+        "Overall, the final scores of DBM-3 were better, on average, than those of any other single system: 42.9 versus 38.2% (Spitkovsky et al2011a, Table 6).",
+        "The progression of scores for DBM-1 through 3 without using punctuation constraints in inference ?",
+        "40.7, 41.7 and 42.2% ?",
+        "fell entirely above this previous state-of-the-art result as well; the DMV baseline ?",
+        "also trained on sentences without internal but with final punctuation ?",
+        "averaged 33.6%."
+      ]
+    },
+    {
+      "heading": "8.2 Monolingual POS-Identified Inducers",
+      "text": [
+        "The second class of techniques assumes knowledge about identities of part-of-speech tags (Naseem et al., 2010), i.e., which word tokens are verbs, which ones are nouns, etc.",
+        "Such grammar inducers generally do better than the first kind ?",
+        "e.g., by encouraging verbocentricity (Gimpel and Smith, 2011) ?",
+        "though even here our results appear to be competitive.",
+        "In fact, to our surprise, only in 5 of 19 languages a ?POS-identified?",
+        "system performed better than all of the ?POS-agnostic?",
+        "ones (see Table 8)."
+      ]
+    },
+    {
+      "heading": "8.3 Multi-Lingual Semi-Supervised Parsers",
+      "text": [
+        "The final broad class of related algorithms we considered extends beyond monolingual data and uses 11For Turkish ?06, the ?right-attach?",
+        "baseline outperforms even the DMV, at 65.4% (Rasooli and Faili, 2012, Table 1); an important difference between 2006 and 2007 CoNLL data sets has to do with segmentation of morphologically-rich languages.",
+        "both identities of POS-tags and/or parallel bitexts to transfer (supervised) delexicalized parsers across languages.",
+        "Parser projection is by far the most successful approach to date and we hope that it too may stand to gain from our modeling improvements.",
+        "Of the 10 languages for which we found results in the literature, transferred parsers underperformed the grammar inducers in only one case: on English (see Table 8).",
+        "The unsupervised system that performed better used a special ?weighted?",
+        "initializer (Spitkovsky et al2011b, ?3.1) that worked well for English (but less so for many other languages).",
+        "DBMs may be able to improve initialization.",
+        "For example, modeling of incomplete sentences could help in incremental initialization strategies like baby steps (Spitkovsky et al2009), which are likely sensitive to the proverbial ?bum steer?",
+        "from unrepresentative short fragments, pace Tu and Honavar (2011)."
+      ]
+    },
+    {
+      "heading": "8.4 Miscellaneous Systems on Short Sentences",
+      "text": [
+        "Several recent systems (Cohen et al2011; S?gaard, 2011b; Naseem et al2010; Gillenwater et al2010; Berg-Kirkpatrick and Klein, 2010, inter alia) are absent from Table 8 because they do not report performance for all sentence lengths.",
+        "To facilitate comparison with this body of important previous work, we also tabulated final accuracies for the ?up-to-ten words?",
+        "task under heading @10: 51.9%, on average."
+      ]
+    },
+    {
+      "heading": "9 Conclusion",
+      "text": [
+        "Although a dependency parse for a sentence can be mapped to a constituency parse (Xia and Palmer, 2001), the probabilistic models generating them use different conditioning: dependency grammars focus on the relationship between arguments and heads, constituency grammars on the coherence of chunks covered by non-terminals.",
+        "Since redundant views of data can make learning easier (Blum and Mitchell, 1998), integrating aspects of both constituency and dependency ought to be able to help grammar induction.",
+        "We have shown that this insight is correct: dependency grammar inducers can gain from modeling boundary information that is fundamental to constituency (i.e., phrase-structure) formalisms.",
+        "DBMs are a step in the direction towards modeling constituent boundaries jointly with head dependencies.",
+        "Further steps must involve more tightly coupling the two frameworks, as well as showing ways to incorporate both kinds of information in other state-of-the art grammar induction paradigms."
+      ]
+    },
+    {
+      "heading": "Acknowledgments",
+      "text": [
+        "We thank Roi Reichart and Marta Recasens, for many helpful comments on draft versions of this paper, and Marie-Catherine de Marneffe, Roy Schwartz, Mengqiu Wang and the anonymous reviewers, for their apt recommendations.",
+        "Funded, in part, by Defense Advanced Research Projects Agency (DARPA) Machine Reading Program, under Air Force Research Laboratory (AFRL) prime contract no.",
+        "FA8750-09-C-0181.",
+        "Any opinions, findings, and conclusion or recommendations expressed in this material are those of the authors and do not necessarily reflect the view of the DARPA, AFRL, or the US government.",
+        "First author is grateful to Cindy Chan for her friendship and support over many long months leading up to this publication."
+      ]
+    }
+  ]
+}

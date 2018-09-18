@@ -1,0 +1,181 @@
+{
+  "info": {
+    "authors": [
+      "Kadri Hacioglu",
+      "Wayne H. Ward"
+    ],
+    "book": "Human Language Technology Conference",
+    "id": "acl-H01-1058",
+    "title": "On Combining Language Models: Oracle Approach",
+    "url": "https://aclweb.org/anthology/H01-1058",
+    "year": 2001
+  },
+  "references": [],
+  "sections": [
+    {
+      "heading": "ABSTRACT",
+      "text": [
+        "In this paper, we address the problem of combining several language models (LMs).",
+        "We find that simple interpolation methods, like log-linear and linear interpolation, improve the performance but fall short of the performance of an oracle.",
+        "The oracle knows the reference word string and selects the word string with the best performance (typically, word or semantic error rate) from a list of word strings, where each word string has been obtained by using a different LM.",
+        "Actually, the oracle acts like a dynamic combiner with hard decisions using the reference.",
+        "We provide experimental results that clearly show the need for a dynamic language model combination to improve the performance further.",
+        "We suggest a method that mimics the behavior of the oracle using a neural network or a decision tree.",
+        "The method amounts to tagging LMs with confidence measures and picking the best hypothesis corresponding to the LM with the best confidence."
+      ]
+    },
+    {
+      "heading": "1. INTRODUCTION",
+      "text": [
+        "Statistical language models (LMs) are essential in speech recognition and understanding systems for high word and semantic accuracy, not to mention robustness and portability.",
+        "Several language models have been proposed and studied during the past two decades [8].",
+        "Although it has turned out to be a rather difficult task to beat the (almost) standard class/word n-grams (typically n = 2 or 3), there has been a great deal of interest in grammar based language models [1].",
+        "A promising approach for limited domain applications is the use of semantically motivated phrase level stochastic context free grammars (SCFGs) to parse a sentence into a sequence of semantic tags which are further modeled using n-grams [2, 9, 10, 3].",
+        "The main motivation behind the grammar based LMs is the inability of n-grams to model longer-distance constraints in a language.",
+        "With the advent of fairly fast computers and efficient parsing and search schemes several researchers have focused on incorporating relatively complex language models into speech recognition and understanding systems at different levels.",
+        "For example, in [3], we *The work is supported by DARPA through SPAWAR under grant #N66001-00-2-8906.",
+        "report a significant perplexity improvement with a moderate increase in word/semantic accuracy, at N-best list (rescoring) level, using a dialog-context dependent, semantically motivated grammar based language model.",
+        "Statistical language modeling is a learning from data problem.",
+        "The generic steps to be followed for language modeling are preparation of training data selection of a model type specification of the model structure estimation of model parameters The training data should consist of large amounts of text, which is hardly satisfied in new applications.",
+        "In those cases, complex models fit to the training data.",
+        "On the other hand, simple models can not capture the actual structure.",
+        "In the Bayes (sequence) decision framework of speech recognition/understanding we heavily constrain the model structure to come up with a tractable and practical LM.",
+        "For instance, in a class/word n-gram LM the dependency of a word is often restricted to the class that it belongs and the dependency of a class is limited to n-1 previous classes.",
+        "The estimation of the model parameters, which are commonly the probabilities, is another important issue in language modeling.",
+        "Besides data sparseness, the estimation algorithms (e.g. EM algorithm) might be responsible for the estimated probabilities to be far from optimal.",
+        "The aforementioned problems of learning have different effects on different LM types.",
+        "Therefore, it is wise to design LMs based on different paradigms and combine them in some optimal sense.",
+        "The simplest combination method is the so called linear interpolation [4].",
+        "Recently, the linear interpolation in the logarithmic domain has been investigated in [6].",
+        "Perplexity results on a couple of tasks have shown that the log-linear interpolation is better than the linear interpolation.",
+        "Theoretically, a far more powerful method for LM combination is the maximum entropy approach [7].",
+        "However, it has not been widely used in practice, since it is computationally demanding.",
+        "In this research, we consider two LMs: class-based 3-gram LM (baseline).",
+        "dialog dependent semantic grammar based 3-gram LM [3].",
+        "The paper is organized as follows.",
+        "Section 2 presents the language models considered in this study.",
+        "In Section 3, we briefly explain combining of LMs using linear and log-linear interpolation.",
+        "Section 4 explains the set up for the oracle experiment.",
+        "Experimental results are reported in Section 5.",
+        "The future work and conclusions are given in the last section."
+      ]
+    },
+    {
+      "heading": "2. LANGUAGE MODELS",
+      "text": [
+        "In language modeling, the goal is to find the probability distribution of word sequences, i.e. P(W), where W = w1, w2.",
+        ", wL.",
+        "We first describe a model for sentence generation in a dialog [5] on which our grammar LM is based.",
+        "The model is illustrated in Figure 1.",
+        "Here, the user has a specific goal that does not change throughout the dialog.",
+        "According to the goal and the dialog context the user first picks a set of concepts with respective values and then use phrase generators associated with concepts to generate the word sequence.",
+        "The word sequence is next mapped into a sequence of phones and converted into a speech signal by the users vocal apparatus which we finally observe as a sequence of acoustic feature vectors.",
+        "Assuming that the dialog context S is given, W is independent of S but the concept sequence C, i.e. P(W/C, S) = P(W/C), (W,C) pair is unique (possible with either Viterbi approximation or unambigious association between C and W), one can easily show that P(W) is given by",
+        "In (1) we identify two models:",
+        "The concept model is conditioned on the dialog context.",
+        "Although there are several ways to define a dialog context, we select the last question prompted by the system as the dialog context.",
+        "It is simple and yet strongly predictive and constraining.",
+        "The concepts are classes of phrases with the same meaning.",
+        "Put differently, a concept class is a set of all phrases that may be used to express that concept (e.g. [i want], [arrive loc]).",
+        "Those concept classes are augmented with single word, multiple word and a small number of broad (and unambigious) part of speech (POS) classes.",
+        "In cases where the parser fails, we break the phrase into a sequence of words and tag them using this set of filler classes.",
+        "Two examples in Figure 2 clearly illustrate the scheme.",
+        "The structure of the concept sequences is captured by an n-gram LM.",
+        "We train a seperate language model for each dialog context.",
+        "Given the context S and C = c0c1 cx, cx+1, the concept sequence probabilities are calculated as (for n = 3)",
+        "where c0 and cx+1 are for the sentence-begin and sentence-end symbols, respectively.",
+        "Each concept class is written as a CFG and compiled into a stochastic recursive transition network (SRTN).",
+        "The production rules define complete paths beginning from the start-node through the end-node in these nets.",
+        "The probability of a complete path traversed through one or more SRTNs initiated by the top-level SRTN associated with the concept is the probability of the phrase given that concept.",
+        "This probability is calculated as the multiplication of all arc probabilities that defines the path.",
+        "That is,",
+        "where si is a substring in W = w1, w2..wL = s1, ..s2, sx (K < L) and r1, r2, ...rm, are the production rules that construct si.",
+        "The concept and rule sequences are assumed to be unique in the above equations.",
+        "The parser uses heuristics to comply with this assumption.",
+        "SCFG and n-gram probabilities are learned from a text corpus by simple counting and smoothing.",
+        "Our semantic grammars have a low degree of ambiguity and therefore do not require computationally intensive stochastic training and parsing techniques.",
+        "The class based LM can be considered as a very special case of our grammar based model.",
+        "Concepts (or classes) are restricted to those that represent a list of semantically similar words, like [city name] , [day of week], [month day] and so forth.",
+        "So, instead of rule probabilities we have given the class the word probabilities, P(wi/cj ).",
+        "For simplicity, each word belongs to at most one class."
+      ]
+    },
+    {
+      "heading": "3. LINEAR AND LOG-LINEAR INTERPO- LATION",
+      "text": [
+        "Assuming that we have M language models, Pi(W ), i = 1, 2, M, the combined LM obtained using the linear interpolation (at sen- tence level) is given by",
+        "where Ai are positive interpolation weights that sum up to unity.",
+        "The log-linear interpolation suggests an LM, again at sentence level, given by where Z(A) is the normalization factor and it is a function of the interpolation weights.",
+        "The linearity in logarithmic domain is obvious if we take the logarithm of both sides.",
+        "In the sequel, we omit the normalization term, as its computation is very expensive.",
+        "We hope that its impact on the performance is not significant.",
+        "Yet, it prevents us from reporting perplexity results."
+      ]
+    },
+    {
+      "heading": "4. THE ORACLE APPROACH",
+      "text": [
+        "The set-up for oracle experiments is illustrated in Figure 3.",
+        "The purpose of this set-up is twofold.",
+        "First, we use it to evaluate the oracle performance.",
+        "Second, we use it to prepare data for the training of a stochastic decision model.",
+        "For the sake of simplicity, we show the set-up for two LMs and do experiments accordingly.",
+        "Nonetheless, the set-up can be extended to an arbitrary number of LMs.",
+        "The language models are used for N-best list rescoring.",
+        "The N-best list is generated by a speech recognizer using a relatively simpler LM (here, a class-based trigram LM) .",
+        "The framework for N-best list rescoring is the following MAP decision:",
+        "where pA is the acoustic probability from the first pass, CW is the unique concept sequence associated with W, and LN denotes the N-best list.",
+        "Each rescoring module supplies the oracle with their best hypothesis after rescoring.",
+        "The oracle compares each hypothesis to the reference and pick the one with the best word (or semantic) accuracy.",
+        "For training purposes, we create the input feature vector by augmenting features from each rescoring module (fg, f,) and the dialog context (S).",
+        "The output vector is the LM indicator I from the oracle.",
+        "The element that corresponds to the LM with the best final hypothesis is unity and the rest are zeros.",
+        "After training the oracle combiner (here, we assume a neural network), we set our system as shown in Figure 4.",
+        "The input to the neural network (NN) is the augmented feature vector.",
+        "The output of the NN is the LM indicator probably with fuzzy values.",
+        "So, we first pick the max output, and then, we select and output the respective word string."
+      ]
+    },
+    {
+      "heading": "5. EXPERIMENTAL RESULTS",
+      "text": [
+        "The models were developed and tested in the context of the CU Communicator dialog system which is used for telephone-based flight, hotel and rental car reservations [11].",
+        "The text corpus was divided into two parts as training and test sets with 15220 and 1220 sentences, respectively.",
+        "The test set was further divided into two parts.",
+        "Each part, in turn, was used to optimize language and interpolation weights to be used for the other part in a jacknife paradigm.",
+        "The results were reported as the average of the two results.",
+        "The average sentence length of the corpus was 4 words (end-of-sentence was treated as a word).",
+        "We identified 20 dialog contexts and labeled each sentence with the associated dialog context.",
+        "We trained a dialog independent (DI) class based LM and dialog dependent (DD) grammar based LM.",
+        "In all LMs n is set to 3.",
+        "It must be noted that the DI class-based LM served as the LM of the baseline system with 921 unigrams including 19 classes.",
+        "The total number of the distinct words in the lexicon was 1681.",
+        "The grammar-based LM had 199 concept and filler classes that completely cover the lexicon.",
+        "In rescoring experiments we set the N best list size to 10.",
+        "We think that the choice of N = 10 is a resonable tradeoff between performance and complexity.",
+        "The perplexity results are presented in Table 1.",
+        "The perplexity of the grammar-based LM is 36.8% better than the baseline class based LM.",
+        "We did experiments using 10-best lists from the baseline recognizer.",
+        "We first determined the best possible performance in WER"
+      ]
+    },
+    {
+      "heading": "6. CONCLUSIONS",
+      "text": [
+        "We have presented our recent work on language model combining.",
+        "We have shown that although a simple interpolation of LMs improves the performance, it fails to reach the performance of an oracle.",
+        "We have proposed a method for LM combination that mimics the behavior of the oracle.",
+        "Although our work is not complete without a neural network that mimics the oracle, we argue that the universal approximation theory ensures the success of such a method.",
+        "However, extensive experiments are required to reach the goal with the main focus on the selection of features.",
+        "At the moment, the number of concepts, the number of filler classes and the number of 3-gram hits in a sentence (all normalized by the length of the sentence) and the behavior of n-grams in a context are the features that we consider to use.",
+        "Also, it has been observed that the performance of the oracle is still far from the best possible performance.",
+        "This is partly due to the very small number of LMs used in the rescoring, partly due to the oracles hard decision combining strategy and partly due to the static combination with the acoustic model.",
+        "The work is in progress towards the goal of filling the performance gap."
+      ]
+    },
+    {
+      "heading": "7. REFERENCES",
+      "text": []
+    }
+  ]
+}

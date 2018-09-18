@@ -1,0 +1,266 @@
+{
+  "info": {
+    "authors": [
+      "Billy T. M. Wong",
+      "Chunyu Kit"
+    ],
+    "book": "EMNLP",
+    "id": "acl-D12-1097",
+    "title": "Extending Machine Translation Evaluation Metrics with Lexical Cohesion to Document Level",
+    "url": "https://aclweb.org/anthology/D12-1097",
+    "year": 2012
+  },
+  "references": [
+    "acl-A92-1028",
+    "acl-C96-2137",
+    "acl-D11-1084",
+    "acl-J91-1002",
+    "acl-P02-1040",
+    "acl-W09-0441",
+    "acl-W09-2404",
+    "acl-W10-1750",
+    "acl-W97-0703",
+    "acl-W99-0210"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "This paper proposes the utilization of lexical cohesion to facilitate evaluation of machine translation at the document level.",
+        "As a linguistic means to achieve text coherence, lexical cohesion ties sentences together into a meaningfully interwoven structure through words with the same or related meaning.",
+        "A comparison between machine and human translation is conducted to illustrate one of their critical distinctions that human translators tend to use more cohesion devices than machine.",
+        "Various ways to apply this feature to evaluate machine-translated documents are presented, including one without reliance on reference translation.",
+        "Experimental results show that incorporating this feature into sentence-level evaluation metrics can enhance their correlation with human judgements."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Machine translation (MT) has benefited a lot from the advancement of automatic evaluation in the past decade.",
+        "To a certain degree, its progress is also confined to the limitations of evaluation metrics in use.",
+        "Most efforts devoted to evaluate the quality of MT output so far have still focused on the sentence level without sufficient attention to how a larger text is structured.",
+        "This is notably reflected in the representative MT evaluation metrics, such as BLEU (Pap-ineni et al. 2002), METEOR (Banerjee and Lavie, 2005) and TER (Snover et al. 2006), that adopt a sentence-by-sentence fashion to score MT outputs.",
+        "The evaluation result for a document by any of them is usually a simple average of its sentence scores.",
+        "A drawback of this kind of sentence-based evaluation is the neglect of document structure.",
+        "There is no guarantee for the coherence of a text if it is produced by simply putting together standalone sentences, no matter how well-translated, without adequate inter-sentential connection.",
+        "As a consequence, MT system optimized this way to any of these metrics can only have a very dim chance of producing translated document that reads as natural as human writing.",
+        "The accuracy of MT output at the document level is particularly important to MT users, for they care about the overall meaning of a text in question more than the grammatical correctness of each sentence (Visser and Fuji, 1996).",
+        "Post-editors particularly need to ensure the quality of a whole document of MT output when revising its sentences.",
+        "The connectivity of sentences is surely a significant factor contributing to the understandability of a text as a whole.",
+        "This paper studies the inter-sentential linguistic features of cohesion and coherence and presents plausible ways to incorporate them into the sentence-based metrics to support MT evaluation at the document level.",
+        "In the Framework for MT Evaluation in the International Standards of Language Engineering (FEMTI) (King et al. 2003), coherence is defined as ?the degree to which the reader can describe the role of each individual sentence (or group of sentences) with respect to the text as a whole?.",
+        "The measurement of coherence has to rely on cohesion, referring to the ?relations of meaning that exist within the text?",
+        "(Halliday and Hasan, 1976).",
+        "Cohesion is realized via the interlinkage of grammatical and lexical elements across sentences.",
+        "Grammatical",
+        "cohesion refers to the syntactic links between text items, while lexical cohesion is achieved through the word choices in a text.",
+        "This paper focuses on the latter.",
+        "A quantitative comparison of lexical cohesion devices between MT output and human translation is first conducted, to examine the weakness of current MT systems in handling this feature.",
+        "Different ways of exploiting lexical cohesion devices for MT evaluation at the document level are then illustrated."
+      ]
+    },
+    {
+      "heading": "2 Related Works",
+      "text": [
+        "Cohesion and coherence are both necessary monolingual features in a target text.",
+        "They can hardly be evaluated in isolation and have to be conjoined with other quality criteria such as adequacy and fluency.",
+        "A survey of MT post-editing (Vasconcellos, 1989) suggests that cohesion and coherence serve as higher level quality criteria beyond many others such as syntactic well-formedness.",
+        "Post-editors tend to correct syntactic errors first before any amendment for improving the cohesion and coherence of an MT output.",
+        "Also, as Wilks (1978)1 noted, it is rather unlikely for a sufficiently large sample of translations to be coherent and totally wrong at the same time.",
+        "Cohesion and coherence are appropriate to serve as criteria for the overall quality of MT output.",
+        "Previous researches in MT predominantly focus on specific types of cohesion devices.",
+        "For grammatical cohesion, a series of works, including Nakaiwa and Ikehara (1992), Nakaiwa et al(1995), and Nakaiwa and Shirai (1996), present approaches to resolving Japanese zero pronouns and to integrating them into a Japanese-English transferred-based MT system.",
+        "Peral et al(1999) propose an interlingual mechanism for pronominal anaphora generation by exploiting a rich set of lexical, syntactic, morphologic and semantic information.",
+        "Mu-rata and Nagao (1993) and Murata et al(2001) develop a rule base to identify the referential properties of Japanese noun phrases, so as to facilitate anaphora resolution for Japanese and article generation for English during translation.",
+        "A recent COMTIS project (Cartoni et al. 2011) begins to exploit inter-sentential information for statistical MT.",
+        "A phase of its work is to have grammatical devices,",
+        "such as verbal tense/aspect/mode, discourse connectives and pronouns, manually annotated in multilingual corpora, in hopes of laying a foundation for the development of automatic labelers for them that can be integrated into an MT model.",
+        "For lexical cohesion, it has been only partially and indirectly addressed in terms of translation consistency in MT output.",
+        "Different approaches to maintaining consistency in target word choices are proposed (Itagaki et al. 2007; Gong et al. 2011; Xiao et al. 2011).",
+        "Carpuat (2009) also observes a general tendency in human translation that a given sense is usually lexicalized in a consistent manner throughout the whole translation.",
+        "Nevertheless there are only a few evaluation methods explicitly targeting on the quality of a document.",
+        "Miller and Vanni (2001) devise a human evaluation approach to measure the comprehensibility of a text as a whole, based on the Rhetorical Structure Theory (Mann and Thompson, 1988), a theory of text organization specifying coherence relations in an authentic text.",
+        "Snover et al(2006) proposes HTER to assess post-editing effort through human annotation.",
+        "Its automatic versions TER and TERp (Snover et al. 2009), however, remain sentence-based metrics.",
+        "Comelles et al(2010) present a family of automatic MT evaluation measures, based on the Discourse Representation Theory (Kamp and Reyle, 1993), that generate semantic trees to put together different text entities for the same referent according to their contexts and grammatical connections.",
+        "Apart from MT evaluation, automated essay scoring programs such as E-rater (Burstein, 2003) also employ a rich set of discourse features for assessment.",
+        "However, the parsing process needed for these linguistic-heavy approaches may suffer seriously from grammatical errors, which are unavoidable in MT output.",
+        "Hence their accuracy and reliability inevitably fluctuate in accord with different evaluation data.",
+        "Lexical cohesion has far been neglected in both MT and MT evaluation, even though it is the single most important form of cohesion devices, accounting for nearly half of the cohesion devices in English (Halliday and Hasan, 1976).",
+        "It is also a significant feature contributing to translation equivalence of texts by preserving their texture (Lotfipour-Saedi, 1997).",
+        "The lexical cohesion devices in a text can be",
+        "represented as lexical chains conjoining related entities.",
+        "There are many methods of computing lexical chains for various purposes, e.g., Morris and Hirst (1991), Barzilay and Elhadad (1997), Chan (2004), Li et al(2007), among many others.",
+        "Contrary to grammatical cohesion highly depending on syntactic well-formedness of a text, lexical cohesion is less affected by grammatical errors.",
+        "Its computation has to rely on a thesaurus, which is usually available for almost every language.",
+        "In this research, a number of formulations of lexical cohesion, with or without reliance on external language resource, will be explored for the purpose of MT evaluation."
+      ]
+    },
+    {
+      "heading": "3 Lexical Cohesion in Machine and",
+      "text": []
+    },
+    {
+      "heading": "Human Translation",
+      "text": [
+        "This section presents a comparative study of MT and human translation (HT) in terms of the use of lexical cohesion devices.",
+        "It is an intuition that more cohesion devices are used by humans than machines in translation, as part of the superior quality of HT.",
+        "Two different datasets are used to ensure the reliability and generality of the comparison.",
+        "The results confirm the incapability of MT in handling this feature and the necessity of using lexical cohesion in MT evaluation."
+      ]
+    },
+    {
+      "heading": "3.1 Data",
+      "text": [
+        "The MetricsMATR 2008 development set (Przy-bocki et al. 2009) and the Multiple-Translation Chinese (MTC) part 4 (Ma, 2006) are used for this study.",
+        "They consist of MT outputs of different source languages in company with reference translations.",
+        "The data of MetricsMATR is selected from the NIST Open MT 2006 evaluation, while MTC4 is from the TIDES 2003 MT evaluation.",
+        "Both datasets include human assessments of MT output, from which the part of adequacy assessment is selected for this study.",
+        "Table 1 provides overall statistics of the datasets."
+      ]
+    },
+    {
+      "heading": "3.2 Identification of Lexical Cohesion Devices",
+      "text": [
+        "Lexical cohesion is achieved through word choices of two major types: reiteration and collocation.",
+        "Reiteration can be realized in a continuum or a cline of specificity, with repetition of the same lexical item at one end and the use of a general noun to point to the",
+        "same referent at the other.",
+        "In between the two ends is to use a synonym (or near-synonym) and superordinate.",
+        "Collocation refers to those lexical items that share the same or similar semantic relations, including complementarity, antonym, converse, coordinate term, meronym, troponym, and so on.",
+        "In this study, lexical cohesion devices are defined as content words (i.e., tokens after stopword having been removed) that reiterate once or more times in a document, including synonym, near-synonym and superordinate, besides those repetition and collocation.",
+        "Repetition refers to the same words or stems in a document.",
+        "Stems are identified with the aid of Porter stemmer (1980).",
+        "To classify the semantic relationships of words, WordNet (Fellbaum, 1998) is used as a lexical resource, which clusters words of the same sense (i.e., synonyms) into a semantic group, namely a synset.",
+        "Synsets are interlinked in WordNet according to their semantic relationships.",
+        "Superordinate and collocation are formed by words in a proximate semantic relationship, such as bicycle and vehicle (hypernym), bicycle and wheel (meronym), bicycle and car (coordinate term), and so on.",
+        "They are defined as synset pairs with a distance of 1 in WordNet.",
+        "The measure of semantic distance (Wu and Palmer, 1994) is also applied to identify near-synonyms, i.e., words that are synonyms in a broad sense but not grouped in the same synset.",
+        "It quantifies the semantic similarity of word pairs as a real number in between 0 and 1 (the higher the more similar) as",
+        "where c1 and c2 are the concepts (synsets) that the two words in question belong to, d is the distance in terms of the shortest path from a concept to the",
+        "- Not lexical cohesion device 2403 2381 -22 (-1.0) 8657 8814 157 (1.8) - Lexical cohesion device 2025 2255 230 (11.4) 7505 8168 663 (8.9) - Repetition 1297 1445 148 (11.4) 4888 5509 621 (12.7) - Synonym and near-synonym 318 350 32 (10.1) 1323 1311 -12 (-0.9) - Superordinate and collocation 410 460 50 (12.4) 1294 1348 54 (4.2)",
+        "global root node in WordNet, and lcs is the least common subsumer (i.e., the most specific ancestor concept) of c1 and c2.",
+        "A threshold is set to 0.96 for words to be considered near-synonyms of each other, based on the empirical observation in a previous study (Wong, 2010)."
+      ]
+    },
+    {
+      "heading": "3.3 Results",
+      "text": [
+        "The difference between MT and HT (reference translation) in terms of the frequencies of lexical cohesion devices in MetricsMATR and MTC4 datasets is presented in Table 2.",
+        "The frequencies are averaged by the number of MT/HT versions.",
+        "A further categorization breaks down content words into lexical cohesion devices and those that are not.",
+        "The count of each type of lexical cohesion device is also provided.",
+        "In general the two datasets provide highly similar statistics.",
+        "There are 4.7?5.1% more content words in HT than in MT.",
+        "The numbers of ordinary content words (i.e., not lexical cohesion devices) are close in MT and HT.",
+        "The difference of content words in HT and MT is mostly due to that of lexical cohesion devices, which are mostly repetition.",
+        "8.9?",
+        "11.4% more lexical cohesion devices are found in HT than in MT in the datasets.",
+        "A further analysis is carried out to investigate into the use of lexical cohesion devices in each version of MT and HT in terms of the following two ratios,",
+        "A higher LC or RC ratio means that a greater proportion of content words are used as lexical cohesion devices.",
+        "Figure 1 illustrates the RC and LC ratios in the two datasets.",
+        "The ratios of different MT systems are presented in an ascending order in each graph from left to right, according to their human assessment results.",
+        "The distributions of these values show a strong similarity between the two datasets.",
+        "First, most of the RC and LC ratios are within an observable range, i.e., 0.25?0.35 for the former and 0.40?",
+        "0.50 for the latter, except a particularly low LC for",
+        "one MT system.",
+        "Second, the ratios in those different HT versions are very stable in comparison with those of MT.",
+        "Especially, all four HT versions in the MetricsMATR dataset share the sameRC ratio 0.31.",
+        "This shows a typical level of the use of lexical cohesion device.",
+        "Third, the ratios in MT are lower than or at most equal to those in HT, suggesting their correlation with translation quality: the closer their RC and LC ratios to those in HT, the better the MT.",
+        "These results verify our assumption that lexical cohesion can serve as an effective proxy of the level of translation quality."
+      ]
+    },
+    {
+      "heading": "4 MT Evaluation at Document Level",
+      "text": [
+        "As a feature at the discourse level, lexical cohesion is a good complement to current evaluation metrics focusing on features at the sentence level.",
+        "Table 3 illustrates an example selected from the MetricsMATR dataset, consisting two versions of MT output for a short document of two segments only.",
+        "The n-grams matched with the reference are underlined, while the lexical cohesion devices are italicized.",
+        "The two MT outputs have a similar number of matched n-grams and hence receive similar BLEU scores.",
+        "These scores, however, do not reflect their real difference in quality: the second version is better, according to human assessment of adequacy.",
+        "Instead, their LC ratios seem to represent such a variation more accurately.",
+        "The theme of the second output is also highlighted through the lexical chains, including main/important, technology/technologies and achieve/achieving, which create a tight texture between the two sentences, a crucial factor of text quality.",
+        "To perform MT evaluation at the document level, the LC and RC ratios can be used alone or integrated into a sentence-level metric.",
+        "The former way has an advantage that it does not have to rely on any reference translation.",
+        "LC mainly requires a thesaurus for computing semantic relation, while RC only needs a morphological processor such as stemmer, both of which are available for most lan",
+        "guages.",
+        "Its drawback, however, lies in the risk of relying on a single discourse feature.",
+        "Although lexical cohesion gives a strong indication of text coherence, it is not indispensable, because a text can be coherent without any surface cohesive clue.",
+        "Furthermore, the quality of a document is also reflected in that of its sentences.",
+        "A coherent translation may be mistranslated, and on the other hand, a text containing lots of sentence-level errors would make it difficult to determine its document-level quality.",
+        "A previous study comparing MT evaluation at the sentence versus document level (Wong et al. 2011) reports a poor consistency in the evaluation results at these two levels when the sentence-level scores of MT output are low.",
+        "In regard of these, how to integrate these two levels of MT evaluation is particularly worth studying."
+      ]
+    },
+    {
+      "heading": "5 Experiments",
+      "text": [
+        "We examine, through experiments, the effectiveness of using LC and RC ratios alone and integrating them into other evaluation metrics for MT evaluation at the document and system levels.",
+        "Three evaluation metrics, namely BLEU, TER and METEOR,2 are selected for testing.",
+        "They represent three distinctive types of evaluation metrics: n-gram, edit-distance, and unigram with external language resources, respectively.",
+        "These metrics are evaluated in terms of their correlation with human assessments, using Pearson's r correlation coefficient.",
+        "The MetricsMATR and MTC4 datasets and their adequacy assessments are used as evaluation data.",
+        "Note that the adequacy assessment is in fact an evaluation method for the sentence level.",
+        "We have to rely on an assumption that this evaluation data may emulate document-level quality, since its MT outputs were assessed sentence by sentence in sequence as in a document.",
+        "All experiments are performed under a setting of multiple reference translations.",
+        "The integration of the two ratios into an evaluation metric follows a simple weighted average approach.",
+        "A hybrid metric H is formulated as",
+        "where mdoc refers to the document-level feature in 2METEOR 1.0 with default parameters optimized over the adequacy assessments.",
+        "use (i.e., LC or RC), mseg to a sentence-level metric, and ?",
+        "to a weight controlling their proportion.",
+        "The MetricsMATR dataset is used as training data to optimize the values of ?",
+        "for different metrics, while the MTC4 is used as evaluation data.",
+        "Table 4 shows the optimized weights for the metrics for evaluation",
+        "course feature into sentence-level metrics Table 5 presents the correlation rates of evaluation metrics obtained in our experiments under different settings, with their 95% conference intervals (CI) provided.",
+        "The LC and RC ratios are found to have strong correlations with human assessments at the system level even when used alone, highly comparable to BLEU and TER.",
+        "At the document level, however, they are not as good as the others.",
+        "They show their advantages when integrated into other metrics, especially BLEU and TER.",
+        "LC raises the correlation of BLEU from 0.447 to 0.472 and from 0.861 to 0.905 at the document and system levels, respectively.",
+        "It improves TER even more significantly, in that the correlation rates are boosted up from -0.326 to -0.390 at the document level, and even from -0.601 to -0.763 at the system level.",
+        "Since there are only six systems in the MTC4 data, such a dramatic change may not be as meaningful as the smooth improvement at the document level.",
+        "METEOR is a special case in this experiment.",
+        "Its correlation cannot be improved by integrating LC orRC, and is even slightly dropped at the document level.",
+        "The cause for this is yet to be identified.",
+        "Nevertheless, these results confirm the close relationship of an MT system's capability to appropriately generate lexical cohesion devices with the quality of its output.",
+        "Table 6 presents the Pearson correlations between evaluation results at the document level using different evaluation metrics in the MTC4 data.",
+        "It illustrates the homogeneity/heterogeneity of different metrics and helps explain the performance change",
+        "by combining sentence-and document-level metrics.",
+        "The table shows that the two ratios LC and RC highly correlate with each other, as if they are two variants of quantifying lexical cohesion devices.",
+        "The three sentence-level metrics, BLEU, TER and METEOR, also show strong correlations with each other, especially between BLEU and METEOR.",
+        "The correlations are generally weaker between sentence-and document-level metrics, for instance, 0.263 between BLEU and LC and only -0.097 between TER and LC, showing that they are quite heterogeneous in nature.",
+        "This accounts for the significant performance gain from their combination: their difference allows them to complement each other.",
+        "It is also worth noting that between METEOR and LC the correlation of 0.437 is mildly strong, explaining the negative result of their integration.",
+        "On the one hand, lexical cohesion is word choice oriented, which is only sensitive to the reiteration and semantic relatedness of words in MT output.",
+        "On the other hand, METEOR is strong in unigram matching, with multiple strategies to maximize the matching rate between MT output and reference translation.",
+        "In this sense they are homogeneous to a certain extent, explaining the null effect of their combination."
+      ]
+    },
+    {
+      "heading": "6 Discussion and Conclusion",
+      "text": [
+        "In this study we have attempted to address the problem that most existing MT evaluation metrics disregard the connectivity of sentences in a document.",
+        "By focusing on a typical type of cohesion, i.e., lexical cohesion, we have shown that its use frequency is a significant factor to differentiate HT from MT and MT outputs of different quality from each other.",
+        "The high correlation rate of its use with translation adequacy also suggests that the more lexical cohesion devices in use, the better the quality of MT output.",
+        "Accordingly we have used two ratios, LC and RC, to capture such correlativity.",
+        "Our experimental results have confirmed the effectiveness of this feature in accounting for the document-level quality of MT output.",
+        "The performance of two evaluation metrics, BLEU and TER, is highly improved through incorporating this document-level feature, in terms of the",
+        "change of their correlation with human assessments.",
+        "This finding is positive and sheds light on a region of MT research that is still severely under-explored.",
+        "Our approach to extending the granularity of MT evaluation from sentence to document through lexical cohesion is highly applicable to different languages.",
+        "It has a relatively weak demand for language resource in comparison with the processing of other discourse features like grammatical cohesion.",
+        "It is also much unaffected by grammatical problems or errors commonly seen in natural languages and, in particular, MT outputs.",
+        "Our future work will continue to explore the relationship of lexical cohesion to translation quality, so as to identify, apart from its use frequency, other significant aspects for MT evaluation at the document level.",
+        "A frequent use of cohesion devices in a text is not necessarily appropriate, because an excess of them may decrease the quality and readability of a text.",
+        "Human writers can strategically change the ways of expression to achieve appropriate coherence and also avoid overuse of the same lexical item.",
+        "To a certain extent, this is one of the causes for the unnaturalness of MT output: it may contain a large number of lexical cohesion devices which are simply direct translation of those in a source text that do not fit in the target context.",
+        "How to use lexical cohesion devices appropriately instead of frequently is thus an important issue to tackle before we can adopt them in MT and MT evaluation by a suitable means."
+      ]
+    },
+    {
+      "heading": "Acknowledgments",
+      "text": [
+        "The research described in this paper was substantially supported by the Research Grants Council (RGC) of Hong Kong SAR, P. R. China through GRF grant 144410."
+      ]
+    }
+  ]
+}

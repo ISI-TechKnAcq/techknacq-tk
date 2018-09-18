@@ -1,0 +1,91 @@
+{
+  "info": {
+    "authors": [
+      "Dragomir R. Radev",
+      "Timothy Allison",
+      "Matthew Craig",
+      "Stanko Dimitrov",
+      "Omer Kareem",
+      "Michael Topper",
+      "Adam Winkel",
+      "Jin Yi"
+    ],
+    "book": "Human Language Technology Conference and Meeting of the North American Association for Computational Linguistics – Demonstration Papers",
+    "id": "acl-N04-3007",
+    "title": "A Scaleable Multi-Document Centroid-Based Summarizer",
+    "url": "https://aclweb.org/anthology/N04-3007",
+    "year": 2004
+  },
+  "references": [
+    "acl-H01-1056",
+    "acl-J98-3005",
+    "acl-W00-0403"
+  ],
+  "sections": [
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "We are presenting the most recent version of MEAD (v. 3.08), a large-scale public-domain summarizer that has been used in a number of applications, including the 2001 JHU summer workshop and the NewsInEssence project (www.",
+        "news ine s sence.",
+        "com).",
+        "A version of MEAD finished in first place on task 4 at DUC 2003 and finished in the top three on two other tasks.",
+        "In this demo, we will be showing several interfaces to MEAD, including a WAP-based cell phone interface, a Web-based interface, a command-line interface, and a Nutch-based interface."
+      ]
+    },
+    {
+      "heading": "1.1 Text summarization",
+      "text": [
+        "Text summarization is the process of identifying salient concepts in text, conceptualizing the relationships that exist among them and generating concise representations of the input text that preserve the gist of its content.",
+        "One distinguishes between single-document summarization (SDS) and multi-document summarization (MDS).",
+        "MDS, which our approach will be focusing on, is much more complicated than SDS in nature.",
+        "Besides the obvious difference in input size, several other factors account for the complication, e.g.: Multiple articles might come from different sources, written by different authors, and therefore have different styles, although they are topically related.",
+        "This means that a summarizer cannot make the same coherence assumption that it can for a single article.",
+        "Multiple articles might come out of different time frames.",
+        "Therefore an intelligent summarizer has to take care of the temporal information and try to maximize the overall temporal cohesiveness of the summary.",
+        "Descriptions of the same event may differ in perspective, or even conflict with one another.",
+        "The summarizer should provide a mechanism to deal with issues of this kind.",
+        "We also make the distinction between information-extraction- vs. sentence-extraction-based summarizers.",
+        "The former, such as (Radev and McKeown, 1998), rely on an information extraction system to extract very specific aspects of some events and generate abstracts thereof.",
+        "This approach can produce good summaries but is usually knowledge intensive and domain dependent.",
+        "Sentence extraction techniques (Luhn, 1958; Radev et al., 2000), on the other hand, compute a score for each sentence based on certain features and output the most highly ranked sentences.",
+        "This approach is conceptually straightforward and usually domain independent, but the summaries produced by it often need further revision to be more smooth and coherent."
+      ]
+    },
+    {
+      "heading": "1.2 Centroid-based summarization and MEAD",
+      "text": [
+        "Centroid-based summarization is a method of multi-document summarization.",
+        "It operates on a cluster of documents with a common subject (the cluster may be produced by a Topic Detection and Tracking, or TDT, system).",
+        "A cluster centroid, a collection of the most important words from the whole cluster, is built.",
+        "The centroid is then used to determine which sentences from individual documents are most representative of the entire cluster.",
+        "MEAD is a publicly available toolkit for multi-document summarization (Radev et al., 2000; MEAD, 2003).",
+        "The toolkit implements multiple summarization algorithms (at arbitrary compression rates) such as position-based, TF*IDF, largest common subsequence, and keywords.",
+        "The methods for evaluating the quality of the summaries are both intrinsic (such as percent agreement, precision/recall, and relative utility) and extrinsic (document rank).",
+        "MEAD has an expansive architecture which allows end users to interface with its summarization capabilities through a Perl and Java API."
+      ]
+    },
+    {
+      "heading": "2 Demonstration of MEAD",
+      "text": [
+        "The Mead Demo is a web-based demonstration of MEAD.",
+        "Users are able to add multiple documents for the",
+        "mailboxes from a cell phone or other WAP-enabled device.",
+        "WapMead has two modes: a mailbox view, in which a user can search for an email message and a summary view, in which a summary of a message is displayed.",
+        "Summaries are displayed hierarchically, first showing the most salient sentences in the entire message and then (on a need basis) showing in greater detail particular areas of the message."
+      ]
+    },
+    {
+      "heading": "5 Acknowledgements",
+      "text": [
+        "This work is partially supported by grant ITR 0082884 from the National Science Foundation (NSF).",
+        "The authors would like to thank the MEAD team (Sasha Blair-Goldensohn, Simone Teufel, Horacio Saggion, Wai Lam, Arda C¸elebi, John Blitzer, Hong Qi, Elliott Drabek, and Danyu Liu) for their hard work on various versions of the MEAD system."
+      ]
+    },
+    {
+      "heading": "4 Other interfaces",
+      "text": [
+        "We will be also showing the Java-MEAD interface (Figure 7) implemented in Nutch (a public-domain search engine from www.nutch.org), an older interface, NewsInEssence (Radev et al., 2001; Radev et al., 2002) (Figure 6), as well as the MEAD command-line interface."
+      ]
+    }
+  ]
+}

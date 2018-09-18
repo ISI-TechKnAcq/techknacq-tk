@@ -1,0 +1,271 @@
+{
+  "info": {
+    "authors": [
+      "Ganesh Ramakrishnan",
+      "B. Prithviraj",
+      "Pushpak Bhattacharyya"
+    ],
+    "book": "SENSEVAL International Workshop on the Evaluation of Systems for the Semantic Analysis of Text",
+    "id": "acl-W04-0853",
+    "title": "A Gloss-Centered Algorithm for Disambiguation",
+    "url": "https://aclweb.org/anthology/W04-0853",
+    "year": 2004
+  },
+  "references": [],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "The task of word sense disambiguation is to assign a sense label to a word in a passage.",
+        "We report our algorithms and experiments for the two tasks that we participated in viz. the task of WSD of Word-Net glosses and the task of WSD of English lexical sample.",
+        "For both the tasks, we explore a method of sense disambiguation through a process of “comparing” the current context for a word against a repository of contextual clues or glosses for each sense of each word.",
+        "We compile these glosses in two different ways for the two tasks.",
+        "For the first task, these glosses are all compiled using WordNet and are of various types viz. hypernymy glosses, holonymy mixture, descriptive glosses and some hybrid mixtures of these glosses.",
+        "The “comparison” could be done in a variety of ways that could include/exclude stemming, expansion of one gloss type with another gloss type, etc.",
+        "The results show that the system does best when stemming is used and glosses are expanded.",
+        "However, it appears that the evidence for word-senses ,accumulated through WordNet, in the form of glosses, are quite sparse.",
+        "Generating dense glosses for all WordNet senses requires a massive sense tagged corpus - which is currently unavailable.",
+        "Hence, as part of the English lexical sample task, we try the same approach on densely populated glosses accumulated from the training data for this task."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "The main idea behind our approach for both the WSD tasks is to use the context of a word along with the gloss or description of each of its senses to find its correct sense.",
+        "The similarity between the context and each sense of the word is measured and the word-sense with the highest similarity measure is picked as most appropriate, that with second highest similarity is ranked second and so on.",
+        "Glosses have been used by authors in the past for WSD (Lesk, 1986).",
+        "The novelty in our approach, for the task of disambiguation of extended WordNet is in the way we generate our descriptions or glosses.",
+        "Also, an additional novelty in the second task, is in our use of textual proximity between words in the neighborhood of the word to be disambiguated and the words in the glosses of each of its senses."
+      ]
+    },
+    {
+      "heading": "2 Glosses",
+      "text": []
+    },
+    {
+      "heading": "2.1 Descriptive glosses",
+      "text": [
+        "A word, with its associated part of speech and an associated sense number, has a description.",
+        "Description for fifth noun sense of “tape” memory device consisting of a long thin plastic strip coated with iron oxide; used to record audio or video signals or to store computer information",
+        "We call these descriptions - descriptive glosses.",
+        "For word-senses picked up from WordNet, the WordNet glosses are the descriptive glosses.",
+        "WordNet glosses also contain example usages of the word.",
+        "We have excluded the examples from descriptive glosses For other word-senses, the descriptions could come from glossaries (like glossaries of software terms), encyclopedias (for names of people, places, events, pacts etc), world fact books, abbreviation lists etc.",
+        "Examples glosses picked up from above sources are listed below.",
+        "descriptive-gloss for “piccolo” an instrument of the woodwind family.",
+        "Most of these instruments were once of made of wood, and because they are played by blowing with air or wind, they are called woodwind.",
+        "SENSEVAL-3: Third International Workshop on the Evaluation of Systems for the Semantic Analysis of Text, Barcelona, Spain, July 2004"
+      ]
+    },
+    {
+      "heading": "Association for Computational Linguistics 2.2 Hypernymy glosses",
+      "text": [
+        "The gloss for a particular sense of a word could also describe what hierarchical categories it belongs to.",
+        "For instance, the hierarchical categorization of the noun sense of the word “Vesuvius” is: Vesuvius#n#1 _> volcano _> mountain, mount _> natural elevation, elevation _> geological formation _> natural object _> object, physical object _> entity Based on this hierarchical categorization of the first noun sense of “Vesuvius”, we describe its hypernymy-gloss as the collection of all nodes in its hypernymy-path to the root - viz. “entity”.",
+        "Whereas descriptive-glosses can be derived even for word-senses not present in WordNet, hypernymy-glosses require classification of word-senses into nodes into an ontological structure - like the hypernymy hierarchy of WordNet.",
+        "This is not that easy to procure for words not present in WordNet."
+      ]
+    },
+    {
+      "heading": "2.3 Hyper-Desc( ) glosses",
+      "text": [
+        "This category of gloss was developed for each word-sense by concatenating the descriptive glosses of a word-sense with the glosses of its hypernyms, all the way upto height .",
+        "Hyper-Desc( ) glosses denotes concatenating descriptive glosses all the way upto the root."
+      ]
+    },
+    {
+      "heading": "2.4 Holo-Desc( ) glosses",
+      "text": [
+        "The specification of these glosses is same as of Hyper-Desc( ) glosses, except that holonyms are considered here instead of hypernyms."
+      ]
+    },
+    {
+      "heading": "Handling Named Entities",
+      "text": [
+        "One possible solution, and the one that we actually resort to, is to find the named entity tag for a token (if one exists) and then map the tag to a node in WordNet.",
+        "For example, the token “President Musharraf ” is not present in WordNet.",
+        "But this token can be tagged as a PERSON and PERSON could be mapped to a node in WordNet - viz. the first noun sense of “person” (person#n#1).",
+        "Similarly, the token “ December 2003” has a DATE named-entity tag.",
+        "DATE could be translated to the sense of the word “date” (date#n#7) in WordNet.",
+        "Thus, the glosses of named entites, which dont find their entries into WordNet could be evolved from their named-entity tags.",
+        "This information is valuable for disambiguating the surrounding words.",
+        "For the seneval task, we have built our own Named Entity tagger that uses gazetteers and context-sensitive grammar rules for tagging named entities."
+      ]
+    },
+    {
+      "heading": "Context of a word",
+      "text": [
+        "The context of the word to be disambiguated (target word) can be evolved in several possible ways.",
+        "1.",
+        "The passage in which the target word lies can be tokenized and the set of tokens are considered the context for that word.",
+        "2.",
+        "In addition to tokenizing the passage as de",
+        "scribed above, each token is also subjected to stemming using the porter stemming algorithm (Porter, 1980).",
+        "The corresponding set of stemmed tokens form the context.",
+        "This option is abbreviated as ST in table ??.",
+        "3.",
+        "The passage can be part of speech tagged.",
+        "In the case of SemCor and Extended WordNet, the part of speech tags have already been assigned manually.",
+        "In the absence of a manual POS tags, we use the QTag part of speech tagger (Manson, 1980).",
+        "And each part of speech tagged word is expanded to the concatenation of the glosses of all its word-senses.",
+        "The collection of all tokens in the expansions of all words in the passage put together forms the context for the target word.",
+        "In table ?",
+        "?, this option is abbreviated as FG."
+      ]
+    },
+    {
+      "heading": "3 Similarity metrics",
+      "text": [
+        "Another parameter for measuring the similarity between the context of a word and the gloss of each of its senses is the similarity metric.",
+        "The similarity between two sets of tokens is found by constructing vectors of counts from the two vectors and finding similarity between the vectors."
+      ]
+    },
+    {
+      "heading": "3.1 Cosine similarity",
+      "text": [
+        "One standard metric of similarity, as used in information retrieval, is the cosine-similarity.",
+        "We find Hypernymy gloss for first noun sense of “Vesuvius” volcano , mountain, mount , natural elevation, elevation , geological formation, formation , natural object , object, physical object , entity the cosine similarity between the term frequency-inverse gloss frequency (tfigf) vectors of the two sets.",
+        "The inverse gloss frequency (igf) of a token is the inverse of the number of glosses which contain that token and it captures the “commonness” of that particular token.",
+        "There have been fancier definitions of similarity in literature (Lin, 1998) which involve information theoretic measures of similarity between word-senses, based on the hypernymy path and DAG structure of WordNet.",
+        "These methods are heavily dependent on frequencies of synsets in a sense-tagged corpus.",
+        "The idea is that two word-senses are highly related if their subsuming synsets are highly information bearing - or in other words, have high information content.",
+        "Information content is computed from a sense tagged corpus - word-senses with high frequencies of occurrence have low information content.",
+        "This brings in the the problem of data sparsity - because sense-tagged corpora are very scarce and of short size.",
+        "Their coverage of synsets is poor as well.",
+        "Hence there is the danger of making the similarity measure biased toward the sense-tagged corpus.",
+        "Also, these methods are very slow and CPU intensive, since finding similarity between two word-senses at run time involves traversing the WordNet graph, in the direction of hypernymy links, up to the least common ancestor.",
+        "On the other hand, a cosine similarity on tfigf vectors built from hypernymy-glosses, gives a low similarity value between word-senses whose hypernymy-glosses overlap in very frequently occurring synsets relative to the synsets which are not common to their glosses.",
+        "This is because igfimplic-itly captures the information content of a synset - the higher the igf - higher is the information content of a synset.",
+        "The purpose served by a sense-tagged corpus is cumulatively served by the collection of hypernymy glosses of all the WordNet synsets.",
+        "This method is also more reliable since the igf values come from WordNet which is very exhaustive, unlike sense tagged corpora (like SemCor) which will have bias and data-sparsity in terms of which words occur in the corpus and which sense is picked for a word.",
+        "(The reader might want to note some work which has been done to illustrate that words can inherently have multiple senses in a given context).",
+        "The cosine similarity on tfigf vectors built from descriptive glosses is very much like the similarity found between document and query vectors, since the tokens in descriptive glosses are regular words.",
+        "Cosine similarity is intuitively the most useful similarity measure on descriptive glosses since cosine similarity of tfigfvectors takes care of stop words and very non-informative words like “the” etc."
+      ]
+    },
+    {
+      "heading": "3.2 Jaccard similarity",
+      "text": [
+        "Another metric of similarity is the jaccard similarity.",
+        "Jaccard similarity between two sets of tokens (glosses) is computed as .",
+        "Here and are the two glosses.",
+        "Jaccard similarity is appealing only if the glosses used are hypernymy-glosses."
+      ]
+    },
+    {
+      "heading": "3.3 Asymmetric measures of similarity",
+      "text": [
+        "The above two were symmetric measures of similarity.",
+        "A third asymmetric similarity measure is one that takes a value of if the intersection of the glosses of two word-senses is not equal to the gloss of one of the word-senses.",
+        "Else, the similarity is equal to one of cosine or jaccard similarity measures.",
+        "This means that there are actually two asymmetric similarity measures - one due to jaccard and the other due to cosine."
+      ]
+    },
+    {
+      "heading": "4 Main Algorithm",
+      "text": [
+        "For each word, a set of content words in its surrounding was found and the similarity of this set with with the gloss of each sense of the word was measured.",
+        "Cosine similarity measure was used for all the experiments.",
+        "The senses were then ordered in decreasing value of scores.",
+        "The word-sense with highest similarity measure was picked as its most appropriate sense.",
+        "Following were the parameters used in the sense-ranking algorithm."
+      ]
+    },
+    {
+      "heading": "4.1 Parameters",
+      "text": [
+        "1.",
+        "GlossType : The type of gloss being used in the algorithm.",
+        "It can be any one of the four outlined in section 2.",
+        "2.",
+        "Similarity measure: The cosine similarity measure was used in all the experiments.",
+        "3.",
+        "Stemming : Sometimes the words in the con",
+        "text are related semantically with the gloss of the ambiguous word but they may not be in the same morphological form.",
+        "For example, suppose that the context contains the word Christian but the gloss of the word contains the word Christ.",
+        "The base form of both the words is Christ but since they are not in the same morphological form they will not be treated as common words during intersection.",
+        "Stemming of words may prove useful in this case, because after stemming both will give the same base form.",
+        "4.",
+        "FullContextExpansion : This parameter determines whether or not the words in the con",
+        "text should be expanded to their glosses.",
+        "This feature expands the context massively.",
+        "If set true the gloss of each sense of each context word will be included in the context.",
+        "5.",
+        "Context size : The context size can be 1 or 2 sentences etc.",
+        "or 1 or 2 paragraphs etc."
+      ]
+    },
+    {
+      "heading": "5 Experimental Results",
+      "text": [
+        "The algorithms were evaluated against Semcor and was also used in Senseval-3 competition.",
+        "We present results in this section."
+      ]
+    },
+    {
+      "heading": "5.1 Results for Semcor",
+      "text": [
+        "For preliminary experiments, we chose the Semcor 1.7 corpus.",
+        "It has been manually tagged using WordNet 1.7 glosses.",
+        "The baseline algorithm for sense-tagging of Semcor was of picking a sense for a word, as its correct sense, uniformly at random.",
+        "This gave us a precision measure of 42.5% for nouns and 23.2% for verbs.",
+        "Tables 2, 3, 4 and 5 report precision for WSD on Semcor, using our algorithm, with different parameter settings.",
+        "We see that the algorithm certainly makes a difference over the baseline algorithm.",
+        "PrRank1 and PrRank2 (precision at rank 1 and 2 respectively) denote the percentage of cases where the highest scoring sense is the correct sense or one of first two highest scoring senses is the correct sense, respectively.",
+        "Our recall measures were the same as precision because every word was assigned a sense tag.",
+        "In the event of lack of any evidence for any sense tag, the first WordNet sense(the most frequent sense) was picked.",
+        "Also note that acronyms in table 1 have been employed for parameters in the subsequent tables."
+      ]
+    },
+    {
+      "heading": "5.2 Results for Senseval-3 task",
+      "text": [
+        "For the Senseval task, we employed hypernym glosses.",
+        "The remaining parameters and the results are tabulated in table 6.",
+        "We find results quite poor.",
+        "We performed additional experiments with modified paramater set and find great improvement in numbers.",
+        "Moreover, we",
+        "pick the first WordNet sense in event of lack of any evidence for disambiguation.",
+        "Hence, in the next reported experiment, the recall values are all same as precision.",
+        "Based on our experience with the SemCor experiments, we used Hyper-Desc( ) glosses and a context size of 1 sentence.",
+        "The results are presented in the table 7.",
+        "The baseline precisions we obtained were by sampling word-senses uniformly at random.",
+        "The baseline precision was 45.7% for nouns and 25.4% for verbs."
+      ]
+    },
+    {
+      "heading": "6 English Lexical Sample Task",
+      "text": [
+        "The results of our gloss based disambiguation system show that an optimal configuration of the parameters is essential to get good results.",
+        "Hyper-Desc( ) glosses together with stemming seem to almost always give better results than other.",
+        "But it may be worthwhile finding out the weight-age for different types of glosses and use all of them together.",
+        "However - the algorithm performs better than the baseline algorithm, it still falls short of a decent precision that is generally a prerequisite for the use of WSD in Machine Translation - %.",
+        "One obvious reason for this is that no matter how we try",
+        "to use WordNet, the descriptive glosses of WordNet are very sparse and contain very few contextual clues for sense disambiguation.",
+        "In the task of English Lexical Sample, we further develop the algorithm describe for the previous task and use relatively dense glosses from the training set.",
+        "The large size of the glosses require us to modify the architecture for ranking glosses.",
+        "We use and inverted index for indexing the glosses and treat the context of the word to be disambiguated as a query.",
+        "The senses of the word are ranked using the same set of parameters as described for the earlier task."
+      ]
+    },
+    {
+      "heading": "6.1 Experiments",
+      "text": [
+        "For this task, the gloss for a word-sense is generated by concatenating the contexts of all training instances for that word-sense.",
+        "An inverted index is generated for the glosses.",
+        "The context for a test instance is fired as a query and the senses for the word are ranked using the tf-igf based cosine similarity metric described in section 3.1.",
+        "The top sense is picked.",
+        "The baseline precision obtained for this task was 53.5% The precision obtained using fine-grained scoring was 66.1% and the recall was 65.7%.",
+        "The precision obtained using coarse-grained scoring was 74.3% and the recall was 73.9%."
+      ]
+    },
+    {
+      "heading": "6.2 Conclusion",
+      "text": [
+        "We see that densely populated glosses do help in getting a better precision score.",
+        "One possible course of action that this finding suggests is some kind of interactive WSD where the user is allowed to correct machine generated tags for some dataset.",
+        "The contexts for words in the correctly tagged data could next get appended to existing gloss of the corresponding word-sense."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,239 @@
+{
+  "info": {
+    "authors": [
+      "Claire Gardent"
+    ],
+    "book": "Annual Meeting of the Association for Computational Linguistics",
+    "id": "acl-P02-1013",
+    "title": "Generating Minimal Definite Descriptions",
+    "url": "https://aclweb.org/anthology/P02-1013",
+    "year": 2002
+  },
+  "references": [
+    "acl-J02-1003",
+    "acl-P97-1027",
+    "acl-W00-1416",
+    "acl-W01-0805",
+    "acl-W98-1419"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "The incremental algorithm introduced in (Dale and Reiter, 1995) for producing distinguishing descriptions does not always generate a minimal description.",
+        "In this paper, I show that when generalised to sets of individuals and disjunctive properties, this approach might generate unnecessarily long and ambiguous and/or epistemically redundant descriptions.",
+        "I then present an alternative, constraint-based algorithm and show that it builds on existing related algorithms in that (i) it produces minimal descriptions for sets of individuals using positive, negative and disjunctive properties, (ii) it straightforwardly generalises to nary relations and (iii) it is integrated with surface realisation."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "In English and in many other languages, a possible function of definite descriptions is to identify a set of referents1: by uttering an expression of the form The N, the speaker gives sufficient information to the hearer so that s/he can identify the set of the objects the speaker is referring to.",
+        "From the generation perspective, this means that, starting from the set of objects to be described and from the properties known to hold of these objects by both the speaker and the hearer, a definite description must be constructed which allows the user 1 The other well-known function of a definite is to inform the hearer of some specific attributes the referent of the NP has.",
+        "to unambiguously identify the objects being talked about.",
+        "While the task of constructing singular definite descriptions on the basis of positive properties has received much attention in the generation literature (Dale and Haddock, 1991; Dale and Reiter, 1995; Horacek, 1997; Krahmer et al., 2001), for a long time, a more general statement of the task at hand remained outstanding.",
+        "Recently however, several papers made a step in that direction.",
+        "(van Deemter, 2001) showed how to extend the basic Dale and Reiter Algorithm (Dale and Reiter, 1995) to generate plural definite descriptions using not just conjunctions of positive properties but also negative and disjunctive properties; (Stone, 1998) integrates the D&R algorithm into the surface realisation process and (Stone, 2000) extends it to deal with collective and distributive plural NPs.",
+        "Notably, in all three cases, the incremental structure of the D&R’s algorithm is preserved: the algorithm increments a set of properties till this set uniquely identifies the target set i.e., the set of objects to be described.",
+        "As (Garey and Johnson, 1979) shows, such an incremental algorithm while being polynomial (and this, together with certain psycholinguistic observations, was one of the primary motivation for privileging this incremental strategy) is not guaranteed to find the minimal solution i.e., the description which uniquely identifies the target set using the smallest number of atomic properties.",
+        "In this paper, I argue that this characteristic of the incremental algorithm while reasonably innocuous when generating singular definite descriptions using only conjunctions of positive properties, renders it cognitively inappropriate when generalised to sets of individuals and disjunctive properties.",
+        "I present an alternative approach which always produce the minimal description thereby avoiding the shortcomings of the incremental algorithm.",
+        "I conclude by comparing the proposed approach with related proposals and giving pointers for further research."
+      ]
+    },
+    {
+      "heading": "2 The incremental approach",
+      "text": [
+        "Dale and Reiter’s incremental algorithm (cf.",
+        "Figure 1) iterates through the properties of the target entity (the entity to be described) selecting a property, adding it to the description being built and computing the distractor set i.e., the set of elements for which the conjunction of properties selected so far holds.",
+        "The algorithm succeeds (and returns the selected properties) when the distractor set is the singleton set containing the target entity.",
+        "It fails if all properties of the target entity have been selected and the distractor set contains more than the target entity (i.e. there is no distinguishing description for the target).",
+        "This basic algorithm can be refined by ordering properties according to some fixed preferences and thereby selecting first e.g., some base level category in a taxonomy, second a size attribute third, a colour attribute etc.",
+        "Z: the domain; Pe, the set of properties of e; To generate the UID De, do:",
+        "1.",
+        "Initialise: C := Z, De := 0.",
+        "2.",
+        "Check success:",
+        "3.",
+        "Choose property pi C Pe which picks out the smallest set Ci = C n {x I pi(x)j.",
+        "4.",
+        "Update: De := De U {p }, C := Q, P,:= Pe – {p }.",
+        "goto",
+        "individuals present in the context.",
+        "It then incrementally selects a property P that is true of the target set (S C_ [[P]]) but not of all elements in the distractor set (C g [[P]]).",
+        "Each selected property is thus used to simultaneously increment the description being built and to eliminate some distractors.",
+        "Success occurs when the distractor set equals the target set.",
+        "The result is a distinguishing description (DD, a description that is true only of the target set) which is the conjunction of properties selected to reach that state.",
+        "the set of properties that are true of x); To generate the distinguishing description Ds, do:",
+        "1.",
+        "Initialise: C := Z, Ds := 0.",
+        "2.",
+        "Check success:",
+        "3.",
+        "Choose property pi C Ps s.t.",
+        "S C [[pi]] and C V= [[pi]] 4.",
+        "Update: Ds := Ds U {p }, C := C n [[p iii, Ps:= Ps – ",
+        "erties of the form P V P' with P, P' C P+I _ ; if this is successful then stop, otherwise go to phase 3.",
+        "To generalise this algorithm to disjunctive and negative properties, van Deemter adds one more level of incrementality, an incrementality over the length of the properties being used (cf.",
+        "Figure 3).",
+        "First, literals are used i.e., atomic properties and their negation.",
+        "If this fails, disjunctive properties of length two (i.e. with two literals) are used; then of length three etc."
+      ]
+    },
+    {
+      "heading": "3 Problems",
+      "text": [
+        "We now show that this generalised algorithm might generate (i) epistemically redundant descriptions and (ii) unnecessarily long and ambiguous descriptions.",
+        "Epistemically redundant descriptions.",
+        "Suppose the context is as illustrated in Figure 4 and the target",
+        "To build a distinguishing description for the target set {x1i x2}, the incremental algorithm will first look for a property P in the set of literals such that (i) {x1i x21 is in the extension of P and (ii) P is not true of all elements in the distractor set C (which at this stage is the whole universe i.e., {X1, X2, X3, X4, X5, x6}).",
+        "Two literals satisfy these criteria: the property of being a board member and that of not being the treasurer2 Suppose the incremental algorithm first selects the board-member property thereby reducing the distractor set to {X1, X21 X3, X4, X51.",
+        "Then treasurer is selected which restricts the distractor set to {x1, X21 X4, X51.",
+        "There is no other literal which could be used to further reduce the distractor set hence properties of the form P V P' are used.",
+        "At this stage, the algorithm might select the property pdt V secr whose intersection with the distractor set yields the target set {x1i x2}.",
+        "Thus, the description produced is in this case: board-member n–treasurer n (pdt V secr) which can be phrased as the president and the secretary who are board members and not treasurers – whereas the minimal DD the president and the secretary would be a much better output.",
+        "2 Note that selecting properties in order of specificity will not help in this case as neither president nor treasurer meet the selection criterion (their extension does not include the target set).",
+        "One problem thus is that, although perfectly well formed minimal DDs might be available, the incremental algorithm may produce “epistemically redundant descriptions” i.e. descriptions which include information already entailed (through what we know) by some information present elsewhere in the description.",
+        "Unnecessarily long and ambiguous descriptions.",
+        "Another aspect of the same problem is that the algorithm may yield unnecessarily long and ambiguous descriptions.",
+        "Here is an example.",
+        "Suppose the context is as given in Figure 5 and the target set is",
+        "The most natural and probably shortest description in this case is a description involving a disjunction with four disjuncts namely Pi V Po V VH V J which can be verbalised as the Pitbul, the Pooddle, the Holstein and the Jersey.",
+        "This is not however, the description that will be returned by the incremental algorithm.",
+        "Recall that at each step in the loop going over the properties of various (disjunctive) lengths, the incremental algorithm adds to the description being built any property that is true of the target set and such that the current distractor set is not included in the set of objects having that property.",
+        "Thus in the first loop over properties of length one, the algorithm will select the property W, add it to the description and update the distractor set to C n [[W]] _ {X1,X2,X3,X4,X5,X6,X7,X8,X9,X10I.",
+        "Since the new distractor set is not equal to the target set and since no other property of length one satisfies the selection criteria, the algorithm proceeds with properties of length two.",
+        "Figure 6 lists the properties P of length two meeting the selection criteria at that stage ({x5, X6, X9, X101 E [[P]] and",
+        "The incremental algorithm selects any of these properties to increment the current DD.",
+        "Suppose it selects B V C. The DD is then updated to W n (B V C) and the distractor set to f X3, X4, X5, X6, X7, x8, x9, x10l.",
+        "Except for D V C and �D V B which would not eliminate any distractor, each of the other property in the table can be used to further reduce the distractor set.",
+        "Thus the algorithm will eventually build the description W A (B V C) A (H V �S) A (J V �M) thereby reducing the distractor set to {X3, X5, X6, X8, X9, X10}.",
+        "At this point success still has not been reached (the distractor set is not equal to the target set).",
+        "It will eventually be reached (at the latest when incrementing the description with the disjunction Pi V Po V VH V J).",
+        "However, already at this stage of processing, it is clear that the resulting description will be awkward to phrase.",
+        "A direct translation from the description built so far (W n (B V C) n (H V �S) n (J V �M)) would yield e.g., (1) The white things that are big or a cow, a Holstein or not small, and a Jersey or not medium size Another problem then, is that when generalised to disjunctive and negative properties, the incremental strategy might yield descriptions that are unnecessarily ambiguous (because of the high number of logical connectives they contain) and in the extreme cases, incomprehensible."
+      ]
+    },
+    {
+      "heading": "4 An alternative based on set constraints",
+      "text": [
+        "One possible solution to the problems raised by the incremental algorithm is to generate only minimal descriptions i.e. descriptions which use the smallest number of literals to uniquely identify the target set.",
+        "By definition, these will never be redundant nor will they be unnecessarily long and ambiguous.",
+        "As (Dale and Reiter, 1995) shows, the problem of finding minimal distinguishing descriptions can be formulated as a set cover problem and is therefore known to be NP hard.",
+        "However, given an efficient implementation this might not be a hindrance in practice.",
+        "The alternative algorithm I propose is therefore based on the use of constraint programming (CP), a paradigm aimed at efficiently solving NP hard combinatoric problems such as scheduling and optimization.",
+        "Instead of following a generate-and-test strategy which might result in an intractable search space, CP minimises the search space by following a propagate-and-distribute strategy where propagation draws inferences on the basis of efficient, deterministic inference rules and distribution performs a case distinction for a variable value.",
+        "The basic version.",
+        "Consider the definition of a distinguishing description given in (Dale and Reiter, 1995).",
+        "Let r be the intended referent, and C be the distractor set; then, a set L of attribute-value pairs will represent a distinguishing description if the following two conditions hold: C 1: Every attribute-value pair in L applies to r: that is, every element of L specifies an attribute value that r possesses.",
+        "C2: For every member c of C, there is at least one element l of L that does not apply to c: that is, there is an L in L that specifies an attribute-value that c does not possess.",
+        "l is said to rule out C. The constraints (cf.",
+        "Figure 7) used in the proposed algorithm directly mirror this definition.",
+        "A description for the target set S is represented by a pair of set variables constrained to be a subset of the set of positive(i.e., properties that are true of all elements in S) and of negative (i.e., properties that are true of none of the elements in S) properties",
+        "elements of S;",
+        "of S respectively.",
+        "The third constraint ensures that the conjunction of properties thus built eliminates all distractors i.e. each element of the universe which is not in S. More specifically, it states that for each distractor c there is at least one property P such that either P is true of (all elements in) S but not of c or P is false of (all elements in) S and true of c. The constraints thus specify what it is to be a DD for a given target set.",
+        "Additionally, a distribution strategy needs to be made precise which specifies how to search for solutions i.e., for assignments of values to variables such that all constraints are simultaneously verified.",
+        "To ensure that solutions are searched for in increasing order of size, we distribute (i.e. make case distinctions) over the cardinality of the output description GPs U PS I starting with the lowest possible value.",
+        "That is, first the algorithm will try to find a description (PS , PS) with cardinality one, then with cardinality two etc.",
+        "The algorithm stops as soon as it finds a solution.",
+        "In this way, the description output by the algorithm is guaranteed to always be the shortest possible description.",
+        "Extending the algorithm with disjunctive properties.",
+        "To take into account disjunctive properties, the constraints used can be modified as indicated in Figure 8.",
+        "That is, the algorithm looks for a tuple of sets such that their union Sl U ... U S1, is the target set S and such that for each set Si in that tuple there is a basic",
+        "tion for a set of individuals S iff:",
+        "• 1<M<ISI • S=SJU ... USM • for 1 < i < M, DS is a basic distinguishing description for Si",
+        "conjunctive description.",
+        "As before solutions are searched for in increasing order of size (i.e., number of literals occurring in the description) by distributing over the cardinality of the resulting description."
+      ]
+    },
+    {
+      "heading": "5 Discussion and comparison with related work",
+      "text": [
+        "Integration with surface realisation As (Stone and Webber, 1998) clearly shows, the two-step strategy which consists in first computing a DD and second, generating a definite NP realising that DD, does not do language justice.",
+        "This is because, as the following example from (Stone and Webber, 1998) illustrates, the information used to uniquely identify some object need not be localised to a definite description.",
+        "(2) Remove the rabbit from the hat.",
+        "In a context where there are several rabbits and several hats but only one rabbit in a hat (and only one hat containing a rabbit), the sentence in (2) is sufficient to identify the rabbit that is in the hat.",
+        "In this case thus, it is the presupposition of the verb “remove” which ensures this: since x remove y from z presupposes that y was in z before the action, we can infer from (2) that the rabbit talked about is indeed the rabbit that is in the hat.",
+        "The solution proposed in (Stone and Webber, 1998) and implemented in the SPUD (Sentence Planning Using Descriptions) generator is to integrate surface realisation and DD computation.",
+        "As a property true of the target set is selected, the corresponding lexical entry is integrated in the phrase structure tree being built to satisfy the given communicative goals.",
+        "Generation ends when the resulting tree (i) satisfies all communicative goals and (ii) is syntactically complete.",
+        "In particular, the goal of describing some discourse old entity using a definite description is satisfied as soon as the given information (i.e. information shared by speaker and hearer) associated by the grammar with the tree suffices to uniquely identify this object.",
+        "Similarly, the constraint-based algorithm for generating DD presented here has been integrated with surface realisation within the generator INDIGEN (http://www.coli.uni-sb.de/ cl /proj ects / indigen .",
+        "html) as follows.",
+        "As in SPUD, the generation process is driven by the communicative goals and in particular, by informing and describing goals.",
+        "In practice, these goals contribute to updating a “goal semantics” which the generator seeks to realise by building a phrase structure tree that (i) realises that goal semantics, (ii) is syntactically complete and (iii) is pragmatically appropriate.",
+        "Specifically, if an entity must be described which is discourse old, a DD will be computed for that entity and added to the current goal semantics thereby driving further generation.",
+        "Like SPUD, this modified version of the SPUD algorithm can account for the fact that a DD need not be wholy realised within the corresponding NP – as a DD is added to the goal semantics, it guides the lexical lookup process (only items in the lexicon whose semantics subsumes part of the goal semantics are selected) but there is no restriction on how the given semantic information is realised.",
+        "Unlike SPUD however, the INDIGEN generator does not follow an incremental greedy search strategy mirroring the incremental D&R algorithm (at each step in the generation process, SPUD compares all possible continuations and only pursues the best one; There is no backtracking).",
+        "It follows a chart based strategy instead (Striegnitz, 2001) producing all possible paraphrases.",
+        "The drawback is of course a loss in efficiency.",
+        "The advantages on the other hand are twofold.",
+        "First, INDIGEN only generates definite descriptions that realize minimal DD.",
+        "Thus unlike SPUD, it will not run into the problems mentioned in section 2 once generalised to negative and disjunctive properties.",
+        "Second, if there is no DD for a given entity, this will be immediately noticed in the present approach thus allowing for a non definite NP or a quantifier to be constructed instead.",
+        "In contrast, SPUD will, if unconstrained, keep adding material to the tree until all properties of the object to be described have been realised.",
+        "Once all properties have been realised and since there is no backtracking, generation will fail.",
+        "Nary relations.",
+        "The set variables used in our constraints solver are variables ranging over sets of integers.",
+        "This, in effect, means that prior to applying constraints, the algorithm will perform an encoding of the objects being constrained – individuals and properties – into (pairwise distinct) integers.",
+        "It follows that the algorithm easily generalises to nary relations.",
+        "Just like the proposition red(el) using the unary-relation “red” can be encoded by an integer, so can the proposition on(el, e2) using the binary-relation “on” be encoded by two integers (one for on(, e2) and one for on(el, ).",
+        "Thus the present algorithm improves on (van Deemter, 2001) which is restricted to unary relations.",
+        "It also differs from (Krahmer et al., 2001), who use graphs and graph algorithms for computing DDs – while graphs provides a transparent encoding of unary and binary relations, they lose much of their intuitive appeal when applied to relations of higher arity.",
+        "It is also worth noting that the infinite regress problem observed (Dale and Haddock, 1991) to hold for the D&R algorithm (and similarly for its van Deemter’s generalisation) when extended to deal with binary relations, does not hold in the present approach.",
+        "In the D&R algorithm, the problem stems from the fact that DD are generated recursively: if when generating a DD for some entity el, a relation r is selected which relates el to e.g., e2, the D&R algorithm will recursively go on to produce a DD for e2.",
+        "Without additional restriction, the algorithm can thus loop forever, first describing el in terms of e2, then e2 in terms of el, then el in terms of e2 etc.",
+        "The solution adopted by (Dale and Haddock, 1991) is to stipulate that facts from the knowledge base can only be used once within a given call to the algorithm.",
+        "In contrast, the solution follows, in the present algorithm (as in SPUD), from its integration with surface realisation.",
+        "Suppose for instance, that the initial goal is to describe the discourse old entity el.",
+        "The initially empty goal semantics will be updated with its DD say, { bowl (b), on(b, t)}.",
+        "Nb the Goal Semantics= {bowl(b), on(b, t)} This information is then used to select appropriate lexical entries i.e., the noun entry for “bowl” and the preposition entry for “on”.",
+        "The resulting tree (with leaves “the bowl on”) is syntactically incomplete hence generation continues attempting to provide a description for t. If t is discourse old, the lexical entry for the will be selected and a DD computed say, {table(t), on(b, t)}.",
+        "This then is added to the current goal semantics yielding the goal semantics {table(t), bowl(b), on(b, t)} which is compared with the semantics of the tree built so far i..e., { bowl (b), on(b, t)}.",
+        "the • Goal Semantics= { bowl (b), on(b, t), table (t) Tree Semantics = {bowl(b), on(b, t)} Since goal and tree semantics are different, generation continue selecting the lexical entry for “table” and integrating it in the tree being built.",
+        "Goal Semantics = {bowl(b), on(b, t), table(t)} Tree Semantics = {bowl(b), on(b, t), table(t)} At this stage, the semantics of that tree is {table(t), bowl (b), on(b, t)} which is equivalent to the goal semantics.",
+        "Since furthermore the tree is syntactically and pragmatically complete, generation stops yielding the NP the bowl on the table.",
+        "In sum, infinite regress is avoided by using the computed DDs to control the addition of new material to the tree being built."
+      ]
+    },
+    {
+      "heading": "Minimality and overspecified descriptions. It",
+      "text": [
+        "has often been observed that human beings produce overspecified i.e., non-minimal descriptions.",
+        "One might therefore wonder whether generating minimal descriptions is in fact appropriate.",
+        "Two points speak for it.",
+        "First, it is unclear whether redundant information is present because of a cognitive artifact (e.g., incremental processing) or because it helps fulfill some other communicative goal besides identification.",
+        "So for instance, (Jordan, 1999) shows that in a specific task context, redundant attributes are used to indicate the violation of a task constraint (for instance, when violating a colour constraint, a task participant will use the description “the red table” rather than “the table” to indicate that s/he violates a constraint to the effect that red object may not be used at that stage of the task).",
+        "More generally, it seems unlikely that no rule at all governs the presence of redundant information in definite descriptions.",
+        "If redundant descriptions are to be produced, they should therefore be produced in relation to some general principle (i.e., because the algorithm goes through a fixed order of attribute classes or because the redundant information fulfills a particular communicative goal) not randomly, as is done in the generalised incremental algorithm.",
+        "Second, the psycholinguistic literature bearing on the presence of redundant information in definite descriptions has mainly been concerned with unary atomic relations.",
+        "Again once binary, ternary and disjunctive relations are considered, it is unclear that the phenomenon generalises.",
+        "As (Krahmer et al., 2001) observed, “it is unlikely that someone would describe an object as “the dog next to the tree in front of the garage” in a situation where “the dog next to the tree” would suffice.",
+        "Nt Implementation.",
+        "The ideas presented in this paper have been implemented within the generator INDIGEN using the concurrent constraint programming language Oz (Programming Systems Lab Saarbr¨ucken, 1998) which supports set variables ranging over finite sets of integers and provides an efficient implementation of the associated constraint theory.",
+        "The proof-of-concept implementation includes the constraint solver described in section 4 and its integration in a chart-based generator integrating surface realisation and inference.",
+        "For the examples discussed in this paper, the constraint solver returns the minimal solution (i.e., The cat and the dog and The poodle, the Jersey, the pitbul and the Holstein) in 80 ms and 1.4 seconds respectively.",
+        "The integration of the constraint solver within the generator permits realising definite NPs including negative information (the cat that is not white) and simple conjunctions (The cat and the dog)."
+      ]
+    },
+    {
+      "heading": "6 Conclusion",
+      "text": [
+        "One area that deserves further investigation is the relation to surface realisation.",
+        "Once disjunctive and negative relations are used, interesting questions arise as to how these should be realised.",
+        "How should conjunctions, disjunctions and negations be realised within the sentence?",
+        "How are they realised in practice?",
+        "and how can we impose the appropriate constraints so as to predict linguistically and cognitively acceptable structures?",
+        "More generally, there is the question of which communicative goals refer to sets rather than just individuals and of the relationship to what in the generation literature has been baptised “aggregation” roughly, the grouping together of facts exhibiting various degrees and forms of similarity."
+      ]
+    },
+    {
+      "heading": "Acknowledgments",
+      "text": [
+        "I thank Denys Duchier for implementing the basic constraint solver on which this paper is based and Marilisa Amoia for implementing the extension to disjunctive relations and integrating the constraint solver into the INDIGEN generator.",
+        "I also gratefully acknowledge the financial support of the Conseil R´egional de Lorraine and of the Deutsche Forschungsgemeinschaft."
+      ]
+    }
+  ]
+}

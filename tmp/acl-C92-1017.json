@@ -1,0 +1,286 @@
+{
+  "info": {
+    "authors": [
+      "Hans Ulrich Block",
+      "Stefanie Schachtl"
+    ],
+    "book": "International Conference on Computational Linguistics",
+    "id": "acl-C92-1017",
+    "title": "Trace and Unification Grammar",
+    "url": "https://aclweb.org/anthology/C92-1017",
+    "year": 1992
+  },
+  "references": [
+    "acl-C88-1024",
+    "acl-C90-2009",
+    "acl-E89-1014",
+    "acl-J81-4003",
+    "acl-P84-1075",
+    "acl-W91-0113"
+  ],
+  "sections": [
+    {
+      "heading": "TRACE & UNIFICATION GRAMMAR",
+      "text": [
+        "flans Ulrich Block and Stefanie Schachtl Siemens AG, Corporate Research, ZFE ST SN 74 Otto Hahn-Ring 6 D-8000 Manclien 83 Germany blockOztivax.zfesiernens.de"
+      ]
+    },
+    {
+      "heading": "Abstract",
+      "text": [
+        "This paper presents Trace Az Unification Grammar (TUG), a declarative and reversible grammar formalism that brings together Unification Grammar (UG) and ideas of Government & Binding Theory (f30).",
+        "The main part of the paper consists in a description of many free word order phenomena of German syntax.",
+        "It will be shown that the use of traces allows for an easier and more elegant way of description than competing approaches like ID/LP-format rules m used e.g. in GPSO and HPSG.",
+        "Grammars written in the TUG-formalism can be compiled to a very efficient parser.",
+        "The occurrence of head movement, wh-movement and scrambling in one sentence does not lead to any decrease in parsing efficiency."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "The basic motivation in creating TUG formalism was to capture the empiric knowledge that represents the outcome of at least 15 years' linguistic discussion of German word order, while maintaining the efficiency that is required from a grammar formalism of today's standard.",
+        "With reference to the basic work of (Len71 on marked and unmarked word order linguists in the generative tradition such as [Thi82], [(11384], [Fan87] and [Cze87] revealed an impressive list of descriptive phenomena that can be appropriately handled by the assumption of a configurational, i.e. VP containing description of German word order.",
+        "Among these phenomena count asymetries in the serialization behaviour of nominatively marked NPs in passive and the so called \"psych\" constructions', the account for scrambling phenomena in Ad/ECM constructions' and the observations of [Cze87] wrt.",
+        "to the voices of double accusative verbs in German.",
+        "What all these works intend is to pronounce the danger a description of German is likely to run into, that \"draws immediate conclusions as to the surface position of argument NPs on the basis of their surface cases\" ([d1384]:59)."
+      ]
+    },
+    {
+      "heading": "2 The TUG formalism",
+      "text": [
+        "The basis of TUG is formed by a context free grammar that is augmented by PATR II-style feature equations.",
+        "Besides this basis, the main features of TUG are feature typing, mixing of attribute-value-pair and (l'ItOLOG-) term unification, flexible macros, unrestricted disjunction and special rule types for argument and head movement."
+      ]
+    },
+    {
+      "heading": "2.1 Basic rule types",
+      "text": [
+        "As a very simple example we will look at the TUG version of the example grammar in (Shi84]3.",
+        "% type definition",
+        "a ---> up, vp I np:agr s vp:agr.",
+        "vp ---> v, np I vp:agr 0 v:agr.",
+        "The two main differences to PATH II in the basic framwork are that first, TUG is less flexible in that it has a \"hard\" contextfree backbone, whereas in PATR II categories of the context free part are placeholders for feature structures, their names beeing taken as the value of the cat feature in the structure.",
+        "Second, TUG has a strict typing.",
+        "For a feature path to be well defined, each of its attributes has to be declared in the type definition.",
+        "'For a slightly more detailed description of the basic features of TUG refer to ([Blo91]).",
+        "AcrEs DE COLING-92, NAn-mxs, 23-28 min.",
+        "1992 8 7 PR0C.",
+        "or COLING-92, NAKrifs, AUG. 23-28, 1992"
+      ]
+    },
+    {
+      "heading": "2.2 Movement rules",
+      "text": [
+        "Further to these more standard UG-features, TUG provides special rule formats for the description of discontinuous dependencies, so called \"movement rules\".",
+        "Two main types of movement are distinguished: argument movement and head movement.",
+        "The format and processing of argument movement rules is greatly inspired by [CLW88] and [Che90], the processing of head movement is based on GPSG like slash features.",
+        "A head movement rule defines a relation between two positions in a parse tree, one is the landing site, the other the trace position.",
+        "Head movement is constrained by the condition that the trace is the head of a specified sister (the root node) of the landing site'.",
+        "Trace and antecedent are identical with the exception that the landing site contains overt material, the trace does'nt.",
+        "To formulate head movement in TUG the following format is used.",
+        "First, a head definition defines which category is the head of which other, e.g. for the V-projection line of the above grammar: v ia_head_of vp.",
+        "vp is_head_of a.",
+        "Second, the landing site is defined by a rule like s---> v+s I ... where landing site and root node are linked by a +.",
+        "To include recursive rules in the head path, heads are defined by the following head definitions.",
+        "In a structure [m DI ... 11,,] Di is the head of M if either Di is_head_of M is defined or Di has the same category as M and either Di is_head_ef X or X is_head_of is defined for any category X.",
+        "Argument movement rules describe a relation between a landing site and a trace.",
+        "The trace is always c-commanded by the landing site, its antecedent.",
+        "Two different traces are distinguished, anaphoric traces and variable traces.",
+        "Anaphoric traces must find their antecedent within the same bounding node, variable trace binding is constrained by sufijacency, c.a.",
+        "the binding of the trace to its antecedent must not cross two bounding nodes.",
+        "Anaphoric traces are found for example in English passive constructions [s [up The hook of this author]; was read td whereas variable traces are usually found in wh-constructions and topicalization.",
+        "Similar to the proposal in [CLW88], argument movement is coded in TUG by a rule that describes the landing site, as for example in 4 Here, \"head of\" is a transitive relation s.t.",
+        "if x is head of y and y is head of z then x is head of z.",
+        "This rule states that np:ante5 is the antecedent of an np-trace that is dominated by sl.",
+        "The first argument in the trace-term indicates whether the landing site is for a variable (var) or for an anaphoric (ana) trace.",
+        "Other than head movement, where trace and antecedent are by definition identical, the feature sharing of argument traces with their antecedents has to be defined in the grammar by feature equations (ante:fx = trace: fx, ...).",
+        "Furthermore, it is not necessary that the antecedent and the trace have the same syntactic category.",
+        "The current version of the formalisms requires that the grammar contains a declaration on which categories are possible traces.",
+        "In such a declaration it is possible to assign features to a trace, for example marking it as empty: trace(np) I np:erapty = yes.",
+        "Bounding nodes have to be declared as such in the grammar by statements of the form bounding_node(np).",
+        "bounding_node(s) I s :tense = yes.",
+        "As in the second case, bounding nodes may be defined in terms of category symbols and features.",
+        "The main difference of argument movement to other approaches for the description of discontinuities like extraposition grammars ([Per81]) is that argument movement is not restricted to nested rule application.",
+        "This makes the approach especially atractive for a scrambling analysis of the relative free word order in the German Mittelfeld as explained in more detail below."
+      ]
+    },
+    {
+      "heading": "3 Some facts on German syntax",
+      "text": []
+    },
+    {
+      "heading": "3.1 Basic assumptions",
+      "text": [
+        "In the following we will sketch the basic structures of German syntax.",
+        "According to the position of the finite verb, we distinguish sentences with the verb in the second (a), the first(b) and the last position (c).6",
+        "(1) a. Karl fiihri nach Hamburg.",
+        "Karl goes to Hamburg b. Fart Karl nach Hamburg?",
+        "Goes Karl to Hamburg",
+        "c. dali Karl each Hamburg fart.",
+        "... that Karl to Hamburg goes 'The notation Cat : Index is used to distinguish two or more occurrences of the same category in the same rule in the equation part.",
+        ": ante and t race are arbitrary names used as index to refer to the two different spa.",
+        "'English literal translations are given in typewriter font.",
+        "We call the sentence types V2-S (a), V1-S (b) and Ve-S (c) respectively.",
+        "In V1-S and V2-S, compound verbfornis build a so called Satzklammer between the finite and the nonfinite parts.",
+        "(2) Karl jet mit dem Zug nach Hamburg Karl has with the train to hamburg gefahren.",
+        "gone \"Karl has gone to Hamburg by train.\" Traditionally, according to the position of the verbal elements, we call the position in front of the finite verb the Vorfeld and the positions within the Satzklammer the Mittelfeld.",
+        "In accordance with the mentioned configurational analysis of the german sentence, we suppose an unmarked \"underlying\" structure, that is similar to the order in the german subordinate clause.",
+        "This structure contains four different positions for verb arguments, as exemplified by the following sentences.",
+        "(3) [s‘ daft [S [NP der Mann] [Nr, der hued [1,1 [N,r, dos Bach] [vie gegeben hut] 11] ] that the man the ;roman the book given has \"that the man has given the woman the book\" b. fs5 [St daft [s [NP der Mann] [vp [NP das Bach] [v [pp in den Schrank][vie gelegt hat] ] [1] ] that the man the book into the bookshelf put has \"that the man has put the book into the book-shelf\" A sentence always contains the v-projection VK, V', VP, S, even if the sentence contains less than three arguments.",
+        "(4) a.",
+        "[ss [s■ daft [s [NP der Mann] [vP [vt [vx tan2111111 that the ean[nom] dances b.",
+        "[s, [sr daft [s [vi' dent Mann] [vie geholfen wird]]]]]] that the ttan[dat] helped is \"that the man is helped\" c. [s, [st daft [s [VP [vt [NP das Duch] [vie gelesen wird]]]]]]",
+        "that the book [nov] read is \"that the book is read\" d, [s, [s, daft Is [vp [e] [vK getanzt that danced is \"that there is dancing\" As is shown in (4a.)",
+        "vs.",
+        "(4c.)",
+        "the nominative may be assigned to a VP-external or a VI'-internal position.",
+        "Adverbials are chomksy-adjoind to S, VP, VI and VK.",
+        "An adjunction is only possible, if the right daughter is binarily branching.",
+        "(5) a.",
+        "[s, [51 dog [s brute [s [nip der Mann] [vt [vit.",
+        "U1114111",
+        "b.",
+        "[s, [.sr daft [s heute [/vp dent Mann] [v■ [vie geholfen wir4111] c. [St [5t daft [s [vp [vt heute [v' [NP doe Bach] [vx geiesen !LIM]]]]]] d. [s, [sr daft [s [vp (v‘ [vx heute [vie getanzt wird]]]]]]",
+        "For a word order that differs from the underlying structure the movement rules of TUG are used.",
+        "V1-S are formed by head-movement of the finite verb to the position of the complementizer.",
+        "This can be formulated in a rather compact way in TUG by definition of the head relation and rules for the introduction of the landing site of the finite verb.",
+        "(7) v is_head_of vk.",
+        "vk is_head_of vi.",
+        "v1 is_head_of vp.",
+        "vp is_head_of s. (8) 81 ---> comp, S",
+        "Si ---> 1/43 V2-S are formed by occupying the Vorfeld, i.e. the position immediately dominated by S2 with either a verb argument by argument movement (a), by an adverbial (b) or by a Vorfeld-es (c).",
+        "(9) a. Lst Peter; [51 malt, [s ti [yr [vi die Bilder [vis.",
+        "oh QM",
+        "Peter copies the pictures I,.",
+        "Ls, lleute [5.1 malt; [s Peter [vi [vt die Bilder [vp at, Today copies Peter the pictures",
+        "It copies Peter the pictures \"Peter copies the pictures\" This facts can be described by the following rules:",
+        "(10) s2 ----> es, 81 B2 ---> pp, 81 82 ---> advp, 81",
+        "s2 ---> np<trace(var,np), 81 trace(var,np).",
+        "Free word order in the Mittelfeld is described by \"moving\" an argument to a chomsky-adjoined position on the V-projection.",
+        "Here it obeys the same conditions as an adverbial and leaves a trace in the original argument position."
+      ]
+    },
+    {
+      "heading": "3.2 Alternative approaches",
+      "text": [
+        "Whereas most concurrent theories adopt the view that an argument phrase in the Vorfeld is linked to the argument position by a trace - be it by movement or by the slash-feature - the relative free word order in the Mitielfeld is often accounted for by the distinction of phrase structure rules into immediate dominance (ID) rules and linear precedence (LP) rules.",
+        "ID rules define the hierarchical structure of constituents, LP rules the linear ordering of daughters constituents.",
+        "In this paradigm the german Mittelfeld including the finite verb typically is supposed to form a flat structure, generated by an ID rule like s ---> np [nom] , np [WO np[clat] , v [fin] , vk [int in] I.",
+        "The elements on the right hand side can then be (partially) ordered by LP statements of the form v[fin] < np, np < vk (a finite verb precedes an NP, a VK follows an NP).",
+        "As no LP statement is made for the NPs, the rules generate all possible permutations of NPs.",
+        "(13) [s hat der Mann der Frau das Buch gegeben] [s hat der Frau der Mann du Bud gegeben) [s hat das Buch der Mann der Frau gegeben] [s bat der Frau du Bach der Mann gegeben] [s hat der Mann du Bach der Frau gegeben] So, where TUG supposes a fixed unmarked word order, from which marked orders are derived by movement rules (scrambling), GPSG and IIPSG suppose unordered ID rules and express constraints on order explicitly by LP statements.",
+        "The same holds for the position of the finite verb in the different german sentence types.",
+        "As for movement to the Vorfeld the GPSG/HPSG approach using the slash feature and the TUG approach are rather similar, as in fact movement is implemented in TUG by structure sharing."
+      ]
+    },
+    {
+      "heading": "3.3 Some more facts on German syntax",
+      "text": [
+        "In the following paragraph we will outline a few descriptive phenomena where we think the use of traces 7But see [Rea89] for en alternative approach using LP-■tatements that does not have to assume a flat structure.",
+        "as in TUG allows for more elegant formulations of the facts.",
+        "In many German dialects, prepositional proforms like damn or dagegen and question forms like womit or wogegen can be used discontinuously.",
+        "Both the slash analysis and the movement to the Vorfeld are able to describe appropriately sentences like (14b.",
+        "), where the pronoun part of a prepositional proform is detached from its preposition.",
+        "There can he this theory with defeat \"With this he can defeat the theory\" Whereas the preceding data give strong evidence for movement into the Vorfeld, preposition stranding in German is not restricted to that position.",
+        "The da of a discontinuous proform can also occur in the Mittelfeld.",
+        "(16) a. Er kann diese Theorie damit wider-legen.",
+        "He can this theory therewith defeat .",
+        "b. Er kann da diese Theorie mit wider-legen.",
+        "He can there this theory with defeat.",
+        "Furthermore, it kann be combined in one sentence with another discontinuity, e. g. discontinuous was fur.",
+        "(18) a.",
+        "Was kann er da fur eine Theorie mit widerlegen.",
+        "What can he there for a theory with defeat \"What a theory can he defeat with this\" b. Wasi kann er dai tr fiir eine Theorie Si mit widerlegen.",
+        "Evidently, a formalism whose slash feature allows only for one discontinuous constituent has to describe da mit by LP rules.",
+        "Therefore, da and mit would have to be of the same constituent as dicse Theorie.",
+        "But in 14 (a) damn obviously forms one constituent.",
+        "It is unclear how in a flat structure the obligatoriness of da can be expressed, an effect that naturally falls out of the trace approach.",
+        "The word order of personal pronouns in the German sentence is rather restricted as exemplified by the following sentences.",
+        "(17) a. deli der Chef ihn ihr vorstellt that the boss him[acc] her[dat] presents \"that the boss presents her to him\" b. daB der Chef ihr den neuen Mitarbeiter vorstellt that the boss her[dat] the new collegue presents \"that the boss presents the new collegue to her\" c. *daB der Chef den neuen Mitarbeiter ihr vorstellt *that the boss the new collegue[acc] her[dat] presents d. *dab der Chef ihr ihn vorstellt *that the boss her [dat] him[acc] presents e. dad ihn ihr der Chef vorstellt that him[acc] her[dat] the boss presents f. *?daB ihn der Chef ihr vorstellt *that him[acc] the boss her[dat] presents g. *dell ihn ihr er vorstellt *that him[acc] her[dat] he[nom] presents Even though it might be possible to describe these restrictions by a set of LP statements, our impression is that this kind of analysis obscure the rather simple pronoun word order.",
+        "Furthermore, we cannot see how LP rules could allow for (a) and (e) while excluding (f)8.",
+        "Ihn may preceed the nominativ NP, but only if there is no dativ pronoun following the latter.9 In our analysis, personal pronouns have a fixed position in the sentence either between S' and S or between S and VP.",
+        "[v, ti"
+      ]
+    },
+    {
+      "heading": "3.4 ACI-constructions",
+      "text": [
+        "In ACI-constructions however a personal pronoun may very well follow a non-nominativ NP.",
+        "Compare (17c.)",
+        "and (19).",
+        "° (f) seems to be somehow acceptable in some dialects but completely agrammatical in others.",
+        "°As far as we understand it, also a solution by sequence union [flea89] could not account for these facts.",
+        "(19) a. Gestern hat Karl den Jungen ihr helfen lessen.",
+        "Yesterday has Karl the boy her[dat] help let \"Yesterday Karl has made the boy help her\" b. Gestern hat Karl den Jungen p ihr helfen] lassen.",
+        "To save an LP analysis as indicated above we would have to say that ihr helfen is part of another constituent as den Jungen, therefore the LP statements do not hold between den Jungen and ihr.",
+        "The structure of the sentence (19a) might then be sketched as in (19b).",
+        "But now consider the following sentence: (20) Gestern hat sich Karl eine LOsung ein-fallen lessen.",
+        "Yesterday has Karl himself a solution come_to_mind let This sentence, although it represents a regular ACI-construction and consequently must have an embedded VP constituent, shows the same serialization wrt.",
+        "the pronoun as (17), where all NPs belonged to the same constituent.",
+        "ID and LP rules therefore lead to a contradiction in handling (19) and (20)19.",
+        "A TUG description on the other hand can make use of a scrambling analysis in (20).",
+        "The pronoun sich leaves a trace in the pronoun position of the embedded construction and appears in the appropriate pronoun position of the matrix constituent, thereby maintaining the relevant serialization conditions in both constituents.",
+        "And a further restriction may be implemented when configurational relations are available: the scrambling of a dative pronoun out of an ACI-construction as shown in (20) is sensitive as to whether the accusative of the ACI-verb replaces an external or internal nominative of the embedded verb.",
+        "Finite einfallen marks its nominative internally, finite helfen marks it externally.",
+        "Only internal nominative-accusatives allow being scrambled over, cf. (20) with (21).",
+        "(21) *Gestern hat ihr Karl den Jungen helfen lassen.",
+        "*Yesterday has her[dat] Karl the boy help let"
+      ]
+    },
+    {
+      "heading": "3.4.1 Scrambling and Thematic Structure",
+      "text": [
+        "Another aspect of the configurational differentiation between external and internal arguments can be made use of in analysing the thematic structure of a sentence.",
+        "So e.g. the thematic differentiation between wide and narrow scope of a verbal argument depends on its appearing in marked or unmarked position.",
+        "Compare the readings of (22) and (23) vs. (26), where boldface marks the posodically prominent syllable:",
+        "(22) Ich glaube daf3 der Kollege dem Vorstand widersprochen hat.",
+        "I think that the collegue has the board contradicted \"I think that the collegue has contradicted to the board.\" (23) Ich glaube da0 dem Vorstand der Kollege widersprochen hat.",
+        "I think that the board the collegue contradicted has \"I think that the colluege has contradicted to the board.\" (22) is a possible answer to the question what happened on the meeting yesterday whereas (23) is only allowed in specific contexts such as Wer hat dem Vorstand widersprochen?.",
+        "Widersprechen like helfen marks its nominative externally, therefore the dative NP follows the nominative NP in the unmarked word order as shown in (22).",
+        "If scrambling applies as in (23) this correlates with a change in the thematic and prosodic structure.",
+        "In the TUG framework this would be achieved in combining the scrambling mechanism with a feature structure that indicates the desired thematic interpretation of the sentence: (24) vp ---> np<trace(ana,np:trace), vp:h h:scope=narrow.",
+        "(25) vp ---> np, vi np:scope.vp:scope.",
+        "A straightforward implementation of this observation in the ID/LP format however would come to a halt in the case of (26): (26) Ich glaube daft dem Vorstand die Lt sung eingefallen ist.",
+        "I think that the board the solution come_to_mind has \"I think that the solution has come to mind to the board.\" Although the nominative follows the dative in (26) the sentence has wide scope interpretation and unmarked prosodic structure\" .",
+        "(26) again is a likely answer to the general question Was ist gestern passiert?",
+        "This clearly contradicts (22)-(23) if only the surface case marking of the arguments can be referred to in the generalization.",
+        "On the other hand this result is exactly what would be expected by a TUG analysis: Since einfallen marks its nominative internally, no scrambling is involved in (26) vs. (23).",
+        "IlJohn Pheby in [I-IFM81] postulates the distinction between marked and unmarked prosodic structure in German.",
+        "[vSU86] combine this with a configurational syntax.",
+        "See also [Uhm91] for a reformulation of the relevant obeservations in the framework of [Pie80]."
+      ]
+    },
+    {
+      "heading": "4 Parsing with TUG",
+      "text": [
+        "TUG can be processed by a parser and a generator.",
+        "Before parsing and generation, the grammar is compiled to a more efficient form.",
+        "The first compilation step that is common to generation and parsing transforms the attribute-value-pair structure to (PRO-LOG) term structure.",
+        "This transformation makes use of the type definitions.",
+        "For parsing, TUG is processed by a Tomita parser [Tom86].",
+        "For usage in that parser the result of the transformation to PROLOG further undergoes several transformations (expansion of head movement rules, transformation of argument movement rules, elimination of empty productions, conversion to Llt(K) format and computation of LR tables).",
+        "This compilation leads to a considerable increase in processing speed that makes it possible to use TUG for the syntactic description in real-time systems, Especially the seperate compilation of head movement and argument movement leads to run time grammars that do not show the usual decrease in efficiency due to empty productions (traces).",
+        "In fact, a compiled TUG does not contain empty productions any longer.",
+        "Parsing time for simple sentences of about 10 words using a grammar of German with rather broad coverage is between 1 and 2 secs.",
+        "on the average on a SUN SPARC I workstation running Quintus Prolog, even if the sentence contains verb fronting, argument movement to the Vorfeld and scrambling in the Mittelfeld."
+      ]
+    },
+    {
+      "heading": "5 Conclusion",
+      "text": [
+        "We have presented Trace & Unification Grammar, a grammar formalism that tries to bridge the gap between UG and GB theory with the aim of adopting many of the linguistic descriptions of German found in the linguistics literature.",
+        "Besides German, the presented grammar formalism has also been used successfully to describe a smaller subset of Chinese.",
+        "We have compared 'PUG descriptions of some phenomena in german syntax to approaches that do not make use of movement rules but use ID/LP rules instead and shown that in all these cases TUG provides a simple and elegant description whereas the Ill/LP approach in most cases even fails to describe the data at all.",
+        "Furthermore we have briefly mentioned the way TUG can be compiled to an efficient parser.",
+        "Empirical tests have shown that using movement rules and traces does not lead to a considerable decrease in parsing speed."
+      ]
+    },
+    {
+      "heading": "Acknowledgements",
+      "text": [
+        "We would like to thank Ping Peng, Manfred Gehrke, Rudi Ilunze and Ludwig Schmid for many discussions on the TUG-formalism.",
+        "The work described here is partly sponsored by the Federal Ministry of Research and Technology in the ASL project under no. 011V102A0."
+      ]
+    }
+  ]
+}

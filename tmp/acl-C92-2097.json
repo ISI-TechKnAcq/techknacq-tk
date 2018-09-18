@@ -1,0 +1,257 @@
+{
+  "info": {
+    "authors": [
+      "Osamu Furuse",
+      "Hitoshi Iida"
+    ],
+    "book": "International Conference on Computational Linguistics",
+    "id": "acl-C92-2097",
+    "title": "Cooperation Between Transfer and Analysis in Example-Based Framework",
+    "url": "https://aclweb.org/anthology/C92-2097",
+    "year": 1992
+  },
+  "references": [
+    "acl-C90-3044",
+    "acl-E91-1048",
+    "acl-P91-1024"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract Transfer-Driven Machine Translation (TDMT) is presented as a method which drives the translation processes according to the nature of the input. In TDMT, transfer knowledge is the central knowledge of translation, and various kinds and levels of knowledge are cooperatively applied to input sentences. TDMT effectively utilizes an example-based framework for transfer and analysis knowledge. A consistent framework of examples makes the cooperation between transfer and analysis effective, and efficient translation is achieved. The TDMT prototype system, which translates Japanese spoken dialogs into English, has shown great promise. 1 Introduction",
+      "text": [
+        "Many applications dealing with spoken-language, such as automatic telephone interpreting system, need efficient and robust processing.",
+        "The system must be capable of handling many idiomatic expressions and spoken-language-specific expressions which deviate from conventional grammar.",
+        "Also, spoken-language has both easy and difficult expressions to translate.",
+        "In human translation when translating an easy sentence, the translated result is produced quickly using only surface-level knowledge.",
+        "When translating a complex sentence, a more elaborate process is performed, using syntactic, semantic, and contextual knowledge.",
+        "Thus, many strategies and various levels of knowledge are used to effectively translate spoken-language.",
+        "This paper proposes a method called Transfer-Driven Machine Translation (TDMT), which carries out efficient translation processing by driving the necessary translation processes according to the nature of the input sentence.",
+        "An example-based framework can achieve quick processing and consistently describe knowledge.",
+        "The integration of transfer and analysis in an example-based framework is proposed as a method for achieving TDMT.",
+        "In this method, transfer and analysis proceed autonomously and cooperatively.",
+        "Also, a well-balanced load on each process can be achieved by employing this integrated processing mechanism.",
+        "Section 2 explains the idea of TDMT.",
+        "Section 3 explains distance calculation and transfer in an example based framework.",
+        "Section 4 explains analysis in an example-based framework.",
+        "Section 5 reports on the TDMT prototype system, and Section 6 reports on the experimental results.",
+        "The explanations in the following sections use Japanese-to-English translation,"
+      ]
+    },
+    {
+      "heading": "2 Transfer-Driven Machine Translation",
+      "text": [
+        "TDMT performs efficient and robust spoken-language translation using various kinds of strategies to be able to treat diverse input.",
+        "Its characteristics are explained in the following subsections."
+      ]
+    },
+    {
+      "heading": "2.1 Transfer-centered cooperation mechanism",
+      "text": [
+        "Translation is essentially converting a source language expression into a target language expression.",
+        "In TDMT, transfer knowledge consists of various levels of bilingual information.",
+        "It is the primary knowledge used to solve translation problems.",
+        "The transfer module retrieves the necessary transfer knowledge ranging from global unit like sentence structures to local unit like words.",
+        "The retrieval and application of transfer knowledge are flexibly controlled depending on the knowledge necessary to translate the input.",
+        "Basically, translation is performed by using transfer knowledge.",
+        "A transfer module utilizes analysis knowledge (syntactie/s3mantic information) which helps to apply transfer Laowledge to some part of the input.",
+        "And generation and context knowledge are utilized for producing correct translation result.",
+        "In other words, TDMT produces translation results by utilizing these different kinds of knowledge cooperatively and by centering on transfer, and achieves efficient translation according to the nature of the input.",
+        "AcrEs DE COLING-92, NrorrEs, 23-28 Aoirr 1992645 PRoc.",
+        "01,COLING-92, Nporms, AUG. 23-28, 1992 required to apply transfer knowledge and to produce the correct translation from the input sentence.",
+        "Suzuki\" by applying transfer knowledge such as the following:"
+      ]
+    },
+    {
+      "heading": "4.1 Description of analysis knowledge",
+      "text": [
+        "Analysis knowledge is described by examples in the same way as transfer knowledge, as follows: SE => Revised SEi (Eli, E12, ), Revised SEn (Ent , En2, ) Although the form of knowledge description is virtually the same, transfer knowledge descriptions map onto TEs, whereas analysis knowledge descriptions map onto revised SEs."
+      ]
+    },
+    {
+      "heading": "4.2 Cooperation mechanism",
+      "text": [
+        "The transfer and analysis processes operate autonomously but cooperatively to produce the translation result shown in Figure 4.",
+        "((hoteru (hotel), yoyaku-sum (reserve)), ...), CN ni Verb ((kaigi (conference), sanka-suru(participate)),...), This analysis knowledge allows the recovery of various particles such as, \"hoteru yoyaku-suru\" -> \"'totem o yoyaku-suru\" \"kaigi sanka-suru\"-> \"kaigi ni sanka-suru\" Analysis knowledge for normalization also has the advantage of making the scale of knowledge more economical and the translation processing more robust.",
+        "Structuring is recognition of structure components of by insertion of a marker in order to apply transfer knowledge to each structure component.",
+        "Analysis knowledge for structuring is applied to detect special linguistic phenomena such as adnominal expressions, wh-expressions, and discontinuities, so as to assign a structure to the SE.",
+        "Adnominal expressions appear with high frequency in Japanese, corresponding to various English expressions such as relative clauses, infinitives, pronouns, gerunds, and subordinate clauses.",
+        "They can be detected by means of inflectional forms.",
+        "Three components of adnominal expressions must be considered in the translation process: the modification relationship, the modifier, and Analysis application of analysis knowlege informationTransfer application of transfer knowlege CTES on COLING-92, NArrrEs.",
+        "23-28 notir 1992649 PRoc.",
+        "OF COLING-92, NANrrEs, Aua.",
+        "23-28.",
+        "1992 Then the distance between I and Eij is calculated as follows:",
+        "Applying this knowledge,\"you\" is selected as the word corresponding to the \"sochira\" in \"sochira ni (particle) tsutaeru\" because of the small distance between \"tsutacru (convey)\" and \"okuru(send)\".",
+        "d (I, Eij) = d ((II ,...,It), (Eiji,Eijt)) = X d (1k, Eijk)*Wk k=1 The attribute weight Wk expresses the importance of the k-th element in the translation'.",
+        "The distance from the input is calculated for all examples.",
+        "Then the example whose distance to the input is least, is detected and the TE which has the example is selected.",
+        "When Eij is closest to I, TEi is selected as the most plausible TE.",
+        "The enrichment of examples increases the accuracy of determining the TE because conditions become more detailed.",
+        "Further, even if there is only one TE, but there is no example close to the input, the application of the transfer knowledge is rejected."
+      ]
+    },
+    {
+      "heading": "3.3 Wide application of distance calculation",
+      "text": [
+        "Distance calculation is used to determine which TE has the example that is closest to the input, and can be used in various abstract level expressions depending on how the input words are provided.",
+        "Various levels of knowledge can be provided by the wide application of distance calculation.",
+        "TDMT achieves efficient translation by utilizing multilevel knowledge effectively.",
+        "In the transfer knowledge of the TDMT prototype system, the string-, pattern and grammar-level knowledge, the latter two of which can be described easily in an example-basal framework, are now adopted.",
+        "String-level knowledge is the most concrete, while grammar-level knowledge is the most abstract,",
+        "Since this kind of knowledge has a condition outside the SE, the cooperation with such as context module is sometimes necessary.",
+        "In some cases the conditions can be described by the examples of the most closely related word in which the SE is used, as follows:",
+        "In the translation of \"X o o-negaishimasu\", the TE is determined by the calculation below: if Min ( d((X), (jiimikyoku)) ..... ) < Min ( d((X), (bangou))) then the TE is \"may I speak to X' else the TE is \"please give me X'\" The following two sentences have the pattern \"X o onegaishimasu\":",
+        "(1) \"jinjika (personnel section) o o-negaishimasu.\" (2) \"daimei (title) o o-negaishimasu.\" The first sentence selects \"may I speak to X' \" because (jinjika) is close to (jimukyoku).",
+        "The second sentence selects \"please give me X' \" ,because (daimei) is close to (bangou).",
+        "Thus, we get the following translations: (1') \"may I speak to the personnel section.\" (2') \"please give me the title,\" 3.3.3 Grammar-level transfer knowledge Grammar-level transfer knowledge is expressed in terms of grammatical categories.",
+        "The examples consist of sets of words which are concrete instances of each category.",
+        "'Me following transfer knowledge involves sets of three common nouns (CNs): 3A' is the transferred expression of A ACTES us COLING-92, Narars, 23-28 Aoirr 1992647 Pitoc.",
+        "01 COL1NG-92, NAIsTles, Atm.",
+        "23-28, 1992 the modified.",
+        "Analysis information for structuring is used to insert a marker at the boundary between the modifier and the modified.",
+        "The following analysis knowledge can be constructed.",
+        "Y that X' ((iku (go) , basu[busl ), ...), Y' when X' ((deru (attend) , hi (day) ), ...), For example, analysis knowledge is applied to \"Kyoto eki e iku basu [Kyoto station particle go bus)\" , and the revised SE \"Kyoto eki e iku Adnominal-marker basu\" is produced.",
+        "Then, by the application of the above transfer knowledge about the adnominal relation and the following transfer knowledge about the modifier and modified, the translation result \"the bus that goes to the Kyoto station\" is produced.",
+        "Transfer knowledge is applied at the most concrete level as possible, that is, in the order of string, pattern, and grammar level.",
+        "In order to achieve flexible processing which exchanges necessary translation information, a parallel implementation is under study based on the results from the prototype system.",
+        "The knowledge base has been built from statistical investigation of the bilingual corpus, whose domain is inquiries concerning international conference registration.",
+        "The corpus has syntactic correspondences between Japanese and English.",
+        "We have established transfer and analysis knowledge as follows: string-level transfer knowledge (about 500 items) pattern-level transfer knowledge (about 300 items) grammar-level transfer knowledge (about 20 items) analysis knowledge(about 50 items)"
+      ]
+    },
+    {
+      "heading": "6 Evaluation",
+      "text": [
+        "We have evaluated the TDMT prototype system, with the model conversations about conference registration consisting of 10 dialogs and 225 sentences.",
+        "The model conversations cover basic expressions.",
+        "Table 1 shows the kinds of knowledge that were required to translate the model conversations.",
+        "Table 1 Knowledge Necessary to Translate Model Conversation ( total number of sentences - 225) string only pattern and string only grammar-level transfer knowledge needed analysis knowledge needed",
+        "At present, the prototype system can produce output quickly by the example-based framework.",
+        "200 of the sentences are correct, providing a success rate of 88.9%.",
+        "The coverage by string and pattern-level knowledge is wider than expected.",
+        "Table 2 shows the main causes of incorrect sentences.",
+        "X e YY' to X', Kyoto cid => Kyoto station, iku => go,basu --r> bus"
+      ]
+    },
+    {
+      "heading": "5 TDMT Prototype System",
+      "text": [
+        "A prototype Japanese to English system constructed to confirm the feasibility and effectiveness of TDMT is running on a Genera 8.1 LISP machine [Furuse and Lida 92].",
+        "Due to the restriction of the sequential mechanism, a method for driving the necessary process at the required time has not been completely achieved.",
+        "However, the following control mechanism is used to obtain the most efficient processing possible.",
+        "ACTES DE COLING-92, NANTES, 23-28 Ao&r 1992650 PROC.",
+        "OF COLING-92, NA6rrcs, Aug. 23-28, 1992"
+      ]
+    },
+    {
+      "heading": "2.2 Utilization of example-based framework",
+      "text": [
+        "Transfer knowledge is the basic data which is used for totally controlling the translation process.",
+        "Most of the transfer knowledge in TDMT is described by the example-based framework.",
+        "An example-based framework is useful for consistently describing transfer knowledge.",
+        "The essence of the example-based framework is the distance calculation.",
+        "This framework achieves the best-match based on the distance between the input and provided examples, and selects the most plausible target expression from many candidates.",
+        "The distance is calculated quickly because of its simple mechanism.",
+        "Through providing examples, various kinds and levels of knowledge can be described in the example-based frarneworlc."
+      ]
+    },
+    {
+      "heading": "2.3 Multilevel knowledge",
+      "text": [
+        "TDMT provides multilevel transfer knowledge, which corresponds to each translation strategy.",
+        "In the transfer knowledge of the TDMT prototype system, there is string-, pattern and grammar-level knowledge.",
+        "TDMT achieves efficient translation by utilizing multilevel knowledge effectively according to the nature of input.",
+        "Some conventional machine translation systems also provide multiple levels of transfer knowledge for idioms, syntax, semantics, and so on, and try to apply these levels of that knowledge in a fixed order to cover diverse input [Ikehara et al.",
+        "871.",
+        "However, this method proceeds with the analysis for deciding which level of knowledge should be applied for any given input sentence in a fixed order, placing heavy load on the analysis module.",
+        "Also, the knowledge description is rather more complicated than that of the example-based framework.",
+        "Therefore, the translation of a simple sentence is not always quick because the system tries to cover all translation strategies."
+      ]
+    },
+    {
+      "heading": "3 Example-based Transfer",
+      "text": [
+        "TDMT utilizes distance calculation to determine the most plausible target expression and structure in transfer."
+      ]
+    },
+    {
+      "heading": "3.1 Word distance",
+      "text": [
+        "We adopt the distance calculation method of Example Based Machine Translation (EBMT) [Sumita and lida 91].",
+        "The distance between words is defined as the closeness of semantic attributes in a thesaurus.",
+        "Words have certain thesaurus codes, which correspond to particular semantic attributes.",
+        "The distance between the semantic attributes is determined according to the relationship of their positions in the hierarchy of the thesaurus, and varies between 0 and 1 (Fig.",
+        "1).",
+        "The distance between semantic attributes A and B is expressed as d(A, B).",
+        "Provided that the words X and Y have the semantic attribute A and B, respectively, the distance between X and Y, d(X, Y), is equal to d(A, B).",
+        "Figure 1 Distance between thesaurus codes The hierarchy of the thesaurus that we use is in accordance with the thesaurus of everyday Japanese [Ohno and Hamanishi 84], and consists of four layers.",
+        "when two values can be abstracted in the k-th layer from the bottom, the distance k/3 (0 k 3) is assigned.",
+        "The value 0 means that two codes belong to exactly the same category, and 1 means that they are unrelated.",
+        "The attributes \"writing\" and \"book\" are abstracted by the immediate upper attribute \"document\" and the distance is given as 1/3.",
+        "Thus, the word \"ronbun[ technical paper]\" which has thesaurus code \"writing\", and \"yokoushuu[proceedings)\" which has the thesaurus code \"book\", arc assigned a distance of 1/3."
+      ]
+    },
+    {
+      "heading": "3.2 Description of Transfer Knowledge",
+      "text": [
+        "Transfer knowledge describes the correspondence between source language expressions (SE) and target language expressions (TE) in certain meaningful units, preserving the translational equivalence [Tsujii and Fujita 91].",
+        "The condition under which a TE is chosen as a translation result of an SE is associated with the TE.",
+        "Transfer knowledge in an example-based framework is described as follows:",
+        "(1) inability to get such 1Es9 as elided objects (2) selection of incorrect TEs8 (3) error in adverb position4 (4) incorrect declension1 (5) incorrect tense (6) etc2",
+        "The second factor shows that an elaboration of distance calculation and an enrichment of examples are needed.",
+        "The first, third, and fourth factors are caused by the shortage of generation knowledge.",
+        "The fifth factor is caused by the shortage of analysis knowledge.",
+        "These facts show that the cooperative control that flexibly communicates various kinds of knowledge including context and generation knowledge, and various kinds of frameworks such as a rule-based and a statistical framework are useful to improve the translation performance."
+      ]
+    },
+    {
+      "heading": "7 Related Research",
+      "text": [
+        "The example-based approach was advocated by Nagao [Nagao 84].",
+        "The essence of this approach is (a) retrieval of similar examples from a bilingual database and (b) applying the examples to translate the input.",
+        "Other research has emerged following this line, including EBMT ]Sumita and Iida 91], MET [Sato and Nagao 90], and Al3MT [Sadler 89].",
+        "El3MT uses phrase examples and will be integrated with conventional rule based machine translation.",
+        "MBT and ABMT use example dependency trees of examples and translate the whole sentence by matching expressions and by a lef tto-right search of maximal matching.",
+        "TDMT utilizes an example-based framework for various process as the method of selecting the most suitable TE, and combines multilevel transfer knowledge.",
+        "On the other hand, MBT and ABMT utilize uni-level knowledge only for transfer."
+      ]
+    },
+    {
+      "heading": "8 Concluding Remarks TDMT (Transfer-Driven Machine Translation) has been proposed. The prototype TDMT system which translates Japanese to English spoken dialogs, has been constructed with an example-based framework. The consistent description by example smoothes the cooperation between transfer and analysis, have shown the high feasibility. Important future work will include the achievement of flexible translation which effectively control the translation process. Also important is the implementation of TDMT in distributed cooperative processing by a parallel computer and incorporating various kinds of processing such as rule-based and statistical framework into the cooperation mechanism. Acknowledgements",
+      "text": [
+        "I would like to thank the members of the ATR Interpreting Telephony Research Laboratories for their comments on various parts of this research.",
+        "Special thanks are due to Dr. Kohei Habara, the chairman of the board of ATR Interpreting Telephony Research Laboratories, Dr. Akira Kurematsu, the president of ATR Interpreting Telephony Research Laboratories, for their support of this research."
+      ]
+    },
+    {
+      "heading": "References",
+      "text": [
+        "[Furuse and !lila 92] Peruse, 0., and Iida, H. : An Example-based Method for Transfer-driven Machine Translation, Proc.",
+        "of the Fourth International Conference on Theoretical and Methodological Issues in Machine Translation, (1992).",
+        "[Ikehara et al.",
+        "87] Ikehara, S., Miyazaki, M., Shirai, S., and Hayashi, Y : Speaker's Recognition and Multilevel-Translating Method Based on It, Trans,IPS Japan Vol.28 No.12., IPSJ , pp.1269-1279, (1987), (in Japanese).",
+        "[Nagao 84] Nagao, M. : A framework of a mechanical translation between Japanese and English by analogy principle, in Artificial and Human Intelligence, ed.",
+        "Elithorn, A. and Banerji, R., North-Holland , pp.173- 180, (1984).",
+        "[Ohno and Harnanishi 84] Ohno, S. and Hamanishi M. : Ruigo-Shin-Jiten, Kadokawa, (1984), (in Japanese).",
+        "[Sadler 89] Sadler, V. : Working with Analogical Semantics, Foris Publications (1989).",
+        "[Sato and Nagao 90] Sato, S. and Nagao M. : Toward Memory-Based Translation, Proc.",
+        "of Coling '90, (1990).",
+        "[Samna and lida 91] Smith., E., and Iida, H. Experiments and Prospects of Example-based Machine Translation, Proc.",
+        "of the 29th Annual Meeting of the Association for Computational Linguistics, (1991).",
+        "[Tsujii and Fujita 91] Tsujii, J. and Fujita, K. : Lexical Transfer based on Ili-Lingual Signs Towards Interaction during Transfer, : Proc.",
+        "of the 5th Conference of the European Chapter of the Association for Computational Linguistics, (1991).",
+        "kaisai, kikan (conference, opening, time) ),...), CN2' CN3' for CN1' ((\"sanka, moushikomi, youshi (participation, application, form)\"),...), (1') \"discount of the registration fee of the conference\" (2') \"discount of registration fee for the conference\" discount of registration fee of the conference (total distance-0.67) This transfer knowledge allows the following translations: kenkyukai kaisai kikan (workshop, opening, time) -> the time of the workshop happyou moshikomi youshi (presentation, application, form) -> the application form for presentation The above translations select \"CN3' of CN1' \" and 'CN2' CN3' for CNI.",
+        "\" as the most plausible TEs, as the result of distance calculations."
+      ]
+    },
+    {
+      "heading": "3.4 Disambiguation by total distance",
+      "text": [
+        "When there are several ways to apply transfer knowledge to the input sentence, structural ambiguity may occur.",
+        "In such cases, the most appropriate structure is selected on the basis of total distance.",
+        "The least total distance implies that the chosen structure is the most suitable input structure.",
+        "For example, when the pattern \"X no Y\" is applied to the sentence \"kaigi no touroku hi no waribiki (conference, particle, registration, fee, particle, discount)\", there are two possible structures: (1) kaigi no (touroku hi no waribiki) (2) (kaigi no touroku hi) no waribiki The pattern \"X no Y\" has various 'IEs, such as in the following"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,212 @@
+{
+  "info": {
+    "authors": [
+      "Sabine Bergler"
+    ],
+    "book": "Conference of the European Association for Computational Linguistics",
+    "id": "acl-E91-1038",
+    "title": "The Semantics of Collocational Patterns for Reporting Verbs",
+    "url": "https://aclweb.org/anthology/E91-1038",
+    "year": 1991
+  },
+  "references": [
+    "acl-C88-2110",
+    "acl-C90-2008",
+    "acl-C90-3010",
+    "acl-E89-1000",
+    "acl-P90-1032",
+    "acl-P90-1034"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "One of the hardest problems for knowledge extraction from machine readable textual sources is distinguishing entities and events that are part.",
+        "of the main story from those that are part of the narrative structure.",
+        "Importantly, however, reported speech in newspaper articles explicitly links these two levels.",
+        "In this paper, we illustrate what the lexical semantics of reporting verbs must incorporate in order to contribute to the reconstruction of story and context.",
+        "The lexical structures proposed are derived from the analysis of semantic collocations over large text corpora."
+      ]
+    },
+    {
+      "heading": "I Motivation",
+      "text": [
+        "We can distinguish two levels in newspaper articles: the pure information, here called primary information, and the meta-information, which embeds the primary information within a perspective, a belief context, or a modality, which we call circumstantial information.",
+        "The distinction is not limited to, but is best illustrated by, reported speech sentences.",
+        "Here the matrix clause or reporting clause corresponds to the circumstantial information, while the complement (whether realized as a full clause or as a noun phrase) corresponds to primary information.",
+        "For tasks such as knowledge extraction it is the primary information that is of interest.",
+        "For example in the text of Figure 1 the matrix clauses (italicized) give the circumstantial information of the who, when and how of the reporting event, while what is reported (the primary information) is given in the complements.",
+        "The particular reporting verb also adds important information about the manner of the original utterance, the preciseness of the quote, the temporal relationship between matrix clause and complement, and more.",
+        "In addition, the source of the original information provides information about the reliability or credibility of the primary information.",
+        "Because the individual reporting verbs differ slightly but importantly in this respect, it is the lexical semantics that must account for such knowledge.",
+        "US Advising Third Parties on Hostages (RI) The Bush administration continued to insist yesterday that (CI) it is not involved in negotiations over the Western hostages in Lebanon, (R2) but acknowledged that (C2) US officials have provided advice to and have been kept informed by \"people at all levels\" who are holding such talks.",
+        "(C3) \"There's a lot happening, and I don't want to be discouraging,\" (R3) Marlin Fitzwa-ter, the president's spokesman, told reporters.",
+        "(11.4) But Fitzwater stressed that (C4) he was not trying to fuel speculation about any impending release, (R5) and said (C5) there was \"no reason to believe\" the situation had changed.",
+        "(Al) Nevertheless, it appears that it has.",
+        "...",
+        "We describe here a characterization of influences which the reporting clause has on the interpretation of the reported clause without fully analyzing the reported clause.",
+        "This approach necessarily leaves many questions open, because the two clauses are so intimately linked that no one can be analyzed fully in isolation.",
+        "Our goal is, however, to show a minimal requirement on the lexical semantics of the words in-volvdd, thereby enabling us to attempt a solution to the larger problems in text analysis.",
+        "The lexical semantic framework we assume in this paper is that of the Generative Lexicon introduced by Pustejovsky [Pustejovsky89].",
+        "This framework allows",
+        "us to represent explicitly even those semantic collocations which have traditionally been assumed to be presuppositions and not part of the lexicon itself."
+      ]
+    },
+    {
+      "heading": "II Semantic Collocations",
+      "text": [
+        "Reporting verbs carry a varying amount of information regarding time, manner, factivity, reliability etc.",
+        "of the original utterance.",
+        "The most unmarked reporting verb is say.",
+        "The only presupposition for say is that there was an original utterance, the assumption being that this utterance is represented as closely as possible.",
+        "In this sense say is even less marked than report, which in addition specifies an adressee (usually implicit from the context.)",
+        "The other members in the semantic field are set apart through their semantic collocations.",
+        "Let us consider in depth the case of insist.",
+        "One usage can be found in the first part of the first sentence in Figure 1, repeated here as (1).",
+        "1 The Bush administration continued to insist yesterday that it is not involved in negotiations over the Western hostages in Lebanon.",
+        "The lexical definition of insist in the Long-man Dictionary of Contemporary English (LDOCE) [Procter78] is insist 1 to declare firmly (when opposed) and in the Merriam Webster Pocket Dictionary (MWDP) [Woo1f74]: insist to take a resolute stand: PERSIST.",
+        "The opposition, mentioned explicitly in LDOCE but only hinted at in MWDP, is an important part of the meaning of insist.",
+        "In a careful analysis of a 250,000 word text base of TIME magazine articles from 1963 (TIMEcorpus) [Bergler90a] we confirmed that in every sentence containing insist some kind of opposition could be recovered and was supported by some other means (such as emphasis through word order etc.).",
+        "The most common form of expressing the opposition was through negation, as in (1) above.",
+        "In an automatic analysis of the 7 million word corpus containing Wall Street Journal documents (WSJC) [Bergler90b], we found the distribution of patterns of opposition reported in Figure 2.",
+        "This analysis shows that of 586 occurrences of insist throughout the WSJC, 109 were instances' of the idiom insisted on which does not subcategorize for a clausal complement.",
+        "Ignoring these occurrences for now, of the remaining 477 occurrences, 42-8 cooccur"
+      ]
+    },
+    {
+      "heading": "Keywords Occ Comments",
+      "text": [
+        "insist 586 occurrences throughout the corpus insist on 109 these have been cleaned by hand and are actually occurrences of the idiom insist on rather than accidental co-occurrences.",
+        "insist & 117 occurrences of both insist but and but in the same sentence insist & 186 includes not and n't negation insist & 159 includes would, could, subjunctive should, and be insist & 14 but & neg.",
+        "insist & 12 but & on insist & 8 but & subj.",
+        "with such explicit markers of opposition as but (selecting for two clauses that stand in an opposition), not and n't, and subjunctive markers (indicating an opposition to factivity).",
+        "While this is a rough analysis and contains some \"noise\", it supports the findings of our careful study on the T1MEcorpus, namely the following: 2 A propositional opposition is implicit in the lexical semantics of insist.",
+        "This is where our proposal goes beyond traditional collocational information, as for example recently argued for by Smadja and McKeown [Smadja&McKeown90].",
+        "They argue for a flexible lexicon design that can accomodate both single word entries and collocational patterns of different strength and rigidity.",
+        "But the collocations considered in their proposal are all based on word cooccurrences, not taking advantage of the even richer layer of semantic collocations made use of in this proposal.",
+        "Semantic collocations are harder to extract than cooccurrence patterns – the state of the art does not enable us to find semantic collocations automatically1.",
+        "This paper however argues that if we take advantage of lexical paradigmatic behavior underlying the lexicon, we can at least achieve semi-automatic extraction of semantic collocations (see also Calzolari and Bindi (1990) 'But note the important work by Hindle [Flindle901 on extracting semantically similar nouns based on their substitutability in certain verb contexts.",
+        "We see his work as very similar in spirit.",
+        "- 2J7 - and Pustejovsky and Anick (1990) for a description of tools for such a semi-automatic acquisition of semantic information from a large corpus).",
+        "Using qualia structure as a means for structuring different semantic fields for a word [Pustejovsky89], we can summarize the discussion of the lexical semantics of insist with a preliminary definition, making explicit the underlying opposition to the assumed context (here denoted by 0) and the fact that.",
+        "insist is a reporting verb."
+      ]
+    },
+    {
+      "heading": "III Logical Metonymy",
+      "text": [
+        "In the previous section we argued that certain semantic collocations are part of the lexical semantics of a word.",
+        "In this section we will show that.",
+        "reporting verbs as a class allow logical metonymy [Pustejovsky91] [Pustejovsky&Anick88].",
+        "An example can be found in (1), where the metonymy is found in the subject.",
+        "NP.",
+        "The Bush administration is a compositional object of type administration, which is defined somewhat like (4)."
+      ]
+    },
+    {
+      "heading": "4 (Lexical Definition)",
+      "text": [
+        "administration iForm: + plural part of: institution] execute(x, orders(y)), where y is a high official in the specific institution]",
+        "In its formal role at least.",
+        "an administration does not fulfill the requirements for making an utterance – only in its constitutive role is there the attribute 1+ human), allowing for the metonymic use.",
+        "Although metonymy is a general device – in that it can appear in almost any context and make use of associations never considered before' – a closer 2 As the well-known example The ham sandwich ordered another coke.",
+        "illustrates.",
+        "look at the data reveals, however, that metonymy as used in newspaper articles is much more restricted and systematic, corresponding very closely to logical metonymy [Pustejovsky89].",
+        "Not all reporting verbs use the same kind of metonymy, however.",
+        "Different reporting verbs select for different semantic features in their source NPs.",
+        "More precisely, they seem to distinguish between a single person, a group of persons, and an institution.",
+        "We confirmed this preference on the TIMEcorpus, extracting automatically all the sentences containing one of seven reporting verbs and analyzing these data by hand.",
+        "While the number of occurrences of each reporting verb was much too small to deduce the verb's lexical semantics, they nevertheless exhibited interesting tendencies.",
+        "Figure 3 shows the distribution of the degree of an-lunacy.",
+        "The numbers indicate percent of total occurrence of the verb, i.e. in 100 sentences that contain insist as a reporting verb, 57 have a single person as their source.",
+        "The significance of the results in Figure 3 is that semantically related words have very similar distributions and that this distribution differs from the distribution of less related words.",
+        "Admit, denied and insist then fall in one category that we can call here informally [-inst], said and told fall in [+person], and claim and announce fall into a not yet clearly marked category [other].",
+        "We are currently implementing statistical methods to perform similar analyses on WSJC.",
+        "We hope that the impreciseness of an automated analysis using statistical methods will be counterbalanced by very clear results.",
+        "The TIMEcorpus also exhibited a preference for one particular metonymy, which is of special interest for reporting verbs, namely where the name of a country, of a country's citizens, of a capital, or even of the building in which the government resides stands for the government itself.",
+        "Examples are Great Britain/ The British/ London/ Buckingham Palace announced....",
+        "Figure 4 shows the preference of the re 218 - porting verbs for this metonymy in subject position.",
+        "Again the numbers are too small to say anything about each lexical entry, but the difference in preference is strong enough to suggest it is not only due to the specific style of the magazine, but that some metonymies form strong collocations that should be reflected in the lexicon.",
+        "Such results in addition provide interesting data for preference driven semantic analysis such as Wilks' [Wilks75]."
+      ]
+    },
+    {
+      "heading": "IV A Source NP Grammar",
+      "text": [
+        "The analysis of the subject NPs of all occurrences of the 7 verbs listed in Figure 3 displayed great regularity in the TIMEcorpus.",
+        "Not only was the logical metonymy discussed in the previous section pervasive, but moreover a fairly rigid semantic .grammar for the source NI's emerged.",
+        "Two rules of this semantic grammar are listed in Figure 5. source [quant] [mod] descriptor [\",\" name \",\"] [descriptor I ((a I the) mod)] [mod] name [inst 's I name 's] descriptor [name] I name \",\" [a I the] [relation prep] descriptor name \",\" [a I the] name 's (descriptor I relation) I name \",\" free relative clause descriptor role I [inst] position I [position (for I of)] [quant] inst Figure 5: Two rules in a semantic grammar for source NPs The grammar exemplified in Figure 5 is partial – it only captures the regularities found in the TIMEcorpus.",
+        "Source NPs, like all NPs, can be adorned with.",
+        "modifiers, temporal adjuncts, appositions, and relative clauses of any shape.",
+        "The important observation is that these cases are very rare in the corpus data and must be dealt with by general (i.e. syntactic) principles.",
+        "The value of a specialized semantic grammar for.",
+        "source NPs is that it provides a powerful interface between lexical semantics, syntax, and compositional semantics.",
+        "Our source NP grammar compiles different kinds of knowledge.",
+        "It spells out explicitly that logical rnetonyrny is to be expected in the context of reporting verbs.",
+        "Moreover, it restricts possible metonymies: the ham sandwich is not a typical source with reporting verbs.",
+        "The source grammar also gives a likely ordering of pertinent information as roughly"
+      ]
+    },
+    {
+      "heading": "COUNTRYILOCATION ALLEGIANCE INSTITUTION POSITION NAME.",
+      "text": [
+        "This information defines essentially the schema for the representation of the source in the knowledge extraction domain.",
+        "We arc currently applying this grammar to the data in WSJC in order to see whether it is specific to the TIMEcorpus.",
+        "Preliminary results were encouraging: The adjustments needed so far consisted only of small enhancements such as adding locative PPs at the end of a descriptor:"
+      ]
+    },
+    {
+      "heading": "V LCPs – Lexical Conceptual Paradigms",
+      "text": [
+        "The data that lead to our source NP grammar was essentially collocational material: We extracted the subject NPs for a set of verbs, analyzed the lexical-ization of the source and generalized the findings.",
+        "In this section we will justify why we think that the results can properly be generalized and what impact this has on the representation in the lexicon.",
+        "It has been noted that dictionary definitions form a -- usually shallow – hierarchy [Amsler80].",
+        "Unfortunately explicitness is often traded in for conciseness in dictionaries, and conceptual hierarchies cannot be automatically extracted from dictionaries alone.",
+        "Yet for a computational lexicon, explicit dependencies in the form of lexical inheritance are crucial [Briscoe&a1.90] [Pustejovsky&Boguraev91].",
+        "Following Anick and Pustejovsky (1990), we argue that lexical items having related, paradigmatic syntactic behavior enter into the same lexical conceptual paradigm.",
+        "This states that items within an LCP will, have a set of syntactic realization patterns for how the",
+        "- 219 - word and its conceptual space (e.g. presuppositions) axe realized in a text.",
+        "For example, reporting verbs form such a paradigm.",
+        "In fact the definition of an individual word often stresses the difference between it and the closest synonym rather than giving a constructive (decompositional) definition (see LDOCE).4 Given these assumptions, we will revise our definition of insist in (3).",
+        "We introduce.",
+        "an LCP (i.e. semantic type), REPORTING VERB, which spells out the core semantics of reporting verbs.",
+        "It also makes explicit.",
+        "reference to the source NI' grammar discussed in Section IV as the default grammar for the subject NP (in active voice).",
+        "This general template allows us to define the individual lexical entry concisely in a form close to normal dictionary definitions: deviations and enhancements as well as restrictions of the general pattern are expressed for the individual entry, making a comparison between two entries focus on the differences in entailments.",
+        "(6) and (7) differ in the quality of their opposition to the assumed proposition in the context, 0: insist only specifies an opposition, whereas deny actually negates that proposition.",
+        "The entries also reflect"
+      ]
+    },
+    {
+      "heading": "4 The notion of LCPs is of course related to the idea of semantic fields trrier31j.",
+      "text": [
+        "their common preference not to participate in the metonymy that allows institutions to appear in subject position.",
+        "Note that opposed and negate are not assumed to be primitives but decompositions; these predicates are themselves decomposed further in the lexicon.",
+        "Insist (and other reporting verbs) \"inherit\" much structural information from their semantic type, i.e. the LCP REPORTING VERB.",
+        "It is the semantic type that actually provides the constructive der-.",
+        "inition, whereas the individual entries only define refinements on the type.",
+        "This follows standard inheritance mechanisms for inheritance hierarchies [Pustejovsky&Boguraev91] [Evans&G azdar90].",
+        "Among other things the ICI' REPORTING VERB specifies our specialized semantic grammar for one of its constituents, namely the subject NI' in non-passive usage.",
+        "This not only enhances the tools available to a parser in providing semantic constraints useful for constituent delimiting, but also provides an elegant; way to explicitly state which logical metonymies are common with a given class of words."
+      ]
+    },
+    {
+      "heading": "VI Summary",
+      "text": [
+        "Reported speech is an important phenomenon that cannot be ignored when analyzing newspaper articles.",
+        "We argue that the lexical semantics of reporting verbs plays an important part in extracting information from large on-line text bases.",
+        "Based on extensive studies of two corpora, the 250,000 word TIMEcorpus and the 7 million word Wall Street Journal Corpus we identified that semantic collocations must be represented in the lexicon, expanding thus on current trends to include syntactic collocations in a word based lexicon [Smadja&M cKeow n90] .",
+        "We further discovered that logical metonymy is pervasive in subject position of reporting verbs, but that reporting verbs differ with respect to their preference for different kinds of logical metonymy.",
+        "A careful analysis of seven reporting verbs in the TIMEcorpus suggested that there are three features that divide the reporting verbs into classes according to the preference for metonymy in subject position, namely whether the subject NP refers to the source as a single person, a group of people, or an institution.",
+        "The analysis of the source NPs of seven reporting verbs further allowed us to formulate a specialized se-'Grirnshaw [Grimshaw79] argues that verbs also select for their complements on a semantic basis.",
+        "For the sake of conciseness the whole issue of the form of the complement and its semantic connection has to be omitted here.",
+        "- 220 - mantic grammar for source NPs, which constitutes an important interface between lexical semantics, syntax, and compositional semantics used by an application program.",
+        "We are currently testing the completeness of this grammar on a different corpus and are planning to implement a noun phrase parser.",
+        "We have imbedded the findings in the framework of Pustejovsky 's Generative Lexicon and qualia theory [Pustejovsky89] [Pustejovsky9l].",
+        "This rich knowledge representation scheme allows us to represent explicitly the underlying structure of the lexicon, including the clustering of entries into semantic types (i.e. LCPs) with inheritance and the representation of information which was previously considered pre-suppositional and not part of the lexical entry itself.",
+        "In this process we observed that the analysis of semantic collocations can serve as a measure of semantic closeness of words.",
+        "Acknowledgements: I would like to thank my advisor, James Pustejovsky, for inspiring discussions and many critical readings."
+      ]
+    }
+  ]
+}

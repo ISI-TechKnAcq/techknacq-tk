@@ -1,0 +1,165 @@
+{
+  "info": {
+    "authors": [
+      "David S. Pallett",
+      "William M. Fisher",
+      "Jonathan G. Fiscus",
+      "John S. Garofolo"
+    ],
+    "book": "Workshop on Speech and Natural Language",
+    "id": "acl-H90-1024",
+    "title": "DARPA ATIS Test Results June 1990",
+    "url": "https://aclweb.org/anthology/H90-1024",
+    "year": 1990
+  },
+  "references": [],
+  "sections": [
+    {
+      "heading": "Introduction",
+      "text": [
+        "The first Spoken Language System tests to be conducted in the DARPA Air Travel Information System (ATIS) domain took place during the period June 15 - 20, 1989.",
+        "This paper presents a brief description of the test protocol, comparator software used for scoring results at NIST, test material selection process, and preliminary tabulation of the scored results for seven SLS systems from five sites: BBN, CMU, MIT/LCS, SRI and Unisys.",
+        "One system, designated cmu-spi(r) in this paper, made use of digitized speech as input (.wav files), and generated CAS-format answers.",
+        "Other systems made use of SNOR transcriptions (.snr files) as input."
+      ]
+    },
+    {
+      "heading": "Test Protocol",
+      "text": [
+        "The test protocol for these tests was modelled after precedents established over the past several years in the DARPA Resource Management speech recognition benchmark tests.",
+        "On June 11, 1990, participating sites were notified of the availability of SNOR-format transcriptions for a designated set of 93 \"Class A\" test utterances.",
+        "Data were available using an FTP protocol that had been used earlier for access to system training material.",
+        "Copies of the speech waveform files were distributed to three sites using Exabyte tapes.",
+        "Responses were provided (in most cases) to NIST on June 15.",
+        "In return, NIST provided a key to an encrypted version of the complete ATIS session data from which the test material was selected, and sites were free to access that data in scoring their system results locally.",
+        "A preliminary summary of the test results was distributed by NIST to participants on June 18th."
+      ]
+    },
+    {
+      "heading": "Availability of the ATIS Data",
+      "text": [
+        "Access to all of the ATIS data released by NIST (except for the speech waveform data) has been available via anonymous FTP.",
+        "The speech waveform data has been made available to three sites to date on 8mm Exabyte tape: AT&T, CMU and SRI.",
+        "Production of the entire Pilot ATIS Corpus is planned for release by NIST on CD-ROM media after completion of the corpus collection effort at TI."
+      ]
+    },
+    {
+      "heading": "Comparator Software",
+      "text": [
+        "Both REF (reference) and HYP (hypothesized) answers were to be written in a CAS (Common Answer Specification) format that was a slight adaptation of the CAS originally developed by BBN, and which had been agreed on by the CAS/Comparator Task Group.",
+        "Two programs were available to aid in the evaluation by automatically comparing matching REF and HYP answers: one in LISP, contributed by BBN, and one in C, developed at NIST.",
+        "Final responsibility for decisions on",
+        "whether or not an answer is correct rested with human judges at NIST.",
+        "When the comparator programs ran, there were a few disagreements in two areas: (1) some answers were scored \"correct\" by the more forgiving NIST code even though the REF and HYP answers disagreed in the use of quotation marks delimiting an answer; and (2) some HYP answers consisting of tables of numeric codes were incorrectly counted as matching the REF answers by the NIST code.",
+        "The first area is a trivial matter of formats and how forgiving a program should be.",
+        "Our judgement in these cases was that the content of the answer was correct.",
+        "The second area raises some interesting logical questions.",
+        "In a typical case, the required column in the table was a code that looked like a number, such as flight_code; because integers and floating point numbers were to be treated as the same type, the tolerance for floating point comparison was used in deciding equality.",
+        "Because the key fields of the extra erroneous rows were \"close enough\" to the correct ones, they were ignored.",
+        "An ad hoc code change was subsequently made in the NIST code so that the tolerance was used only in equality tests when at least one of the numbers was floating point.",
+        "But we think that in principle there is nothing wrong about using a tolerance in comparing two integers; the real wrongness is treating a pointer (or name) as a number.",
+        "One principled way to clear this up would be to consistently use enclosing quotation marks to indicate tokens that are not to be treated numerically.",
+        "We had to increase considerably the space allotted to input buffers in the NIST C software, since one answer that was submitted took more than 175 K bytes.",
+        "As a result of seeing some particular answers, one more change was made in the NIST Comparator code to make it more forgiving: leading and trailing whitespace in a string is now ignored.",
+        "This made several answers from one of the sites count as correct, in agreement with our judgement that they had the right content.",
+        "Several examples came up in the test answers to illustrate the trouble with looking for matches of only values, without constraining the values to be of the same variable, in conjunction with allowing extra values in a tuple.",
+        "For instance, query bdO0c1s, 'WHAT IS CLASS Y\", has the REF answer ((\"Y\")), and one of the HYP answers supplied is: ((Y\"Y\" \"COACH\" \"NO\" \"YES\" \"NO\" \"NO\" \"NONE\" \"1234567\")) Our CAS specification counts this is a correct match, although it is indeterminate which of the tuple's two 'Y' fields was matched.",
+        "A HYP answer with 'Y' value in any field would count as equally correct.",
+        "In tabular answers intended for human consumption, this problem is solved by supplying column headings.",
+        "It would be easy to incorporate a similar system into our computerized scoring methods."
+      ]
+    },
+    {
+      "heading": "Test Material Selection Process",
+      "text": [
+        "Time was available to do only cursory study of material in sorting it into training and test bins.",
+        "A vague, intuitive sense of \"plain vanilla\" vs. \"weird\" was used.",
+        "Several sessions were ruled out as test material because they were unusual: one had an extremely low frequency of \"Class A\" queries; in another, almost all the queries were just NP's, without verbs.",
+        "In the sessions accepted as test material, all \"Class A\" queries were used.",
+        "It was strongly suggested that we partition the results into \"new word\" and \"old word\" sets, the \"new word\" set being those queries containing words not in the training material.",
+        "This motivated us to think some about the \"new word\" problem.",
+        "Probably the principle being implicitly addressed here is that test queries are unfair if they are not answerable by the logical generalization of the",
+        "conjunction of training material and the initial state of the language model.",
+        "(In a spelling bee, it is probably unfair to expect a contestant to come up with the \"k\" in \"knight\" if that word -- or a related word -- had never been seen in training.)",
+        "This is the other side of the usual constraint between testing and training: that they be statistically independent, for a valid test.",
+        "Violation of the \"fair generalization\" constraint between training set and test set does not make a test \"invalid\", or necessarily biased, but only inefficient and \"unfair\" if only the bottom line is paid attention to.",
+        "Since some words are understandable even though one has not previously heard them, and polysemous words are not necessarily understandable after limited exposure, \"words\" are not the right unit to look at in deciding if a test case is implied by the training set.",
+        "The real constraint is that all sound-to-meaning mappings that are required in order to answer the test question be learnable from the training material (assuming an initial \"tabula rasa\" language model).",
+        "This points to idioms: sound-meaning pairs that are not predictable by general rule from a knowledge of the sounds and meanings of their constituent parts.",
+        "Knowing the meaning of \"time\" and \"table\" does not make \"time table\" understandable.",
+        "And morphemes (roughly non-complex words) qualify as idioms, since they have no sound-meaning constituent parts.",
+        "New syntactic constructions mediating between sound and meaning would also make the sound-to-meaning mapping of a query unhandleable.",
+        "Here are the qualitatively new elements that we found in the test material (including non-Class A) utterances :",
+        "1.",
+        "Morphemes: EARLY, EQUAL, ITS, LOCKHEED, NIGHT, [STAYING] OVER, and PART.",
+        "2.",
+        "Words: [U] A'S, LEAVES, MEANINGS, MORNINGS, NINETEENTH, PRICES, SEATINGS, SERVICING, [TO] SERVICE, SPECIALS, STAYING [OVER], and THREE'S. 3.",
+        "Multi-word Idioms: TIME TABLE (only in Class X)",
+        "With one exception, none of the five Class A queries with new morphemes were answered correctly.",
+        "Query bp00k1s, with \"NIGHT\" in it, was successfully answered by only the MIT system.",
+        "Perhaps because \"NIGHT\" is in the knowledge database, it should have been counted as an \"old\" morpheme.",
+        "Several of the ten queries with new complex words in the test set were answered correctly; primarily ones with new words that are regular morphological variants of other words that are in the training set (or the assumed preexisting language model), e.g. \"meanings\", \"times\", or \"nineteenth\".",
+        "A table showing the \"new phenomena\" subset of results is provided at the end of this paper (Table 2).",
+        "It seems to us that a promising research topic would be further study of such training-test \"fair generalization\" or \"learnability\" constraints, with an eye to automating detection of their violation in the design of better tests."
+      ]
+    },
+    {
+      "heading": "Preliminary Results",
+      "text": [
+        "Results were reported to NIST for a total of seven systems by June 19th: two systems from BBN, two from CMU and one each from MIT, SRI and Unisys.",
+        "The system designated as cmu-spi (\"spi\" = > speech input) was the only one for which the input consisted of the speech waveform.",
+        "For the other systems the input consisted of the SNOR transcriptions.",
+        "Subsequently, reformatted results for three systems were accepted: \"cmu-r\", \"cmu-spir\", and \"mite.",
+        "The CAS-format input provided for an answer of the form NO ANSWER to indicate that the _ system failed to provide an answer for any of several reasons (e.g., failure to recognize the words, failure to parse, failure to produce a valid database query, etc).",
+        "Some sites made considerable use of this option, others (e.g., MIT) initially did not, partially due to miscommunication about the validity of this option.",
+        "Some trivial fixes in the format used for submissions of results from some of the sites were made.",
+        "One site initially omitted an answer for one of the queries, throwing subsequent REF-HYP alignment off; we inserted for them a NO_ANSWER response.",
+        "Since there was miscommunication about the use of the \"NO_ANSWER\" response, we also changed one system's stock response meaning \"system can't handle it\" to \"NO_ANSWER\" for them, and allowed another site to submit revised results with \"NO_ANSWER\" in place of some of their responses.",
+        "In the table of results, the revised systems are \"cmu-r\", \"cmuspir\", and \"mit-r\".",
+        "Responding to several complaints from sites about specific items in the test reference material, we corrected one reference answer (bd0071s) and changed the classification of three queries (bm0011s, bp0081s, and bwO0s1s) from Class A to Class X (in effect deleting these from the test set, reducing the test set size to 90 valid Class A queries).",
+        "The classification disputes all centered on ambiguity, one of the hardest calls to make.",
+        "If similar limitations on what is evaluable are made for the next round, we would like to have both an explicit principle for deciding when ambiguity is present and a procedure for adjudicating disputes agreed on early.",
+        "The detailed results are given in Table la for Class A queries with only lexical items that appear at least once in the training data, and in Table 2a for Class A queries with \"new\" morphemes, words, or idioms.",
+        "Table 3 presents a complete summary of the results for the entire 90 sentence-utterance test set.",
+        "Since the Class A test queries are not context-dependent, the ordering of these queries is not significant.",
+        "As an aid in analysis, for the results presented in Tables la and 2a, queries have been (roughly) rank ordered in order of increasing apparent difficulty.",
+        "Note that queries toward the top of both parts of the table resulted in more \"T\" answers than \"F\" or NA\", while queries toward the bottom of the table resulted in more \"F\" and \"NA\" answers.",
+        "Not surprisingly, there appears to be a general trend toward increasing apparent difficulty with increased length of the utterance (number of words).",
+        "Table 3 shows that the number of correct answers from the various systems ranged from 25 to 58.",
+        "Note also that for the system for which speech waveform data was used as input, (cmu-spir), 35 of the queries were answered correctly.",
+        "Comparing results from similar systems for the two subsets of the data (Tables lb and 2b), note that the ratios of the numbers of correctly recognized queries in the two subsets vary from 1.9 to 4.6, with better performance on the subset for which all lexical items occurred at least once in the training data, of course.",
+        "Comparisons such as these are complicated, however, by the fact that different systems returned NO_ANSWER for from 0 to 60 of the queries.",
+        "Perhaps a more appropriate denominator to be used in computing the percentage of correct responses would have been the number of responses for which an answer was provided."
+      ]
+    },
+    {
+      "heading": "Summary",
+      "text": [
+        "This paper has presented results of the first Spoken Language System tests conducted in the DARPA Air Travel Information System domain.",
+        "bbn-par T anu T cmu-r T anu-spi T cmu-spir T mit T ME THE AIRFARES ON FLIGHTS FROM D F W TO DENVER BEFORE NINE A M bbn-par T anu T cmu-r T anu-spi T anu-spir T mit T IS THE FARE ON UNITED AIRLINES NINE FIFTY THREE bbn-par T anu T cmu-r T cmu-spi T cmu-spir T mit T ME THE AIRFARE ON FLIGHT EIGHT EIGHT ZERO FOR UNITED AIRLINES bbn-par T anu T cmu-r T emu-spi T cmu-spir T mit T ME THE PRICE FOR FLIGHT THREE FOURTEEN ON MAY TWELFTH FROM DALLAS TO BALT bbn-par T anu T cmu-r T cmu-spi T cmu-spir T mit T ME ALL THE FLIGHTS FROM PHILADELPHIA TO SAN FRANCISCO ON MAY TWENTY SIXTH bbn-par T cmu T cmu-r T cmu-spi T amu-spir T mit T IS THE NAME OF THE AIRPORT IN BOSTON bbn-par T anu T cmu-r T anu-spi T cmu-spir T mit T IS THE FARE ON FLIGHT ELEVEN FORTY NINE FROM CONTINENTAL AIRLINES bbn-par T cmu T cmu-r T anu-spi T cmu-spir T mit T IS THE FARE ON AMERICAN AIRLINES FOURTEEN FORTY THREE FLIGHT bbn-par T anu T cmu-r T anu-spi T cmu-spir T mit T IS A Y CLASS bbn-par T anu T cmu-r T cmu-spi T anu-spir T mit T IS RESTRICTION V U SLASH ONE",
+        "cmu T mit-r F sri NA unisys NA 2 4 4 bbn-harc NA bbn-par NA cmu-r T cmu-spi F cmu-spir F mit F",
+        "mit F bbn-harc NA bbn-par NA cmu-r T cmu-spi F cmu-spir F mit-r F sri NA unisys NA 2 4 4 bm00b1sx GIVE ME A LIST OF ADVANCE PURCHASE AIRFARES FOR ROUND-TRIP TICKETS FROM DALLAS TO BOSTON ON DELTA FLIGHT SIX NINETY FOUR RETURNING ON DELTA FLIGHT FIVE EIGHTY NINE mit F mit-r F sri NA unisys NA 2 4 bbn-harc NA bbn-par NA cmu-r F cmu-spi T cmu-spir T 4 bp00c1sx SHOW ME A LIST OF CODES FOR THE MEALS cmu F mit F sri NA unisys NA 2 4 bbn-harc T bbn-par T cmu-r NA cmu-spi F anu-spir NA mit-r F 4 bp00z1sx IS FIVE HUNDRED AND FIFTY TWO DOLLARS THE CHEAPEST FARE FROM SAN FRANCISCO TO DALLAS FORT WORTH"
+      ]
+    },
+    {
+      "heading": "bm0071sx GIVE ME A LIST OF ALL AIRFARES FOR A ROUND-TRIP TICKETS FROM DALLAS TO BOSTON ON DELTA FLIGHT SIX NINETY FOUR RETURNING ON DELTA FLIGHT FIVE EIGHTY NINE",
+      "text": []
+    },
+    {
+      "heading": "Detailed ATIS Results for Utterances with Lexical Items Not Contained in Training Lexicon",
+      "text": []
+    },
+    {
+      "heading": "Summarized ATIS Results for Utterances with Lexical Items Not Contained in Training Lexicon",
+      "text": [
+        "Site counts I T F NA bbn-harc 4 0 12 ---- 2 bbn-par 5 1 8 anu 3 11 0 cmu-r 3 5 6 cmu-spi 2 12 0 cmu-spir 2 4 8 mit 5 9 0 mit-r 4 7 3 sri 2 1 11 unisys 2 1 11 Where T is for a correct answer agreement of REF and HYP F is for an incorrect answer NA is for \"NO ANSWER\""
+      ]
+    },
+    {
+      "heading": "Summarized ATIS Results for All Utterances",
+      "text": [
+        "Where T is for a correct answer agreement of REF and HYP F is for an incorrect answer NA is for \"NO ANSWER\" bbn-harc bbn-par cmu cmu-r cmu-spi cmu-spir mit mit-r sri unisys"
+      ]
+    }
+  ]
+}

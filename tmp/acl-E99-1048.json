@@ -1,0 +1,66 @@
+{
+  "info": {
+    "authors": [
+      "John Nerbonne",
+      "Wilbert Heeringa",
+      "Peter Kleiweg"
+    ],
+    "book": "Conference of the European Association for Computational Linguistics",
+    "id": "acl-E99-1048",
+    "title": "Comparison and Classification of Dialects",
+    "url": "https://aclweb.org/anthology/E99-1048",
+    "year": 1999
+  },
+  "references": [
+    "acl-E95-1009"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "This project measures and classifies language variation.",
+        "In contrast to earlier dialectology, we seek a comprehensive characterization of (potentially gradual) differences between dialects, rather than a geographic delineation of (discrete) features of individual words or pronunciations.",
+        "More general characterizations of dialect differences then become available.",
+        "We measure phonetic (un)relatedness between dialects using Levenshtein distance, and classify by clustering distances but also by analysis through multidimensional scaling."
+      ]
+    },
+    {
+      "heading": "1 Data and Method",
+      "text": [
+        "Data is from Reeks Nederlands(ch)e Dialectat-lassen (Blancquaert and Pee, 1925 1982)).",
+        "It contains 1,956 Netherlandic and North Belgian transcriptions of 141 sentences.",
+        "We chose 104 dialects, regularly scattered over the Dutch language area, and 100 words which appear in each dialect text, and which contain all vowels and consonants.",
+        "Comparison is based on Levenshtein distance, a sequence-processing algorithm which speech recognition has also used (Kruskal, 1983).",
+        "It calculates the \"cost\" of changing one word into another using insertions, deletions and replacements.",
+        "L-distance (81,82) is the sum of the costs of the cheapest set of operations changing s1 to sz-sDagIrl delete r 1 spagIl replace I/0 2 spag01 insert r 1 sDrag01 Sum distance 4 The example above illustrates Levenstein distance applied to Bostonian and standard American pronunciations of saw a girl.",
+        "Kessler (1995) applied Levenshtein distance to Irish dialects.",
+        "The example simplifies our procedure for clarity: refinements due to feature sensitivity are omitted.",
+        "To obtain the results below, costs are refined based on phonetic feature overlap.",
+        "Replacement costs vary depending on the phones involved.",
+        "Different feature systems were tested; the results shown are based on Hoppenbrouwers' (SPE-like) features (Hoppenbrouwers and Hoppenbrouwers, 1988).",
+        "Comparing two dialects results in a sum of 100 word pair comparisons.",
+        "Because longer words tend to be separated by more distance than shorter words, the distance of each word pair is normalized by dividing it by the mean lengths of the word pair.",
+        "This results in a halfrnatrix of distances, to which (i) clustering may be applied to CLASSIFY dialects (Aldenderfer and Blashfield, 1984); while (ii) multidimensional scaling may be applied to extract the most significant dimensions (Kruskal and Wish, 1978)."
+      ]
+    },
+    {
+      "heading": "2 Results",
+      "text": [
+        "We have validated the technique using cross-validation on unseen Dutch dialect data (Nerbonne and Heeringa, 1999).",
+        "The map in Figure 1 distinguishes Dutch \"dialect area\" in a way which nonstatistical methods have been unable to do (without resorting to subjective choices of distinguishing features).",
+        "Ongoing work applies the technique to questions of convergence/divergence of dialects using dialect data from two different periods.",
+        "Finally, the MDS analysis gives mathematical form to the intuition of dialectologists in Dutch (and other areas) that the material is best viewed as a \"continuum\".",
+        "The map is obtained by interpreting MDS dimensions as colors and mixing using inverse distance weighting.",
+        "Further information on the project is available at www .",
+        "let .",
+        "rug .nl/alf al, \"Projects.\""
+      ]
+    },
+    {
+      "heading": "3 Acknowledgements",
+      "text": [
+        "Joseph Kruskal's advice has been invaluable."
+      ]
+    }
+  ]
+}

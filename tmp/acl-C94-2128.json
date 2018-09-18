@@ -1,0 +1,273 @@
+{
+  "info": {
+    "authors": [
+      "Renate Henschel",
+      "John A. Bateman"
+    ],
+    "book": "International Conference on Computational Linguistics",
+    "id": "acl-C94-2128",
+    "title": "The Merged Upper Model: A Linguistic Ontology for German and English",
+    "url": "https://aclweb.org/anthology/C94-2128",
+    "year": 1994
+  },
+  "references": [
+    "acl-H89-1022",
+    "acl-H92-1052"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "A detailed comparison of the Penman Upper Model and the 1.",
+        "{01V1 ['IT German Upper Model has been carried out in order to construct a new Merged Upper Mode/ capable of serving as the ideational basis for generation in both English and GerIllall Previously proposed criteria for conducting such a merge are expanded on and evaluated.",
+        "It is established that no (semi-)automatic merging of such knowledge sources can be expected to produce a reasonable result and that detailed comparison of the kind reported is essential.",
+        "The result of the merge is now being used as the basis for sentence generation in finglish, German and Butch."
+      ]
+    },
+    {
+      "heading": "1 INTRODUCTION: MULTILINGUAL LINGUISTIC `ONTI)LOGIES'",
+      "text": [
+        "With the need to develop reusable frameworks for organizing information (cf., e.g., the ARPA Knowledge Sharing Effort [Patin ei al., 1992]), workable proposals for `ontologies' to provide such organization are increasing in importance.",
+        "Such ontologies are now commonly applied in Natural Language Processing systems since there the representation of commonsense and domain knowledge is essential.",
+        "Accordingly, a number of organizations of knowledge have been developed some quite extensive.",
+        "These organizations are evaluated by the extent, to which they prove reusable across distinct, domains awl applications.",
+        "The consideration of the reuse of these organizations is, however, coin plimited by the range of differing design criteria that are employed in their construction; an extensive overview of approaches is given in [Bateman, 1992a].",
+        "One particular approach is to define linguislicallg 1110ti'vatcdontologies, where the criteria for organization rest on semantic distinctions that the grammar of a language needs to have drawn in order to motivate its deployment, of grammatical distinctions.",
+        "Two sizeable linguistic ontologies constructed in this way are the Penman Lipper Model developed for English text.",
+        "generation within the yentuan project at USC/iSt [Permian Project, 1989] and the Upper Model for (ilerman developed similarly for text generation within the komr'n project at CM 1)/I PSI [Bateman et at., \"1991a].",
+        "The English Upper Model (1,3:111) is described in [Bateman et al., 1990]; the concepts of the German Upper Model (GUAM) go [nick to [Steiner ci al., 1988] and [Teich, 1992].",
+        "Both ontologies are individually examples of the most detailed such on-trilogies currently under development, each with over 2011 domain and application independent concepts *Also on indefinite leave front the Penman Project, US( gInformation Sciences Institute, Marina del Itey, dos A imeles.",
+        "arranged in a subsumption lattice, sin-inning distinct types of processes (mental, communication, relational, actions), and diverse qualities and objects.",
+        "13otli ontologies have been used in a number of domains and show good re-usability characteristics mainly due to the fact that they are linguistically motivated.",
+        "Thus, for example, if language generation is required there is typically 100% re-usability across domains in contrast to the 130% described by Widen], 1993] for the, largely non-linguistically motivated, 1,11,001 ontology.' There are a. nuinber of suggestions for the evaluation of ontologies in terms of formal properties of consistence and coherence of the information those ontologies contain (e.g., [Iloracek, 1989, Guarino, 1994]).",
+        "With a restriction to linguistically 1110 tivated ontologies, we can now state further design principles concerning what, is to be represented '1.11.",
+        "(1 how.",
+        "Although these principles were originally developed in order to carry out a detailed comparison of the VUM- and the (;(111/1, they are generally applicable for all linguistically motivated ontologies; evaluating the concepts proposed within such an ontology according to the principles described in this paper should improve the status of that ontology overall.",
+        "The main result of the vum-GUM comparison is a Merged Upper Model presently used within the KomnT project, as the basis for multilingual sentence generation in English, German and Dutch.'\" This then also provides au early answer to a question concerning a different kind of re-usability of linguistically motivated ontologies, i.e., the extent to which they can be reused across distinct languages rather than across distinct, domains."
+      ]
+    },
+    {
+      "heading": "2 THE MERGING METHOD",
+      "text": []
+    },
+    {
+      "heading": "2.11 Starting points",
+      "text": [
+        "Merging distinct ontologies is a problem that will occur More frequently as new proposals are to be reconciled.",
+        "[Hovy and Nirenburg, 1992] propose a general method for creating a merged ontology out, of different ontologies where it does not matter whether This is simply because a linguistically motivated ontology is bound to the semantics of a grammar and not to general, possibly domain-transcendent knowledge.",
+        "The two kinds of ontologies should therefore be seen as performing different kinds of work.",
+        "For extensive motivations for maintaining a linguistically motivated ontology, see [I alliday and Matthiessem to appear, Ilateman, 1992a].",
+        "differences arc language dependent or clue to different linguistic theories.",
+        "The commonalities and differences in two ontologies are classified according to Hovy and Nirenburg as follows: I .",
+        "Identity: The same concept is found in both ontologies.",
+        "2.",
+        "Extension: There is a concept in one ontology which is missing in the other, but which specializes the latter ontology further.",
+        "3.",
+        "Cross classification: The partitioning of identified concepts into subconcepts differs in the considered ontologies.",
+        "The merging procedure then keeps all concepts of cases (1) and (2) and resolves case (3) by exhaustive cross classification.",
+        "A simplified version of this procedure is proposed in [Hovy and Knight, 1993].",
+        "Here, the cross classification resulting from nonmatching partitions of identified concepts into subconcepts is replaced by parallel subordination of those subconcepts.",
+        "This results in a substantial reduction in the concepts necessary, but leaves open the question of the mutual relation between concepts stemming from different source ontologies.",
+        "Participating NLP components can be controlled well by such a shared ontology, but its adequacy as a point of communication in a joint MT system is less clear.",
+        "We have found that it is necessary to go beyond the original merging methodology in a number of ways.",
+        "Nevertheless, as a consequence of the criteria for merging that we propose, not all existent concepts of the EUM and GUM need find their representation in the Merged Upper Model and cross classification is still significantly reduced without impairing inter-translatability across concepts arising from different source ontologies."
+      ]
+    },
+    {
+      "heading": "2.2 Problems with identity",
+      "text": [
+        "The crucial point in [IIovy and Nirenburg, 1992] is the notion of 'identity'.",
+        "The decision how to deal with different concepts (identification, extension, or cross classification) is based on the possibility of stating an identity between concepts of different language ontologies.",
+        "This is somewhat problematic.",
+        "In the comparison between the English and the German upper models, we took as identification criterion the equivalence of the sentences or phrases which can be generated by the concepts.",
+        "This correspondence relies on the assumption that German and English sentences have a one-to-one-mapping and that translation is a totally information preserving relation.",
+        "Although this is not true in general, we based our merging on the assumption that it may be true for simple sentences if we abstract out the textual and interpersonal – i.e., non-experiential (examples below) dimensions of utterances, and the language distance is close.",
+        "Hence, the whole construction has to be seen in the context of its own relativity."
+      ]
+    },
+    {
+      "heading": "2.3 Further Principles",
+      "text": [
+        "Internal problems should not be automatically transmitted to a merged ontology.",
+        "Thus, during merging, the distinctions drawn in individual ontologies need always to be evaluated internally before being admitted.",
+        "The exclusion of textual and interpersonal information in a merged upper model provides an additional important criteriurn for an 'extended identification' of concepts within.",
+        "ontologies to be merged.",
+        "Two common kinds of non-experiential concept discriminations were found in the GUM.",
+        "The first introduces distinct upper model concepts in order to motivate lexicogrammatical realization by differing types of grammatical units.",
+        "The second introduces distinct upper model concepts to motivate the selection of semantic roles from a given semantic configuration that are to be lexicogrammatically expressed.",
+        "An example of the first kind is offered by the concepts G Relational and C-Relationship3.",
+        "These are both responsible for the generation of processes experientially classifiable as relational, but whereas G-Relationship causes an attributive or adverbial realization, C, Relational causes a clausal realization.",
+        "Thus, phrases (1) and (2) can only be generated from different semantic input – expressed here in the form of the typed semantic assertions of the Penman Sentence Plan Language (see) [Kasper, 1989]:4",
+        "(1) Das Midchen ist krank.",
+        "(The girl is sick.)",
+        "(a / classificatory :attribuant (xi / person :lex madchen) :classifier (k / quality :lex krank)) (2) das kra.nke Miidchen (the sick girl)",
+        "(a / property-ascription :domain (m / person :lex madchen) :range (k / quality :lex krank)) This problem does not surface so often in the EU M , although there are occasional violations – e.g., the inclusion of 'rhetorical relations' that are explicitly textual (see [Bateman et al., 1990] for details).",
+        "Examples of the second kind are offered by sentences (3a-b).",
+        "(3)a.",
+        "Der Lehrer antwortet, class clan ltaumschiff zuriick gekehrt, ist.",
+        "(The teacher answers that the spaceship has returned.)",
+        "b.",
+        "Der I,ehrer Euttwortet dell Schfilern, class das Raumschiffzuriick gekehrt ist.",
+        "(The teacher answers the students that.",
+        "The differences in (3) arise from differences in the number of semantic participants in the answering-event that are made grammatically explicit.",
+        "Both (3a) and (3b) could be used to describe the same experiential event, the selection being made on non-experiential grounds (e.g., lack of relevance of a participant, being known from context, known from preceding text, etc.)",
+        "specific to the text being created.",
+        "3 Concepts from the English Upper Model and the German Upper Model will be differentiated where relevant by prefixing either 'IF,' or as appropriate.",
+        "4 Classificatory is a subtype of GUM concept Relational, property-ascription a subtype of relationship.",
+        "Further, in the SPL examples in this paper, lexical selection is specified directly by means of the keyword :lex to avoid complicating the discussion unnecessarily.",
+        "Both are, however, classified semantically underneath distinct GUM concepts.",
+        "These distinct concepts have differing obligatory role configurations, which requires that the selection of semantic (experiential) type has to be made according to the participants that are to be expressed - a decision that is often made oil textual grounds without a change in experiential perspective.",
+        "In the EUNI the only semantic distinction in this area of communication processes is between `telling'-like events (addres.see- oriented) and `saying'-like events (non.-addreSS CC °ricoter!",
+        "), which is a difference in experiential perspectives in the EUM, concept discrimination is made with respect to differing possible realizations of roles, not straightforward absence/presence of roles as in the GUM.",
+        "'Missing' surface participants can be modelled more adequately by an upper Enoc:I-grammar interface which allows defined semantic roles to have zero realization.",
+        "This is an elegant way to deal with optional participants, passive, and impersonal constructions.",
+        "The net effect of both kinds of violations( of principle 1 is that the number of concepts is increased and necessary decisions concerning lexicogrammatical realizations are avoided.",
+        "'Ile proliferation of concepts---if allowed--would complicate consider ably the task of 'identification' of similar concepts in ontologies to be merged.",
+        "Principle 2: Intelligent cross classification following extended identification of concepts, it is not sufficient to provide cross products for those concepts that are not identifiable but which classify overlapping semantic areas.",
+        "This is clarified by the following concrete, although much abbreviated, example of merging in the area of material (action) process types.",
+        "The decisions that, are required here are typical of the merging process as a whole.",
+        "The 15-Material-Processhierarchy distinguishes processes more or less with regard to transitivity patterning.",
+        "An EN undirected Action is a process without external causation (mostly intransitive, although transitive sentences where the object is not affected or created by the action also fall into this class).",
+        "K-Ambient- Process and E Motion-Process are not exhaustive subconcepts of P-Nondirected-Action.",
+        "an external causer as additional participant.",
+        "1%- Directed-Actions divide into K Creative M (aerial-Action and 1,1- Dispositive- Material Action.",
+        "former necessarily involves an addressee seinan-tically, someone who is intended to lie listening, while the latter does not.",
+        "This difference is gra.mmaticized in 11nglish ill the acceptability/non-acceptability of 'I told him that...'/`l said him that_ '.",
+        "In order to grammati-cize an addressee in a saying-like event, it is necessary to respect its less central role and to use the form '1 said to him '.",
+        "'''There are further similar cases; for example the GUM also includes interpersonally motivated concept discriminations such as negative-feature-ascription and negative-quality.",
+        "These govern the generation of negative assertions, thus preempting a more appropriate speech function control ()I' negation.",
+        "The child broke the vase.",
+        "Dispositive- Material-Action The lion chased the tourist.",
+        "Diapositive-Material-Action Mary baked a cake.",
+        "Creative-Material-Action The GUN/ differentiates G-Agent- centered, (I-Affected- centered, G Agent-only and G Affected-only as disjoint (7-Action subtypes.",
+        "Here, we have at first, a classification with regard to lAnd and number of participants.",
+        "Examples for the semantic representations of the intransitive process types are given in",
+        "(4) and (5), again in set., notation: (1) I)er Tourist ratuae.",
+        "(The tourist ran.)",
+        "(r / action :lex rennen :agent (t / tourist)) (5) Die Pflanze gent ein.",
+        "(Tlw plant is dying.)",
+        "The transitive processes (with two participants) arc further broken up into G-Agent-centered and (-Affected-centered.",
+        "The (1-Affected-centered process type is a very special case of a transitive process.",
+        "'the definition is given in [Steiner et al., .1988] thus: \"A affected-centered-verb Y ill' X causes that Y affected-centered-verb\".",
+        ":Examples arc: Das Kind zerbricht die Vase.",
+        "Das Kind bewirkt, dass die Vase zerbricht.",
+        "The child breaks the vase.",
+        "/-J.",
+        "The child brings it about that the vase breaks.",
+        "'thus a process is called G Affecied-ccelered if the realizing verb is able to form an ergative pair.",
+        "All G Affected-centered processes have at least, two participants, the C Agent and the (7-Mee-lc& The G-Agent-ccittercil process is differentiated with regard to the different participant types for the second participant; Affecting Der Ilauer NM den Ilainn.",
+        "(The fanner is felling the tree.)",
+        "and could mechanically build a cross classification as shown in Figure 1.",
+        "Some created concepts should, however, be omitted from this 'cross product ontol-ogy'.",
+        "'Ile first obvious argument is the number of participants.",
+        "'these are contradictory in the following cross concepts: E Directed Action' Agelli- (Mtn and 1,;- Directed Action!",
+        "G-Allected-only.",
+        "A comparison of the low level concepts shows farther that the",
+        "following GUM and RUM concepts can in fact be identified:",
+        ":Furthermore, it is known from the definition of E-Nondirected-Action in [Bateman el al., 1990] that such processes are either intransitive or they have a second participant which is in meaning nothing else than the G-Process-range participant.",
+        "Hence, the cross concepts:",
+        "as well as its subconcepts",
+        "are ruled out.",
+        "Finally, the exhaustive coverage of the low level subtypes in the KUM and GUM supports the following identities:",
+        "By these kinds of detailed considerations, we have filtered an intelligent merge out of the mechanical merge.",
+        "Within the intelligent merge, we omit the German differences concerning the participant number (G-Agent-only, G-Ranging) since these violate principle 1, and do not establish the very subtle (I-Affected-centered type.",
+        "Preferring the English terminology the result is given in Figure 2.",
+        "This turns out to he mainly the VI7M subhier-archy for material processes.",
+        "'lb also cover the German requirements, the Nondirected-Action concept is differentiated into Nondirected-Doing and Nondirected-happening according to the distinction between Agent-only and Affected-only.",
+        "Therefore we do not need to preserve the German participant types Agent and Affected, and can infer the relevant information from the new Nondirected-Action subconcepts.",
+        "'the German SP1_, examples (4) and (9) then have the revised semantic form:",
+        "Because we have fixed the semantic differences between the G-Agent and the G-Affected participant in the process types we do not need this differentiation as participant roles again.",
+        "Bence, we choose the English participant types P-Actor and E-Actee, the correspondence of which to the German G-Agent, Affected, G-Effected and C Process-range differs with the process type (see Figure 2).",
+        "For further details of the merging of all 12 top-level regions of the two ontologies, see [Henschel, 1993].",
+        "One peculiarity of the proposed merging is that we do not assume a straightforward correspondence between concepts (especially process types) and sets of surface sentences.",
+        "'flint means, disjoint concepts",
+        "in the Merged Upper Model do not, necessarily correspond to disjoint sets of surface sentences only to disjoint semantic perspectives on them.",
+        "The interface between the upper model and the grammar needs to he written in such a way that it is possible in some cases to generate die saute sentence from different semantic input.",
+        "This approach meets the differences between the process type paxtitioning in the {SUM and the GUM without eliminating both perspectives and without creating new cross product types (as it, would be the case in the simple merging stralgy); but by giving the upper Inodel-grammar interface inore r. As a consequence, a sentence such as (6) can now have two distinct semantic representations (7a-b) according to the Merged Upper Model; the catmint destination in (7b) is a subconcept of rclationaUprocess, which is disjoint to material-process in (7a).",
+        "(6) Der Sohn begleitet seinen Voter in die Stadt.",
+        "Ole son accompanies his father to the city.)",
+        "The two semantic.",
+        "representations correspond to two genuinely alternative experiential perspectives on the event, one focusing more on its action-like nature, the other more on its relational-like nature."
+      ]
+    },
+    {
+      "heading": "3 RESULTS AND CONCLUSIONS",
+      "text": []
+    },
+    {
+      "heading": "3.1 The Merged Upper Model",
+      "text": [
+        "Ily applying the principles for merging set out above, it was possible to fully replace both upper models",
+        "by a single merged upper model that, differs very slightly fromi the HUM.",
+        "The Merged Eppel: Model can in fact, be, obtained from the EUM by a small number of additions (6 new concepts and 1 change of role restrictions to an existing concept).",
+        "This lack of difference supports the claims concerning nuittilitt guality of functional descriptions made in [Bateman et al., 1991i].",
+        "There it, is argued that a functional grammar already goes beyond strictly language specific distinctions: the re-usability of the vast, majority Of the EUM organization for German demon-Arates that that, organization is not tied solely to English.",
+        "This is further reinforced by the experience during the merge that where the 14:(711,1 extended on distinctions made in the (WM, these extensions were generally equally applicable and useful for German (see [Henschel, 1993] for relevant examples).",
+        "The result, of our inerging procedure is an enter.",
+        "ogy fultillitlg the construction ideas of [Ilovy and Knight, 1993] in that, the resulting ontology contains all concepts necessary for the operattOtt of the - M A N module and the KomBT module.",
+        "However, it, contradicts the merging theory of Ilovy and Knight, in that iC states some theoretical principles for the merge construction which should be maintained by the source ontologies as well as in the merge."
+      ]
+    },
+    {
+      "heading": "3.2 Merging Statistics",
+      "text": [
+        "Because of their questionable status, we leave the, 'rhetorical relations' out of account, in the statistical comparison.",
+        "Without this Rst-subbierarchy the HUM includes 252 concepts.",
+        "The GUM makes no precise distinction between upper and domain model.",
+        "For the comparison, 235 GUM concepts are considered.",
+        "The Merged Upper Model contains 258 concepts.",
+        "Identity We found 167 identical concept uanIes (excluding the itsT-relations), from which only 87 concepts can really be identified.",
+        "Identical meaning can strongly be staled for 106 concepts (i.e. 1.9 have distinct, names).",
+        "The main identification areas are the object, and the quality hierarchy as well as the temporal one, The",
+        "precise distribution for strong identical meaning is shown by the numbers outside of brackets in Figure 3.",
+        "Union If both considered ontologies are equally weighted as in [Hovy and Nirenburg, 1992], individual concepts in an ontology must be maintained in any merge.",
+        "However, in our approach we have extensively made use of an ontology-internal concept union.",
+        "This is a result of the general ontology design principles given in Section 2.3.",
+        "The clause/PP distinction, for example, which is often a concept discrimination criterion in the GUM violates Principle 1 and so this discrimination is not preserved in the Merged Upper Model.",
+        "Therefore, leaving out of account the clause/PP distinction, identical concepts then amount to 163.",
+        "The number and distribution of concepts identical after union is shown by the numbers in brackets in Figure 3.",
+        "106 concepts are strongly identical and 57 merged concepts are identical with the unions of different GUM concepts.",
+        "Extension Extension can be found in both directions.",
+        "Because of the emphasis we have given to the EUM, most of the extensions are EUM concepts which extend the GUM further.",
+        "These are 60 concepts, 11 for the Menial-Process, 11 Participants and 38 others front the Relational-Process hierarchy.",
+        "On the other hand, only 4 German participant concepts have found their way into the Merged Upper Model.",
+        "Cross classification An essential field for cross classification has been avoided by the relaxation of the upper model-grammar interface stated in Principle 3 in Section 2.3.",
+        "For example, whereas the cross classification discussed for the Material-Process/Action hierarchy in Section 2.3 would have cross classified 2 English subconcepts with 5 German subconcepts and their subhierarchies respectively, resulting in 42 merged concepts, 9 concepts are sufficient to cover all distinctions expressed in the PPM and the GUM."
+      ]
+    },
+    {
+      "heading": "Summary",
+      "text": [
+        "Summarizing the merging statistics, strong identity can be found for 41%.",
+        "if we allow identification of unified concepts, identity can be stated for 63%.",
+        "About 25% of the merged UM are created by extension, and only 3.6% by cross classification.",
+        "Beside this, there is a small part of the Merged Upper Model (8%) where the concepts are not created by identification, extension and cross classification, but by preferring /43/M: concepts over GUM ones."
+      ]
+    },
+    {
+      "heading": "3.3 Future work",
+      "text": [
+        "In the current merging process, we have only looked for identities and differences between the given English and German Upper Models.",
+        "We did not try to improve the inherent consistency of both, although it became clear during the merge that certain distinctions should be removed and others further developed; these local improvements are detailed in [Henschel, 1993] and will be incorporated in future versions of the Merged Upper Model.",
+        "In addition, one of our aims with the Merged Upper Model is to provide a stable basis for further",
+        "extension – both to include further linguistic phenomena and to cover further languages.",
+        "We expect that an organization of information based on the requirements of natural language grammars will provide a more stable and reusable result than organizations based on the requirements of individual computational systems.",
+        "We are already using the Merged Upper Model as the basis for sentence generation in Dutch and there is suggestion here that, again, few additional concepts appear necessary.",
+        "01 more interest is the extension to rather different languages, some of which has already been begun.",
+        "Detailed accounts of this work of extension and comparison are necessary since automatic merging will rarely be possible when these most general levels of information organization are considered.",
+        "Finally, extensions in future may also be made by comparison with other ontologies although here it is necessary to be very careful concerning the kinds of ontologies considered.",
+        "Since the Merged Upper Model is explicitly a linguistically motivated ontology, comparison with ontologies with differing motivations can be difficult.",
+        "In considering the ontology of the LILOG project, for example, the mixture of linguistic and non-linguistic information criticized by [Lang, 1991] should not, be carried over into the merge.",
+        "The evaluation of the resulting linguistic ontologies as potential semantic type hierarchies for representations in machine translation, analysis all d multilingual generation is then a clear further step."
+      ]
+    },
+    {
+      "heading": "References",
+      "text": []
+    },
+    {
+      "heading": "Syntax",
+      "text": []
+    }
+  ]
+}

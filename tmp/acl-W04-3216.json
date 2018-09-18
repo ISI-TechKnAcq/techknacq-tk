@@ -1,0 +1,325 @@
+{
+  "info": {
+    "authors": [
+      "Daumé",
+      "Hal III",
+      "Daniel Marcu"
+    ],
+    "book": "SIGDAT Conference on Empirical Methods in Natural Language Processing",
+    "id": "acl-W04-3216",
+    "title": "A Phrase-Based HMM Approach to Document/Abstract Alignment",
+    "url": "https://aclweb.org/anthology/W04-3216",
+    "year": 2004
+  },
+  "references": [
+    "acl-C96-2141",
+    "acl-J02-4006",
+    "acl-J03-1002",
+    "acl-J93-2003",
+    "acl-J96-2004",
+    "acl-P00-1041",
+    "acl-P02-1057"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "We describe a model for creating word-to-word and phrase-to-phrase alignments between documents and their human written abstracts.",
+        "Such alignments are critical for the development of statistical summarization systems that can be trained on large corpora of document/abstract pairs.",
+        "Our model, which is based on a novel Phrase-Based HMM, outperforms both the Cut & Paste alignment model (Jing, 2002) and models developed in the context of machine translation (Brown et al., 1993)."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "There are a wealth of document/abstract pairs that statistical summarization systems could leverage to learn how to create novel abstracts.",
+        "Detailed studies of such pairs (Jing, 2002) show that human abstractors perform a range of very sophisticated operations when summarizing texts, which include reordering, fusion, and paraphrasing.",
+        "Unfortunately, existing document/abstract alignment models are not powerful enough to capture these operations.",
+        "To get around directly tackling this problem, researchers in text summarization have employed one of several techniques.",
+        "Some researchers (Banko et al., 2000) have developed simple statistical models for aligning documents and headlines.",
+        "These models, which implement IBM Model 1 (Brown et al., 1993), treat documents and headlines as simple bags of words and learn probabilistic word-based mappings between the words in the documents and the words in the headlines.",
+        "As our results show, these models are too weak for capturing the operations that are employed by humans in summarizing texts beyond the headline level.",
+        "Other researchers have developed models that make unreasonable assumptions about the data, which lead to the utilization of a very small percent of available data.",
+        "For instance, the document and sentence compression models of Daum´e III, Knight, and Marcu (Knight and Marcu, 2002; Daum´e III and Marcu, 2002a) assume that sentences/documents can be summarized only through deletion of contiguous text segments.",
+        "Knight and Marcu found that from a corpus of 39, 060 abstract sentences, only 1067 sentence extracts existed: a recall of only 2.7%.",
+        "An alternate techinque employed in a large variety of systems is to treat the summarization problem as a sentence extraction problem.",
+        "Such systems can be trained either on human constructed extracts or extracts generated automatically from document/abstract pairs (see (Marcu, 1999; Jing and McKeown, 1999) for two such approaches).",
+        "None of these techniques is adequate.",
+        "Even for a relatively simple sentence from an abstract, we can see that none of the assumptions listed above holds.",
+        "In Figure 1, we observe several phenomena:",
+        "• Alignments can occur at the granularity of words and at the granularity of phrases.",
+        "• The ordering of phrases in an abstract can be different from the ordering in the document.",
+        "• Some abstract words do not have direct cor",
+        "respondents in the document, and some document words are never used.",
+        "It is thus desirable to be able to automatically construct alignments between documents and their abstracts, so that the correspondences between the pairs are obvious.",
+        "One might be initially tempted to use readily-available machine translation systems like GIZA++ (Och and Ney, 2003) to perform such",
+        "alignments.",
+        "However, as we will show, the alignments produced by such a system are inadequate for this task.",
+        "The solution that we propose to this problem is an alignment model based on a novel mathematical structure we call the Phrase-Based HMM."
+      ]
+    },
+    {
+      "heading": "2 Designing a Model",
+      "text": [
+        "As observed in Figure 1, our model needs to be able to account for phrase-to-phrase alignments.",
+        "It also needs to be able to align abstract phrases with arbitrary parts of the document, and not require a monotonic, left-to-right alignment.1"
+      ]
+    },
+    {
+      "heading": "2.1 The Generative Story",
+      "text": [
+        "The model we propose calculates the probability of an alignment/abstract pair in a generative fashion, generating the summary 5 = (s1 ... sm) from the document D = (d1 ... dn).",
+        "In a document/abstract corpus that we have aligned by hand (see Section 3), we have observed that 16% of abstract words are left unaligned.",
+        "Our model assumes that these “null-generated” words and phrases are produced by a unique document word 0, called the “null word.” The parameters of our model are stored in two tables: a rewrite/paraphrase table and a jump table.",
+        "The rewrite table stores probabilities of producing summary words/phrases from document words/phrases and from the null word (namely, probabilities of the form rewrite �¯s ¯d� and rewrite (¯s 0)); the jump table stores the probabilities of moving within a document from one position to another, and from and to 0.",
+        "The generation of a summary from a document is assumed to proceed as follows: 1 In the remainder of the paper, we will use the words “summary” and “abstract” interchangeably.",
+        "This is because we wish to use the letter s to refer to summaries.",
+        "We could use the letter a as an abbreviation for “abstract”; however, in the definition of the Phrase-Based HMM, we reuse common notation which ascribes a different interpretation to a.",
+        "1.",
+        "Choose a starting index i and jump to position dz in the document with probability jump (i).",
+        "(If the first summary phrase is null-generated, jump to the null-word with probability jump (0).)",
+        "2.",
+        "Choose a document phrase of length k > 0 and a summary phrase of length l > 1.",
+        "Generate summary words s l1 from document words d' +k",
+        "with probability rewrite (sl1",
+        "3.",
+        "Choose a new document index i' and jump to position dz' with probability jump (i' – (i + k)) (or, if the new document position is the empty state, then jump (0)).",
+        "4.",
+        "Choose k' and l' as in step 2, and generate the summary words s i+i+l' from the document words dz;+k' with probability rewrite (s1+l1+l+l' 5.",
+        "Repeat from step 3 until the entire summary has been generated.",
+        "6.",
+        "Jump to position dn+1 in the document with probability jump (n + 1 – (i' + k')).",
+        "Note that such a formulation allows the same document word/phrase to generate many summary words: unlike machine translation, where such behavior is typically avoided, in summarization, we observe that such phenomena do occur.",
+        "However, if one were to build a decoder based on this model, one would need to account for this issue to avoid degenerate summaries from being produced.",
+        "The formal mathematical model behind the alignments is as follows: An alignment R defines both a segmentation of the summary 5 and a mapping from the segments of 5 to the segments of the document D. We write sz to refer to the ith segment of 5, and M to refer to the total number of segments",
+        "in 5.",
+        "We write dR(i) to refer to the words in the document which correspond to segment si.",
+        "Then, the probability of a summary/alignment pair given a document (Pr (5, R D)), becomes:",
+        "Here, we implicitly define sm+1 to be the end-of-document token (W) and dR(m+1) to generate this with probability 1.",
+        "We also define the initial position in the document, R(0) to be 0, and assume a uniform prior on segmentations."
+      ]
+    },
+    {
+      "heading": "2.2.2 Backward algorithm",
+      "text": [
+        "Just as we can compute the probability of an observation sequence by moving forward, so can we calculate it by going backward.",
+        "We define Oi(t) as the probability of emitting the sequence oTt given that we are starting out in state i."
+      ]
+    },
+    {
+      "heading": "2.2.3 Best path",
+      "text": [
+        "We define a path as a sequence P = (p1 ... pL) such that pi is a tuple (t, x) where t corresponds to the last of the (possibly multiple) observations made, and x refers to the state we were coming from when we output this observation (phrase).",
+        "Thus, we want to find: argmax Pr (P oT1 , µ) = argmax Pr (P, oT1 µ)"
+      ]
+    },
+    {
+      "heading": "2.2 The Mathematical Model P P",
+      "text": [
+        "Having decided to use this model, we must now find a way to efficiently train it.",
+        "The model is very much like a Hidden Markov Model in which the summary is the observed sequence.",
+        "However, using a standard HMM would not allow us to account for phrases in the summary.",
+        "We therefore extend a standard HMM to allow multiple observations to be emitted on one transition.",
+        "We call this model a Phrase-Based HMM (PBHMM).",
+        "For this model, we have developed equivalents of the forward and backward algorithms, Viterbi search and forward-backward parameter re-estimation.",
+        "Our notation is shown in Table 1.",
+        "Here, 5 is the state space, and the observation sequences come from the alphabet K. 7rj is the probability of beginning in state j.",
+        "The transition probability ai j is the probability of transitioning from state i to state j. bi,j,¯k is the probability of emitting (the non-empty) observation sequence k¯ while transitioning from state i to state j.",
+        "Finally, xt denotes the state after emitting t symbols.",
+        "The full derivation of the model is too lengthy to include; the interested reader is directed to (Daum´e III and Marcu, 2002b) for the derivations and proofs of the formulae.",
+        "To assist the reader in understanding the mathematics, we follow the same notation as (Manning and Schütze, 2000).",
+        "The formulae for the calculations are summarized in Table 2."
+      ]
+    },
+    {
+      "heading": "2.2.1 Forward algorithm",
+      "text": [
+        "The forward algorithm calculates the probability of an observation sequence.",
+        "We define �j (t) as the probability of being in state j after emitting the first t – 1 symbols (in whatever grouping we want).",
+        "To do this, as in a traditional HMM, we estimate the C table.",
+        "When we calculate �j (t), we essentially need to choose an appropriate i and t', which we store in another table, so we can calculate the actual path at the end.",
+        "We want to find the model µ which best explains observations.",
+        "There is no known analytic solution for standard HMMs, so we are fairly safe in assuming that we will not find an analytic solution for this more complex problem.",
+        "Thus, we also revert to an iterative hill-climbing solution analogous to Baum-Welch re-estimation (i.e., the Forward Backward algorithm).",
+        "The equations for the re-estimated values aˆ and bˆ are shown in Table 2."
+      ]
+    },
+    {
+      "heading": "2.2.5 Dirichlet Priors",
+      "text": [
+        "Using simple maximum likelihood estimation is inadequate for this model: the maximum likelihood solution is simply to make phrases as long as possible; unfortunately, doing so will first cut down on the number of probabilities that need to be multiplied and second make nearly all observed summary phrase/document phrase alignments unique, thus resulting in rewrite probabilities of 1 after normalization.",
+        "In order to account for this, instead of finding the maximum likelihood solution, we instead seek the maximum a posteriori solution.",
+        "The distributions we deal with in HMMs, and, in particular, PBHMMs, are all multinomial.",
+        "The Dirichlet distribution is in the conjugate family to the multinomial distribution3.",
+        "This makes Dirichlet priors very appealing to work with, so long as",
+        "we can adequately express our prior beliefs in their form.",
+        "(See (Gauvain and Lee, 1994) for the application to standard HMMs.)",
+        "Applying a Dirichlet prior effectively allows us to add “fake counts” during parameter re-estimation, according to the prior.",
+        "The prior we choose has a form such that fake counts are added as follows: word-to-word rewrites get an additional count of 2; identity rewrites get an additional count of 4; stem-identity rewrites get an additional count of 3."
+      ]
+    },
+    {
+      "heading": "2.3 Constructing the PBHMM",
+      "text": [
+        "Given our generative story, we construct a PBHMM to calculate these probabilities efficiently.",
+        "The structure of the PBHMM for a given document is conceptually simple.",
+        "We provide values for each of the following: the set of possible states 5; the output alphabet K; the initial state probabilities H; the transition probabilities A; and the emission probabilities B."
+      ]
+    },
+    {
+      "heading": "2.3.1 State Space",
+      "text": [
+        "The state set is large, but structured.",
+        "There is a unique initial state p, a unique final state q, and a state for each possible document phrase.",
+        "That is, for all 1 < i < i' < n, there is a state that corresponds to the document phrasei, beginning at position i and ending at position i', di , which we will refer to as ri,i,.",
+        "There is also a null state for each document position r ,i, so that when jumping out of a null state, we can remember what our previous position in the document was.",
+        "Thus, 5 = {p, q} U {ri,i, : 1 < i < i' < n} U {r ,i : 1 < i < n}.",
+        "Figure 2 shows the schematic drawing of the PBHMM constructed for the document “a b”.",
+        "K, the output alphabet, consists of each word found in 5, plus the token w."
+      ]
+    },
+    {
+      "heading": "2.3.2 Initial State Probabilities",
+      "text": [
+        "For initial state probabilities: since p is our initial state, we say that 7rp = 1 and that 7rr = 0 for all r=�p.",
+        "The transition probabilities A are governed by the jump table.",
+        "Each possible jump type and it’s associated probability is shown in Table 3.",
+        "By these calculations, regardless of document phrase lengths, transitioning forward between two consecutive segments will result in jump (1).",
+        "When transitioning",
+        "if we begin at the first word in the document, we incur a transition probability ofjump (1).",
+        "There are no transitions into p.",
+        "Just as the transition probabilities are governed by the jump table, the emission probabilities B are governed by the rewrite table.",
+        "In general, we write bx,y,¯k to mean the probability of generating k while transitioning from state x to state y.",
+        "However, in our case we do not need the x parameter, so we will refer to these as bj,¯k, the probability of generating k¯ when jumping into state j.",
+        "When j = ri,i', this is rewrite (k df) .",
+        "When j = r i, this is rewrite �¯k 0� .",
+        "Finally, any state transitioning into q generates the phrase (w) with probability 1 and any other phrase with probability 0.",
+        "Consider again the document “a b” (the PBHMM for which is shown in Figure 2) in the case when the corresponding summary is “c d”.",
+        "Suppose the correct alignment is that “c d” is aligned to “a” and “b” is left unaligned.",
+        "Then, the path taken through the PBHMM is p – * a – * q.",
+        "During the transition p – * a, “c d” is emitted.",
+        "During the transition a – * q, w is emitted.",
+        "Thus, the probability for the alignment is: jump (1) rewrite (“cd” “a”) jump (2).",
+        "The rewrite probabilities themselves are governed by a mixture model with unknown mixing parameters.",
+        "There are three mixture component, each of which is represented by a multinomial.",
+        "The first is the standard word-for-word and phrase-for-phrase table seen commonly in machine translation, where rewrite �¯s ¯d� is simply a normalized count of how many times we have seen s¯ aligned to J.",
+        "The second is a stem-based table, in which suffixes (using Porter’s stemmer) of the words in s¯ and d¯are thrown out before a comparison is made.",
+        "The third is a simple identity function, which has a constant zero value when s¯ and d¯ are different (up to stem) and a constant non-zero value when they have the same stem.",
+        "The mixing parameters are estimated simultaneously during EM.",
+        "Instead of initializing the jump and rewrite tables randomly or uniformly, as it typically done with HMMs, we initialize the tables according to the distribution specified by the prior.",
+        "This is not atypical practice in problems in which a MAP solution is sought."
+      ]
+    },
+    {
+      "heading": "3 Evaluation and Results",
+      "text": [
+        "In this section, we describe an intrinsic evaluation of the PBHMM document/abstract alignment model.",
+        "All experiments in this paper are done on the Ziff-Davis corpus (statistics are in Table 4).",
+        "In order to judge the quality of the alignments produced by a system, we first need to create a set of “gold standard” alignments.",
+        "Two human annotators manually constructed such alignments between documents and their abstracts.",
+        "Software for assisting this process was developed and is made freely available.",
+        "An annotation guide, which explains in detail the document/abstract alignment process was also prepared and is freely available.4"
+      ]
+    },
+    {
+      "heading": "3.1 Human Annotation",
+      "text": [
+        "From the Ziff-Davis corpus, we randomly selected 45 document/abstract pairs and had both annotators align them.",
+        "The first five were annotated separately and then discussed; the last 40 were done independently.",
+        "Annotators were asked to perform phrase-to-phrase alignments between abstracts and documents and to classify each alignment as either possible P or sure S, where P C_ S. In order to calculate scores for phrase alignments, we convert all phrase alignments to word alignments.",
+        "That is, if we have an alignment between phrases A and B, then this induces word alignments between a and b for all words a E A and b E B.",
+        "Given an alignment A, we could calculate precision and recall as (see (Och and Ney, 2003)):",
+        "One problem with these definitions is that phrase-based models are fond of making phrases.",
+        "That is, when given an abstract containing “the man” and a document also containing “the man,” a human may prefer to align “the” to “the” and “man” to “man.” However, a phrase-based model will almost always prefer to align the entire phrase “the man” to “the man.” This is because it results in fewer probabilities being multiplied together.",
+        "To compensate for this, we define soft precision (SoftP in the tables) by counting alignments where “a b” is aligned to “a b” the same as ones in which “a” is aligned to “a” and “b” is aligned to “b.” Note, however, that this is not the same as “a” aligned to “a b” and “b” aligned to “b”.",
+        "This latter alignment will, of course, incur a precision error.",
+        "The soft precision metric induces a new, soft F-Score, labeled SoftF.",
+        "Often, even humans find it difficult to align function words and punctuation.",
+        "A list of 58 function words and punctuation marks which appeared in the corpus (henceforth called the ignore-list) was assembled.",
+        "Agreement and precision/recall have been calculated both on all words and on all words that do not appear in the ignore-list.",
+        "Annotator agreement was strong for Sure alignments and fairly weak for Possible alignments (considering only the 40 independently annotated pairs).",
+        "When considering only Sure alignments, the kappa statistic (over 7.2 million items, 2 annotators and 2 categories) for agreement was 0.63.",
+        "When words from the ignore-list were thrown out, this rose to 0.68.",
+        "Carletta (1995) suggests that kappa values over 0.80 reflect very strong agreement and that kappa values between 0.60 and 0.80 reflect good agreement."
+      ]
+    },
+    {
+      "heading": "3.2 Machine Translation Experiments",
+      "text": [
+        "In order to establish a baseline alignment model, we used the IBM Model 4 (Brown et al., 1993) and the HMM model (Stephan Vogel and Tillmann, 1996) as implemented in the GIZA++ package (Och and Ney, 2003).",
+        "We modified this slightly to allow longer inputs and higher fertilities.",
+        "Such translation models require that input be in sentence-aligned form.",
+        "In the summarization task, however, one abstract sentence often corresponds to multiple document sentences.",
+        "In order to overcome this problem, each sentence in an abstract was paired with three sentences from the corresponding document, selected using the techniques described by Marcu (1999).",
+        "In an informal evaluation, 20 such pairs were randomly extracted and evaluated by a human.",
+        "Each pair was ranked as 0 (document sentences contain little-to-none of the information in the abstract sentence), 1 (document sentences contain some of the information in the abstract sentence) or 2 (document sentences contain all of the information).",
+        "Of the twenty random examples, none were labeled as 0; five were labeled as 1; and 15 were labeled as 2, giving a mean rating of 1.75.",
+        "We ran experiments using the document sentences as both the source and the target language in GIZA++.",
+        "When document sentences were used as the target language, each abstract word needed to produce many document words, leading to very high fertilities.",
+        "However, since each target word is generated independently, this led to very flat rewrite tables and, hence, to poor results.",
+        "Performance increased dramatically by using the document as the source language and the abstract as the target language.",
+        "In all MT cases, the corpus was appended with one-word sentence pairs for each word where that word is translated as itself.",
+        "In the two basic models, HMM and Model 4, the abstract sentence is the source language and the document sentences are the target language.",
+        "To alleviate the fertility problem, we also ran experiments with the translation going in the opposite direction.",
+        "These are called HMM-flipped and Model 4-flipped, respectively.",
+        "These tend to outperform the original translation direction.",
+        "In all of these setups, 5 iterations of Model 1 were run, followed by 5 iterations of the HMM model.",
+        "In the Model 4 cases, 5 iterations of Model 4 were run, following the HMM."
+      ]
+    },
+    {
+      "heading": "3.3 Cut and Paste Experiments",
+      "text": [
+        "We also tested alignments using the Cut and Paste summary decomposition method (Jing, 2002), based on a non-trainable HMM.",
+        "Briefly, the Cut and Paste HMM searches for long contiguous blocks of words in the document and abstract that are identical (up to stem).",
+        "The longest such sequences are aligned.",
+        "By fixing a length cutoff of n and ignoring sequences of length less than n, one can arbitrarily increase the precision of this method.",
+        "We found that n = 2 yields the best balance between precision and recall (and the highest F-measure).",
+        "The results of these experiments are shown under the header “Cut & Paste.” It clearly outperforms all of the MT-based models."
+      ]
+    },
+    {
+      "heading": "3.4 PBIEMM Experiments",
+      "text": [
+        "While the PBHMM is based on a dynamic programming algorithm, the effective search space in this model is enormous, even for moderately sized document/abstract pairs.",
+        "We selected the 2000 shortest document/abstract pairs from the Ziff-Davis corpus for training; however, only 12 of the hand-annotated documents were included in this set, so we additionally added the other 33 hand-annotate documents to this set, yielding 2033 document/abstract pairs.",
+        "We then performed sentence extraction on this corpus exactly as in the MT case, using the technique of (Marcu, 1999).",
+        "The relevant data for this corpus is in Table 4.",
+        "We also restrict the state-space with a beam, sized at 50% of the unrestricted state-space.",
+        "The PBHMM system was then trained on this abstract/extract corpus.",
+        "The precision/recall results are shown in Table 5.",
+        "Under the methodology for combining the two human annotations by taking the union, either of the human scores would achieve a",
+        "precision and recall of 1.0.",
+        "To give a sense of how well humans actually perform on this task (in addition to the kappa scores reported earlier), we compare each human against the other.",
+        "One common precision mistake made by the PBHMM system is to accidentally align words on the summary side to words on the document side, when the summary word should be null-aligned.",
+        "The PBHMMO system is an oracle system in which system-produced alignments are removed for summary words that should be null-aligned (according to the hand-annotated data).",
+        "Doing this results in a rather significant gain in SoftP score.",
+        "As we can see from Table 5, none of the machine translation models is well suited to this task, achieving, at best, an F-score of 0.298.",
+        "The Cut & Paste method performs significantly better, which is to be expected, since it is designed specifically for summarization.",
+        "As one would expect, this method achieves higher precision than recall, though not by very much.",
+        "Our method significantly outperforms both the IBM models and the Cut & Paste method, achieving a precision of 0.456 and a recall nearing 0.7, yielding an overall F-score of 0.548."
+      ]
+    },
+    {
+      "heading": "4 Conclusions and Future Work",
+      "text": [
+        "Despite the success of our model, it’s performance still falls short of human performance (we achieve an F-score of 0.548 while humans achieve 0.736).",
+        "Moreover, this number for human performance is a lower-bound, since it is calculated with only one reference, rather than two.",
+        "We have begun to perform a rigorous error analysis of the model to attempt to identify its deficiencies: currently, these appear to primarily be due to the model having a zeal for aligning identical words.",
+        "This happens for one of two reasons: either a summary word should be null-aligned (but it is not), or a summary word should be aligned to a different, non-identical document word.",
+        "We can see the PBHMMO model as giving us an upper bound on performance if we were to fix this first problem.",
+        "The second problem has to do either with synonyms that do not appear frequently enough for the system to learn reliable rewrite probabilities, or with corefer-ence issues, in which the system chooses to align, for instance, “Microsoft” to “Microsoft,” rather than “Microsoft” to “the company,” as might be correct in context.",
+        "Clearly more work needs to be done to fix these problems; we are investigating solving the first problem by automatically building a list of synonyms from larger corpora and using this in the mixture model, and the second problem by investigating the possibility of including some (perhaps weak) coreference knowledge into the model.",
+        "Finally, we are looking to incorporate the results of this model into a real system.",
+        "This can be done either by using the word-for-word alignments to automatically build sentence-to-sentence alignments for training a sentence extraction system (in which case the precision/recall numbers over full sentences are likely to be much higher), or by building a system that exploits the word-for-word alignments explicitly."
+      ]
+    },
+    {
+      "heading": "5 Acknowledgments",
+      "text": [
+        "This work was partially supported by DARPA-ITO grant N66001-00-1-9814, NSF grant IIS-0097846, and a USC Dean Fellowship to Hal Daum´e III.",
+        "Thanks to Franz Josef Och and Dave Blei for discussions related to the project."
+      ]
+    }
+  ]
+}

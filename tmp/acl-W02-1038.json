@@ -1,0 +1,81 @@
+{
+  "info": {
+    "authors": [
+      "Marcello Federico",
+      "Nicola Bertoldi",
+      "Vanessa Sandrini"
+    ],
+    "book": "Conference on Empirical Methods in Natural Language Processing",
+    "id": "acl-W02-1038",
+    "title": "Bootstrapping Named Entity Recognition for Italian Broadcast News",
+    "url": "https://aclweb.org/anthology/W02-1038",
+    "year": 2002
+  },
+  "references": [
+    "acl-H94-1050"
+  ],
+  "sections": [
+    {
+      "text": [
+        "most probable path for an input text can be efficiently computed through a Viterbi-like decoding algorithm (Brugnara and Federico, 1997).",
+        "Here, in particular, the decoding software used for speech recognition is used by converting the input front-end to a stream of ASCII characters, and by replacing acoustic models to single state HMMs with delta distributions over single ASCII characters.",
+        "The NE LM is compiled into a set of distinct PFSNs, corresponding to the main trigram LM, the class related models, etc.",
+        "Significant memory savings are achieved by exploiting a tree-based topology for the trigram and bag-of-word models (Bertoldi et al., 2001;",
+        "✍.✑ ✒iterbi training Let M ✪ be an available estimate of the NE LM and W an untagged text.",
+        "A new estimate M can be obtained by searching for the best parse tree T, under M✪, and by computing, then, the ML estimate M, under T ✪ .",
+        "This corresponds to performing the two following steps:",
+        "1.",
+        "T ✪ = arg max log Pr(T, W; M) T 2.",
+        "M✭ = arg max log Pr(T✪, W; M) ✵",
+        "The following inequalities show that the above procedure can be iteratively used to improve the likelihood of the best parse tree:",
+        "However, the above property does not tell if the parameter transformation M ✪ ✸ M✭ indeed converges to a fixed point.",
+        "A tricky convergence proof of the segmental K-means algorithm applied to HMMs can be found in (Juang and Ra-biner, 1990), while bounds on the distance between HMM parameters estimated by EM and Viterbi training are discussed in (Merhav and Ephraim, 1991).",
+        "In this work, few iterations of Viterbi training were applied, as relative likelihood improvements of the best interpretation drastically reduced after the first iteration.",
+        "Figure 4 shows how training is applied to the NE LM.",
+        "Starting from some model estimate M✪, the corpus is tagged according to the most probable parse tree T. Hence, sufficient statistics are extracted from the tagged corpus in order to estimate M✭.",
+        "In some cases, little supervision in terms of manually checked NE lists is used to filter out unreliably tagged data."
+      ]
+    },
+    {
+      "heading": "✍.✽ Incre❄ental training",
+      "text": [
+        "Training of the NE LM goes through the definition and estimation of two simpler intermediate models, which are obtained by fixing some of the parameters in (1-1, A, T, E).",
+        "In particular, the notation (1-1, A = 0, E) indicates a list ❋o●❍l, as the switch parameters in A inhibit the template part, while (1-1, A = 1, T) indicates a t❍❋plat❍ ❋o●❍l, as the lists of known-entries are inhibited ▲.",
+        "Estimates of intermediate models will be used to initialize the complete NE LM.",
+        "✍.◆ Inter❄e❘iate ❄V❘el MX A list model (1-1, A = 0, E) is estimated starting from a supervised list of NE entries which may also include ambiguous casesY.",
+        "Initialization and estimation of distributions in 1-1 and E are performed on a sub corpus made of sentences",
+        "after removing punctuation and capitalization information, and for model M3.",
+        "Three different settings of the BN transcription system were considered in order to evaluate NE recognition with different word error rates (namely recl, rec2, and rec3).",
+        "Moreover, as a reference, manual transcripts without punctuation and capitalization (txt-i) were also used.",
+        "Results on the reference transcripts (txt-i) show that the lack of punctuation and capitalization causes a 8.6% relative loss in performance, i.e. F-score drops from 87.17 to 81.12.",
+        "This is mainly due to the increase in ambiguity caused by common words which may also occur in proper names.",
+        "However, the incremental training procedure allowed for a significantly improvement over the initial model Mo, i.e. a 20% F-score relative improvement, from 67.42 to 81.12.",
+        "Experiments on automatic transcripts with different WERs show relative decreases in performance, with respect to txt-i, ranging between 10.4% and 13.0%, for WERs between 19.8% and 23.0%.",
+        "The relative improvement between the initial and final models, Mo and M3, is around 15-16% for all automatic transcripts.",
+        "The reason for the lower performance improvement may be that M3 basically augments Mo with less frequent proper names which are probably more difficult to recognize, given the statistical nature of the speech recognizer."
+      ]
+    },
+    {
+      "heading": "6 Discussion",
+      "text": [
+        "This section compares the here proposed NE LM with the NE tagged LM, presented in (Gotoh et al., 1999; Renals et al., 1999).",
+        "The NE tagged LM uses a different decomposition of the probability Pr(W,T), which can be related to an ordinary class based trigram model, i.e.:",
+        "where T now corresponds to a word-by-word tagging of W with classes in E U {eo}, with eo denoting the not-NE class.",
+        "NE recognition with this model can also be performed by Viterbi decoding.",
+        "However, this requires estimating probabilities in the space (V x (EU{eo}))3, in contrast to the probability space (V U E) 3 used by the NE LM.",
+        "Moreover, the cascade structure of the NE LM can span longer dependencies, i.e. across words and NE classes, than the NE tagged LM can do.",
+        "On the other side, the latter model is probably more flexible in the composition of NEs.",
+        "In other words, new NEs can be recognized by concatenating known entries.",
+        "The capability of finding new NEs is, for what concerns the NE LM, limited to the template model.",
+        "Hence, a possible improvement could be to replace the current bag-of-word model in M3 with an n-gram model, estimated on the entries currently used in E. Interestingly, similar levels of performance are reported in (Renals et al., 1999) when NE recognition is carried out on clean, case-insensitive texts and automatic transcripts (with 21% WER), i.e. F-scores are 85.0 and 75.0, respectively.",
+        "Of course, a true comparison between the two approaches should be perfomed on the same language and data.",
+        "7 Conclusion This paper presented a statistical language model for NE recognition which was developed for the Italian broadcast news domain.",
+        "The model integrates trigram statistics on words and NE classes, with probabilistic finite state language models.",
+        "A bootstrap training technique is presented which permits to estimate the model by means of very inexpensive language resources: a large newspaper corpus and a few thousand manually classified NEs.",
+        "Experimental results were provided for two automatically transcribed broadcast news shows.",
+        "Presented results are comparable with those obtained, on similar conditions, by NE taggers for American English broadcast news, which were trained on much more supervised data.",
+        "8 Acknowledgements This work was carried out under the projects CORETEX (IST-1999-11876) and WebFAQ partially funded, respectively, by the European Commission and the Fondo Unico della Provin-cia di Trento."
+      ]
+    }
+  ]
+}

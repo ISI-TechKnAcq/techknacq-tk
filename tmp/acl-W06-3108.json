@@ -1,0 +1,311 @@
+{
+  "info": {
+    "authors": [
+      "Richard Zens",
+      "Hermann Ney"
+    ],
+    "book": "Workshop on Statistical Machine Translation",
+    "id": "acl-W06-3108",
+    "title": "Discriminative Reordering Models for Statistical Machine Translation",
+    "url": "https://aclweb.org/anthology/W06-3108",
+    "year": 2006
+  },
+  "references": [
+    "acl-C04-1030",
+    "acl-E99-1010",
+    "acl-H05-1021",
+    "acl-J03-1002",
+    "acl-J90-2002",
+    "acl-J96-1002",
+    "acl-J97-3002",
+    "acl-N03-1020",
+    "acl-N04-1033",
+    "acl-P02-1038",
+    "acl-P02-1040",
+    "acl-P03-1021",
+    "acl-P05-1069",
+    "acl-W99-0604"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "We present discriminative reordering models for phrase-based statistical machine translation.",
+        "The models are trained using the maximum entropy principle.",
+        "We use several types of features: based on words, based on word classes, based on the local context.",
+        "We evaluate the overall performance of the reordering models as well as the contribution of the individual feature types on a word-aligned corpus.",
+        "Additionally, we show improved translation performance using these reordering models compared to a state-of-the-art baseline system."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "In recent evaluations, phrase-based statistical machine translation systems have achieved good performance.",
+        "Still the fluency of the machine translation output leaves much to desire.",
+        "One reason is that most phrase-based systems use a very simple reordering model.",
+        "Usually, the costs for phrase movements are linear in the distance, e.g. see (Och et al., 1999; Koehn, 2004; Zens et al., 2005).",
+        "Recently, in (Tillmann and Zhang, 2005) and in (Koehn et al., 2005), a reordering model has been described that tries to predict the orientation of a phrase, i.e. it answers the question ’should the next phrase be to the left or to the right of the current phrase?’ This phrase orientation probability is conditioned on the current source and target phrase and relative frequencies are used to estimate the probabilities.",
+        "We adopt the idea of predicting the orientation, but we propose to use a maximum-entropy based model.",
+        "The relative-frequency based approach may suffer from the data sparseness problem, because most of the phrases occur only once in the training corpus.",
+        "Our approach circumvents this problem by using a combination of phrase-level and word-level features and by using word-classes or part-of-speech information.",
+        "Maximum entropy is a suitable framework for combining these different features with a well-defined training criterion.",
+        "In (Koehn et al., 2005) several variants of the orientation model have been tried.",
+        "It turned out that for different tasks, different models show the best performance.",
+        "Here, we let the maximum entropy training decide which features are important and which features can be neglected.",
+        "We will see that additional features do not hurt performance and can be safely added to the model.",
+        "The remaining part is structured as follows: first we will describe the related work in Section 2 and give a brief description of the baseline system in Section 3.",
+        "Then, we will present the discriminative reordering model in Section 4.",
+        "Afterwards, we will evaluate the performance of this new model in Section 5.",
+        "This evaluation consists of two parts: first we will evaluate the prediction capabilities of the model on a word-aligned corpus and second we will show improved translation quality compared to the baseline system.",
+        "Finally, we will conclude in Section 6."
+      ]
+    },
+    {
+      "heading": "2 Related Work",
+      "text": [
+        "As already mentioned in Section 1, many current phrase-based statistical machine translation systems use a very simple reordering model: the costs",
+        "for phrase movements are linear in the distance.",
+        "This approach is also used in the publicly available Pharaoh decoder (Koehn, 2004).",
+        "The idea of predicting the orientation is adopted from (Tillmann and Zhang, 2005) and (Koehn et al., 2005).",
+        "Here, we use the maximum entropy principle to combine a variety of different features.",
+        "A reordering model in the framework of weighted finite state transducers is described in (Kumar and Byrne, 2005).",
+        "There, the movements are defined at the phrase level, but the window for reordering is very limited.",
+        "The parameters are estimated using an EM-style method.",
+        "None of these methods try to generalize from the words or phrases by using word classes or part-of-speech information.",
+        "The approach presented here has some resemblance to the bracketing transduction grammars (BTG) of (Wu, 1997), which have been applied to a phrase-based machine translation system in (Zens et al., 2004).",
+        "The difference is that, here, we do not constrain the phrase reordering.",
+        "Nevertheless the inverted/monotone concatenation of phrases in the BTG framework is similar to the left/right phrase orientation used here."
+      ]
+    },
+    {
+      "heading": "3 Baseline System",
+      "text": [
+        "In statistical machine translation, we are given a source language sentence f J1 = f1 .",
+        ".",
+        ".",
+        "f� ... fJ, which is to be translated into a target language sentence eI1 = e1 ... ez ... eI.",
+        "Among all possible target language sentences, we will choose the sentence with the highest probability:",
+        "The posterior probability Pr(eI1 l fJ1) is modeled directly using a log-linear combination of several models (Och and Ney, 2002):",
+        "(2) The denominator represents a normalization factor that depends only on the source sentence f J1 .",
+        "Therefore, we can omit it during the search process.",
+        "As a decision rule, we obtain:",
+        "This approach is a generalization of the source-channel approach (Brown et al., 1990).",
+        "It has the advantage that additional models h(•) can be easily integrated into the overall system.",
+        "The model scaling factors aM1 are trained with respect to the final translation quality measured by an error criterion (Och, 2003).",
+        "We use a state-of-the-art phrase-based translation system (Zens and Ney, 2004; Zens et al., 2005) including the following models: an n-gram language model, a phrase translation model and a word-based lexicon model.",
+        "The latter two models are used for both directions: p(f le) and p(elf).",
+        "Additionally, we use a word penalty and a phrase penalty.",
+        "The reordering model of the baseline system is distance-based, i.e. it assigns costs based on the distance from the end position of a phrase to the start position of the next phrase.",
+        "This very simple reordering model is widely used, for instance in (Och et al., 1999; Koehn, 2004; Zens et al., 2005)."
+      ]
+    },
+    {
+      "heading": "4 The Reordering Model",
+      "text": []
+    },
+    {
+      "heading": "4.1 Idea",
+      "text": [
+        "In this section, we will describe the proposed discriminative reordering model.",
+        "To make use of word level information, we need the word alignment within the phrase pairs.",
+        "This can be easily stored during the extraction of the phrase pairs from the bilingual training corpus.",
+        "If there are multiple possible alignments for a phrase pair, we use the most frequent one.",
+        "The notation is introduced using the illustration in Figure 1.",
+        "There is an example of a left and a right phrase orientation.",
+        "We assume that we have already produced the three-word phrase in the lower part.",
+        "Now, the model has to predict if the start position of the next phrase j' is to the left or to the right of the current phrase.",
+        "The reordering model is applied only at the phrase boundaries.",
+        "We assume that the reordering within the phrases is correct.",
+        "In the remaining part of this section, we will describe the details of this reordering model.",
+        "The classes our model predicts will be defined in Section 4.2.",
+        "Then, the feature functions will be defined",
+        "in Section 4.3.",
+        "The training criterion and the training events of the maximum entropy model will be described in Section 4.4."
+      ]
+    },
+    {
+      "heading": "4.2 Class Definition",
+      "text": [
+        "Ideally, this model predicts the start position of the next phrase.",
+        "But as predicting the exact position is rather difficult, we group the possible start positions into classes.",
+        "In the simplest case, we use only two classes.",
+        "One class for the positions to the left and one class for the positions to the right.",
+        "As a refinement, we can use four classes instead of two: 1) one position to the left, 2) more than one positions to the left, 3) one position to the right, 4) more than one positions to the right.",
+        "In general, we use a parameter D to specify 2 • D classes of the types:",
+        "• exactly d positions to the left, d = 1, ..., D – 1 • at least D positions to the left • exactly d positions to the right, d = 1, ..., D – 1 • at least D positions to the right",
+        "Let cj,j′ denote the orientation class for a movement from source position j to source position j' as illustrated in Figure 1.",
+        "In the case of two orientation classes, cj,j′ is defined as: r left, if j′ < j Sl right, if j' > j Then, the reordering model has the form p(cj,j′ I fJ1 , eI1, i, j) A well-founded framework for directly modeling the probability p(cj,j′ I fJ1 , eI1, i, j) is maximum entropy (Berger et al., 1996).",
+        "In this framework, we have a set of N feature functions hn (f J1 , eI1 , i, j, cj,j′ ), n = 1, ... , N. Each feature function hn is weighted with a factor An.",
+        "The resulting model is:",
+        "The functional form is identical to Equation 2, but here we will use a large number of binary features, whereas in Equation 2 usually only a very small number of real-valued features is used.",
+        "More precisely, the resulting reordering model p�N1(cj,j′ I fJ1 , eI1, i, j) is used as an additional component in the log-linear combination of Equation 2."
+      ]
+    },
+    {
+      "heading": "4.3 Feature Definition",
+      "text": [
+        "The feature functions of the reordering model depend on the last alignment link (j, i) of a phrase.",
+        "Note that the source position j is not necessarily the",
+        "end position of the source phrase.",
+        "We use the source position j which is aligned to the last word of the target phrase in target position i.",
+        "The illustration in Figure 1 contains such an example.",
+        "To introduce generalization capabilities, some of the features will depend on word classes or part-of-speech information.",
+        "Let F1J denote the word class sequence that corresponds to the source language sentence f J1 and let EI1 denote the target word class sequence that corresponds to the target language sentence eI1.",
+        "Then, the feature functions are of the form h�(fJ1 , eI1, F1J , EI1, i, j, j′).",
+        "We consider the following binary features:",
+        "1. source words within a window around the current source position j",
+        "2. target words within a window around the current target position i",
+        "3. word classes or part-of-speech within a window around the current source position j",
+        "4. word classes or part-of-speech within a window around the current target position i",
+        "Here, s(', ') denotes the Kronecker-function.",
+        "In the experiments, we will use d E {-1, 0, 11.",
+        "Many other feature functions are imaginable, e.g. combinations of the described feature functions, n-gram or multi-word features, joint source and target language feature functions."
+      ]
+    },
+    {
+      "heading": "4.4 Training",
+      "text": [
+        "As training criterion, we use the maximum class posterior probability.",
+        "This corresponds to maximizing the likelihood of the maximum entropy model.",
+        "Since the optimization criterion is convex, there is only a single optimum and no convergence problems occur.",
+        "To train the model parameters ��1 , we use the Generalized Iterative Scaling (GIS) algorithm (Dar-roch and Ratcliff, 1972).",
+        "In practice, the training procedure tends to result in an overfitted model.",
+        "To avoid overfitting, (Chen and Rosenfeld, 1999) have suggested a smoothing method where a Gaussian prior distribution of the parameters is assumed.",
+        "This method tried to avoid very large lambda values and prevents features that occur only once for a specific class from getting a value of infinity.",
+        "We train IBM Model 4 with GIZA++ (Och and Ney, 2003) in both translation directions.",
+        "Then the alignments are symmetrized using a refined heuristic as described in (Och and Ney, 2003).",
+        "This word-aligned bilingual corpus is used to train the reordering model parameters, i.e. the feature weights ��1 .",
+        "Each alignment link defines an event for the maximum entropy training.",
+        "An exception are the one-to-many alignments, i.e. one source word is aligned to multiple target words.",
+        "In this case, only the topmost alignment link is considered because the other ones cannot occur at a phrase boundary.",
+        "Many-to-one and many-to-many alignments are handled in a similar way."
+      ]
+    },
+    {
+      "heading": "5 Experimental Results",
+      "text": []
+    },
+    {
+      "heading": "5.1 Statistics",
+      "text": [
+        "The experiments were carried out on the Basic Travel Expression Corpus (BTEC) task (Takezawa et al., 2002).",
+        "This is a multilingual speech corpus which contains tourism-related sentences similar to those that are found in phrase books.",
+        "We use the Arabic-English, the Chinese-English and the Japanese-English data.",
+        "The corpus statistics are shown in Table 1.",
+        "As the BTEC is a rather clean corpus, the preprocessing consisted mainly of tokenization, i.e., separating punctuation marks from words.",
+        "Additionally, we replaced contractions such as it’s or I’m in the English corpus and we removed the case information.",
+        "For Arabic, we removed the diacritics and we split common prefixes: Al, w, f, b, l. There was no special preprocessing for the Chinese and the Japanese training corpora.",
+        "To train and evaluate the reordering model, we",
+        "use the word aligned bilingual training corpus.",
+        "For evaluating the classification power of the reordering model, we partition the corpus into a training part and a test part.",
+        "In our experiments, we use about 10% of the corpus for testing and the remaining part for training the feature weights of the reordering model with the GIS algorithm using YASMET (Och, 2001).",
+        "The statistics of the training and test alignment links is shown in Table 2.",
+        "The number of training events ranges from 119K for Japanese-English to 144K for Arabic-English."
+      ]
+    },
+    {
+      "heading": "5.2 Classification Results",
+      "text": [
+        "The word classes for the class-based features are trained using the mkcls tool (Och, 1999).",
+        "In the experiments, we use 50 word classes.",
+        "Alternatively, one could use part-of-speech information for this purpose.",
+        "Additional experiments were carried out on the large data track of the Chinese-English NIST task.",
+        "The corpus statistics of the bilingual training corpus are shown in Table 3.",
+        "The language model was trained on the English part of the bilingual training corpus and additional monolingual English data from the GigaWord corpus.",
+        "The total amount of language model training data was about 600M running words.",
+        "We use a fourgram language model with modified Kneser-Ney smoothing as implemented in the SRILM toolkit (Stolcke, 2002).",
+        "For the four English reference translations of the evaluation sets, the accumulated statistics are presented.",
+        "In this section, we present the classification results for the three language pairs.",
+        "In Table 4, we present the classification results for two orientation classes.",
+        "As baseline we always choose the most frequent orientation class.",
+        "For Arabic-English, the baseline is with 6.3% already very low.",
+        "This means that the word order in Arabic is very similar to the word order in English.",
+        "For Chinese-English, the baseline is with 12.7% about twice as large.",
+        "The most differences in word order occur for Japanese-English.",
+        "This seems to be reasonable as Japanese has usually a different sentence structure, subject-object-verb compared to subject-verb-object in English.",
+        "For each language pair, we present results for several combination of features.",
+        "The three columns per language pair indicate if the features are based on the words (column label ’Words’), on the word classes (column label ’Classes’) or on both (column label",
+        "’W+C’).",
+        "We also distinguish if the features depend on the target sentence (’Tgt’), on the source sentence (’Src’) or on both (’Src+Tgt’).",
+        "For Arabic-English, using features based only on words of the target sentence the classification error rate can be reduced to 4.5%.",
+        "If the features are based only on the source sentence words, a classification error rate of 2.9% is reached.",
+        "Combining the features based on source and target sentence words, a classification error rate of 2.8% can be achieved.",
+        "Adding the features based on word classes, the classification error rate can be further improved to 2.1 %.",
+        "For the other language pairs, the results are similar except that the absolute values of the classification error rates are higher.",
+        "We observe the following:",
+        "• The features based on the source sentence perform better than features based on the target sentence.",
+        "• Combining source and target sentence features performs best.",
+        "• Increasing the window always helps, i.e. additional context information is useful.",
+        "• Often the word-class based features outperform the word-based features.",
+        "• Combining word-based and word-class based features performs best.",
+        "• In general, adding features does not hurt the performance.",
+        "These are desirable properties of an appropriate reordering model.",
+        "The main point is that these are fulfilled not only on the training data, but on unseen test data.",
+        "There seems to be no overfitting problem.",
+        "In Table 5, we present the results for four orientation classes.",
+        "The final error rates are a factor 2-4 larger than for two orientation classes.",
+        "Despite that we observe the same tendencies as for two orientation classes.",
+        "Again, using more features always helps to improve the performance."
+      ]
+    },
+    {
+      "heading": "5.3 Translation Results",
+      "text": [
+        "For the translation experiments on the BTEC task, we report the two accuracy measures BLEU (Pap-ineni et al., 2002) and NIST (Doddington, 2002) as well as the two error rates: word error rate (WER) and position-independent word error rate (PER).",
+        "These criteria are computed with respect to 16 references.",
+        "In Table 6, we show the translation results for the BTEC task.",
+        "In these experiments, the reordering model uses two orientation classes, i.e. it predicts either a left or a right orientation.",
+        "The features for the maximum-entropy based reordering model are based on the source and target language words within a window of one.",
+        "The word-class based features are not used for the translation experiments.",
+        "The maximum-entropy based reordering model achieves small but consistent improvement for all the evaluation criteria.",
+        "Note that the baseline system, i.e. using the distance-based reordering, was among the best systems in the IWSLT 2005 evalua",
+        "tion campaign (Eck and Hori, 2005).",
+        "Some translation examples are presented in Table 7.",
+        "We observe that the system using the maximum-entropy based reordering model produces more fluent translations.",
+        "Additional translation experiments were carried out on the large data track of the Chinese-English NIST task.",
+        "For this task, we use only the BLEU and NIST scores.",
+        "Both scores are computed case-insensitive with respect to four reference translations using the mteval-v11b tool1.",
+        "For the NIST task, we use the BLEU score as primary criterion which is optimized on the NIST 2002 evaluation set using the Downhill Simplex algorithm (Press et al., 2002).",
+        "Note that only the eight or nine model scaling factors of Equation 2 are optimized using the Downhill Simplex algorithm.",
+        "The feature weights of the reordering model are trained using the GIS algorithm as described in Section 4.4.",
+        "We use a state-of-the-art baseline system which would have obtained a good rank in the last NIST evalua",
+        "tion (NIST, 2005).",
+        "The translation results for the NIST task are presented in Table 8.",
+        "We observe consistent improvements of the BLEU score on all evaluation sets.",
+        "The overall improvement due to reordering ranges from 1.2% to 2.0% absolute.",
+        "The contribution of the maximum-entropy based reordering model to this improvement is in the range of 25% to 58%, e.g. for the NIST 2003 evaluation set about 58% of the improvement using reordering can be attributed to the maximum-entropy based reordering model.",
+        "We also measured the classification performance for the NIST task.",
+        "The general tendencies are identical to the BTEC task."
+      ]
+    },
+    {
+      "heading": "6 Conclusions",
+      "text": [
+        "We have presented a novel discriminative reordering model for statistical machine translation.",
+        "This model is trained on the word aligned bilingual corpus using the maximum entropy principle.",
+        "Several types of features have been used:",
+        "• based on the source and target sentence",
+        "• based on words and word classes • using local context information",
+        "We have evaluated the performance of the reordering model on a held-out word-aligned corpus.",
+        "We have shown that the model is able to predict the orientation very well, e.g. for Arabic-English the classification error rate is only 2.1%.",
+        "We presented improved translation results for three language pairs on the BTEC task and for the large data track of the Chinese-English NIST task.",
+        "In none of the cases additional features have hurt the classification performance on the held-out test corpus.",
+        "This is a strong evidence that the maximum entropy framework is suitable for this task.",
+        "Another advantage of our approach is the generalization capability via the use of word classes or part-of-speech information.",
+        "Furthermore, additional features can be easily integrated into the maximum entropy framework.",
+        "So far, the word classes were not used for the translation experiments.",
+        "As the word classes help for the classification task, we might expect further improvements of the translation results.",
+        "Using part-of-speech information instead (or in addition) to the automatically computed word classes might also be beneficial.",
+        "More fine-tuning of the reordering model toward translation quality might also result in improvements.",
+        "As already mentioned in Section 4.3, a richer feature set could be helpful."
+      ]
+    },
+    {
+      "heading": "Acknowledgments",
+      "text": [
+        "This material is partly based upon work supported by the Defense Advanced Research Projects Agency (DARPA) under Contract No.",
+        "HR0011-06-C-0023, and was partly funded by the European Union under the integrated project TC-STAR (Technology and Corpora for Speech to Speech Translation, IST-2002-FP6-506738, http://www.tc-star.org)."
+      ]
+    }
+  ]
+}

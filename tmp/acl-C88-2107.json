@@ -1,0 +1,184 @@
+{
+  "info": {
+    "authors": [
+      "Vladimir Pericliev",
+      "Svjatoslav Brajnov",
+      "Irina Nenova"
+    ],
+    "book": "International Conference on Computational Linguistics",
+    "id": "acl-C88-2107",
+    "title": "Hinting by Paraphrasing in an Instruction System",
+    "url": "https://aclweb.org/anthology/C88-2107",
+    "year": 1988
+  },
+  "references": [
+    "acl-C86-1136",
+    "acl-P84-1020",
+    "acl-P84-1076"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "Previous work has emphasized the need for paraphrases as means of' ensuring e Feedback with a sestem.",
+        "In this paper, we discuss how a paraphrase maw be used as a heuristic device, viz. as a hint.",
+        "We describe an experimental instruction sestem in mathematics incorporating this.",
+        "Feeture.",
+        "The system accepts a restricted class of algebraic store problems, formulated in non-stylized Bulgarian language, and is capable of solving them and prnviding one or more \"hinting\" paraphraees, that is, paraphrases alleviating their formalisation Cetraeslation into equations)."
+      ]
+    },
+    {
+      "heading": "1. INTRODUCTION",
+      "text": [
+        "Previous work has emphasized the need Era paraphrases as means of ensuring a Feedback with the system.",
+        "For example, question-answering sestems, before responding, paraphrase the requests Formulated in natural (Kaplan 1979, McKeown 1903) or a Formal language (de Roeck, Lowden 1906) in order that the user ascertain that his/her question has really been correctly understood.",
+        "This step is necessary to avoid (possibly) costly searches in the data base for requests that have never been made.",
+        "An additional reason in that sometimes the format or the retrieved information also cannot clear up a potential misunderstanding (Thomas, Gould 1976).",
+        "However, there are other applications, different from feedback, to which a paraphrastic Facility maw profitably contribute.",
+        "In the paper, we discuss how a paraphrase may be used as a heuristic device, viz, as providing a hint, ie an instruction system in mathematics.",
+        "The paper is organized in the following wail.",
+        "Sect.",
+        "2 is a brief overview or the instruction system incorporating this feature.",
+        "Secte.",
+        "3 and 4 describe respectively some general requirements to a hinting paraphrase and the measures we have taken to satisfy them in the sgstem.",
+        "Sect.",
+        "S discusses an example, and Sect.",
+        "6, some implementation -details."
+      ]
+    },
+    {
+      "heading": "2. SYSTEM OVERVIEW",
+      "text": [
+        "We have designed an experimental instruction system in mathematics.",
+        "The system operates in a limited domain: it is capable of solving a restricted class or store problems in algebra for Secondary Schools in Bulgaria Cthe so called \"number problems\").",
+        "The system accepts non-stelized store problems in Bulgarian as thee can be Found in mathematical textbooks or are spontaneously formulated be the user.",
+        "It solves the problem, and is capable of providing either of the following 3 options:",
+        "(a) Result (resultant number(s) are displayed).",
+        "Cb) Equations Cthe equation(s) to which problems translate are displayed).",
+        "(c.) Paraphrases Cone or more",
+        "\"hinting\" paraphrases are displaeed, together with the text of the original problem).",
+        "All the three options serve as (different degrees of) hinting needed in case the users (Secondarg School pupils) have problems with finding a solution.",
+        "Furtheron, we focus on problems concerned with the hinting paraphrastic facilitg or the sestem."
+      ]
+    },
+    {
+      "heading": "3. GENERAL REQUIREMENTS TO A HINTING PARAPHRASE",
+      "text": [
+        "The profit of' using a paraphrase, or a \"reformulation\", of a problem as a heuristic tool has been emphasized be researchers in heuristics, pedagogy and psychology or education.",
+        "Nevertheless, such a possibility is usually beyond the scope of instruction systems CSleeman, Brown 1902, Weisehedel at al 1970, Pulman 1994).",
+        "The question still remains as to what can count as a hinting paraphrase (HP) (obviously , not anu paraphrase can serve this purpose equally well).",
+        "Basing ourselves on research in mathematical pedagogy and psychnlinguistics (since conceptual and linguistic structures in this early age are known to be strangle",
+        "interdependent), we derived the Following general requirements to a HP:",
+        "1.",
+        "The HP should simplifu the original problem COP) as regards the users of the system C by this we mean simplification of OP in both conceptual and linguistic aspects with respect to the task assigned, viz. to fomalise C-translate into equations) the OP.",
+        "2.",
+        "The HP should be different From the OP (this requirement is self-evident).",
+        "3.",
+        "The HP should keep close to the OP From a conceptual and linguistic viewpoints (this is to ensure that the users conceive the \"sameness\" of HP and OP).",
+        "Since the most important task of the HP is to simplify the translation of verbally formulated problems into equations Csolving these equations being as a rule unproblematic For children), we took the following general solution regarding an \"appropriate\" HP: An \"appropriate\" HP to a problem is the one that can be, somewhat metaphorically expressed, literallu translated into the respective equations of this problem.",
+        "Obviously, this would, to the greatest extent possible, simplify the OP (in the sense in which in the translation from one NL to another, the easiest to perform is the literal translation).",
+        "This decision is further supported by the fact that pupils usually translate to themselves the OP into intermediary language which is most close to the equations derivable From this problem."
+      ]
+    },
+    {
+      "heading": "q. CONSTRAINTS ON \"APPROPRIATE\" Ws",
+      "text": [
+        "From what is stated above, a number of specific constraints on the content and Form of the HP can be derived.",
+        "We briefly mention them below in connection with two of the major decisions that have to be made in a generation process: first, making a decisions as to the discourse structure of the HP (i.e. determining what and when to say, or en ordered message to be conveyed), and, secondly, making a decision as to the ation of the discourse structure of the HP (i.e. determining how to express this information in Bulgarian, what syntactic structures to use, what lexemes, etc.).",
+        "At the first stage, we should gain in conceptual, and, at the second stage, in linguistic simplification, thus approximating the requirement as to the literalness we have imposed."
+      ]
+    },
+    {
+      "heading": "4.1. Discourse structure",
+      "text": [
+        "In the light of our aims, it is clear that the discourse structure of the HPs should be standardized, or canonized, This means that we need not be concerned (like most scholars working on discourse organization, e.g. Mann 1984, McKewon 1985) with demcribina types of discourse structures of actual texts in the domain of interest, but rather with umamullmx a discourse pattern that satisfies the discourse goal.",
+        "Each of the texts in our domain, story problems in algebra For Secondary Schools, is known to be characterized by unknewn_C), (i.e. what is looked for in the problem), and condition(*) (i.e. the equation(s), relating the unknown(s), or variables, to the givenCs), or constants, in the problem).",
+        "Some problems also involve auxiliary unknOwnCe) (i.e. Further unknown(s), often mentioned in the problem Formulation somewhat misleadingly (e.g. \"...Another number is given..\"), which have to be manipulated, but are not themselves part of the solution).",
+        "The discourse structure of the HPs, therefore, will have to reflect the basic conceptual constituents of the problems:",
+        "1. the unknown(s) 2. the auxiliary unknown(s) <optionally> 3. the condition(s), in that, particular order.",
+        "It may be noted that a lot of problems, as they are formulated in mathematics textbooks, do not actually satisfy this discourse schema: the unknowns are interspersed in the text, the unknownCs) and auxiliary unknown(s) are not explicitly discriminated, the conditions precede (auxiliary) unknown(s), etc.",
+        "For instance, a typical problem to be found in a textbook may begin as follows: \"The sum of two numbers is 8...\" Clearly, starting the problem Formulation by a condition, instead of with declaring First the unknown(s), is misleading.",
+        "Thus, notice that this problem may have quite different continuations, among which ...The First number is 2.",
+        "Which is the second?",
+        "in which we have just aul unknown, or ...Their product is 12.",
+        "What are these numbers?",
+        "a version in which there are two unknowns.",
+        "The resolution of this local ambiguity requires additional intellectual effort on the part of the pupil, rereading, etc., circumstances which our HPs should evade.",
+        "In addition to describing the major conceptual constituents of the problems, in the canonical discourse structure of the HPs, the conditions of problems themselves, usually compound propositions, should be arts.",
+        "The ordering of these propositions should",
+        "eurleet tha hieeceeehical eteueture of the mortaiticit&J, eteeting with theuie.",
+        "et.",
+        "the loweet level of the hiererchu, peeeeding Imith the next hiuher level, end",
+        "Veehel Tho verb.eti formuietlee or the HPH leeledoe the choice nr euetectie end leeleel eeeuetueee e.e.l.",
+        "Aveteee -eeeueture Onlg eeetviceed eleesee of euntectio eteueeere should he ueed in the HP.",
+        "fel m IAAle eelFeembedded, recursive, eeeeteeeeiune shut appuee le eotual texts i\".,.theft eum Ise the eum and difeueueec.„\"i, ellipsis and \"conteeing\" tieepheeleel eoeetteutinne should be evei 11E;1, ee.e.",
+        "LeAdeal etructure Ihe uxaiiuu in the HP ehould direetlq, explieitle name operatione, numbed rind veeiablee help unu roletien 444 kid 13 dmissible in the HPs, vie.",
+        "the relotiee \"equal\", hut not the cenfunine eor oupiin \"le greater thee/with\", cite.",
+        "Ye both euntaetio and lexieel huiree wheeevee puseible, the HPu ehould etioe th the verbal expeciesioee in the 1e will he eleee erom whet is said New the APe eoefeem to the requieemente elf euut.",
+        "A. S. OW eXAMPUe ecilew we give an example, weeked hu the eeetem, which illuetratee untie of' the eimplifieetione or the OP achieved in the HP Ceor convenience, the OP and the HP ere translated into Enulish).",
+        "The OP ie:",
+        "(1) IF the sum of owe number with enother Ce) which Li with I mallee then it (3) ie multiplied big 2,",
+        "Ci you will find the product of the eeoeed number with the eumbee A.",
+        "05) find thu First numbee.",
+        "flee of the Hee of this UP will leek uomethieg 14oie (1) e eumbee i luuked tot.",
+        "Ce) Aeothee number CA) Add thu tee numbere.",
+        "C'.0 IF uou welticlu the 9tAgia obtained eith (e) you will find the produet of the second number with the numbee S. (B) If from the First number uou subtract (7) gnu will obtain the eecond ember.",
+        "Is comperieon with the OP, the HP explicates the two numbers of thu problem that will be further manipulated: first, the unknown, arid, than, the auxiliarq unknown.",
+        "In clause (1) of the OP the operation of addition is implicitly given lug its result C\"the sum\"), whereas in clause (A) or the HP the same oporetion is elaborated big an explicit mentioning of the particuler arithmetical operation of eddition .",
+        "The imbedded relative clause (P) rie the UP is expressed separatelu from the mein sentence in the HP C(U) and (7) Lit the HP).",
+        "This provides a peesibilitu, eeedieu thu condition of the problem fiem left to eight, to write down, Hequentiallu and independently, the diFferent equations.",
+        "In the paraphrase of the relative clause (2) of the OP, the relation \"is smaller than\", known to be confusing for small children, in replaced bu its corresponding operation \"subtraction\", end the pronominal reference (expressed in the English test with \"it\") is avoided.",
+        "Notice also that (q) from the OP and CE) from the HP are phrased in the same way (thus preservinu partial sameness of the OP and the HP).",
+        "The reorganised text of the HI' can he seen to significantlu simplify the OP (which will be particularly true For Seconderu School children)."
+      ]
+    },
+    {
+      "heading": "G. IMPLEMENTATION",
+      "text": [
+        "Milos we briefly describe some aspects of the implementation design.",
+        "The system comprises 3 modules:",
+        "(i) Analyser (ii) Solver (iii) Paraphraser.",
+        "The Analyser is a \"traditional\" semantic grammar, using hierarchically organised tumulaturs The Solver solves thu equations obtained as a result of the parsing phase Cif the system in in a \"Result\" mode).",
+        "The generation process goes through two major phases.",
+        "The paraphraetie facility of the sustem has two components, eesponsible for the tasks at these phases: the Cereal-Czar, and the Uenerator.",
+        "In the first phase, the Eanonizer constructs the discourse structure, or the canonical form, of the HP.",
+        "The process includes the representation of the discourse structure into a sequence of elementaru propositions, instantiated bid 5 0 9 the result derived by the Analysis module.",
+        "This sequence begins with the proposition describing the unknown(s), and, optionally, propositions For auxiliary unknown(s).",
+        "In the sequence Follow the propositions describing conditinns Caequatinns).",
+        "For example, as a result of the analysis of the OP, mentioned in Sect.",
+        "5, the renewing sequence is obtained: equal(*(+(X,Y),2),*(Y,5)) equalC-CX,4),Y) unknown(X) The Canonizer shifts the last proposition unknown(X) at the begining of the-sequence of propositions and adds get another proposition auxiliary_unknown(Y).",
+        "As a result",
+        "Each compound proposition of the latter type is substituted with an equivalent pronositional eXPreeuien.",
+        "In order to achieve this, all constituent propositions are substituted by variables, after which the simple proposition obtained is unified with the compound proposition.",
+        "In the above case, From the unification of the two compound propositions \"equal\" with the simple proposition equalCa,(3), we obtain: equal(*C+CX,Y),2),*(Y,5))-equal(e,13).C*CT,2)/e,*(Y,5)/0).CeCX,Y)/T) equalC-CX,a),Y)-equalCa,B).C\"(X,4)/a,Y/3), where the expressions in braces are substitutions.",
+        "The propositional expression thus describes the process of obtaining the compound proposition in question from simple propositions.",
+        "After the substitution of each compound proposition of the equivalent propositional expression, the Following canonical representation obtains:",
+        "The canonical representation used is easily seen to have certain advantages.",
+        "On the one hand, it explicates all computations necessary for construction of the system of equations, and, on the other hand, it defines a plaeLuesveljmelliatlau, to be used by the Generator, in which, First of all, the simple propositions are verbalized, then their verbalizations.are used in the verbalization of the compound propositions at the next higher level of hierarchy, and so on.",
+        "The text to be obtained following such a plan of verbalization can be literally translated into a sustain of equations by virtue of the fact that the text itself is generated in inverse order - From simple to compound propositions.",
+        "In the second phase of the process of generation of the HPs, the canonical Form of the HPs is translated into Bulgarian text by the Generator.",
+        "The Generator itself is a omitioaigii._...strzammar__ Jar.",
+        ",templates (the templates used for, generation).",
+        "Each template describes a Syntactic construction by means of particular wordforms, lexical classes and variables.",
+        "Some of the templates are used to propagate anaphorical relations (definite NPs, or pronominal references).",
+        "As already mentioned, the Generator follows the plan for verbalization defined by the canonical representation.",
+        "A set of selection rules governs the choice of particular templates, before unification begins.",
+        "In case of alternatives as to the choice of a template, the Generator consults the derivational history of the analysis, which is kept in a special register, and selects the template, and the concrete verbal Formulation, used in the OP (this ensuring partial \"sameness\" of HPs and OPs).",
+        "The system is implemented in PROLOG-2 and runs on IBM ATs and compatibles."
+      ]
+    },
+    {
+      "heading": "7. CONCLUSION",
+      "text": [
+        "In the paper, we tried to show how a paraphrase can be used as a hinting tool in an instruction system in mathematics, and described a system incorporating this feature.",
+        "In the current implementation, the system may give reasonably good paraphrases of the original problem, but still there is a lot to be desired, even abstracting'from any real application for educational purposes.",
+        "It is a rather difficult thing to make the \"right\" compromise between the simplification needed in such tasks and a nice verbal phrasing of the problems.",
+        "We shall continue the work on the refinement of the system and on developing an explanation facility."
+      ]
+    },
+    {
+      "heading": "REFERENCES",
+      "text": []
+    }
+  ]
+}

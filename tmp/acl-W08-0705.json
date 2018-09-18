@@ -1,0 +1,49 @@
+{
+  "info": {
+    "authors": [
+      "Jason Riggle"
+    ],
+    "book": "Proceedings of the Tenth Meeting of ACL Special Interest Group on Computational Morphology and Phonology",
+    "id": "acl-W08-0705",
+    "title": "Invited talk: Counting Rankings",
+    "url": "https://aclweb.org/anthology/W08-0705",
+    "year": 2008
+  },
+  "references": [],
+  "sections": [
+    {
+      "text": [
+        "In this talk, I present a recursive algorithm to calculate the number of rankings that are consistent with a set of data (optimal candidates) in the framework of Optimality Theory (OT; Prince and Smolensky 1993).Computing this quantity, which I call r-volume, makes possible a simple and effective Bayesian heuristic in learning - all else equal, choose candidates that are preferred by the highest number of rankings consistent with previous observations.",
+        "This heuristic yields an r-volume learning algorithm (RVL) that is guaranteed to make fewer than k Ig k errors while learning rankings of k constraints.",
+        "This log-linear error bound is an improvement over the quadratic bound of Recursive Constraint Demotion (RCD; Tesar and Smolensky 1996) and it is within a logarithmic factor of the best possible mistake bound for any OT learning algorithm.",
+        "Computing r-volume: The violations in an OT tableau can be given as a [n x k]array ofintegers in which the first row ti corresponds to the winner.",
+        "Following Prince (2002), the ranking information can be extracted by comparing ti with each 'losing' row t2,tn to create an Elementary Ranking Condition as follows: erc(t\\,ti) = (a\\,) where aj = L if tij <tij, aj = W if t\\j >Utj,and aj = e otherwise.",
+        "The meaning of a is that at least one constraint associated with W dominates all those associated with L.",
+        "erc(ti,t4) = (l, w, w) i.e. ti beats t4 if C2 or C3 outranks Ci",
+        "For a set E of length-k ERCs, E – wi denotes ( if xi = L for any x € E aset E derived from E by removing ERCs r-vol [Ek) =^ < (k - 1)1 if Xi = W for all x € E with W in column i and removing column i.",
+        "<i<k { r (E – Wi) otherwise",
+        "Mistake bounds: To make predictions, RVL selects in each tableau the candidate that yields the highest r-volume when the ERCs that allow it to win are combined with E (the ERCs for past winners).",
+        "To establish a mistake bound, assume that the RVL chooses candidate e when, in fact, candidate o was optimal according to the target ranking Rt.",
+        "Assuming e = o, the rankings that make o optimal must be half or fewer of the rankings consistent with E or else RVL would have chosen o.",
+        "Because all rankings that make candidates other than o optimal will be eliminated once the ERCs for o are added to E, each error reduces the number of rankings consistent with all observed data by at least half and thus there can be no more than lg k!",
+        "errors.",
+        "Applications: The r-volume seems to encode 'restrictiveness' in a way similar to Tesar and Prince's (1999) r-measure.",
+        "As a factor in learning, it predicts typological frequency (cf. Bane and Riggle 2008) and priors other than the 'flat' distribution over rankings can easily be included to test models of ranking bias.",
+        "More generally, this research suggests the concept of ^-volume for any parameterized model of grammar.",
+        "input",
+        "C2",
+        "C3",
+        "candidate t\\",
+        "*",
+        "**",
+        "candidate t2",
+        "•I*",
+        "candidate t$",
+        "•I* \"I*",
+        "candidate t±",
+        "•I* \"I* \"I*",
+        "•I*"
+      ]
+    }
+  ]
+}

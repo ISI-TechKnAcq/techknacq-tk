@@ -1,0 +1,330 @@
+{
+  "info": {
+    "authors": [
+      "Hiroya Takamura",
+      "Takashi Inui",
+      "Manabu Okumura"
+    ],
+    "book": "Annual Meeting of the Association for Computational Linguistics",
+    "id": "acl-P05-1017",
+    "title": "Extracting Semantic Orientations of Words Using Spin Model",
+    "url": "https://aclweb.org/anthology/P05-1017",
+    "year": 2005
+  },
+  "references": [
+    "acl-C90-2067",
+    "acl-C92-1056",
+    "acl-J96-1002",
+    "acl-P97-1023",
+    "acl-W03-0404"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "We propose a method for extracting semantic orientations of words: desirable or undesirable.",
+        "Regarding semantic orientations as spins of electrons, we use the mean field approximation to compute the approximate probability function of the system instead of the intractable actual probability function.",
+        "We also propose a criterion for parameter selection on the basis of magnetization.",
+        "Given only a small number of seed words, the proposed method extracts semantic orientations with high accuracy in the experiments on English lexicon.",
+        "The result is comparable to the best value ever reported."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Identification of emotions (including opinions and attitudes) in text is an important task which has a variety of possible applications.",
+        "For example, we can efficiently collect opinions on a new product from the internet, if opinions in bulletin boards are automatically identified.",
+        "We will also be able to grasp people’s attitudes in questionnaire, without actually reading all the responds.",
+        "An important resource in realizing such identification tasks is a list of words with semantic orientation: positive or negative (desirable or undesirable).",
+        "Frequent appearance of positive words in a document implies that the writer of the document would have a positive attitude on the topic.",
+        "The goal of this paper is to propose a method for automatically creating such a word list from glosses (i.e., definition or explanation sentences ) in a dictionary, as well as from a thesaurus and a corpus.",
+        "For this purpose, we use spin model, which is a model for a set of electrons with spins.",
+        "Just as each electron has a direction of spin (up or down), each word has a semantic orientation (positive or negative).",
+        "We therefore regard words as a set of electrons and apply the mean field approximation to compute the average orientation of each word.",
+        "We also propose a criterion for parameter selection on the basis of magnetization, a notion in statistical physics.",
+        "Magnetization indicates the global tendency of polarization.",
+        "We empirically show that the proposed method works well even with a small number of seed words."
+      ]
+    },
+    {
+      "heading": "2 Related Work",
+      "text": [
+        "Turney and Littman (2003) proposed two algorithms for extraction of semantic orientations of words.",
+        "To calculate the association strength of a word with positive (negative) seed words, they used the number of hits returned by a search engine, with a query consisting of the word and one of seed words (e.g., “word NEAR good”, “word NEAR bad”).",
+        "They regarded the difference of two association strengths as a measure of semantic orientation.",
+        "They also proposed to use Latent Semantic Analysis to compute the association strength with seed words.",
+        "An empirical evaluation was conducted on 3596 words extracted from General Inquirer (Stone et al., 1966).",
+        "Hatzivassiloglou and McKeown (1997) focused on conjunctive expressions such as “simple and",
+        "well-received” and “simplistic but well-received”, where the former pair of words tend to have the same semantic orientation, and the latter tend to have the opposite orientation.",
+        "They first classify each conjunctive expression into the same-orientation class or the different-orientation class.",
+        "They then use the classified expressions to cluster words into the positive class and the negative class.",
+        "The experiments were conducted with the dataset that they created on their own.",
+        "Evaluation was limited to adjectives.",
+        "Kobayashi et al.",
+        "(2001) proposed a method for extracting semantic orientations of words with bootstrapping.",
+        "The semantic orientation of a word is determined on the basis of its gloss, if any of their 52 hand-crafted rules is applicable to the sentence.",
+        "Rules are applied iteratively in the bootstrapping framework.",
+        "Although Kobayashi et al.’s work provided an accurate investigation on this task and inspired our work, it has drawbacks: low recall and language dependency.",
+        "They reported that the semantic orientations of only 113 words are extracted with precision 84.1% (the low recall is due partly to their large set of seed words (1187 words)).",
+        "The hand-crafted rules are only for Japanese.",
+        "Kamps et al.",
+        "(2004) constructed a network by connecting each pair of synonymous words provided by WordNet (Fellbaum, 1998), and then used the shortest paths to two seed words “good” and “bad” to obtain the semantic orientation of a word.",
+        "Limitations of their method are that a synonymy dictionary is required, that antonym relations cannot be incorporated into the model.",
+        "Their evaluation is restricted to adjectives.",
+        "The method proposed by Hu and Liu (2004) is quite similar to the shortest-path method.",
+        "Hu and Liu’s method iteratively determines the semantic orientations of the words neighboring any of the seed words and enlarges the seed word set in a bootstrapping manner.",
+        "Subjective words are often semantically oriented.",
+        "Wiebe (2000) used a learning method to collect subjective adjectives from corpora.",
+        "Riloff et al.",
+        "(2003) focused on the collection of subjective nouns.",
+        "We later compare our method with Turney and Littman’s method and Kamps et al.’s method.",
+        "The other pieces of research work mentioned above are related to ours, but their objectives are different from ours."
+      ]
+    },
+    {
+      "heading": "3 Spin Model and Mean Field Approximation",
+      "text": [
+        "We give a brief introduction to the spin model and the mean field approximation, which are well-studied subjects both in the statistical mechanics and the machine learning communities (Geman and Geman, 1984; Inoue and Carlucci, 2001; Mackay, 2003).",
+        "A spin system is an array of N electrons, each of which has a spin with one of two values “+ 1(up)” or “-1 (down)”.",
+        "Two electrons next to each other energetically tend to have the same spin.",
+        "This model is called the Ising spin model, or simply the spin model (Chandler, 1987).",
+        "The energy function of a spin system can be represented as",
+        "where xi and xj (E x) are spins of electrons i and j, matrix W = {wzj } represents weights between two electrons.",
+        "In a spin system, the variable vector x follows the Boltzmann distribution:",
+        "where Z(W) = Ex exp( – QE(x, W)) is the normalization factor, which is called the partition function and Q is a constant called the inverse-temperature.",
+        "As this distribution function suggests, a configuration with a higher energy value has a smaller probability.",
+        "Although we have a distribution function, computing various probability values is computationally difficult.",
+        "The bottleneck is the evaluation of Z(W), since there are 2N configurations of spins in this system.",
+        "We therefore approximate P(xlW) with a simple function Q(x; 0).",
+        "The set of parameters 0 for Q, is determined such that Q(x; 0) becomes as similar to P(xIW) as possible.",
+        "As a measure for the distance between P and Q, the variational free energy F is often used, which is defined as the difference between the mean energy with respect to Q and the entropy of Q :",
+        "+EQ(x;0)logQ(x;0)).",
+        "(3) x The parameters 0 that minimizes the variational free energy will be chosen.",
+        "It has been shown that minimizing F is equivalent to minimizing the KullbackLeibler divergence between P and Q (Mackay, 2003).",
+        "We next assume that the function Q(x; 0) has the factorial form :",
+        "Simple substitution and transformation leads us to the following variational free energy:",
+        "With the usual method of Lagrange multipliers, we obtain the mean field equation :"
+      ]
+    },
+    {
+      "heading": "4 Extraction of Semantic Orientation of Words with Spin Model",
+      "text": [
+        "We use the spin model to extract semantic orientations of words.",
+        "Each spin has a direction taking one of two values: up or down.",
+        "Two neighboring spins tend to have the same direction from a energetic reason.",
+        "Regarding each word as an electron and its semantic orientation as the spin of the electron, we construct a lexical network by connecting two words if, for example, one word appears in the gloss of the other word.",
+        "Intuition behind this is that if a word is semantically oriented in one direction, then the words in its gloss tend to be oriented in the same direction.",
+        "Using the mean-field method developed in statistical mechanics, we determine the semantic orientations on the network in a global manner.",
+        "The global optimization enables the incorporation of possibly noisy resources such as glosses and corpora, while existing simple methods such as the shortest-path method and the bootstrapping method cannot work in the presence of such noisy evidences.",
+        "Those methods depend on less-noisy data such as a thesaurus."
+      ]
+    },
+    {
+      "heading": "4.1 Construction of Lexical Networks",
+      "text": [
+        "We construct a lexical network by linking two words if one word appears in the gloss of the other word.",
+        "Each link belongs to one of two groups: the same-orientation links 5L and the different-orientation links DL.",
+        "If at least one word precedes a negation word (e.g., not) in the gloss of the other word, the link is a different-orientation link.",
+        "Otherwise the links is a same-orientation link.",
+        "We next set weights W = (wZj) to links:",
+        "where lZj denotes the link between word i and word 3, and d(i) denotes the degree of word i, which means the number of words linked with word i.",
+        "Two words without connections are regarded as being connected by a link of weight 0.",
+        "We call this network the gloss network (G).",
+        "We construct another network, the gloss-thesaurus network (GT), by linking synonyms, antonyms and hypernyms, in addition to the the above linked words.",
+        "Only antonym links are in DL.",
+        "We enhance the gloss-thesaurus network with cooccurrence information extracted from corpus.",
+        "As mentioned in Section 2, Hatzivassiloglou and McKeown (1997) used conjunctive expressions in corpus.",
+        "Following their method, we connect two adjectives if the adjectives appear in a conjunctive form in the corpus.",
+        "If the adjectives are connected by “and”, the link belongs to SL.",
+        "If they are connected by “but”, the link belongs to DL.",
+        "We call this network the gloss-thesaurus-corpus network (GTC)."
+      ]
+    },
+    {
+      "heading": "4.2 Extraction of Orientations",
+      "text": [
+        "We suppose that a small number of seed words are given.",
+        "In other words, we know beforehand the semantic orientations of those given words.",
+        "We incorporate this small labeled dataset by modifying the previous update rule.",
+        "Instead of QE(x, W) in Equation (2), we use the following function H(Q, x, W) :",
+        "where L is the set of seed words, ai is the orientation of seed word i, and a is a positive constant.",
+        "This expression means that if xi (i E L) is different from ai, the state is penalized.",
+        "Using function H, we obtain the new update rule for xi (i E L) :",
+        "where sold = Ej wi7-qld .-old �and anew �are the averages of xi respectively before and after update.",
+        "What is discussed here was constructed with the reference to work by Inoue and Carlucci (2001), in which they applied the spin glass model to image restoration.",
+        "Initially, the averages of the seed words are set according to their given orientations.",
+        "The other averages are set to 0.",
+        "When the difference in the value of the variational free energy is smaller than a threshold before and after update, we regard computation converged.",
+        "The words with high final average values are classified as positive words.",
+        "The words with low final average values are classified as negative words."
+      ]
+    },
+    {
+      "heading": "4.3 Hyper-parameter Prediction",
+      "text": [
+        "The performance of the proposed method largely depends on the value of hyper-parameter Q.",
+        "In order to make the method more practical, we propose criteria for determining its value.",
+        "When a large labeled dataset is available, we can obtain a reliable pseudo leave-one-out error rate :",
+        "where [t] is 1 if t is negative, otherwise 0, and xz is calculated with the right-hand-side of Equation (6), where the penalty term a(xi – ai)2 in Equation (10) is ignored.",
+        "We choose Q that minimizes this value.",
+        "However, when a large amount of labeled data is unavailable, the value of pseudo leave-one-out error rate is not reliable.",
+        "In such cases, we use magnetization m for hyper-parameter prediction:",
+        "At a high temperature, spins are randomly oriented (paramagnetic phase, m Pz� 0).",
+        "At a low temperature, most of the spins have the same direction (ferromagnetic phase, m 7� 0).",
+        "It is known that at some intermediate temperature, ferromagnetic phase suddenly changes to paramagnetic phase.",
+        "This phenomenon is called phase transition.",
+        "Slightly before the phase transition, spins are locally polarized; strongly connected spins have the same polarity, but not in a global way.",
+        "Intuitively, the state of the lexical network is locally polarized.",
+        "Therefore, we calculate values of m with several different values of Q and select the value just before the phase transition."
+      ]
+    },
+    {
+      "heading": "4.4 Discussion on the Model",
+      "text": [
+        "In our model, the semantic orientations of words are determined according to the averages values of the spins.",
+        "Despite the heuristic flavor of this decision rule, it has a theoretical background related to maximizer of posterior marginal (MPM) estimation, or ‘finite-temperature decoding’ (Iba, 1999; Marro-quin, 1985).",
+        "In MPM, the average is the marginal distribution over xi obtained from the distribution over x.",
+        "We should note that the finite-temperature decoding is quite different from annealing type algorithms or ‘zero-temperature decoding’, which correspond to maximum a posteriori (MAP) estimation and also often used in natural language processing (Cowie et al., 1992).",
+        "Since the model estimation has been reduced to simple update calculations, the proposed model is similar to conventional spreading activation approaches, which have been applied, for example, to word sense disambiguation (Veronis and Ide, 1990).",
+        "Actually, the proposed model can be regarded as a spreading activation model with a specific update",
+        "rule, as long as we are dealing with 2-class model (2-Ising model).",
+        "However, there are some advantages in our modelling.",
+        "The largest advantage is its theoretical background.",
+        "We have an objective function and its approximation method.",
+        "We thus have a measure of goodness in model estimation and can use another better approximation method, such as Bethe approximation (Tanaka et al., 2003).",
+        "The theory tells us which update rule to use.",
+        "We also have a notion of magnetization, which can be used for hyper-parameter estimation.",
+        "We can use a plenty of knowledge, methods and algorithms developed in the field of statistical mechanics.",
+        "We can also extend our model to a multiclass model (Q-Ising model).",
+        "Another interesting point is the relation to maximum entropy model (Berger et al., 1996), which is popular in the natural language processing community.",
+        "Our model can be obtained by maximizing the entropy of the probability distribution Q(x) under constraints regarding the energy function."
+      ]
+    },
+    {
+      "heading": "5 Experiments",
+      "text": [
+        "We used glosses, synonyms, antonyms and hypernyms of WordNet (Fellbaum, 1998) to construct an English lexical network.",
+        "For part-of-speech tagging and lemmatization of glosses, we used Tree-Tagger (Schmid, 1994).",
+        "35 stopwords (quite frequent words such as “be” and “have”) are removed from the lexical network.",
+        "Negation words include 33 words.",
+        "In addition to usual negation words such as “not” and “never”, we include words and phrases which mean negation in a general sense, such as “free from” and “lack of”.",
+        "The whole network consists of approximately 88,000 words.",
+        "We collected 804 conjunctive expressions from Wall Street Journal and Brown corpus as described in Section 4.2.",
+        "The labeled dataset used as a gold standard is General Inquirer lexicon (Stone et al., 1966) as in the work by Turney and Littman (2003).",
+        "We extracted the words tagged with “Positiv” or “Negativ”, and reduced multiple-entry words to single entries.",
+        "As a result, we obtained 3596 words (1616 positive words and 1980 negative words) 1.",
+        "In the computation of",
+        "networks and four different sets of seed words.",
+        "In the parentheses, the predicted value of Q is written.",
+        "For cv, no value is written for Q, since 10 different values are obtained.",
+        "accuracy, seed words are eliminated from these 3596 words.",
+        "We conducted experiments with different values of 0 from 0.1 to 2.0, with the interval 0.",
+        "1, and predicted the best value as explained in Section 4.3.",
+        "The threshold of the magnetization for hyper-parameter estimation is set to 1.0 x 10-5.",
+        "That is, the predicted optimal value of Q is the largest Q whose corresponding magnetization does not exceeds the threshold value.",
+        "We performed 10-fold cross validation as well as experiments with fixed seed words.",
+        "The fixed seed words are the ones used by Turney and Littman: 14 seed words {good, nice, excellent, positive, fortunate, correct, superior, bad, nasty, poor, negative, unfortunate, wrong, inferior}; 4 seed words {good, superior, bad, inferior}; 2 seed words {good, bad}."
+      ]
+    },
+    {
+      "heading": "5.1 Classification Accuracy",
+      "text": [
+        "Table 1 shows the accuracy values of semantic orientation classification for four different sets of seed words and various networks.",
+        "In the table, cv corresponds to the result of 10-fold cross validation, in which case we use the pseudo leave-one-out error for hyper-parameter estimation, while in other cases we use magnetization.",
+        "In most cases, the synonyms and the cooccurrence information from corpus improve accuracy.",
+        "The only exception is the case of 2 seed words, in which G performs better than GT.",
+        "One possible reason of this inversion is that the computation is trapped in a local optimum, since a small number of seed words leave a relatively large degree of freedom in the solution space, resulting in more local optimal points.",
+        "We compare our results with Turney and",
+        "with various networks and four different sets of seed words.",
+        "In the parenthesis, the actual best value of Q is written, except for cv.",
+        "Littman’s results.",
+        "With 14 seed words, they achieved 61.26% for a small corpus (approx.",
+        "1 x 107 words), 76.06% for a medium-sized corpus (approx.",
+        "2 x 109 words), 82.84% for a large corpus (approx.",
+        "1 x 1011 words).",
+        "Without a corpus nor a thesaurus (but with glosses in a dictionary), we obtained accuracy that is comparable to Turney and Littman’s with a medium-sized corpus.",
+        "When we enhance the lexical network with Figure 1: Example of magnetization and classifica-corpus and thesaurus, our result is comparable to tion accuracy(14 seed words).",
+        "Turney and Littman’s with a large corpus."
+      ]
+    },
+    {
+      "heading": "5.2 Prediction of Q",
+      "text": [
+        "We examine how accurately our prediction method for Q works by comparing Table 1 above and Table 2 below.",
+        "Our method predicts good Q quite well especially for 14 seed words.",
+        "For small numbers of seed words, our method using magnetization tends to predict a little larger value.",
+        "We also display the figure of magnetization and accuracy in Figure 1.",
+        "We can see that the sharp change of magnetization occurs at around Q = 1.0 (phrase transition).",
+        "At almost the same point, the classification accuracy reaches the peak."
+      ]
+    },
+    {
+      "heading": "5.3 Precision for the Words with High Confidence",
+      "text": [
+        "We next evaluate the proposed method in terms of precision for the words that are classified with high confidence.",
+        "We regard the absolute value of each average as a confidence measure and evaluate the top words with the highest absolute values of averages.",
+        "The result of this experiment is shown in Figure 2, for 14 seed words as an example.",
+        "The top 1000 words achieved more than 92% accuracy.",
+        "This result shows that the absolute value of each average",
+        "can work as a confidence measure of classification."
+      ]
+    },
+    {
+      "heading": "5.4 Comparison with other methods",
+      "text": [
+        "In order to further investigate the model, we conduct experiments in restricted settings.",
+        "We first construct a lexical network using only synonyms.",
+        "We compare the spin model with the shortest-path method proposed by Kamps et al.",
+        "(2004) on this network, because the shortest-path method cannot incorporate negative links of antonyms.",
+        "We also restrict the test data to 697 adjectives, which is the number of examples that the shortest-path method can assign a non-zero orientation value.",
+        "Since the shortest-path method is designed for 2 seed words, the method is extended to use the average shortest-path lengths for 4 seed words and 14 seed words.",
+        "Table 3 shows the result.",
+        "Since the only difference is their algorithms, we can conclude that the global optimization of the spin model works well for the semantic orientation extraction.",
+        "We next compare the proposed method with a simple bootstrapping method proposed by Hu and Liu (2004).",
+        "We construct a lexical network using synonyms and antonyms.",
+        "We restrict the test data to 1470 adjectives for comparison of methods.",
+        "The result in Table 4 also shows that the global optimization of the spin model works well for the semantic orientation extraction.",
+        "We also tested the shortest path method and the bootstrapping method on GTC and GT, and obtained low accuracies as expected in the discussion in Section 4."
+      ]
+    },
+    {
+      "heading": "5.5 Error Analysis",
+      "text": [
+        "We investigated a number of errors and concluded that there were mainly three types of errors.",
+        "One is the ambiguity of word senses.",
+        "For example, one of the glosses of “costly”is “entailing great loss or sacrifice”.",
+        "The word “great” here means “large”, although it usually means “outstanding” and is positively oriented.",
+        "Another is lack of structural information.",
+        "For example, “arrogance” means “overbearing pride evidenced by a superior manner toward the weak”.",
+        "Although “arrogance” is mistakingly predicted as positive due to the word “superior”, what is superior here is “manner”.",
+        "The last one is idiomatic expressions.",
+        "For example, although “brag” means “show off”, neither of “show” and “off” has the negative orientation.",
+        "Idiomatic expressions often does not inherit the semantic orientation from or to the words in the gloss.",
+        "The current model cannot deal with these types of errors.",
+        "We leave their solutions as future work."
+      ]
+    },
+    {
+      "heading": "6 Conclusion and Future Work",
+      "text": [
+        "We proposed a method for extracting semantic orientations of words.",
+        "In the proposed method, we regarded semantic orientations as spins of electrons, and used the mean field approximation to compute the approximate probability function of the system instead of the intractable actual probability function.",
+        "We succeeded in extracting semantic orientations with high accuracy, even when only a small number of seed words are available.",
+        "There are a number of directions for future work.",
+        "One is the incorporation of syntactic information.",
+        "Since the importance of each word consisting a gloss depends on its syntactic role.",
+        "syntactic information in glosses should be useful for classification.",
+        "Another is active learning.",
+        "To decrease the amount of manual tagging for seed words, an active learning scheme is desired, in which a small number of good seed words are automatically selected.",
+        "Although our model can easily extended to a",
+        "multi-state model, the effectiveness of using such a multi-state model has not been shown yet.",
+        "Our model uses only the tendency of having the same orientation.",
+        "Therefore we can extract semantic orientations of new words that are not listed in a dictionary.",
+        "The validation of such extension will widen the possibility of application of our method.",
+        "Larger corpora such as web data will improve performance.",
+        "The combination of our method and the method by Turney and Littman (2003) is promising.",
+        "Finally, we believe that the proposed model is applicable to other tasks in computational linguistics."
+      ]
+    }
+  ]
+}

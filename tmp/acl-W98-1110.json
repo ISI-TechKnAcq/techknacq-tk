@@ -1,0 +1,222 @@
+{
+  "info": {
+    "authors": [
+      "Jeongwon Cha",
+      "Gary Geunbae Lee",
+      "Jong-Hyeok Lee"
+    ],
+    "book": "Workshop on Very Large Corpora",
+    "id": "acl-W98-1110",
+    "title": "Generalized Unknown Morpheme Guessing for Hybrid POS Tagging of Korean",
+    "url": "https://aclweb.org/anthology/W98-1110",
+    "year": 1998
+  },
+  "references": [
+    "acl-A92-1018",
+    "acl-A92-1021",
+    "acl-E95-1022",
+    "acl-J93-2006",
+    "acl-J94-2001"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "Most of errors in Korean morphological analysis and POS (Part-of-Speech) tagging are caused by unknown morphemes.",
+        "This paper presents a generalized unknown morpheme handling method with POSTAG(POStech TAGger) which is a statistical/rule based hybrid POS tagging system.",
+        "The generalized unknown morpheme guessing is based on a combination of a morpheme pattern dictionary which encodes general lexical patterns of Korean morphemes with a posteriori syllable trigram estimation.",
+        "The syllable trigrams help to calculate lexical probabilities of the unknown morphemes and are utilized to search the best tagging result.",
+        "In our scheme, we can guess the POS's of unknown morphemes regardless of their numbers and positions in an eojeol, which was not possible before in Korean tagging systems.",
+        "In a series of experiments using three different domain corpora.",
+        "we can achieve 97% tagging accuracy regardless of many unknown morphemes in test corpora."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Part-of-speech (POS) tagging has many difficult problems to attack such as insufficient training data, inherent PUS ambiguities, and most seriously unknown words.",
+        "Unknown words are ubiquitous in any application and cause major tagging failures in many cases.",
+        "Since Korean is an agglutinative language, we have unknown morpheme problems instead of unknown words in our PUS tagging.",
+        "The usual way of unknown-morpheme handling before was to guess possible POS's for an unknown-morpheme by checking connectable • This project was supported by KOSEF (teukjeongki-cho #970-1020-301-3, 1997).",
+        "functional morphemes in the same eojeoll (Kang, 1993).",
+        "In this way, they could guess possible POS's for a single unknown-morpheme only when it is positioned in the begining of an eojeol.",
+        "If an eojeol contains more than one unknown-morphemes or if unknown-morphemes appear other than the first position, all the previous methods cannot efficiently estimate them.",
+        "So, we propose a morpheme-pattern dictionary which enables us to treat unknown-morphemes in the same way as registered known morphemes, and thereby to guess them regardless of their numbers and positions in an eojeol.",
+        "The unknown-morpheme handling using the morpheme-pattern dictionary is integrated into a hybrid PUS disambiguation.",
+        "The PUS disambiguation has usually been performed by statistical approaches mainly using hidden markov model (HMM) (Cutting et al., 1992: Kupiec.",
+        "1992; Weischedel et al., 1993).",
+        "However, since statistical approaches take into account neighboring tags only within a limited window (usually two or three), sometimes the decision cannot cover all linguistic contexts necessary for POS disambiguation.",
+        "Also the approaches are inappropriate for idiomatic expressions for which lexical terms need to be directly referenced.",
+        "The statistical approaches are not enough especially for agglutinative languages (such as Korean) which have usually complex morphological structures.",
+        "In agglutinative languages, a word (called eojeol in Korean) usually consists of separable single stem-morpheme plus one or more functional morphemes, and the PUS tag should be assigned to each morpheme to cope with the complex morphological phenomena.",
+        "Recently, rule-based approaches are An eojeol is a Korean spacing unit(similar to English word) which usually consists of one or more stem morphemes and functional morphemes.",
+        "restudied to overcome the limitations of statistical approaches by learning symbolic tagging rules automatically from a corpus (Brill, 1992; Brill.",
+        "1994).",
+        "Some systems even perform the POS tagging as part of a syntactic analysis process (Voutilainen, 1995).",
+        "However, rule-based approaches alone, in general, are not very robust, and not portable enough to be adjusted to new tag sets and new languages.",
+        "Also the, performance is usually no better than the statistical counterparts (Brill, 1992).",
+        "To gain the portability and robustness and also to overcome the limited coverage of statistical approaches, we adopt a hybrid method that can combine both statistical and rule-based approaches for POS disambiguation."
+      ]
+    },
+    {
+      "heading": "2 Linguistic characteristics of Korean",
+      "text": [
+        "Korean is classified as an agglutinative language in which an eojeol consists of several number of morphemes that have clear-cut morpheme boundaries.",
+        "For examples.",
+        "7,1-71°11 c]-(I caught a cold)\" consists of 3 eojeols and 7 morpheme, such as2 1-1-(i)/T `7:7(auxiliary particle)/jS, 7-71(cold)/MC + oil (other particle)/j0, 72.4E-1(catch)/DR +(past tense)/eGS + cl-(final ending)/eGE.",
+        "Below are the characteristics of Korean that must be considered for morphological-level natural language processing and POS tagging.",
+        "• As an agglutinative language, Korean POS tagging is usually performed on a morpheme basis rather than an eojeol basis.",
+        "So, morphological analysis is essential to POS tagging because morpheme segmentation is much more important and difficult than POS assignment.",
+        "Moreover, morphological analysis should segment out unknown morphemes as well as known morphemes, so unknown morpheme handling should be integrated into the morphological analysis process.",
+        "There are three possible analyses from the eojeol : `1--1-(I)/T' + '-1-_ – :(subject-marker)/jSr, 'L4-(sprout)/DR' + (adnominal)/eCNNIG', ti(fly)/DI' + '1,:-(adnominal)/eCNMG', so morpheme 'Here, '±' is a morpheme boundary in an eojeol and is for the POS tag symbols (see Fig. 1).",
+        "segmentation is often ambiguous.",
+        "• Korean is a postpositional language with many kind of noun-endings (particles), verb-endings (other endings), and prefinal verb-endings (prefinal endings).",
+        "It is these functional morphemes, rather than eojeol's order, which determine most of the grammatical relations such as noun's syntactic functions, verb's tense, aspect, modals, and even modifying relations between eojeols.",
+        "For example.",
+        "' /jS' is an auxiliary particle, so eojeol \"1-1-,-'f\" has a subject role due to the particle.",
+        "-/jS' .",
+        "• Complex spelling changes frequently occur between morphemes when two morphemes combine to form an eojeol.",
+        "These spelling changes make it difficult to segment the original morphemes out before assigning the POS tag symbols.",
+        "Fig.",
+        "1 shows a tag set extracted from 100 full POS tag hierarchies in Korean.",
+        "This tag set will be used in our experiments in section 6."
+      ]
+    },
+    {
+      "heading": "3 Unknown morpheme guessing",
+      "text": []
+    },
+    {
+      "heading": "during morphological analysis",
+      "text": [
+        "Morphological analysis is a basic step to natural language processing which segments input texts into morphotactically connectable morphemes and assigns all possible POS tags to each morpheme by looking up a morpheme dictionary.",
+        "Our morphological analysis follows general three steps (Sproat, 1992): morpheme segmentation, original morpheme recovery from spelling changes, and morphotactics modeling.",
+        "Input texts are scanned from left to right, character3by character.",
+        "to be matched to morphemes in a morpheme dictionary.",
+        "The morpheme dictionary (Fig.",
+        "2) has a separate entry for each variant form (called allomorph) of the original morpheme form so we can easily reconstruct the original morphemes from spelling changes.",
+        "For morphotactics modeling, we used the POS tags and the morphotactic adjacency symbols in the dictionary.",
+        "The full hierarchy of POS tags and morphotactic adjacency symbols are encoded in the morpheme dictionary for each mor",
+        "pheme.",
+        "To model the morpheme's connectabil-ity to one another, besides the morpheme dictionary, the separate morpheme-connectivity table encodes all the connectable pairs of morpheme groups using the morpheme's tag and morphotactic adjacency symbol patterns.",
+        "After an input eojeol is segmented by trie indexed dictionary search, the morphological analysis checks if each segmentation is grammatically connectable by looking into the morpheme-connectivity table.",
+        "For unknown morpheme guessing, we develop a general unknown morpheme estimation method for number-free and position-free unknown morpheme handling.",
+        "Using a morpheme pattern dictionary.",
+        "we can look up unknown morphemes in the dictionary exactly same way as we do the registered morphemes.",
+        "And when morphemes are checked if they are connectable, we can use the information of the adjacent morphemes in the same eojeol..",
+        "The basic idea of the morpheme-pattern dictionary is to collect all the possible general lexical patterns of Korean morphemes and encode each lexical syllable pattern with all the candidate POS tags.",
+        "So we can assign initial POS tags to each unknown morpheme by only matching the syllable patterns in the pattern dictionary.",
+        "In this way, we don't need a special rule-based unknown morpheme handling module in our morphological analyzer, and all the possible POS tags for unknown morphemes can be assigned just like the registered morphemes.",
+        "This method can guess the POS of each and every unknown morpheme, if more than one unknown morphemes are in an eojeol, regardless of their positions since the morpheme segmentation is applied to both the unknown morphemes and the registered morphemes dur",
+        "ing the trie indexed dictionary search."
+      ]
+    },
+    {
+      "heading": "3.1 Morpheme pattern dictionary",
+      "text": [
+        "The morpheme pattern dictionary covers all necessary syllable patterns for unknown morphemes including common nouns, proper-nouns, adnominals, adverbs, regular and irregular verbs, regular and irregular adjectives, and special symbols for foreign words.",
+        "The lexical, patterns for morphemes are collected from the previous studies (Kang, 1993) where the constraints of Korean syllable patterns as to the morpheme connectabilities are well described.",
+        "Fig.",
+        "3 shows some example entries of the morpheme pattern dictionary, where 'Z', 'V', ' are meta characters which indicate a consonant, a vowel, and any number of Korean characters respectively.",
+        "For example, \"2.131-41\" (thanks), which is a morpheme and an eojeol at the same time, is matched \"(ZV*R-1 )\" (shown in Fig. 3) in the morpheme pattern dictionary, and is recovered into the original morpheme form",
+        "Fig.",
+        "4 shows a proposed hybrid architecture for Korean POS tagging with generalized unknown-morpheme guessing.",
+        "There are three major components: the morphological analyzer with unknown-morpheme handler, the statistical tagger, and the rule-based error corrector.",
+        "The morphological analyzer segments the morphemes out of eojeols in a sentence and reconstructs the original morphemes from spelling changes from irregular conjugations.",
+        "It also assigns all possible POS tags to each morpheme by consulting a morpheme dictionary.",
+        "The unknown-morpheme handler integrated into the morphological analyzer assigns the POS's of the morphemes which are not registered in the dictionary.",
+        "The statistical tagger runs the Viterbi algorithm (Forney.",
+        "1973) on the morpheme graph for searching the optimal tag sequence for POS disambiguation.",
+        "For remeding the defects of a statistical tagger, we introduce a post error-correction mechanism.",
+        "The error-corrector is a rule-based transformer (Brill, 1992), and it corrects the mis-tagged morphemes by considering the lexical patterns and the necessary contextual information."
+      ]
+    },
+    {
+      "heading": "4.1 Statistical POS tagger",
+      "text": [
+        "Statistical tagging model has the morpheme graph as input and selects the best morpheme and POS tag sequence4 for sentences represented in the graph.",
+        "The morpheme-graph is a compact way of representing multiple morpheme sequences for a sentence.",
+        "We put each morpheme with the tag as a node and the morpheme connectivity as a link.",
+        "Our statistical tagging model is adjusted from standard bi-grams using the Viterbi-search (Cutting et al., 1992) plus on-the-fly extra computing of lexical probabilities for unknown morphemes.",
+        "The equation of statistical tagging model used is a modified bi-gram model with left to right search:",
+        "where T* is an optimal tag sequence that maximizes the forward Viterbi scores.",
+        "Pr(t2tt1-1) is a bi-gram tag transition probability and",
+        "is a modified morpheme lexical probability.",
+        "This equation is finally selected from the extensive experiments using the following six different equations:",
+        "In the experiments, we used 10204 morpheme training corpus from \"Kemong Encyclopedia 5\".",
+        "Table 1 shows the tagging performance of each equation.",
+        "Training of the statistical tagging model requires parameter estimation process for two parameters, that is, morpheme lexical probabilities and bi-gram tag transition probabilities.",
+        "Several studies show that using as much as tagged corpora for training gives much better"
+      ]
+    },
+    {
+      "heading": "4.2 Lexical probability estimation for unknown morpheme guessing",
+      "text": [
+        "The lexical probabilities for unknown morphemes cannot be pre-calculated using the equation (8), so a special method should be applied.",
+        "We suggest to use syllable trigrams since Korean syllables can duly play important roles as restricting units for guessing POS of a morpheme.",
+        "So the lexical probability for unknown morphemes can be estimated using the frequency of syllable trigram products according to the following formula:",
+        "where 'm' is a morpheme, 'e' is a syllable, 't' is a POS tag, '#' is a morpheme boundary symbol, and ft(eilei_2, ei_i) is a frequency data for tag 't' with cooccurrence syllables ei_2, ei_l, ei.",
+        "A trigram probabilities are smoothed by.",
+        "equation (13) to cope with the sparse-data problem.",
+        "For example.",
+        "is is a name of a person, so is an unknown morpheme.",
+        "The lexical probability of\"tq--7-7;-72:\" as tag MPN is estimated using the formula: All trigrams for Korean syllables were pre-calculated and stored in the table, and are applied with the candidate tags during the unknown morpheme POS guessing and smoothing."
+      ]
+    },
+    {
+      "heading": "5 A posteriori error correction rules",
+      "text": [
+        "The statistical morpheme tagging covers only the limited range of contextual information.",
+        "Moreover, it cannot refer to the lexical patterns as a context for POS disambiguation.",
+        "As mentioned before, Korean eojeol has very complex morphological structure so it is necessary to look at the functional morphemes selectively to get the grammatical relations between eojeols.",
+        "For these reasons, we designed error-correcting rules for eojeols to compensate estimation and modeling errors of the statistical morpheme tagging.",
+        "However, designing the error-correction rules with knowledge engineering is tedious and error-prone.",
+        "Instead, we adopted Brill's approach (Brill, 1992) to automatically learn the error-correcting rules from small amount of tagged corpus.",
+        "Fortunately, Brill showed that we don't need a large amount of tagged corpus to extract the symbolic tagging rules compared with the case in the statistical tagging.",
+        "Table 2 shows some rule schemata we used to extract the error-correcting rules, where a rule schema designates the context of rule applications, i.e.. the morpheme position and the lexical/tag decision in the context eojeol.",
+        "The rules which can be automatically learned using table 2's schemata are in the form of table 3, where [current eojeol or morpheme] consists of morpheme (With current tag) sequence in the eojeol.",
+        "and [corrected eojeol or morpheme] consists of morpheme (with corrected tag) sequence in the same eojeol.",
+        "For example, the rule Pal (Chinese ink)/MC + -81 j Sl[N1FT, MC] -+ [(to eat)/ DR + I eC N MG] says that the current eojeol was statistically tagged as common-noun (MC) plus auxiliary particle (JS), but when the next first eojeol's (Ni) first position morpheme tag (FT) is another common-noun (MC), the eojeol should be tagged as regular verb (DR) plus adnominal ending (eCNIVIG).",
+        "This statistical error is caused from the ambiguity of the morpheme \"°--1\" which has two meanings as \"Chinese ink\" (noun) and \"to eat\" (verb).",
+        "Since the morpheme segmentation is very difficult in Korean, many of the tagging errors also come from the morpheme segmentation errors.",
+        "Our error-correcting rules can cope with these morpheme",
+        "segmentation errors by correcting the errors in the whole eojeol together.",
+        "For example, the following rule can correct morpheme segmentation errors: [/HC + 012/j0][P1LM, 01/DR + 2./eCC].",
+        "This rule says that the eojeol \"01--a\" is usually segmented as common-noun \"*\" (meaning string or rope) plus other-particle \"01-11\", but when the morpheme\"-&-' appears before the eojeol, it should be segmented as regular-verb \"1-01\" (meaning shrink) plus conjunctive-ending \"m\".",
+        "This kind of segmentation-error correction can greatly enhance the tagging performance in Korean.",
+        "The rules are automatically learned by comparing the correctly tagged corpus with the outputs of the statistical tagger.",
+        "The training is leveraged (Brill, 1992) so the error-correcting rules are gradually learned as the statistical tagged texts are corrected by the rules learned so far."
+      ]
+    },
+    {
+      "heading": "6 Experiment results",
+      "text": [
+        "For morphological analysis and POS tagging experiments, we used 130000 morpheme-balanced training corpus for statistical parameter estimation and 50000 morpheme corpus for learning the post error-correction rules.",
+        "These training corpora were collected from various sources such as internet documents, encyclopedia, newspapers, and school textbooks.",
+        "For the test set, we carefully selected three different document sets aiming for a broad coverage.",
+        "The document set 1 (25299 morphemes; 1338 sentences) is collected from \"Kemong encyclopedia 6, hotel reservation dialog corpus' and internet document, and contains 10% of unknown morphemes.",
+        "The documents set 2 (15250 morphemes; 574 sentences) is solely collected from various internet documents from assorted domains such as broadcasting scripts and newspapers, and has about 8.5% of unknown morphemes.",
+        "The document set 3 (20919 morphemes: 555 sentence) is from Korean standard document collection set called KTSET 2.08 and contains academic articles and electronic newspapers.",
+        "This document set contains about .14% unknown morphemes (mainly technical jargons).",
+        "Table 4 shows-our tagging performance for these three document sets.",
+        "This experiment shows efficiency of our unknown morpheme handling and guessing techniques since we can confirm the sharp performance drops between tagger-a and tagger-b.",
+        "The post error correction rules are also proved to be effective by the performance drops between the full tagger and tagger-a, but the drop rates are mild due to the performance saturation at tagger-a, which means that our statistical tagging alone already achieves state-of-the-art performance for Korean morpheme tagging."
+      ]
+    },
+    {
+      "heading": "7 Conclusion and future works",
+      "text": [
+        "This paper presents a pattern-dictionary based unknown-morpheme guessing method for a statistical/rule-based hybrid tagging system which itself exhibits many novel ideas of POS tagging such as experiment-based new statistical model for Korean, rule based error correction and hierarchically expandable tag sets.",
+        "The system POSTAG was developed to test these novel ideas especially for agglutinative languages such as Korean.",
+        "Japanese is also similar to Korean in linguistic characteristics and will be a good target of these ideas.",
+        "POSTAG integrates morphological analysis with generalized unknown-morpheme handling so that unknown-morpheme can be processed in the same manner as registered morphemes using morpheme pattern dictionary.",
+        "POSTAG adopted a hybrid approach by cascading statistical tagging to rule-based error-correction.",
+        "Cascaded training was implemented to selectively learn statistical tagging error-correction rules by Brill style transformation approach.",
+        "POSTAG also employs hierarchical tag sets that are flexible enough to expand/shrink according to the given applications.",
+        "The hierarchical tag sets can be mapped to any other existing tag set as long as they are decently classified, and therefore can en-coverage a corpus sharing in Korean tagging community.",
+        "POSTAG is constantly being improved by expanding the morpheme dictionary, pattern-dictionary, and tagged corpus for statistical training and rule learning.",
+        "Since generalized unknown-morpheme handing is integrated into the system, POSTAG is a good tagger for open domain applications such as internet indexing, filtering, and summarization, and we are now developing a web indexer using the POSTAG technology."
+      ]
+    }
+  ]
+}

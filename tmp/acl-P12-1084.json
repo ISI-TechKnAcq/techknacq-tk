@@ -1,0 +1,352 @@
+{
+  "info": {
+    "authors": [
+      "Katja Markert",
+      "Yufang Hou",
+      "Michael Strube"
+    ],
+    "book": "ACL",
+    "id": "acl-P12-1084",
+    "title": "Collective Classification for Fine-grained Information Status",
+    "url": "https://aclweb.org/anthology/P12-1084",
+    "year": 2012
+  },
+  "references": [
+    "acl-D09-1018",
+    "acl-D09-1102",
+    "acl-D09-1151",
+    "acl-D11-1099",
+    "acl-J00-4003",
+    "acl-J05-3004",
+    "acl-J08-1001",
+    "acl-J08-4004",
+    "acl-J11-4007",
+    "acl-J95-2003",
+    "acl-J96-2004",
+    "acl-L08-1354",
+    "acl-N07-1002",
+    "acl-N07-1030",
+    "acl-N09-1065",
+    "acl-P04-1019",
+    "acl-P04-1035",
+    "acl-P07-1041",
+    "acl-P09-1092",
+    "acl-P96-1039",
+    "acl-W03-1023",
+    "acl-W04-2327",
+    "acl-W06-1612",
+    "acl-W11-1907"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "Previous work on classifying information status (Nissim, 2006; Rahman and Ng, 2011) is restricted to coarse-grained classification and focuses on conversational dialogue.",
+        "We here introduce the task of classifying fine-grained information status and work on written text.",
+        "We add a fine-grained information status layer to the Wall Street Journal portion of the OntoNotes corpus.",
+        "We claim that the information status of a mention depends not only on the mention itself but also on other mentions in the vicinity and solve the task by collectively classifying the information status of all mentions.",
+        "Our approach strongly outperforms reimplementations of previous work."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Speakers present already known and yet to be established information according to principles referred to as information structure (Prince, 1981; Lambrecht, 1994; Kruijff-Korbayova?",
+        "and Steedman, 2003, inter alia).",
+        "While information structure affects all kinds of constituents in a sentence, we here adopt the more restricted notion of information status which concerns only discourse entities realized as noun phrases, i.e. mentions1.",
+        "Information status (IS henceforth) describes the degree to which a discourse entity is available to the hearer with regard to the speaker's assumptions about the hearer's knowledge and beliefs (Nissim et al., 2004).",
+        "Old mentions are known to the hearer and have been referred 1Since not all noun phrases are referential, we call noun phrases which carry information status mentions.",
+        "to previously.",
+        "Mediated mentions have not been mentioned before but are also not autonomous, i.e., they can only be correctly interpreted by reference to another mention or to prior world knowledge.",
+        "All other mentions are new.",
+        "IS can be beneficial for a number of NLP tasks, though the results have been mixed.",
+        "Nenkova et al.",
+        "(2007) used IS as a feature for generating pitch accent in conversational speech.",
+        "As IS is restricted to noun phrases, while pitch accent can be assigned to any word in an utterance, the experiments were not conclusive.",
+        "For determining constituent order of German sentences, Cahill and Riester (2009) incorporate features modeling IS to good effect.",
+        "Rahman and Ng (2011) showed that IS is a useful feature for coreference resolution.",
+        "Previous work on learning IS (Nissim, 2006; Rah-man and Ng, 2011) is restricted in several ways.",
+        "It deals with conversational dialogue, in particular with the corpus annotated by Nissim et al. (2004).",
+        "However, many applications that can profit from IS concentrate on written texts, such as summariza-tion.",
+        "For example, Siddharthan et al. (2011) show that solving the IS subproblem of whether a person proper name is already known to the reader improves automatic summarization of news.",
+        "Therefore, we here model IS in written text, creating a new dataset which adds an IS layer to the already existing comprehensive annotation in the OntoNotes corpus (Weischedel et al., 2011).",
+        "We also report the first results on fine-grained IS classification by modelling further distinctions within the category of mediated mentions, such as comparative and bridging anaphora (see Examples 1 and 2, re",
+        "spectively).2 Fine-grained IS is a prerequisite to full bridging/comparative anaphora resolution, and therefore necessary to fill gaps in entity grids (Barzi-lay and Lapata, 2008) based on coreference only.",
+        "Thus, Examples 1 and 2 do not exhibit any corefer-ential entity coherence but coherence can be established when the comparative anaphor others is resolved to others than freeway survivor Buck Helm, and the bridging anaphor the streets is resolved to the streets of Oranjemund, respectively.",
+        "(1) the condition of freeway survivor Buck Helm .",
+        ".",
+        ".",
+        ", improved, hospital officials said.",
+        "Rescue crews, however, gave up hope that others would be found.",
+        "(2) Oranjemund, the mine headquarters, is a lonely corporate oasis of 9,000 residents.",
+        "Jackals roam the streets at night .",
+        ".",
+        ".",
+        "We approach the challenge of modeling IS via collective classification, using several novel linguistically motivated features.",
+        "We reimplement Nissim's (2006) and Rahman and Ng's (2011) approaches as baselines and show that our approach outperforms these by a large margin for both coarse-and fine-grained IS classification."
+      ]
+    },
+    {
+      "heading": "2 Related Work",
+      "text": [
+        "IS annotation schemes and corpora.",
+        "We enhance the approach in Nissim et al. (2004) in two major ways (see also Section 3.1).",
+        "First, comparative anaphora are not specifically handled in Nissim et al. (2004) (and follow-on work such as Ritz et al. (2008) and Riester et al. (2010)), although some of them might be included in their respective bridging subcategories.",
+        "Second, we apply the annotation scheme reliably to a new genre, namely news.",
+        "This is a non-trivial extension: Ritz et al. (2008) applied a variation of the Nissim et al. (2004) scheme to a small set of 220 NPs in a German news/commentary corpus but found that reliability then dropped significantly to the range of ?",
+        "= 0.55 to 0.60.",
+        "They attributed this to the higher syntactic complexity and semantic vagueness in the commentary corpus.",
+        "Riester et al. (2010) annotated a 2All examples in this paper are from the OntoNotes corpus.",
+        "The mention in question is typed in boldface; antecedents, where applicable, are displayed in italics.",
+        "German news corpus marginally reliable (?",
+        "= 0.66) for their overall scheme but their confusion matrix shows even lower reliability for several subcategories, most importantly deixis and bridging.",
+        "While standard coreference corpora do not contain IS annotation, some corpora annotated for bridging are emerging (Poesio, 2004; Korzen and Buch-Kromann, 2011) but they are (i) not annotated for comparative anaphora or other IS categories, (ii) often not tested for reliability or reach only low reliability, (iii) often very small (Poesio, 2004).",
+        "To the best of our knowledge, we therefore present the first English corpus reliably annotated for a wide range of IS categories as well as full anaphoric information for three main anaphora types (coreference, bridging, comparative).",
+        "Automatic recognition of IS.",
+        "Vieira and Poesio (2000) describe heuristics for processing definite descriptions in news text.",
+        "As their approach is restricted to definites, they only analyse a subset of the mentions we consider carrying IS.",
+        "Siddharthan et al. (2011) also concentrate on a subproblem of IS only, namely the hearer-old/hearer-new distinctions for person proper names.",
+        "Nissim (2006) and Rahman and Ng (2011) both present algorithms for IS detection on Nissim et al.",
+        "'s (2004) Switchboard corpus.",
+        "Both papers treat IS classification as a local classification problem whereas we look at dependencies between the IS status of different mentions, leading to collective classification.",
+        "In addition, they only distinguish the three main categories old, mediated and new.",
+        "Finally, we work on news corpora which poses different problems from dialogue.",
+        "Anaphoricity determination (Ng, 2009; Zhou and Kong, 2009) identifies many or most old mentions.",
+        "However, no distinction between mediated and new mentions is made.",
+        "Most approaches to bridging resolution (Meyer and Dale, 2002; Poesio et al., 2004) or comparative anaphora (Mod-jeska et al., 2003; Markert and Nissim, 2005) address only the selection of the antecedent for the bridging/comparative anaphor, not its recognition.",
+        "Sasano and Kurohashi (2009) do also tackle bridging recognition, but they depend on language-specific non-transferrable features for Japanese."
+      ]
+    },
+    {
+      "heading": "3 Corpus Creation",
+      "text": []
+    },
+    {
+      "heading": "3.1 Annotation Scheme",
+      "text": [
+        "Our scheme follows Nissim et al. (2004) in distinguishing three major IS categories old, new and mediated.",
+        "A mention is old if it is either coreferential with an already introduced entity or a generic or deictic pronoun.",
+        "We follow the OntoNotes (Weischedel et al., 2011) definition of coreference to be able to integrate our annotations with it.",
+        "This definition includes coreference with noun phrase as well as verb phrase antecedents3 .",
+        "Mediated refers to entities which have not yet been introduced in the text but are inferrable via other mentions or are known via world knowledge.",
+        "We distinguish the following six subcategories: The category mediated/comparative comprises mentions compared via either a contrast or similarity to another one (see Example 1).",
+        "This category is novel in our scheme.",
+        "We also include a category mediated/bridging (see Examples 2, 3 and 4).",
+        "Bridging anaphora can be any noun phrase and are not limited to definite NPs as in Poesio et al. (2004), Gardent and Manue?lian (2005), Riester et al. (2010).",
+        "In contrast to Nissim et al. (2004), antecedents for both comparative and bridging categories are annotated and can be noun phrases, verb phrases or even clauses.",
+        "The category mediated/knowledge is inspired by the hearer-old distinction introduced by Prince (1992) and covers entities generally known to the hearer.",
+        "It includes many proper names, such as Poland.4 Mentions that are syntactically linked via a possessive relation or a PP modification to other, old or mediated mentions fall into the type mediated/synt (see Examples 5 and 6).5 With no change to Nissim et al's scheme, coordinated mentions where at least one element in the conjunction is old or mediated are covered by the category mediated/aggregate, and mentions referring to a value of a previously mentioned function by the type mediated/func.",
+        "that only considers possessives but not PP modification.",
+        "ing most generics as well as newly introduced, specific mentions such as Example 7.",
+        "(3) Initial steps were taken at Poland's first environmental conference, which I attended last month.",
+        ".",
+        ".",
+        ".",
+        "it was no accident that participants urged the free flow of information (4) The Bakersfield supermarket went out of business last May.",
+        "The reason was .",
+        ".",
+        ".",
+        "(5) One Washington couple sold their liquor store (6) the main artery into San Francisco (7) the owner was murdered by robbers"
+      ]
+    },
+    {
+      "heading": "3.2 Agreement Study",
+      "text": [
+        "We carried out an agreement study with 3 annotators, of which Annotator A was the scheme developer and first author of this paper.",
+        "All texts used were from the Wall Street Journal (WSJ) portion of OntoNotes.",
+        "There were no restrictions on which texts to include apart from (i) exclusion of letters to the editor as they contain cross-document links and (ii) a preference for longer texts with potentially richer discourse structure.",
+        "Mentions were automatically preselected for the annotators using the gold-standard syntactic annotation.",
+        "The existing coreference annotation was automatically carried over to the IS task by marking all mentions in a coreference chain (apart from the first mention in the chain) as old.",
+        "The annotation task consisted of marking all mentions for their IS (old, mediated or new) as well as marking mediated subcategories (see Section 3.1) and the antecedents for comparative and bridging anaphora.",
+        "The scheme was developed on 9 texts, which were also used for training the annotators.",
+        "Inter-annotator agreement was measured on 26 new texts, which included 5905 pre-marked potential mentions.",
+        "The annotations of 1499 of these were carried over from OntoNotes, leaving 4406 potential mentions for annotation and agreement measurement.",
+        "In addition to",
+        "percentage agreement, we measured Cohen's ?",
+        "(Art-stein and Poesio, 2008) between all 3 possible annotator pairings.",
+        "We also report single-category agreement for each category, where all categories but one are merged and then ?",
+        "is computed as usual.",
+        "Table 1 shows agreement results for the overall scheme at the coarse-grained (4 categories: non-mention, old, new, mediated) and the fine-grained level (9 categories: non-mention, old, new and the 6 mediated subtypes).",
+        "The results show that the scheme is overall reliable, with not too many differences between the different annotator pairings.7 Table 2 shows the individual category agreement for all 9 categories.",
+        "We achieve high reliability for most categories.8 Particularly interesting is the fact that hearer-old entities (mediated/knowledge) can be identified reliably although all annotators had substantially different backgrounds.",
+        "The reliability of the category bridging is more annotator-dependent, although still higher, sometimes considerably, than other previous attempts at bridg7Often, annotation is considered highly reliable when ?",
+        "exceeds 0.80 and marginally reliable when between 0.67 and 0.80 (Carletta, 1996).",
+        "However, the interpretation of ?",
+        "is still under",
+        "ing Annotator B, was explained by Annotator B forgetting about this category after having used it once.",
+        "Pair AC achieved high reliability (?",
+        "83.2 for pair A-C).",
+        "ing annotation (Poesio et al., 2004; Gardent and Manue?lian, 2005; Riester et al., 2010)."
+      ]
+    },
+    {
+      "heading": "3.3 Gold Standard",
+      "text": [
+        "Our final gold standard corpus consists of 50 texts from the WSJ portion of the OntoNotes corpus-The corpus will be made publically available as OntoNotes annotation layer via http://www.",
+        "h-its.org/nlp/download.",
+        "Disagreements in the 35 texts used for annotator training (9 texts) and testing (26 texts) were resolved via discussion between the annotators.",
+        "An additional 15 texts were annotated by Annotator A.",
+        "Finally, Annotator A carried out consistency checks over all texts.",
+        "?",
+        "The gold standard includes 10,980 true mentions (see Table 3)."
+      ]
+    },
+    {
+      "heading": "4 Features",
+      "text": [
+        "In this Section, we describe both the local as well as the relational features we use."
+      ]
+    },
+    {
+      "heading": "4.1 Features for Local Classification",
+      "text": [
+        "We use the following local features, including the features in Nissim (2006) and Rahman and Ng (2011) to be able to gauge how their systems fare on our corpus and as a comparison point for our novel collective classification approach.",
+        "The features developed by Nissim (2006) are shown in Table 4.",
+        "Nissim shows clearly that these features are useful for IS classification.",
+        "Thus, subjects are more likely to be old as assumed by, e.g., centering theory (Grosz et al.,"
+      ]
+    },
+    {
+      "heading": "Feature Value",
+      "text": [
+        "full prev mention {yes, no, NA}9 mention time {first, second, more} partial prev mention {yes, no, NA} determiner {bare, def, dem, indef, poss, NA} NP type {pronoun, common, proper, other} NP length numeric grammatical role {subject, subjpass, pp, other}",
+        "1995).",
+        "Also, previously unmentioned proper names are more likely to be hearer-old and therefore mediated/knowledge, although their exact status will depend on how well known a particular proper name is.",
+        "Rahman and Ng (2011) add all unigrams appearing in any mention in the training set as features.",
+        "They also integrated (via a convolution tree-kernel SVM (Collins and Duffy, 2001)) partial parse trees that capture the generalised syntactic context of a mention e and include the mention's parent and sibling nodes without lexical leaves.",
+        "However, they use no structure underneath the mention node e itself, assuming that ?any NP-internal information has presumably been captured by the flat features?.",
+        "To these feature sets, we add a small set of other local features otherlocal.",
+        "These track partial previous mentions by also counting partial previous mention time as well as the previous mention of content words only.",
+        "We also add a mention's number as one of singular, plural or unknown, and whether the mention is modified by an adjective.",
+        "Another feature encapsulates whether the mention is modified by a comparative marker, using a small set of 10 markers such as another, such, similar .",
+        ".",
+        ".",
+        "and the presence of adjectives or adverbs in the comparative.",
+        "Finally, we include the mention's semantic class as one of 12 coarse-grained classes, including location, organisation, person and several classes for numbers (such as date, money or percent)."
+      ]
+    },
+    {
+      "heading": "4.2 Relations for Collective Classification",
+      "text": [
+        "Both Nissim (2006) and Rahman and Ng (2011) classify each mention individually in a standard supervised ML setting, not considering potential dependencies between the IS categories of different 9We changed the value of ?full prev mention?",
+        "from ?numeric?",
+        "to {yes, no, NA}.",
+        "mentions.",
+        "However, collective or joint classification has made substantial impact in other NLP tasks, such as opinion mining (Pang and Lee, 2004; Soma-sundaran et al., 2009), text categorization (Yang et al., 2002; Taskar et al., 2002) and the related task of coreference resolution (Denis and Baldridge, 2007).",
+        "We investigate two types of relations between mentions that might impact on IS classification.",
+        "Syntactic parent-child relations.",
+        "Two mediated subcategories account for accessibility via syntactic links to another old or mediated mention: mediated/synt is used when at least one child of a mention is mediated or old, with child relations restricted to pre-or postnominal possessives as well as PP children in our scheme (see Section 3.1).",
+        "mediated/aggregate is for coordinations in which at least one of the children is old or mediated.",
+        "In these two cases, a mention's IS depends directly on the IS of its children.",
+        "We therefore link a mention m1 to a mention m2 via a hasChild relation if (i) m2 is a possessive or prepositional modification ofm1, or (ii)m1 is a coordination and m2 is one of its children.",
+        "Using such a relational feature catches two birds with one stone: firstly, it integrates the internal structure of a mention into the algorithm, which Rahman and Ng (2011) ignore; secondly, it captures dependencies between parent and child classification, which would not be possible if we integrated the internal structure via flat features or additional tree kernels.",
+        "We hypothesise that the higher syntactic complexity of our news genre (14.5% of all mentions are mediated/synt) will make this feature highly effective in distinguishing between new and mediated categories.",
+        "Syntactic precedence relations.",
+        "IS is said to influence word order (Birner and Ward, 1998; Cahill and Riester, 2009) and this fact has been exploited in work on generation (Prevost, 1996; Filippova and Strube, 2007; Cahill and Riester, 2009).",
+        "Therefore, we integrate dependencies between the IS classification of mentions in precedence relations.",
+        "m1 precedes m2 if (i) m1 and m2 are in the same clause, allowing for trace subjects in gerund and infinitive constructions, (ii) m1 and m2 are dependent on the same verb or noun, allowing for intervening nodes via modal, auxiliary, gerund and infinitive",
+        "constructions, (iii) m1 is neither a child nor a parent of m2, and (iv) m1 occurs before m2.",
+        "For Example 8 (slightly simplified) we extract the precedence relations shown in Table 5.",
+        "(8) She was sent by her mother to a white woman's house to do chores in exchange for meals and a place to sleep.",
+        "Proper names behave differently from common nouns.",
+        "For example, they can occur at many different places in the clause when functioning as spatial or temporal scene-setting elements, such as In New York.",
+        "We therefore exclude all precedence relations where one element of the pair is a proper name.",
+        "We extract 2855 precedence relations.",
+        "Table 6 shows the statistics on precedence with the first mention in a pair in rows and the second in columns.",
+        "Mediated and new mentions indeed rarely precede old mentions, so that precedence should improve separating of old vs other mentions.",
+        "old mediated new"
+      ]
+    },
+    {
+      "heading": "5 Experiments",
+      "text": []
+    },
+    {
+      "heading": "5.1 Experimental Setup",
+      "text": [
+        "We use our gold standard corpus (see Section 3.3) via 10-fold cross-validation on documents for all experiments.",
+        "Following Nissim (2006) and Rahman and Ng (2011), we perform all experiments on gold standard mentions and use the human WSJ syntactic annotation for feature extraction, when necessary.",
+        "For the extraction of semantic class, we use OntoNotes entity type annotation for proper names and an automatic assignment of semantic class via WordNet hypernyms for common nouns.",
+        "Coarse-grained versions of all algorithms distinguish only between the three old, mediated, new categories.",
+        "Fine-grained versions distinguish between the categories old, the six mediated subtypes, and new.",
+        "We report overall accuracy as well as precision, recall and F-measure per category.",
+        "Significance tests are conducted using McNemar's test on overall algorithm accuracy, at the level of 1%."
+      ]
+    },
+    {
+      "heading": "5.2 Local Classifiers",
+      "text": [
+        "We reimplemented the algorithms in Nissim (2006) and Rahman and Ng (2011) as comparison baselines, using their feature and algorithm choices.",
+        "Algorithm Nissim is therefore a decision tree J48 with standard settings in WEKA with the features in Table 4.",
+        "Algorithm RahmanNg is an SVM with a composite kernel and one-vs-all training/testing (toolkit SVMLight).",
+        "They use the features in Table 4 plus unigram and tree kernel features, described in Section 4.1.",
+        "We add our additional set of otherlocal features to both baseline algorithms (yielding Nis-sim+ol and RahmanNg+ol) as they aim specifically at improving fine-grained classification."
+      ]
+    },
+    {
+      "heading": "5.3 Collective Classification",
+      "text": [
+        "For incorporating our inter-mention links, we use a variant of Iterative Collective classification (ICA), which has shown good performance over a variety of tasks (Lu and Getoor, 2003) and has been used in NLP for example for opinion mining (Somasun-daran et al., 2009).",
+        "ICA is normally faster than Gibbs sampling and ?",
+        "in initial experiments ?",
+        "did not yield significantly different results from it.",
+        "ICA initializes each mention with its most likely IS, according to the local classifier and features.",
+        "It then iterates a relational classifier, which uses both local and relational features (our hasChild and precedes features) taking IS assignments to neighbouring mentions into account.",
+        "We use the exist aggregator to define the dependence between mentions.",
+        "We use NetKit (Macskassy and Provost, 2007) with its standard ICA settings for collective inference, as it allows direct comparison between local and collective classification.",
+        "The relational classifiers are always exactly the same classifiers as the",
+        "local ones with the relational features added: thus, if the local classifier is a tree kernel SVM so is the relational one.",
+        "One problem when using the SVM Tree kernel as relational classifier is that it allows only for binary classification so that we need to train several binary networks in a one-vs-all paradigm (see also (Rahman and Ng, 2011)), which will not be able to use the multiclass dependencies of the relational features to optimum effect."
+      ]
+    },
+    {
+      "heading": "5.4 Results",
+      "text": [
+        "Table 7 shows the comparison of collective classification to local classification, using Nissim's framework and features, and Table 8 the equivalent table for Rahman and Ng's approach.",
+        "The improvements using the additional local features over the original local classifiers are statistically significant in all cases.",
+        "In particular, the inclusion of semantic classes improves mediated/knowledge and mediated/func, and comparative anaphora are recognised highly reliably via a small set of comparative markers.",
+        "The hasChild relation leads to significant improvement in accuracy over local classification in all cases, showing the value of collective classification.",
+        "The improvement here is centered on the categories of mediated/synt (for both cases) and mediated/aggregate (for Nis-sim+ol+hasChild) as well as their distinction from new.10 It is also interesting that collective classification with a concise feature set and a simple decision tree as used in Nissim+ol+hasChild, performs equally well as RahmanNg+ol+hasChild, which uses thousands of unigram and tree features and a more sophisticated local classifier.",
+        "It also shows more consistent improvements over all fine-grained classes.",
+        "The precedes relation does not lead to any further improvement.",
+        "We investigated several variations of the precedence link, such as restricting it to certain grammatical relations, taking into account definiteness or NP type but none of them led to any improvement.",
+        "We think there are two reasons for this lack of success.",
+        "First, the precedence of mediated vs. new mentions does not follow a clear order and is therefore not a very predictive feature (see Table 6).",
+        "At first, this seems to contradict studies such as Cahill and Riester (2009) that find a variety of precedences according to information status.",
+        "However, many of the clearest precedences they find are more specific variants of the old >p mediated or old >p new precedence or they are preferences at an even finer level than the one we annotate, including for example the identification of generics.",
+        "Second, the clear old >p mediated 10For RhamanNg+ol+hasChild, the aggregate class suffers from collective classification.",
+        "We hypothesise that this is an artefact of the one-vs-all training/testing for rare categories.",
+        "bolded.",
+        "and old >p new preferences are partially already captured by the local features, especially the grammatical role, as, for example, subjects are often both old as well as early on in a sentence.",
+        "With regard to fine-grained classification, many categories including comparative anaphora, are identified quite reliably, especially in the multiclass classification setting (Nissim+ol+hasChild).",
+        "Bridging seems to be the by far most difficult category to identify with final best F-measures still very low.",
+        "Most bridging mentions do not have any clear internal structure or external syntactic contexts that signal their presence.",
+        "Instead, they rely more on lexical and world knowledge for recognition.",
+        "Unigrams could potentially encapsulate some of this lexical knowledge but ?",
+        "without generalization ?",
+        "are too sparse for a relatively rare category such as bridging (6% of all mentions) to perform well.",
+        "The difficulty of bridging recognition is an important insight of this paper as it casts doubt on the strategy in previous research to concentrate almost exclusively on antecedent selection (see Section 2)."
+      ]
+    },
+    {
+      "heading": "6 Conclusions",
+      "text": [
+        "We presented a new approach to information status classification in written text, for which we also provide the first reliably annotated English language corpus.",
+        "Based on linguistic intuition, we define features for classifying mentions collectively.",
+        "We show that our collective classification approach outperforms the state-of-the-art in coarse-grained IS classification by about 10% (Nissim, 2006) and 5% (Rahman and Ng, 2011) accuracy.",
+        "The gain is almost entirely due to improvements in distinguishing between new and mediatedmentions.",
+        "For the latter, we also report the ?",
+        "to our knowledge ?",
+        "first fine-grained IS classification results.",
+        "Since the work reported in this paper relied ?",
+        "following Nissim (2006) and Rahman and Ng (2011) ?",
+        "on gold standard mentions and syntactic annotations, we plan to perform experiments with predicted mentions as well.",
+        "We also have to improve the recognition of bridging, ideally combining recognition and antecedent selection for a complete resolution component.",
+        "In addition, we plan to integrate IS resolution with our coreference resolution system (Cai et al., 2011) to provide us with a more comprehensive discourse processing system.",
+        "Acknowledgements.",
+        "Katja Markert received a Fellowship for Experienced Researchers by the Alexander-von-Humboldt Foundation and Yufang Hou is funded by a PhD scholarship from the Research Training GroupCo-herence in Language Processing at Heidelberg University.",
+        "We thank the Heidelberg Institute for Theoretical Studies for hosting Katja Markert and funding the annotation study, and the annotators for their diligent work."
+      ]
+    }
+  ]
+}

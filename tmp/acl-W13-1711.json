@@ -1,0 +1,178 @@
+{
+  "info": {
+    "authors": [
+      "Vidas Daudaravicius"
+    ],
+    "book": "BEA",
+    "id": "acl-W13-1711",
+    "title": "VTEX System Description for the NLI 2013 Shared Task",
+    "url": "https://aclweb.org/anthology/W13-1711",
+    "year": 2013
+  },
+  "references": [
+    "acl-D11-1148",
+    "acl-W07-0602"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "This paper describes the system developed for the NLI 2013 Shared Task, requiring to identify a writer's native language by some text written in English.",
+        "I explore the given manually annotated data using word features such as the length, endings and character trigrams.",
+        "Furthermore, I employ k-NN classification.",
+        "Modified TFIDF is used to generate a stop-word list automatically.",
+        "The distance between two documents is calculated combining n-grams of word lengths and endings, and character trigrams."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Native Language Identification (NLI) is the task of identifying the first spoken language (L1) of a person based on the person's written text in another language.",
+        "As a natural language processing (NLP) task, it is properly categorized as text classification, and standard approaches like support vector machines (SVM) are successufully applied to it.",
+        "Koppel et al. (2005) trained SVM models with a set of stylistic features, including Part of Speech (POS) and character n-grams (sequences), function words, and spelling error types, achieving 80% accuracy in a 5-language task.",
+        "Tsur and Rappoport (2007) focused on character n-grams.",
+        "Wong and Dras (2011) showed that syntactic patterns, derived by a parser, are more effective than other stylistic features.",
+        "The Cambridge Learner Corpus has been used recently by Kochmar (2011), who concluded that character n-grams are the most promising features.",
+        "Brooke and Hirst (2012) investigated function words, character n-grams, POS n-grams, POS/function n-grams, CFG productions, dependencies, word n-grams.",
+        "A notable problem in the recent NLI research is a clear interaction between native languages and topics in the corpora.",
+        "The solution in the mentioned work was to avoid lexical features that might carry topical information."
+      ]
+    },
+    {
+      "heading": "2 Data",
+      "text": [
+        "The NLI 2013 Shared Task uses the TOEFL11 corpus (Blanchard et al., 2013) which was designed specifically for the task of native language identification.",
+        "The corpus contains 12 100 English essays from the TOEFL (Test of English as a Foreign Language) that were collected through ETS (Educational Testing Service) operational test delivery system.",
+        "TOEFL11 contains eleven native languages: Arabic, Chinese, French, German, Hindi, Italian, Japanese, Korean, Spanish, Telugu, and Turkish.",
+        "The sampling of essays ensures approximately equal representation of native languages across eight topics, labeled as prompts.",
+        "The corpus contains more than 1000 essays for each L1 language.",
+        "Each essay is labelled with an English language proficiency level ?",
+        "high, medium, or low ?",
+        "given by human assessment specialists.",
+        "The essays are usually 300 to 400 words long.",
+        "The corpus is split into training, development and test data (9900, 1100 and 1100, respectively).",
+        "The corpus contains plain text files and the index for these",
+        "files.",
+        "Sample of this index is shown in Table 1."
+      ]
+    },
+    {
+      "heading": "3 Nend transformation",
+      "text": [
+        "The training and the development corpora contain a lot of spelling errors and no POS tagging is provided.",
+        "For instance, a sentence from the training corpus ?Acachely I write abawet may communitie and who the people support youg people?.",
+        "Therefore I needed to find features which encode the information about native language of a writer in a more generalized way.",
+        "Also, my primary interest was to build a system which does not utilize any language processing tool, such as part of speech or syntactic trees, and topic-related information, such as full words.",
+        "The reason for that is to have the possibility to apply the same techniques for the texts written in other languages than English in the future.",
+        "Thus, I choose to use the word length as the number of characters together with the last n characters of that word.",
+        "Words in the essays were transformed into tokens using five kinds of transformations: 0end ?",
+        "takes the pure length of a word (for example, make 7?",
+        "4 );",
+        "four characters (make 7?",
+        "4make).",
+        "For instance, the sentence ?Difference makes a lot of opportunities .?",
+        "is translated to: 0end: 10 5 1 3 2 13 1 1end: 10e 5s 1a 3t 2f 13s 1.",
+        "2end: 10ce 5es 1a 3ot 2of 13es 1.",
+        "3end: 10nce 5kes 1a 3lot 2of 13ies 1.",
+        "4end: 10ence 5akes 1a 3lot 2of 13ties 1."
+      ]
+    },
+    {
+      "heading": "4 N-gram features",
+      "text": [
+        "The VTEX NLI 2013 system is based on n-gram features.",
+        "There are no strict rules for how long n-grams should be.",
+        "Frequently used n-grams are unigrams, bigrams and trigrams as in Brooke and Hirst (2012; Wong and Dras (2011).",
+        "The training NLI 2013 corpus is large enough to build higher-order n-grams of nend tokens.",
+        "I use unigrams, bigrams, trigrams, quad-grams and five-grams based on nend tokens.",
+        "Some ex",
+        "Beside n-grams of nends, the character n-grams are of interest also.",
+        "Kochmar (2011) noted that character n-grams provide promiss-ing features for NLI task.",
+        "Therefore, I tried to use character trigrams also.",
+        "For instance, from the sentence ?Difference makes a lot of opportunities .?",
+        "the following trigrams were generated: Dif iff ffe fer ere ren enc nce ce e m ma mak ake kes es s a a a l lo lot ot t o of of f o op opp ppo por ort rtu tun uni nit iti tie ies es s .",
+        "Whitespace is included in character trigrams and denotes the beginning or the end of a word."
+      ]
+    },
+    {
+      "heading": "5 CTFIDF for weigthing features",
+      "text": [
+        "The most widely used technique for weighting items in a list is Term-Frequency?InverseDocument-Frequency, known as TF?IDF.",
+        "Daudaravicius (2012) shows that the small change of TF?IDF allows to the generation of stop-word lists automatically.",
+        "For the NLI 2013 Shared",
+        "where TF(x) is the frequency of the item x in the training corpus, d(x) is the number of documents in the training corpus where the item x appears, known as document frequency, Dmax is the maximum of document frequency of any item in the training corpus.",
+        "The idea of my Conditional TF?IDF is as follows: if a term occures in less than Dmax/4 documents then this term is considered a normal term, and the term is considered as stop-word if it occures in more than Dmax/4 documents.",
+        "The range of TF-IDF is between 0 and positive infinity.",
+        "The range of CTFIDF is from minus infinity to zero for items that are considered stop-words.",
+        "And the range of CTFIDF is from zero to infinity for the rest of the items.",
+        "For instance, the Dmax for the different n-gram length and different Nend transformations is presented in Table 2.",
+        "The example list of 4end ungrams with positive and negative CTFIDFs are shown in Tables 4 and 3, respectively.",
+        "It is important to note that I count Dmax and d(x) for each training language separately; i.e., when I measure the distance between a document and the document in the training data,",
+        "CTFIDFs of the same document as in Fig. 3."
+      ]
+    },
+    {
+      "heading": "6 Distance between documents",
+      "text": [
+        "Cosine distance is a widely used technique to measure the distance between two feature vectors.",
+        "It is calculated as follows:",
+        "CTFIDF allows the splitting of feature vectors into the list of ?informative?",
+        "items and the list of functional items.",
+        "For the NLI 2013 Shared task, I combine two cosine distances of negative and positive CTFIDFs as follows:",
+        "so X ?",
+        "and Y ?",
+        "contain features with positive CTFIDF, while X ??",
+        "and Y ??",
+        "contain features with negative CTFIDF.",
+        "The cos?",
+        "combines two cosine distances giving the weight for cosine of positive CTFIDFs equal to 2 and for the negative CTFIDFs equal to 1.",
+        "I have also tested combinations of 1 to 0, 0 to 1, 1 to 1, and 1 to 2.",
+        "But these combinations did not achieve better results.",
+        "Therefore, for all submitted system results I used the same combination of 2 to 1.",
+        "I utilize 26 feature vectors and obtain 26 combined cosine distances for each document: one for character trigrams and other 25 for token n-grams of diverse word transformations.",
+        "Each combined cosine distance has an assigned weight to get the final distance between two documents.",
+        "The distance between two documents X and Y is calculated as follows:",
+        "where wi is the weight of ith feature vector.",
+        "The most difficult task was to find the best combination of these 26 weights.",
+        "For the NLI 2013 Shared Task I have used the combinations shown in Table 5.",
+        "The n-gram weights in most cases are diagonal with the highest value at the 0end unigram and the lowest at the 4end five-gram.",
+        "In the beggining I tested the opposite combination, but this led to worse results.",
+        "Also, the influence of character trigrams on the results was high.",
+        "The first and second combinations in Table 5 differ in the use of five-grams and 4end transformations, while the leverage of character trigrams were kept the same.",
+        "The final official results show that richer features improve results.",
+        "Also, I found that the higher leverage is for character trigrams over n-grams the better the results are.",
+        "But, the results of character trigrams only resulted in lower performance.",
+        "It is a long way to find the optimal combination of the weights.",
+        "sions.",
+        "7 Assigning native language to a text I used the k-NN technique to assign native language to a text.",
+        "I counted the distances between the test document and all training documents, and take some amount of closest documents for each language.",
+        "To reduce the influnce of outliers, I dropped off the n closest documents and only then take some amount from the rest.",
+        "At first, I remove the 10 top documents from each language, and then kept the 20 closest documents for each language.",
+        "In total, I obtained 220 documents and ranked them by distance.",
+        "Then, I employed voting for the closest 20 documents.",
+        "A winner language is assigned to a document as the native language.",
+        "This technique was used for VTEX-closed-(1, 2 and 3) system submitions.",
+        "For the VTEX-closed-(4 and 5) I used another number for outliers and the top closest ones: the 50 closest documents for each language were dropped off, the remianing 25 for each language were kept, and, finally, the closest 25 documents are used for the voting of native language."
+      ]
+    },
+    {
+      "heading": "8 Results",
+      "text": [
+        "My primary interest in participating in the NLI 2013 Shared Task was to investigate new features that were not used earlier, and what the value of each feature in the identification of a writer's native language is.",
+        "The results of five submitted systems are shown in Tables 6 and 7.",
+        "The best submitted system had 31.9 percent accuracy.",
+        "This result was the worst of all participating teams.",
+        "At the time of writing this report, I tested new combinations of outliers and tops, ?stop-words?",
+        "and significant items, nend n-grams and character trigram weights.",
+        "New settings improved my best submitted system accuracy from 31.9 to 63.9 percent.",
+        "This result was achieved with the following settings.",
+        "I took the last 50 percent of closest documents for each language.",
+        "I set to use only stop-words and to exclude significant items, i.e., items with only negative CTFIDF.",
+        "Finaly, I set n-gram weights accordingly: 84 for character trigrams, and for nend 1,1,1,1,1, 1,3,3,3,1, 1,3,5,3,1, 1,3,3,3,1, 1,1,1,1,1.",
+        "This result shows that 2end and 3end transformation trigrams have the highest impact on the results.",
+        "Nevertheless, all tested transformations help to improve the results.",
+        "In conclusion, I investigated the influence of features, such as character trigrams and Nend n-grams, to the identification of writer's native language and found them very informative."
+      ]
+    }
+  ]
+}

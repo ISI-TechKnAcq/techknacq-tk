@@ -1,0 +1,189 @@
+{
+  "info": {
+    "authors": [
+      "Christian M. I. M. Matthiessen"
+    ],
+    "book": "International Conference on Computational Linguistics",
+    "id": "acl-C90-2056",
+    "title": "Two Approaches to Semantic Interfaces in Text Generation",
+    "url": "https://aclweb.org/anthology/C90-2056",
+    "year": 1990
+  },
+  "references": [
+    "acl-C82-1031",
+    "acl-P81-1013"
+  ],
+  "sections": [
+    {
+      "text": [
+        "This paper is a contribution towards the exploration of semantic interfaces in text generation systems.",
+        "It suggests a general interpretation of semantics for the purpose of text generation as an interlevel between lexicogrammar (the resources of grammar and vocabulary) and higher levels of organization (knowledge base, user model, text planning, and so on).",
+        "Two approaches to the design of this interlevel that have been implemented in generation systems are then presented -- chooser & inquiry semantics and situation-specific semantic systems.",
+        "They are compared and contrasted to bring out their relative merits."
+      ]
+    },
+    {
+      "heading": "1. The role of semantics in text generation: semantics as an inter-level",
+      "text": [
+        "Text generation is the creation of text, typically by means of a computer, in response to some well-specified need for text such as the need to report on tomorrow's weather or to define a particular term for somebody (e.g. Kempen, 1986; McKeown & Swartout, 1987).",
+        "That is, a text has to be created step by step from the initial specification of a need for a text to a final output, either in writing or in speech; minimally we can specify the initial need for text at one end and lexicogrammatical representation & orthographic representation at the other.",
+        "The organization of the process of generating a text and of the resources that are activated in the course of this process can be seen as stratification or the arrangement into levels of successive orders of symbolic abstraction.",
+        "So given the task of text generation, the most productive interpretation of the semantic system is a strata!",
+        "one, more specifically, semantics can be seen as the interlevel or interface between the linguistic resources of the system and the higher-level, non-linguistic ones.",
+        "For instance, if there is a contextual specification that a service of some kind is needed, this can be addressed linguistically by choosing some semantic strategy such as pleading, requesting, or ordering; which strategy is selected will again depend on contextual factors such as the nature of the relationship between speaker and listener.",
+        "The semantic selections are re-expressed lexicogrammatically and then again graphically or phonologically.",
+        "While there are many possible conceptions of semantics, it is this interpretation of semantics as a strategic interlevel for accomplishing tasks linguistically that is central to text generation; and it is the conception of semantics that we find in systemic-functional linguistics.]",
+        "The strategies can be represented as a set of interrelated options by means of the system network of systemic theory.",
+        "This corresponds to McDonald's (1980) characterization of text generation as being organized around the notion of choice.",
+        "That is, generating a text is essentially a process of selecting among all the various alternatives available at different levels of abstraction.",
+        "As Patten (1988) has pointed out, there is a significant parallel between Halliday's (e.g., 1973, 1978) emphasis on the process of choice and the organization of language as interrelated options in systemic linguistics and the paradigm of problem solving in Artificial Intelligence, involving the process of searching for solutions from among the options in a solution space."
+      ]
+    },
+    {
+      "heading": "2. Two approaches to the design of the semantic interlevel",
+      "text": [
+        "Given that we interpret semantics as an interlevel, one central question is how we can explore the organization of this interlevel.",
+        "Since semantics faces upwards, towards higher levels of organization as well as downwards, towards lower levels within the linguistic system, there are two stratal approaches that can be adopted in exploring the organization and categories of semantics, (i) one from below; and (ii) one from above.2 (i) We can explore semantics from below, starting with lexicogrammar (the unified resource of grammar and vocabulary) -- what might be called a decoding or interpretive approach, since it works by decoding or interpreting lexicogrammar in semantic terms.",
+        "(ii) Alternatively, we can explore it from above, from outside the linguistic system what might be called an encoding approach since it looks at semantics as an encoding strategy and explores how contextual categories are encoded semantically.",
+        "Both of these approaches have been used in text generation systems.",
+        "I will discuss one example of the decoding approach in more detail in Section 3, chooser & inquiry semantics developed for and used in the Penman text generation system (e.g., Mann, 1982; Matthiessen, 1988), and one example of the encoding approach in Section 4, the theory of situation-specific semantic systems (Halliday, 1973) modelled in Patten's (1988) SLANG generator.3 I should emphasize that the decoding and encoding approaches should not be seen as mutually exclusive alternatives.",
+        "Rather, the assumption is that they can be reconciled into one account of the semantic interlevel that brings out how it relates its two interfaces.",
+        "3.",
+        "Approaching semantics from below: chooser & inquiry semantics Approaching semantics from below means taking lexicogrammar as the point of departure in modelling semantics."
+      ]
+    },
+    {
+      "heading": "3.1 The organization of the level below: the grammatical system network",
+      "text": [
+        "The nature of the model of semantics that results from a lexicogrammatical point of departure will obviously be determined to a large extent by the nature of the theory of grammar.",
+        "If the focus of the grammar is on structure, the semantics will essentially be a semantics of grammatical structure, possibly cast in some form of predicate logic.",
+        "However, if the grammar is paradigmatically organized -- i.e., if the theory takes choice as the basic organizing principle, as systemic theory does -- the semantics will essentially be one of choice as well.",
+        "We can call this model of meaning choice semantics.",
+        "A number of generation systems have used systemic-functional grammar (e.g., Davey, 1978 [Proteus]; Mann & Matthiessen, 1985 [Nigel]; Bateman et al., 1987 [the Kyoto grammar]; Fawcett and Tucker, 1989 [COMMUNAL]; Patten, 1988 [SLANG]).",
+        "The central organizing principle is the system network; for example, the system network below is a fragment of the grammar of MOOD in English (the lower part of Figure 1)."
+      ]
+    },
+    {
+      "heading": "3.2 The semantic control of a system: choosers and inquiries",
+      "text": [
+        "Now, we can organize a semantic interface in terms of the system network, which is what Bill Mann and I did in the development of the chooser and inquiry framework for one particular systemic generation grammar, the Nigel grammar developed at USC/ Information Sciences Institute (Matthiessen, 1981; Mann, 1982; Matthiessen, 1988); this framework was then adopted and extended for the systemic generator of Japanese and Chinese by John Bateman and associates at Kyoto University (Bateman & Matthiessen, forthcoming).",
+        "Each system in the system network is equipped with a chooser -- a semantic procedure for ascertaining the information needed to choose the appropriate feature in the system.",
+        "The chooser achieves this by presenting one or more inquiries to the higher-level contextual systems above the grammar and its semantic interface.4 Choosers can be added to the system network as shown schematically in the top layer of Figure 1 (choosers are represented by circles at the semantic level above the grammatical system network).",
+        "(The MOOD fragment above is a simple taxonomy; but system networks in general allow for simultaneous systems and disjunctive entry conditions.",
+        "The former property is important for multifunctionality and parallel generation algorithms; cf. Tung, Matthiessen & Sondheimer, 1988) 323 An inquiry is simply a demand for information -- e.g., 'is the current speech function a command, i.e. a demand on the addressee to perform a service or to provide goods?'",
+        "(Command?",
+        "); 'is the current speech function a question, i.e. a demand on the addressee to supply information?'",
+        "(Question?",
+        "); etc.",
+        "-- and the context has to return a response.",
+        "The chooser then acts according to the response, either by presenting another inquiry if more information is needed or by selecting one of the grammatical features of its system if it has enough information.",
+        "To take a very simple example, the chooser of the system INDICATIVE TYPE has the task of choosing between 'declarative' and 'interrogative'.",
+        "It does this by presenting the inquiry Question?",
+        "to the context an inquiry asking whether the current speech function is a demand for information, i.e. a question, or not.",
+        "If the response is positive, the chooser selects 'interrogative'; if not, it selects 'declarative'.",
+        "The chooser thus treats 'declarative' as the default option of the system.",
+        "The inquiry has two or more possible responses; since these responses define branches in the organization of the chooser, this type of inquiry is called a branching inquiry (there is one other type, the so-called identifying inquiry, used to bind variables in inquiries to instantial values).",
+        "This is an example of a minimal chooser: it consists of just one inquiry.",
+        "However, a chooser may consist of more than one inquiry; if there is more than one, they are organized into a decision tree -- an inquiry tree (for examples, see Mann, 1982; Matthiessen, 1983; 1988).",
+        "The response to one inquiry simply leads to another inquiry.",
+        "During generation, an inquiry tree is simply stepped through one inquiry at a time, until the process reaches a response that is a terminal branch in the tree and leads to the choice of one of the options the chooser is associated with.",
+        "5 To sum up, as the grammatical system network is traversed, systems in the network are reached and their choosers are called into action.",
+        "The chooser of a system has the task of making an appropriate selection in its system and it does this by presenting one or more inquiries to the higher-level systems of the text generator.",
+        "Consequently, the problem of controlling the grammatical resources in a purposeful way is decomposed into a number of very simple demands for information.",
+        "These demands can be taken as the basis for specifying what kind of organization is needed to support the generation process: see Matthiessen (1987) and Bateman & Matthiessen (1989, forthcoming).",
+        "While there are considerable advantages in assuming that the semantic interfaces is simply a collection of choosers, the work on English and Japanese generation points towards an organization of inquiries that is more global than choosers local to grammatical systems: see Bateman & Matthiessen (1989).",
+        "4.",
+        "Approaching semantics from above: context-based semantics",
+        "When we approach semantics from above it is the interface between context and language that is highlighted.",
+        "The role of semantics can be stated with respect to context as follows: semantics is the set of strategies for construing contextual meanings as linguistic meanings and thus moving into the linguistic system.",
+        "Or, if we focus on the notion of gap, particular, semantics is the set of strategies for achieving some goal through symbolic activity.",
+        "This is a functional approach to semantics: it interprets semantics in terms of the uses it has evolved to serve in different communicative contexts.",
+        "This functional approach has a number of consequences for semantics; I will mention three here, the second of which I will pursue in Section 4.1:",
+        "(i) Semantic categories have to be sensitive not only to the downward interface to lexicogrammar, but also to the upward interface to context; they have to show how it is that semantic strategies can play a role in context.",
+        "(ii) Since communicative contexts are highly diversified, we have to show how semantics can be responsible across these various contexts; one way of modelling this is to treat semantics itself as diversified into a number of semantic systems 'tailored' to specific communicative demands.",
+        "(iii) Semantics has to be concerned with language functioning in context rather than any unit defined by lexicogrammar; consequently, the basic unit of semantics is text -",
+        "language functioning in context – rather than propositions or predications."
+      ]
+    },
+    {
+      "heading": "4.1 Specificity of semantic categories -- functional diversification of",
+      "text": [
+        "semantics Since the approach from above takes context as its starting point, it is likely to yield situation-specific semantic systems: we project a variety of different uses onto semantics, giving us semantic interpretations of contextual categories; for example, 'behavioural control of child' is semanticized as 'appeal to authority figure', 'threat of physical punishment', 'threat of loss of privilege', and the like, whereas 'behavioural control of student' is semanticized as 'warning about fees', 'threat of expulsion from programme', and the like.",
+        "The notion of function reflected in this kind of semantics is thus use in context and there will be a large number of different uses.",
+        "There are at least two basic types of motivation for exploring and writing context-based semantic systems, (i) bridging and (ii) compilation.",
+        "(i) Bridging.",
+        "The orientation towards context serves to bridge the gap between linguistic categories and higher-level categories.",
+        "Within sociology, Halliday's concept of semantics is motivated partly because it can act as an interface between language and the rest of the social system.",
+        "Turner (1973: 195) comments",
+        "Within computational linguistics and Al, it is possible to make similar observations: situation-specific semantic systems may serve to relate non-linguistic categories to linguistic ones.",
+        "(ii) Compilation.",
+        "Furthermore, a situation-specific semantics can be seen as a set of strategies developed to deal efficiently with the specific, limited set of communication problems inherent in that context of situation.",
+        "We can find this consideration in computational linguistics and Al.",
+        "As noted earlier, Patten (1988) has shown that the approach of situation-specific semantics can be motivated in Al terms as well as in linguistic terms.",
+        "Patten treats text generation as problem solving and shows that there is a striking similarity between the Al problem-solving framework and Halliday's systemic approach to language.",
+        "The similarity is all the more interesting because the two traditions have developed independently of one another.",
+        "The lexicogrammatical system network can be seen as the space of interrelated alternatives for solving a communicative problem.",
+        "There are different ways of searching the system network for appropriate feature selections.",
+        "One way is to traverse the network from left to right and to reason about each systemic alternative by means of choosers (cf.",
+        "Figure 1 above).",
+        "Patten argues that it is potentially costly to do this kind of reasoning from 325 basic principles.",
+        "Another way is to rely on a strategy that has already been developed for a particular problem (\"compiled knowledge\") and this is what Patten takes a situation specific semantics to be.",
+        "That is, for a given register there is a particular semantic strategy for traversing the lexicogrammatical system network.",
+        "If we are faced with a novel generation task which does not correspond to a recognized register, we will have to revert to basic principles."
+      ]
+    },
+    {
+      "heading": "4.2 An example: a semantics of control in a regulatory context",
+      "text": [
+        "Let's consider an example of the semantics of a particular register.",
+        "Assume that we are building a generator for mother-child control, the situation Turner (1973) did sociological research on, Halliday (1973) uses as an example of sociological semantics, and Patten (1988) takes over for text generation.?",
+        "The situation is the following (Halliday, 1973: 65): [A] small boy has been playing with the neighbourhood children on a building site, and has come home grasping some object which he has acquired in the process.",
+        "His mother disapproves, and wishes both to express her disapproval and to prevent him from doing the same thing again.",
+        "The question is what her linguistic strategies are.",
+        "The answer lies in the semantic system network; most generally, she can threaten, warn, or appeal to her son, issue a rule, etc..",
+        "The semantic network consists of systems like threat / warning, physical punishment / mental punishment / restraint on behaviour, and so on.",
+        "Semantic features are realized by preselections of grammatical features.",
+        "For example, the semantic feature 'threat' is realized by selection of the grammatical feature 'declarative'.",
+        "In general, delicate grammatical features are preselected and the less delicate features they presuppose can then be chosen automatically by moving from right to left by backward chaining in the system network rather than by explicit preselection.",
+        "This method makes good use of the 'logic' of the lexicogrammatical system network; see Figure 2 below.",
+        "As the diagram indicates, there is a tendency for the situation-specific semantics to be more delicate than the non-specific lexicogrammar.",
+        "This is to be expected, particularly in the fairly restricted registers that have been attempted in text generation: only a restricted subset of the lexicogrammatical resources will be employed and the semantics can simply 'turn off' certain parts of the grammar by never preselecting grammatical features in these parts.",
+        "To extend Patten's line of research further within text generation, it is important to describe the semantic systems of a variety of situation types; for instance, Marilyn Cross, at Macquarie University, is currently working on descriptions of the water cycle for different addressees.",
+        "There is good reason to think that the approach of situation-specific semantic systems will yield interesting results.",
+        "The types of situation for which we can attempt to write semantic networks would also seem to be the types that can be addressed in text generation at present.",
+        "Now, the example of regulatory semantics has been discussed in terms of a network of semantic systems such as threat / warning.",
+        "To relate these systems upwards, we can assume realizations of contextual features of interaction by means of preselections of semantic features.",
+        "Alternatively, we can easily turn the systems into inquiries that demand information from context.",
+        "For instance, the system threat / warning can be re-represented as an inquiry concerned with the basic strategy of control: is the child to be controlled by appealing to authority, by threatening him with punishment or restraint on behaviour if he carries on; or by appealing to the dangers of the world, by warning him that his behaviour will harm him?",
+        "Although the systemic semantics used by Patten (1988) is context based, the texts that can be generated do not extend beyond the clause complex.",
+        "There is, however, every reason to expect a text semantics rather than only a lexicogrammatical semantics -- i.e. a semantics that is concerned with text as a semantic unit, the basic unit of communication.",
+        "To develop the notion of text semantics further, we would need to examine proposals for how to organize text, since they would provide us with structures we can interpret as text semantic structures.",
+        "The two types of approach that have been developed for text generation are (i) McKeown's Rhetorical Schemas (McKeown, 1982; Paris & McKeown, 1987) (ii) and, within the Penman project, Rhetorical Structure Theory (see e.g., Mann & Thompson, 1987; Matthiessen & Thompson, 1988; Mann, Matthiessen & Thompson, 1989).",
+        "McKeown's work is very similar to systemic work on generic structures by Hasan (1978, 1984, etc.)",
+        "and others.",
+        "In either case, the structures they operate with can serve",
+        "326 to realize semantic features in a text semantic system network.",
+        "5.",
+        "Conclusion: the two approaches reconsidered",
+        "To recapitulate, taking the basic systemic posiiion that semantics is an interlevel between higher-level contextual systems and the purely language-internal level of lexicogrammar, I have suggested that we can approach it from either of the two semantic interfaces -- from above, from context, or from below, from lexicogrammar -- and that we find both approaches modelled in text-generation systems using systemic-functional grammar.",
+        "The chooser and inquiry interface, built from below, has the advantage that it is fairly easy to develop once there is a significant systemic-functional grammar to base it on; it can be developed as 'semantic glosses' on the organization already embodied in the grammatical system network.",
+        "It does not change the basic principle of generation supported by the grammar: the grammatical system network guides the generation process, which is essentially a traversal of the network, and choosers are activated in the course of this process.",
+        "The collection of inquiries can be used as design requirements in the development of the organization of the context of the generation system.",
+        "The approach from above has other advantages.",
+        "It enables the semantics to refer to different grammatical contexts in realization, as in the case of requests being realized both by selections in MOOD and selections in MODALITY.",
+        "Furthermore, it allows us to adapt the semantics to contextual requirements.",
+        "This adaptation may take the form of a diversification of semantics into a range of situation-specific semantic systems.",
+        "Such systems have the added advantage that they represent 'compiled knowledge': they allow the generation system to take advantage of the semantic strategies that have evolved for a particular communication task rather than having to solve the problem from first principles.",
+        "This means, among other things, that only those parts of the lexicogrammar that are relevant in that situation have to be explored and others are simply 'blocked off' by preselections from the semantics.",
+        "restraint on behaviour The two approaches have been used in different generation systems, but they have not been brought together into one system and I have not explored the question whether this would be possible or not.",
+        "We can obviously say that one chooses one approach or the other depending on the nature of the generation task.",
+        "For instance, more closed registers (specific sublanguages) might favour situation-specific semantic systems whereas more open registers might favour the use of a general semantic system.",
+        "However, in the long",
+        "run, such a position would clearly be unsatisfactory since it would commit a generation system to one type of generation task or another.",
+        "The most clearly differentiated positions that are theoretically possible would thus be:",
+        "(i) Situation-specific semantic systems are essentially based on different principles of organization, creating semantic potential for a given situation type, and cannot be drawn from one general semantic system; and (ii) Situation-specific systems are merely abbreviations of one general semantic system, 'blocking off' semantic potential that is not needed in a given situation type.",
+        "This needs a long separate discussion and I will leave the issues at this point for now; for further discussion, see Matthiessen (1989) and cf. Bateman & Paris' (1989) approach to register by means of chooser and inquiry semantics."
+      ]
+    }
+  ]
+}

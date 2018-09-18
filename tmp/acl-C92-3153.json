@@ -1,0 +1,168 @@
+{
+  "info": {
+    "authors": [
+      "Emmanuel Roche"
+    ],
+    "book": "International Conference on Computational Linguistics",
+    "id": "acl-C92-3153",
+    "title": "Text Disambiguation by Finite State Automata, An Algorithm and Experiments on Corpora",
+    "url": "https://aclweb.org/anthology/C92-3153",
+    "year": 1992
+  },
+  "references": [
+    "acl-C90-2040",
+    "acl-C90-3010",
+    "acl-E91-1027",
+    "acl-P91-1032"
+  ],
+  "sections": [
+    {
+      "heading": "TEXT DISAMBIGUATION BY FINITE STATE AUTOMATA, AN ALGORITHM AND EXPERIMENTS ON CORPORA Emmanuel Roche* Insitut Gaspard Monge CERIL-LADL** Paris France 1. Abstract*",
+      "text": [
+        "Consulting a dictionary for the words of a given text provides multiple solutions, that is, ambiguities; thus, the sequence of words pilot studies could lead for example to: pilot: N singular, V infinitive, V (conjugated) studies: N plural, V (conjugated) pilot studies: N plural (compound).",
+        "These informations could be organized in the form of a finite automaton such as: pilot studies N plural (compound) pilot N studies N The exploration of the context should provide clues that eliminate the non-relevant solutions.",
+        "For this purpose we use local grammar constraints represented by finite automata.",
+        "We have designed and implemented an algorithm which performs this task by using a large variety of linguistic constraints.",
+        "Both the texts and the rules (or constraints) are represented in the same formalism, that is finite automata.",
+        "Performing subtraction operations between text automata and constraint automata reduce the ambiguities.",
+        "Experiments were performed on French texts with large scale dictionaries (one dictionary of 600.000 simple inflected forms and one dictionary of 150.000 inflected compounds).",
+        "Syntactic patterns represented by automata, including shapes of compound nouns such as Noun followed by an Adjective (in gender-number agreement) (Cf 5.1), can be matched in texts.",
+        "This process is thus an extension of the classic matching procedures because of the on-line dictionary consultation and because of the grammar constraints.",
+        "It provides a simple and efficient indexing tool."
+      ]
+    },
+    {
+      "heading": "2. Motivation",
+      "text": [
+        "Automatic analysis by phrase-structure grammar is time consuming.",
+        "The need for fast procedures leads to grammar representations that are less powerful but easier to handle than general unification procedures.",
+        "Pereira and Wright 1991 and Rimon and Herz 1991 proposed such approaches, that is, algorithms that perform the construction of a finite-state automaton approximation of a phrase-structure grammar.",
+        "These automata are then used as simple checkers of well-formed patterns.",
+        "However, parsing a sentence and only providing the information that it does (or doesn't) match the automaton description is not sufficient.",
+        "One should provide (see K. Koskenniemi 1990) the readings of the text that respect exactly the constraints.We propose here an algorithm that provide all these readings.",
+        "Moreover, the automaton of a given text can be highly ambiguous, and in order to increase its adequacy (e.g. to study given syntactic patterns), we may want to customize it.",
+        "To achieve such a result, we construct automata that eliminate paths irrelevant to the given study[.",
+        "Once this operation was performed, significant patterns (like Noun Adjective in French) can be extracted.",
+        "Technical terms in many domains take the form of sequences such as Noun Adjective, Noun de Noun etc.",
+        "Their recognition thus leads to an efficient indexation process.",
+        "This is a complementary approach to statistical treatments like those presented in K.Church, W. Gale, P. Hanks, D. Hindle 1989 or in N. Calzolari and R. Binzi 1991.",
+        "Moreover, we use Finite-State Automata (FSA) at all stages of the process: for dictionary consultation, for disambiguation and for the final extraction process.",
+        "This allowed the experiments to be done on-line starting with untagged corpora.",
+        "One of the crucial points is that tagged text should be represented by FSA in order to be disambiguated (disambiguated texts are already in this form in Rimon and Herz 1991 and K. Koskenniemi 1990).",
+        "FSA representation for ambiguities representation is not a new approach but in our contribution, we",
+        "1 Some of these paths may correspond to legitimate solutions.",
+        "ACT-ES DE COLING-92, NANTES, 23-28 Aoirr 1992 9 9 3 Nor:.",
+        "or COLING-92, NANrres, Atm.",
+        "23-28, 1992 systematized it for different types of ambiguities, namely: 1.",
+        "Morphological features ambiguity (gender for instance), 2.",
+        "Part of speech ambiguity, 3.",
+        "Phrase ambiguity (compound v.s.",
+        "sequence of simple words).",
+        "3.",
+        "Presentation of an example",
+        "Let us take, for instance, the French sequence (1).. le passe...",
+        "Both words are ambiguous, le can either be an article (the) or a pronoun (it, him or her) and passe can either be a noun or a verb.",
+        "Moreover the noun passe is still ambiguous, since it can mean either a pass key (and is then masculine) or a pass (like in a forward pass, it is then feminine).",
+        "The verb form passe, in turn, is ambiguous, it is a conjugated form of the canonical form passer (to pass) in one of the three tenses: indicative present, subjunctive present or imperative present.",
+        "For the first two tenses, it can either be in the first or in the third singular person and, for the latter, it has to be in the second person of singular.",
+        "The problem is the following: the consultation of the simple form dictionary DELAF2 (600.000 entries) first provides a sequence tagged as follows: le (pronoun, article) passe(noun-ms, noun-fs, verb-P3s:S3s:Pls:Sls:Y2s) (where the abbreviations are m: masculine, s: singular, 3: third person, P: present, S: subjunctive, Y: imperative) The compound form dictionary DELACF3 (150.000 entries) is used, it marks sequences like pomme de terre (potato) as frozen.",
+        "In a second step, we provide the automaton representation of figure 1, to be read in the following way: The first word is either a pronoun or an article, its spelling is le, the second word is either a singular noun (ambiguous: one meaning is masculine (the pass key) and the other feminine (the forward pass)) or else a verb conjugated at the persons, tenses and numbers specified above.",
+        "On the other hand grammar rules provide constraints which can be described as forbidden sequences.",
+        "In our example, since the clitic sequence is highly constrained (M. Gross 1968), the pronoun le can be followed either by another pronoun or by a verb.",
+        "The article le cannot be followed by a verb or by a feminine noun (except for parts of compounds).",
+        "This set of forbidden sequences is described by the automaton of figure 2.",
+        "Thus the FSA representing the text according to the rules should be the FSA of figure 3. article le onounomo s passe P 1",
+        "The problem consists in constructing the automaton of figure 3 given those of figures 1 The reader probably noticed that the rules were described as a set of forbidden sequences, which is unusual.",
+        "The formal operation and the algorithm are easier to describe with negatively defined rules, it is the reason why we use this device here.",
+        "However, given the grammar corresponding to the automaton representation, the procedure is equivalent to a set of rules expressed in a positive, and hence more usual way."
+      ]
+    },
+    {
+      "heading": "4. The algorithm 4.1 Formal description of the problem.",
+      "text": [
+        "The problem, informally described, can easily be specified in the following way: AcrEs DE COLING-92, NANTES, 23-28 AoOT 1992 9 9 4 PROC.",
+        "OF COLING-92, NANTES, AuG. 23-28, 1992 Given a text, its FSA representation (e.g. figure 1) A1 is defined by the 5-tuple (Alpft,Qt,i1,F1,d1) which respectively denotes its alphabet, its state set, its starting state, its final state set and its transition function4 which maps (Qi*Alph) into Q1.",
+        "Moreover, A1 has the property of being acyclic (it is a Directed Acyclic Graph (DAG)).",
+        "The constraints are represented by the FSA A2, defined in the same way by (Alph,Q2,i2,f2,d2).",
+        "These automata define respectively the regular languages L1=L(A1) (i.e. the language accepted by A / ) and L2=L(A 2) (i.e. the language accepted by A2) .",
+        "Since L2 describes the set of sequences (or factors) forbidden in any word of L1, if A describes the text after the filtering, this means that L=L(A) follows the condition L = L 1 \\ Alph* L2 Alph* This operation on languages will be called factor subtraction and will be noted L=Li f L2.",
+        "At this point, we can define the related operation on automata: if Li =L (A I) and L2=L(A2) we say that A is the factor subtraction of A1 and A2 and note it A= A1 f-A2 if L=L1 f A2 and L=L(A)."
+      ]
+    },
+    {
+      "heading": "4.2 Informal description of the algorithm",
+      "text": [
+        "We will first apply the algorithm on a small example.",
+        "Suppose that A1 is the automaton represented in figure 4, that A2 is the automaton represented in figure 5 and that we want to compute Al f A2.",
+        "Each state of the automaton A=A1 f A2 will be labelled with a state of A1 and a set of states of A2 (i.e a member of the power set of Q2).",
+        "More concretely the automaton A=Ai f A2 of figure 6 is built in the following way: The initial state is labelled (0, (0)), the first 0 refers to the state 0 of A1 (01 for short).",
+        "The letter a leads, from 01 to the state I 1 of A1 but to nothing in A2, we construct the state",
+        "(1,(0)) which means that, for a, 0 leads to 1 in A1 but that (0) leads to nothing (the empty set) in A2 to which we systematically add the initial state.",
+        "On the other hand, d2((0),b)=.",
+        "( 1) to which we add, as for a, the state 0; thus, in A, d((0,(0}),b) (d1(0,b), (042(0,b) (1,(0,1)).",
+        "For each state being constructed, we list the states it could refer to in A2 and, for each of these states, their image by the letter being considered.",
+        "A specific configuration is when the state of A being considered has one of his label that leads to the final state of A2, it means that a complete sequence of A2 has been recognized and should then be deleted.",
+        "This is the case if we look at state (2, ( 0,1,2)) in A: d2(( 0,1,2 ),b)= ( 1,2,3 where 3 is final, thus it has no transition for b, which leads to delete the path bbb forbidden by A2."
+      ]
+    },
+    {
+      "heading": "5. Experimental results",
+      "text": [
+        "Given a syntactic pattern (first Noun followed by an Adjective) and a text, we can detect its occurrences.",
+        "We can search the text without applying constraints, this provides output 1 (figures 7 and 8).We can also search it after having applied constraints (output 2).",
+        "We shall compare both outputs.",
+        "For instance, for the sentence: L' individu n' y est pas percu comme une valeur abstraite et universelle, mais comme un titre concret, comme le membre dun ensemble particulier, localise et qui n' existe que dans son rapport d cet ensemble.",
+        "the program provides the following matchings:",
+        "The program runs in three steps (figure 8).",
+        "It first takes a text and tags it according to the two dictionaries.",
+        "The text is then transformed into its FSA representation on which the constraints are applied.",
+        "Given a pattern (Noun followed by an Adjective), we compare its number of ocuurences in both outputs 1 and 2.",
+        "This will give us a measure of the power of the filtering.",
+        "It is worthwhile to point out that the experiments were realized on untagged corpora, namely that the duration of the tagging process is included in the figures given in the tables.",
+        "These experiments were done on personal computers5 and it can be seen that the 5Experiments were done with an IBM PS2 386 25Mhz with an OS/2 V1.3 and 8Mb ram.",
+        "The program is in C. time spent is low enough to permit on-line use (for compound word enrichment for instance)."
+      ]
+    },
+    {
+      "heading": "5.1 Searching Noun-Adjective patterns",
+      "text": [
+        "First, let us consider the pattern Noun Adjective (which is approximately equivalent to the English sequence adjective-noun).",
+        "We first tried to search each contiguous pair of words whose first element was labelled as a noun and whose second element was an adjective.",
+        "This provides the result of the first line of figure 9.",
+        "The first filtering uses the fact that, in French, the word and the adjective have to agree on their gender and on their number.",
+        "This gives, for the same texts, the results of the second line.",
+        "Third we applied the algorithm described above as a second filter, this leads to the results of the third line.",
+        "The texts are in the form of ASCII files.",
+        "The first one was a magazine editorial of about 1 page8, the second one is an article of about 4 pages8.",
+        "The third one is a novel of the French 19th century writer Jules Verne: Les aventures du docteur Ox.",
+        "The fourth one is a compilation of texts with a large amount of law texts.",
+        "We gave, in the last line, the number of patterns that should have been detected if the filtering had been perfect; this was done by hand."
+      ]
+    },
+    {
+      "heading": "6. Conclusion",
+      "text": []
+    },
+    {
+      "heading": "Text I",
+      "text": [
+        "ACTES DE COLING-92, NANTEs, 23-28 Ao&r 1992 9 9 6 PROC.",
+        "OF COLING-92, NANTES, Auo.",
+        "23-28, 1992 These experiments will be expanded on a larger amount of patterns and on various types of corpora, but we already think that those we presented here show that the method can actually be used as a practical tool for easing the construction of terminological lists."
+      ]
+    },
+    {
+      "heading": "7. Bibliography",
+      "text": [
+        "We present here a sample of constraints as they are actually implemented.",
+        "The following set of sequences represents paths that have to be deleted from the FSA representing the text.",
+        "This set is to be compiled into a FSA before being used by the program.",
+        "The ??",
+        "word means that it can be any transition of the state it is compared to.",
+        "For instance the comparison of ??",
+        "and the character a gives a as result.",
+        "It leaves empty the parameters that are specific to the words being matched (i.e. the word itself or its canonical form)."
+      ]
+    }
+  ]
+}

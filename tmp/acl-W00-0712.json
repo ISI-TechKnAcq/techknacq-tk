@@ -1,0 +1,213 @@
+{
+  "info": {
+    "authors": [
+      "Patrick Schone",
+      "Daniel Jurafsky"
+    ],
+    "book": "Conference on Computational Natural Language Learning and of the Second Learning Language in Logic Workshop CoNLL and LLL",
+    "id": "acl-W00-0712",
+    "title": "Knowledge-Free Induction of Morphology Using Latent Semantic Analysis",
+    "url": "https://aclweb.org/anthology/W00-0712",
+    "year": 2000
+  },
+  "references": [
+    "acl-A00-1030",
+    "acl-P99-1037",
+    "acl-W99-0904"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "Morphology induction is a subproblem of important tasks like automatic learning of machine-readable dictionaries and grammar induction.",
+        "Previous morphology induction approaches have relied solely on statistics of hypothesized stems and affixes to choose which affixes to consider legitimate.",
+        "Relying on stem-and-affix statistics rather than semantic knowledge leads to a number of problems, such as the inappropriate use of valid affixes (\"ally\" stemming to \"all\").",
+        "We introduce a semantic-based algorithm for learning morphology which only proposes affixes when the stem and stem-plus-affix are sufficiently similar semantically.",
+        "We implement our approach using Latent Semantic Analysis and show that our semantics-only approach provides morphology induction results that rival a current state-of-the-art system."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Computational morphological analyzers have existed in various languages for years and it has been said that \"the quest for an efficient method for the analysis and generation of word-forms is no longer an academic research topic\" (Karlsson and Karttunen, 1997).",
+        "However, development of these analyzers typically begins with human intervention requiring time spans from days to weeks.",
+        "If it were possible to build such analyzers automatically without human knowledge, significant development time could be saved.",
+        "On a larger scale, consider the task of inducing machine-readable dictionaries (MRDs) using no human-provided information (\"knowledge-free\").",
+        "In building an MRD, \"simply expanding the dictionary to encompass every word one is ever likely to encounter...fails to take advantage of regularities\" (Sproat, 1992, p. xiii).",
+        "Hence, automatic morphological analysis is also critical for selecting appropriate and non-redundant MRD headwords.",
+        "For the reasons expressed above, we are interested in knowledge-free morphology induction.",
+        "Thus, in this paper, we show how to automatically induce morphological relationships between words.",
+        "Previous morphology induction approaches (Goldsmith, 1997, 2000; Mean, 1998; Gauss-ier, 1999) have focused on inflectional languages and have used statistics of hypothesized stems and affixes to choose which affixes to consider legitimate.",
+        "Several problems can arise using only stem-and-affix statistics: (1) valid affixes may be applied inappropriately (\"ally\" stemming to \"all\"), (2) morphological ambiguity may arise (\"rating\" conflating with \"rat\" instead of \"rate\"), and (3) non-productive affixes may get accidentally pruned (the relationship between \"dirty\" and \"dirt\" may be lost).1 Some of these problems could be resolved if one could incorporate word semantics.",
+        "For instance, \"all\" is not semantically similar to \"ally,\" so with knowledge of semantics, an algorithm could avoid conflating these two words.",
+        "To maintain the \"knowledge-free\" paradigm, such semantics would need to be automatically induced.",
+        "Latent Semantic Analysis (LSA) (Deerwester, et al., 1990); Landauer, et al., 1998) is a technique which automatically identifies semantic information from a corpus.",
+        "We here show that incorporating LSA-based semantics alone into the morphology-induction process can provide results that rival a state-of-the-art system based on stem-and-affix statistics (Goldsmith's Linguistica).",
+        "lError examples are from Goldsmith's Linguistica",
+        "Our algorithm automatically extracts potential affixes from an untagged corpus, identifies word pairs sharing the same proposed stem but having different affixes, and uses LSA to judge semantic relatedness between word pairs.",
+        "This process serves to identify valid morphological relations.",
+        "Though our algorithm could be applied to any inflectional language, we here restrict it to English in order to perform evaluations against the human-labeled CELEX database (Baayen, et al., 1993)."
+      ]
+    },
+    {
+      "heading": "2 Previous work",
+      "text": [
+        "Existing induction algorithms all focus on identifying prefixes, suffixes, and word stems in inflectional languages (avoiding infixes and other language types like concatenative or agglutinative languages (Sproat, 1992)).",
+        "They also observe high frequency occurrences of some word endings or beginnings, perform statistics thereon, and propose that some of these appendages are valid morphemes.",
+        "However, these algorithms differ in specifics.",
+        "DeJean (1998) uses an approach derived from Harris (1951) where word-splitting occurs if the number of distinct letters that follows a given sequence of characters surpasses a threshold.",
+        "He uses these hypothesized affixes to resegment words and thereby identify additional affixes that were initially overlooked.",
+        "His overall goal is different from ours: he primarily seeks an affix inventory.",
+        "Goldsmith (1997) tries cutting each word in exactly one place based on probability and lengths of hypothesized stems and affixes.",
+        "He applies the EM algorithm to eliminate inappropriate parses.",
+        "He collects the possible suffixes for each stem calling these a signature which aid in determining word classes.",
+        "Goldsmith (2000) later incorporates minimum description length to identify stemming characteristics that most compress the data, but his algorithm otherwise remains similar in nature.",
+        "Goldsmith's algorithm is practically knowledge-free, though he incorporates capitalization removal and some word segmentation.",
+        "Gaussier (1999) begins with an inflectional lexicon and seeks to find derivational morphology.",
+        "The words and parts of speech from his inflectional lexicon serve for building relational families of words and identifying sets of word pairs and suffixes therefrom.",
+        "Gaussier splits words based on p-similarity – words that agree in exactly the first p characters.",
+        "He also builds a probabilistic model which indicates that the probability of two words being morphological variants is based upon the probability of their respective changes in orthography and morpho-synt act ics ."
+      ]
+    },
+    {
+      "heading": "3 Current approach",
+      "text": [
+        "Our algorithm also focuses on inflectional languages.",
+        "However, with the exception of word segmentation, we provide it no human information and we consider only the impact of semantics.",
+        "Our approach (see Figure 1) can be decomposed into four components: (1) initially selecting candidate affixes, (2) identifying affixes which are potential morphological variants of each other, (3) computing semantic vectors for words possessing these candidate affixes, and (4) selecting as valid morphological variants those words with similar semantic vectors.",
+        "Stage 1 Stage 2 Stage 3 Stage 4 rInd WA Identify pairs that rDevelo Select variants semantic potential are possible that have affixes morpho- vectors for ...) \\y_ariant§/ , logical / ...words semantic ....} .Nrectors) similar"
+      ]
+    },
+    {
+      "heading": "3.1 Hypothesizing affixes",
+      "text": [
+        "To select candidate affixes, we, like Gaussier, identify p-similar words.",
+        "We insert words into a trie (Figure 2) and extract potential affixes by observing those places in the trie where branching occurs.",
+        "Figure 2's hypothesized suffixes are NULL, \"s,\" \"ed,\" \"es,\" \"ing,\" \"e,\" and \"eful.\" We retain only the K most-frequent candidate affixes for subsequent processing.",
+        "The value for K needs to be large enough to account for the number of expected regular affixes in any given language as well as some of the more frequent irregular affixes.",
+        "We arbitrarily chose K to be 200 in our system.",
+        "(It should also be mentioned that we can identify potential prefixes by inserting words into the trie in reversed order.",
+        "This prefix mode can additionally serve for identifying capitalization.)"
+      ]
+    },
+    {
+      "heading": "3.2 Morphological variants",
+      "text": [
+        "We next identify pairs of candidate affixes that descend from a common ancestor node in the trie.",
+        "For example, (\"s\", NULL) constitutes such a pair from Figure 2.",
+        "We call these pairs rules.",
+        "Two words sharing the same root and the same affix rule, such as \"cars\" and \"car,\" form what we call a pair of potential morphological variants (PPMVs).",
+        "We define the ruleset of a given rule to be the set of all PPMVs that have that rule in common.",
+        "For instance, from Figure 2, the ruleset for (\"s\", NULL) would be the pairs \"cars/car\" and \"cares/care.\" Our algorithm establishes a list which identifies the rulesets for every hypothesized rule extracted from the data and then it must proceed to determine which rulesets or PPMVs describe true morphological relationships."
+      ]
+    },
+    {
+      "heading": "3.3 Computing Semantic Vectors",
+      "text": [
+        "Deerwester, et al.",
+        "(1990) showed that it is possible to find significant semantic relationships between words and documents in a corpus with virtually no human intervention (with the possible exception of a human-built stop word list).",
+        "This is typically done by applying singular value decomposition (SVD) to a matrix, M, where each entry M(i,j) contains the frequency of word i as seen in document j of the corpus.",
+        "This methodology is referred to as Latent Semantic Analysis (LSA) and is well-described in the literature (Landauer, et al., 1998; Manning and Schiitze, 1999).",
+        "SVDs seek to decompose a matrix A into the product of three matrices U, D, and VT where U and VT are orthogonal matrices and D is a diagonal matrix containing the singular values (squared eigenvalues) of A.",
+        "Since SVD's can be performed which identify singular values by descending order of size (Berry, et al., 1993), LSA truncates after finding the k largest singular values.",
+        "This corresponds to projecting the vector representation of each word into a k-dimensional subspace whose axes form k (latent) semantic directions.",
+        "These projections are precisely the rows of the matrix product UkDk.",
+        "A typical k is 300, which is the value we used.",
+        "However, we have altered the algorithm somewhat to fit our needs.",
+        "First, to stay as close to the knowledge-free scenario as possible, we neither apply a stopword list nor remove capitalization.",
+        "Secondly, since SVDs are more designed to work on normally-distributed data (Manning and Schiitze, 1999, p. 565), we operate on Z-scores rather than counts.",
+        "Lastly, instead of generating a term-document matrix, we build a term-term matrix.",
+        "Schiitze (1993) achieved excellent performance at classifying words into quasi-part-of-speech classes by building and performing an SVD on an Nx4N term-term matrix, M(i,Np+j).",
+        "The indices i and j represent the top N highest frequency words.",
+        "The p values range from 0 to 3 representing whether the word indexed by j is positionally offset from the word indexed by i by -2, -1, +1, or +2, respectively.",
+        "For example, if \"the\" and \"people\" were respectively the 1st and 100th highest frequency words, then upon seeing the phrase \"the peo-ple,\" Schiitze's approach would increment the counts of M(1,2N+100) and M(100,N+1).",
+        "We used Schiitze's general framework but tailored it to identify local semantic information.",
+        "We built an Nx2N matrix and our p values correspond to those words whose offsets from word i are in the intervals [-50,-1] and [1,50], respectively.",
+        "We also reserve the Nth position as a catch-all position to account for all words that are not in the top (N-1).",
+        "An important issue to resolve is how large should N be.",
+        "We would like",
+        "to be able to incorporate semantics for an arbitrarily large number of words and LSA quickly becomes impractical on large sets.",
+        "Fortunately, it is possible to build a matrix with a smaller value of N (say, 2500), perform an SVD thereon, and then fold in remaining terms (Manning and Schiitze, 1999, p. 563).",
+        "Since the U and V matrices of an SVD are orthogonal matrices, then UUT =VVT=1.",
+        "This implies that AV =UD.",
+        "This means that for a new word, w, one can build a vector 6,1' which identifies how w relates to the top N words according to the p different conditions described above.",
+        "For example, if w were one of the top N words, then a would simply represent w's particular row from the A matrix.",
+        "The product aw, Vk is the projection of 6„,T into the k-dimensional latent semantic space.",
+        "By storing an index to the words of the corpus as well as a sorted list of these words, one can efficiently build a set of semantic vectors which includes each word of interest."
+      ]
+    },
+    {
+      "heading": "3.4 Statistical Computations",
+      "text": [
+        "Morphologically-related words frequently share similar semantics, so we want to see how well semantic vectors of PPMVs correlate.",
+        "If we know how PPMVs correlate in comparison to other word pairs from their same rulesets, we can actually determine the semantic-based probability that the variants are legitimate.",
+        "In this section, we identify a measure for correlating PPMVs and illustrate how ruleset-based statistics help identify legitimate PPMVs.",
+        "The cosine of the angle between two vectors v1 and v2 is given by,",
+        "We want to determine the correlation between each of the words of every PPMV.",
+        "We use what we call a normalized cosine score (NCS) as a correlation.",
+        "To obtain a NCS, we first calculate the cosine between each semantic vector, SIvi, and the semantic vectors from 200 randomly chosen words.",
+        "By this means we obtain w's correlation mean (pw) and standard deviation (o-w).",
+        "If v is one of w's variants, then we define the NCS between nw and Itv to be Table 1 provides normalized cosine scores for several PPMVs from Figure 2 and from among words listed originally as errors in other systems.",
+        "(NCSs are effectively Z-scores.)"
+      ]
+    },
+    {
+      "heading": "3.4.2 Ruleset-level Statistics",
+      "text": [
+        "By considering NCSs for all word pairs coupled under a particular rule, we can determine semantic-based probabilities that indicate which PPMVs are legitimate.",
+        "We expect random NCSs to be normally-distributed according to .A.r(0,1).",
+        "Given that a particular ruleset contains nR PPMVs, we can therefore approximate the number (nT), mean (MT) and standard deviation (UT) of true correlations.",
+        "If we define (1.z (t, a) to be iy e – ())2 dx, then we can compute the probability that the particular correlation is legitimate:"
+      ]
+    },
+    {
+      "heading": "3.4.3 Subrules",
+      "text": [
+        "It is possible that a rule can be hypothesized at the trie stage that is true under only certain conditions.",
+        "A prime example of such a rule is (\"es\", NULL).",
+        "Observe from Table 1 that the word \"cares\" poorly correlates with \"car.\" Yet, it is true that \"-es\" is a valid suffix for the words \"flashes,\" \"catches,\" \"kisses,\" and many other words where the \"-es\" is preceded by a voiceless sibilant.",
+        "Hence, there is merit to considering subrules that arise while performing analysis on a particular rule.",
+        "For instance, while evaluating the (\"es\", NULL) rule, it is desirable to also consider potential subrules such as (\"ches\", \"ch\") and (\"tes\", \"t\").",
+        "One might expect that the average NCS for the (\"ches\", \"ch\") subrule might be higher than the overall rule (\"es\", NULL) whereas the opposite will likely be true for (\"tes\", \"t\").",
+        "Table 2 confirms this."
+      ]
+    },
+    {
+      "heading": "4 Results",
+      "text": [
+        "We compare our algorithm to Goldsmith's Linguistica (2000) by using CELEX's (Baayen, et al., 1993) suffixes as a gold standard.",
+        "CELEX is a hand-tagged, morphologically-analyzed database of English words.",
+        "CELEX has limited coverage of the words from our data set (where our data consists of over eight million words from random subcollections of TREC data (Voorhees, et a1,1997/8)), so we only considered words with frequencies of 10 or more.",
+        "Morphological relationships can be represented graphically as directed graphs (see Figure 3, where three separate graphs are depicted).",
+        "Developing a scoring algorithm to compare directed graphs is likely to be prone to disagreements.",
+        "Therefore, we score only the vertex sets of directed graphs.",
+        "We will refer to these vertex sets as conflation sets.",
+        "For example, con-cern's conflation set contains itself as well as \"concerned,\" \"concerns,\" and \"concerning\" (or, in shorthand notation, the set is {a,b,c,d}).",
+        "To evaluate an algorithm, we sum the number of correct (C), inserted (Z), and deleted (D) words it predicts for each hypothesized conflation set.",
+        "If X„ represents word w's conflation set according to the algorithm, and if Yw represents its CELEX-based conflation set, then",
+        "However, in making these computations, we disregard any CELEX words that are not in the algorithm's data set and vice versa.",
+        "For example, suppose two algorithms were being compared on a data set where all the words from Figure 3 were available except \"concerting\" and \"concertos.\" Suppose further that one algorithm proposed that { a,b,c,d,e,f,g,i} formed a single conflation set whereas the other algorithm proposed the three sets { a,b,c,d},{e,g,i}, and {f}.",
+        "Then Table 3 illustrates how the two algorithms would be scored.",
+        "To explain Table 3, consider algorithm one's entries for 'a.'",
+        "Algorithm one had proposed that Xa={a,b,c,d,e,f,g,i} when in reality, Ya={ a,b,c,d}.",
+        "Since PC,, n Ya I = 4 and IYal=4, then CA = 4 / 4 .",
+        "The remaining values of the table can be computed accordingly.",
+        "Using the values from Table 3, we can also compute precision, recall, and F-Score.",
+        "Precision is defined to be C/(C+/), recall is C/(C±D), and F-Score is the product of precision and recall divided by the average of the two.",
+        "For the first algorithm, the precision, recall, and F-Score would have respectively been 1/3, 1, and 1/2.",
+        "In the second algorithm, these numbers would have been 5/7, 5/6, and 10/13.",
+        "Table 4 uses the above scoring mechanism to compare between Linguistica and our system (at various probability thresholds).",
+        "Note that since Linguistica removes capitalization, it will have a different total word count than our system."
+      ]
+    },
+    {
+      "heading": "5 Conclusions",
+      "text": [
+        "These results suggest that semantics and LSA can play a key part in knowledge-free morphology induction.",
+        "Semantics alone worked at least as well as Goldsmith's frequency-based approach.",
+        "Yet we believe that semantics-based and frequency-based approaches play complementary roles.",
+        "In current work, we are examining how to combine these two approaches."
+      ]
+    }
+  ]
+}

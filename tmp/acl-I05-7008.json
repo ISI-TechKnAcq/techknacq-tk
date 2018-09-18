@@ -1,0 +1,171 @@
+{
+  "info": {
+    "authors": [
+      "Eiji Aramaki",
+      "Takeshi Imai",
+      "Masayo Kashiwagi",
+      "Masayuki Kajino",
+      "Kengo Miyo",
+      "Kazuhiko Ohe"
+    ],
+    "book": "Proceedings of OntoLex 2005 – Ontologies and Lexical Resources",
+    "id": "acl-I05-7008",
+    "title": "Toward Medical Ontology using Natural Language Processing",
+    "url": "https://aclweb.org/anthology/I05-7008",
+    "year": 2005
+  },
+  "references": [
+    "acl-C02-1120",
+    "acl-J94-4001",
+    "acl-P98-2180",
+    "acl-P99-1014"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "In this paper, we introduce our project aiming to build a medical ontology, and also present a method to estimate term relations and term classification, which are the basic structure for the ontology.",
+        "First, relations between medical terms are extracted from a medical electronic dictionary.",
+        "Next, the terms are classified based on the co-occurrence verbs.",
+        "Preliminary experimental results show the basic feasibility of our approach."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "So far, ontology is defined in various ways.",
+        "In this paper, we define ontology as the following definition (Musen, 1998): An ontology is a model of a particular field of knowledge - the concepts and their attributes, as well as the relationships between the concepts.",
+        "Especially, in the medical field, a special attention is given to ontology studies(Stead et al., 2000; Musen, 2002; Hajdukiewicz et al., 2001), because a medical ontology can be a core technology for various applications, such as an electronic medical record, a diagnostic support system and so on(Musenet al., 1999; Sowa, 2000).",
+        "In addition, medical terms are strongly controlled, leading to strict usage and less ambiguity.",
+        "This can be a strong advantage for a precise natural language processing.",
+        "However, most of ontology studies in the medical field mainly rely on handmade approaches (SNOMED, 2002; UMLS, 2003).",
+        "Such an approach suffers from maintenance costs.",
+        "In such a situation, our project has started in October 2004.",
+        "The goal of the project is to build a Japanese medical ontology semi-automatically.",
+        "For the first stage of the project, we estimate the medical term relations and classification, which can be the basic structure of our ontology.",
+        "First, the system parses the lead (top) sentence of each entry in a medical dictionary.",
+        "A lead sentence usually explains compactly the meaning of the entry, using its hypernym.",
+        "Therefore, the system can extract the relations between an entry and its hypernym with a high-accuracy.",
+        "After that, the system classifies terms based on the distributional hypothesis, which states that words that occurred in the same contexts tend to have similar meanings (Harris, 1985).",
+        "The point of proposed method is the combination of the technique of the hyponyms extraction (which has high-accuracy) and the term classification (which has high-coverage).",
+        "Preliminary experimental results show the basic feasibility of the proposed approach.",
+        "The number of each type is shown in Table 2.",
+        "Both synonymous entries and reference entries can be directly converted into term relations.",
+        "So, the proposed method focuses on handling normal entries."
+      ]
+    },
+    {
+      "heading": "3 Method",
+      "text": [
+        "This section explains the proposed method, consisting of two steps.",
+        "* In fact, the patterns are described in the tree forms, but for simplicity, this table shows them without their structures.",
+        "First, the proposed method extracts term relations, mainly hypernym relations (STEP1).",
+        "Then, the method classifies terms by using the STEP1 results (STEP2).",
+        "3 .1 STEP1: Term Relation Extraction The lead sentence in a dictionary description compactly explains the meaning of the entry.",
+        "Especially, in the Japanese dictionary style, a headword of a lead sentence usually indicates a hypernym of its entry.",
+        "Therefore, we can easily extract the relations between an entry and its hypernym (Tsurumaru et al., 1991).",
+        "For example, a term \"Early Stomach Cancer'\" is explained with its headword \"Stomach Cancer'\" as follows.",
+        "An Early Stomach Cancer is a stomach cancer in which...",
+        "However, there are some exceptions.",
+        "For example, the following entry \"a residual stomach\" has the headword \"a part (off \\ and it is meaningless as the hypernym.",
+        "A Residual Stomach is a part of stomach which... To deal with such exceptions, we prepared 46 patterns/rules for hypernym (or synonym) extraction.",
+        "Some examples of them are shown in Table 3.",
+        "The extraction algorithm is as follows.",
+        "First, for each normal entry, the system analyzes the lead sentence by Japanese parser KNP (Kurohashi and Nagao, 1994).",
+        "If the parsing result matches a pattern, the system extracts the hyper-nym/synonym candidate by using the pattern.",
+        "Otherwise, the system regards its headword as a hypernym candidate.",
+        "Then, the system checks whether the candidate is suitable or not, by consulting the medical dictionary.",
+        "In the case that the extracted hypernym/synonymous does not appear in the entries of the dictionary, the system rejects the relation (such entries have no relation).",
+        "After this procedure, the system sums up all relations, and obtains tree structures (as shown in Figure 1).",
+        "The above procedure estimates reliable relations between terms.",
+        "However, as mentioned before, if a relation is rejected, the term remains without relations.",
+        "In order to handle such terms, the system classifies them in this step.",
+        "We conduct term classification based on the distributional hypothesis, which states that words that occurred in the same contexts tend to have similar meanings (Harris, 1985).",
+        "In applying the hypothesis, we limit a context of a term to its co-occurrence verb(w) and the syntactic relation(reZ) (such as subject relations, object relations and so on).",
+        "Such small context is workable because a term often appears with its typical verb as follows: develop X. provide X. X is effective for ... From the above three phrases, we can easily make a guess that X indicates a kind of a medicine (Of course, we limit X to a medical term).",
+        "For the statistical formalization of the distributional hypothesis, we assume the following probabilistic model.",
+        "where n is a term, v is n's co-occurrence verb, rel is a relation between n and v, c is a class of n, C is a set of c Roughly speaking, this model means that a term appearance is tied into a verb and its relation appearance by a hidden class c Parameter Estimation with EM Algorithm Under the above probabilistic model, all we have to do is to estimate three probabilistic tables, P(v,rel\\c), P{n\\c) and P{c).",
+        "The problem of the estimation is unobserved c (If c is observed, we can easily get these probabilities by direct counting.).",
+        "To estimate three probabilities, we utilize an Expectation Maximization(EM) algorithm, which estimates unobserved parameters by an iterative procedure.",
+        "See (Rooth et al., 1999) or (Torisawa, 2002) for more detail."
+      ]
+    },
+    {
+      "heading": "Initial Parameter Setting",
+      "text": [
+        "EM-based word classification demonstrated its effectiveness in previous studies (Rooth et al., 1999; Torisawa, 2002).",
+        "However, they used huge corpus, i.e., web data, newspapers and so on.",
+        "On the other hand, our corpus size is small as compared to them.",
+        "The lack of data sometimes bring a local minimum problem to the algorithm.",
+        "To avoid the problem, we give the algorithm rough categorization, which is represented as a set of initial probabilities by the following method.",
+        "First, we regarded a term which is the hypernym of many (more than a threshold) terms as a local center.",
+        "We also think that the center and its descendants make a category.",
+        "We call such a category as an initial class.",
+        "For example, in Figure 1, we regard \"tumor\" and \"cancer\", which have many children, as initial classes.",
+        "After the initial class construction, initial probabilities are set by using the initial classes as follows.",
+        "If a term rij belongs to an initial class Cj, the initial probability P(ni|Cj) is otherwise P{rii\\Cj) = 0.",
+        "Where \\Cj\\ denotes the number of Cj members."
+      ]
+    },
+    {
+      "heading": "4 Experiments",
+      "text": [
+        "We think that the experiments should be done in the view point of an application performance.",
+        "However, we have not developed a practical application yet.",
+        "So, this paper only reports the statistics of each step.",
+        "* Where \" – >\" is a hypernym relation, \"=\" is a synonymous relation.",
+        "After STEP1, 25815 hyp/syn relations are extracted from the dictionary.",
+        "They are more than half of the normal entries."
+      ]
+    },
+    {
+      "heading": "Evaluation",
+      "text": [
+        "In order to check the validity of these relations, 100 relations are randomly extracted, and judged by four humans (two medical doctors and two nurses).",
+        "They judged the hyp/syn relations whether valid or not.",
+        "The average accuracy is high, 89.3% (min=84.0%; max=95.0%; average concordance rate is 91.7%).",
+        "We think that it is because medical terms have less ambiguity, leading to the high performance.",
+        "Some examples are shown in Table 4.",
+        "We extracted 60,000 phrases (v, rel, n) from the dictionary, and classified them by the EM-based method in STEP2.",
+        "The method requires two parameters, the number of classes (|C|) and the number of iteration(iter).",
+        "We set |C |to 100, and iter to 16 after preliminary experiments.",
+        "After the classification, we extracted 50 terms (5 classes x 10 terms).",
+        "Then, they are judged by four humans (three medical doctors and one nurse)",
+        "whether a term can be suitable as a member of its class .",
+        "To compare the validity of the initial classes (mentioned in Senction 3.2), we conduct two methods as follows: RAND: initial probabilities are set to random values.",
+        "INIT: initial probabilities are set by using initial classes as mentioned in Section 3.2.",
+        "The result is shown in Table 5.",
+        "As shown in the table, INIT demonstrated higher accuracy than RAND.",
+        "However, we have to say that it is an ambiguous task for human, because the average concordance rate between humans is only 71%.",
+        "Figure 2 shows the likelihoods of each iteration step.",
+        "Not surprisingly, INIT jumps up its likelihood in early steps.",
+        "However, in the last steps, both INIT and RAND have almost equal likelihood.",
+        "It might indicate that the likelihood does not reflect the classification validness."
+      ]
+    },
+    {
+      "heading": "5 Related Works",
+      "text": [
+        "In the field of medical informatics, many studies are conducted for ontology, and some of them realized practical results, i.e., (SNOMED, 2002; UMLS, 2003) and so on.",
+        "However, as mentioned before, they rely on mainly handmade approaches, compel-ing huge maintenance costs.",
+        "On the other hand, in the field of natural language processing, many studies pay attention to full/semi-automatical techniques for knowledge-base building.",
+        "For example, (Richardson et al., 1998) built MINDNET, which is a syntactic knowledge-base using an encyclopedia.",
+        "(Tsurumaru et al., 1991) build a thesaurus using a Japanese word dictionary.",
+        "Our approach is similar to their approach.",
+        "The main deference is that we incorporate term classification into their techniques."
+      ]
+    },
+    {
+      "heading": "6 Conclusions",
+      "text": [
+        "In this paper, we introduced our medical ontology project, and proposed a method to estimate medical term relations/classifications.",
+        "Our techniques are based on the hypernym extraction and the distributional hypothesis.",
+        "Preliminary experimental results showed basic feasibility of our approach."
+      ]
+    },
+    {
+      "heading": "Acknowledgments",
+      "text": []
+    }
+  ]
+}

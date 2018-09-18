@@ -1,0 +1,173 @@
+{
+  "info": {
+    "authors": [
+      "Andre Kempe"
+    ],
+    "book": "International Conference on Computational Linguistics",
+    "id": "acl-C94-1025",
+    "title": "Probabilistic Tagging With Feature Structures",
+    "url": "https://aclweb.org/anthology/C94-1025",
+    "year": 1994
+  },
+  "references": [
+    "acl-A88-1019"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "The described tagger is based on a hidden Markov model and uses tags composed of features such as part-of-speech, gentler, etc.",
+        "The contextual probability of a tag (state transition probability) is deduced from the contextual probabilities of its feature-value-pairs.",
+        "This approach is advantageous when the available training corpus is small and the tag set large, which can be the case with morphologically rich languages."
+      ]
+    },
+    {
+      "heading": "1 INTRODUCTION",
+      "text": [
+        "The present article describes a probabilistic bigger based on a hidden Markov model (IIMM) (Rabiner, 1990) and employs tags which are feature structures.",
+        "Their features concern part-of-speech (I'OS), gender, number, etc.",
+        "and have only atomic values.",
+        "Usually, the contextual probability of a tag (state transition probability) is estimated dividing a trigram frequency by a bigram frequency (second order IIMM).",
+        "With a large tag set resulting from the fact that the tags contain besides of the POS a lot of morphological information, and with only 'a small training corpus available, most of these frequencies are too low for an exact estimation of contextual probabilities.",
+        "Our feature structure tagger estimates these probabilities by connecting contextual probabilities of the single feature-value-pairs (fv-pairs) of the Lags (cf. sec. 2).",
+        "Starting point for the implementation of the feature structure tagger was a second-order-IIMM tagger (trigrams) based on a modified version of the Viterbi algorithm (Viterbi, 1907; Church, 1988) which we had earlier implemented in C (Kempe ,1994).",
+        "There we modified the calculus of the contextual probabilities of the tags in the above-described way (cf sec. 4).",
+        "A test of both taggers under the same conditions on a French corpus' has shown that the feature structure tagger is clearly better when the available training corpus is small and the tag set is large but the tags are decomposable into relatively few fv-pairs.",
+        "The latter can be the case with morphologically rich languages when the tags contain a lot of morphological information (cf. sec. 5).",
+        "ton much obliged to Achim Stein and Leo Wanner, Romance Dept., Univ.",
+        "Stuttgart, Germany, for providing tine corpus and AL dictionary."
+      ]
+    },
+    {
+      "heading": "2 MATHEMATICAL BACKGROUND",
+      "text": [
+        "In order to assign tags to a word sequence, a IIMM can be used where the tagger selects among all possible tag sequences the most probable one (Garside, Leech and Sampson, 1987; Church, 1988; Brown et al., 1989; Rabiner, 1990).",
+        "The joint probability of a tag sequence 1= 10...1N-1 given a word sequence 7p0.–WN-1 is in the case of a second order IIMM:",
+        "The Lerm t, stands for the initial state probability, i.e. the probability that the sequence begins with the first two tags.",
+        "N is the number of words in the sequence, i.e. the corpus sire.",
+        "The term 7)0,00 is the probability of a word wi in the context of the assigned tag It is called observation symbol probability (lexical probability) and can be estimated by:",
+        "The second order state transition probability (contextual probability) Oil ti-2 4_1) in formula (1) expresses how probable it is that, the tag ti appears in the context of its two preceding tags 4_• and 4_1.",
+        "It is usually estimated as the ratio of the frequency of the trigram (4_2, ti_hti) in a given training corpus to the frequency of the bigram (4_2,4-0 in the same corpus:",
+        "With a large tag set and a relatively small hand-tagged training corpus formula (3) has an important disadvantage: The majority of transition probabilities cannot be estimated exactly because most of the possible trigrams (sequences of three consecutive tags) will not appear at all or only a few times3.",
+        "In our example we have a French training corpus of 10,000 words tagged with a set of 386 different tags which could form 386:1 57,512,456 different trigrams, but because of the corpus size no more than 10,000-2 trigrams can appear.",
+        "Actually, their number was only 4,815, i.e. 0.008 % of all possible 2A detailed description of problems caused by small and zero frequencies was given by Cale and Church (n989) (2)"
+      ]
+    },
+    {
+      "heading": "3 TRAINING ALGORITHM",
+      "text": [
+        "ones, because some of them appeared more than once (table 1).",
+        "When we divide e.g. a trigram frequency 1 by a bigram frequency 2 according to formula (3) we get the probability p=0.5 but we cannot trust it to be exact because the frequencies it is based on are too small.",
+        "We can take advantage of the fact that the 386 tags are constituted by only 57 different fv-pairs concerning POS, gender, number, etc.",
+        "If we consider probabilistic relations between single fv-pairs then we get higher frequencies (fig.",
+        "2) and the resulting probabilities are more exact.",
+        "From the equations ILO lei° n eii .•• n ei,n-1) = eik (4) kr-0 where ti means a tag and the ea symbolize its fv-pairs and ••• .13 ei,n – i n-2 eik ) (5) ( Ci n n k=0 whet C1 means the context of I; -Ind contains the tags 4-2 and ti_i follows n–i",
+        "The latter formula3 describes the relation between the contextual probability of a tag and the contextual probabilities of its fv-pairs.",
+        "The unification of morphological features inside a noun phrase is accomplished indirectly.",
+        "In a given context of fv-pairs the correct fv-pair obtains the probability p=1 and therefore will not influence the probability of the tag to which it belongs (e.g. Onum:SG I...) = 1 in fig. 2).",
+        "A wrong fv-pair would obtain p=0 and make the whole tag impossible.",
+        "In the training process we are not interested in analysing and storing the contextual probabilities (state transition probabilities) of whole tags but of single fv-pairs.",
+        "We note them in terms of probabilistic feature relations (PFR):",
+        "which later, in the tagging process, will be combined in order to obtain the contextual tag probabilities.",
+        "The term ei in formula (7) is a fv-pair.",
+        "C; \"b is a reduced context which contains only a subset of the fv-pairs of a really appearing context C1 (fig.",
+        "1).",
+        "CI\" is obtained from C; by eliminating all fv-pairs which do not influence the relative frequency of ei, according to the condition:",
+        "The considered fv-pair has nearly' the same probability in the complete and in the reduced contexts, i.e. C1 does not supply more information about the probability of em than C1 \"b does.",
+        "In the example (fig.",
+        "la) we consider the fv-pair Ogen:FEM.",
+        "Within the given training corpus, its probability in the complete context C1, i.e. in the context of all the other fv-pairs of figure la, is K=44/44=1 (cf. pi; in fig. 2).",
+        "The presence of Inion:SG in tag does not influence the probability of Ogen:FEM in tag Therefore lnurn:SG can be eliminated.",
+        "Only fv-pairs which really have an influence remain in the context.",
+        "The reduced context C/\"1 with less fv-pairs, which we obtain this way, is more general (fig.",
+        "lb).",
+        "In the given training corpus, the probability of Ogen:FEM in the context C1\"1 is po=170/174=0.997 (cf. Po in PM° in fig. 2), which is near to pt)=1.",
+        "The reduced context Cl\"1 is used to form a PM which will be stored.",
+        "A small change in the probability caused by the elimination of fv-pairs from the context is admitted if it does not exceed a defined small percentage e. (We used e = 3%.)",
+        "We sec in the use of reduced contexts instead of complete ones two advantages:",
+        "(1) A great number of complete contexts containing many fv-pairs can lead after elimination of irrelevant fv-pairs to the same PFR, which makes the number of all possible PF1Ls much smaller than the number of all possible trigrams (cf. sec. 2).",
+        "(2) The probability of a fv-pair can be estimated more exactly in a reduced context than in a complete one because of the higher frequencies in the first, case.",
+        "The Generation of Milts In the training process we first extract from a training corpus a set of trigrams where the tags are split up into their fv-pairs.",
+        "From these trigrams a set of PFIts is generated separately for every fv-pair examined four different methods for this procedure: Method 1-3: For every trigrain we generate all possible subsets of its fv-pairs.",
+        "Many trigrams, e.g. if they differ in only one fv-pair, have niost of their subsets of fv-pairs in comulon.",
+        "Both the complete trigrams and the subsets, constitute together the set of contexts and subcontexts (Ci and q\"1) wherein a fv-pair could appear.",
+        "To generate Palls for a given fv-pair, we preselect and mark those (sub-)contexts which are supposed to have an influence on the contextual probability of the fv-pair.",
+        "A (sub-)context will not be preselected if its frequency is smaller than a defined threshold.",
+        "We use different ways for the pres-election: Method 1: A (sub-)context will be preselected if the considered fv-pair itself or an fv-pair belonging to the same feature type ever appears in this (sub-)context.",
+        "E.g., if yetz:MAS appears in a certain (sub-)context then this (sub-)context will be preselected for gen:FEM too.",
+        "Furthermore, it is possible to impose special conditions on the preselection, e.g. that a (sub-)context can only be preselected if it contains a POS feature ill tag ti and 4_1, (cf. lig.",
+        "la: Opos and 1pos).",
+        "Method 2: 111 order to preselect (sub-)contexts for an fv-pair, we generate a decision tree' (Quinlan, 1983) where the feature of the fv-pair, e.g. yen, 11 71111 etc., serves to classify all existing (sub-)contexts.",
+        "11)1111 produces three classes of contexts: those containing the fv-pair Onum:SG, those with Onutit:PI, and those without a Onurn feature.",
+        "We assign to the tree nodes other features than this upon which the classification is based.",
+        "The root node is labeled with the feature from which we expect most information about the probability of the currently considered feature.",
+        "The values of the root node feature are assigned to the branches starting at the root node.",
+        "We continue the branching until there remain no features with an expected information gain and a .frequency higher than defined",
+        "many.",
+        "For reasons of space we explain only how we employ decision trees for our purposes.",
+        "For details about the automatic generation of such trees see Quinlan (1983).",
+        "thresholds.",
+        "'l'o every leaf of the tree corresponds a (sub-)context which will be marked and thus preselected for further analysis.",
+        "Method 3: For each fv-pair concerning POS we preselect every (sub-)context containing only PUS features in tag ti_.2 and (classical POS trigram), e.g. 2pos:PJtEJ' Ipos:DET for Opos:NOUN.",
+        "For the other fv-pairs we mark every (sub-)context containing any fv-pair of the same type in the previous tag 11_1 and any PUS features in tag and e.g. 1pos:DET lgen:FEM Opos:NOUN for ()yen: FEM.",
+        "With the methods 1-3, we next eliminate from every preselected (sub-)context all fv-pairs which in file above described sense do not influence the relative frequency of the currently considered fv-pair (eq.",
+        "8).",
+        "Method 4: From the set, of trigrams extracted from a training corpus we generate separately for every fv-pair, a binary-branched decision tree which shall describe various contextual probabilities of this fv-pair.",
+        "The tree is generated on a modified version of the I1)3 algorithm (Quinlan, 1983) and is similar to the one described by Schmid (1994).",
+        "We start with a binary classification of all trigrams based on the considered fv-pair.",
+        "E.g., a classification for gen:FEM will divide the set of trigrams in two subsets, one where the trigrams contain Ogen:FEM in the tag and one where they do not.",
+        "Ogen:FEM (Every number is a probability of Ogen:FEM in the context described by the path Iron/ the root node to the node labeled with the number.)",
+        "The tree is built up recursively (fig.",
+        "3).",
+        "At each step, i.e. with the construction of each node, we test which one of the other fv-pairs delivers most information concerning the above-described classification.",
+        "The current node will be labeled with this fv-pair.",
+        "One of its two branches concerns the trigrams which con",
+        "The position index at the beginning of every feature-value-pair indicates the tag to which it belongs; e.g. Ogen:FEM belongs to tag ti and 2nutn:SG",
+        "Lain the fv-pair, the other branch concerns the trigrams which do not contain it.",
+        "The recursive expansion of the tree stops if either the information gained by consulting further fv-pairs or the frequencies upon which the calculus is based arc smaller than defined thresholds."
+      ]
+    },
+    {
+      "heading": "4 TAGGING ALGORITHM",
+      "text": [
+        "Starting point for the implementation of a feature structure tagger was a second-order-IIMM tagger (trigrams) based on a modified version of the Viterbi algorithm (Viterbi, 1967; Church, 1988) which we had earlier implemented in C (Kemp° ,1994).",
+        "There we replaced the function which estimated the contextual probability of a tag (state transition probability) by dividing a trigram frequency by a bigram frequency (eq.",
+        "3) with a function which accomplished this calculus either using PFRs in the above-described way (eq.s 6, 7) or by consulting a decision tree (fig.",
+        "3).",
+        "To estimate the contextual probability of a tag we have to know the contextual probabilities of its fv-pairs in order to multiply them (eq.",
+        "6).",
+        "Using PFRs generated by method 1 or 2, when e.g looking for the probability p:;(0pos:ADJ I...) from figure 2, we may find in the list of Ellis, instead of a PER winch would directly correspond (but is not stored), the two PFRs",
+        "Both of them contain subsets of the fv-pairs of the required complete context and could therefore both be applied.",
+        "In such case we need to know how to combine pi and p2 in order to get p (=p?2 in fig. 2).",
+        "As there exists no mathematical relation between these three probabilities, we simply average pi and p2 to get p because this gives as good tagging results as a number of other more complicated approaches which we examined.",
+        "PFRs generated by method 3 do not create this problem.",
+        "For every complete context only one PER is stored.",
+        "When we use the set of decision trees generated by method 4, we obtain for every fv-pair in every possible context only one probability by going down on the relevant branches until a probability information is reached.",
+        "In opposition to the Pills of the other methods, the decision trees also contain negative information about the context of an fv-pair, i.e. not only which fv-pairs have to be in the context but also which ones must be absent."
+      ]
+    },
+    {
+      "heading": "5 TAGGING RESULTS",
+      "text": [
+        "In the training and tagging process we experimented with different values for parameters like: minimal admitted frequency for preselection, admitted percentual difference c between probabilities considered to be equal, etc.",
+        "(cf. sec. 3).",
+        "The feature structure tagger was trained on the French 10,000 words corpus already mentioned in table 1, with the four different training methods (sec.",
+        "3).",
+        "When tagging a 6,000 words corpus6 with an average ambiguity of 2.63 tags per word (after the dictionary",
+        "Comparatively, we used a \"traditional\" TIMM-tagger (cf. sec. 4) on the same training and test corpora and got an accuracy of 83.23 % 7, i.e. the error rate was about 50 % higher than with the feature structure tagger (table 2).",
+        "When we used a tool which always selects the lexically most probable tag without considering the context we obtained an accuracy of 83.81 %, which is even better than with the \"traditional\" IIMM-tagger.",
+        "Provided with enough training data and working on a small tag set, our \"traditional\" tagger got an accuracy of 96.16 % (Kempe ,1994), which is usual in this case (Cutting et al.,1992).",
+        "The English test corpus we used here had an average ambiguity of 2.61 tags per word which is amazingly similar to the ambiguity of the French corpus.",
+        "The feature structure tagger is clearly better when the available training corpus is small and the tag set large but the tags are decomposable into few fv-pairs."
+      ]
+    },
+    {
+      "heading": "6 FURTHER RESEARCH",
+      "text": [
+        "We intend to search for other similar models while keeping in mind the basic idea described above: Splitting up a tag into fv-pairs and deducing its contextual probability from the contextual probabilities of its fv-pairs.",
+        "Furthermore, it may be preferable to split up the tags only when the frequencies are too smalls.",
+        "7 For a similar experiment for German (20,000 words training corpus, 689 tags, trigrams) an accuracy of 72.5 % has been reported (Wothke et al., 1993, p."
+      ]
+    }
+  ]
+}

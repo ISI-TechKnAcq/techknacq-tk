@@ -24,10 +24,10 @@ from collections import defaultdict, Counter
 from noaho import NoAho
 from nltk.util import ngrams
 
-from websearch import WebSearch
+from lib.websearch import WebSearch
 
-from techknacq.corpus import Corpus, Document
-from techknacq.lx import ScrabbleLexicon, StopLexicon, SentTokenizer
+from lib.techknacq.corpus import Corpus, Document
+from lib.techknacq.lx import ScrabbleLexicon, StopLexicon, SentTokenizer
 
 
 # Parameters

@@ -1,0 +1,255 @@
+{
+  "info": {
+    "authors": [
+      "Pascale Fung"
+    ],
+    "book": "Very Large Corpora",
+    "id": "acl-W95-0114",
+    "title": "Compiling Bilingual Lexicon Entries from a Non-Parallel English-Chinese Corpus",
+    "url": "https://aclweb.org/anthology/W95-0114",
+    "year": 1995
+  },
+  "references": [
+    "acl-A94-1030",
+    "acl-C94-1009",
+    "acl-C94-2178",
+    "acl-H94-1027",
+    "acl-P93-1003",
+    "acl-P94-1012",
+    "acl-P95-1032",
+    "acl-W93-0301"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "We propose a novel context heterogeneity similarity measure between words and their translations in helping to compile bilingual lexicon entries from a non-parallel English-Chinese corpus.",
+        "Current algorithms for bilingual lexicon compilation rely on occurrence frequencies, length or positional statistics derived from parallel texts.",
+        "There is little correlation between such statistics of a word and its translation in non-parallel corpora.",
+        "On the other hand, we suggest that words with productive context in one language translate to words with productive context in another language, and words with rigid context translate into words with rigid context.",
+        "Context heterogeneity measures how productive the context of a word is in a given domain, independent of its absolute occurrence frequency in the text.",
+        "Based on this information, we derive statistics of bilingual word pairs from a non-parallel corpus.",
+        "These statistics can be used to bootstrap a bilingual dictionary compilation algorithm."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Building a domain-specific bilingual lexicon is one significant component in machine translation and machine-aided translation systems.",
+        "These terms are often not found in standard dictionaries.",
+        "Human translators, not being experts in every technical or regional domain, cannot produce their translations effectively.",
+        "Automatic compilation of such a bilingual lexicon in specific domains is therefore highly desirable.",
+        "We present an algorithm in finding word correlation statistics for automatic bilingual lexicon compilation from a non-parallel corpus in Chinese and English.",
+        "Most previous automatic lexicon compilation techniques require a sentence-aligned clean parallel bilingual corpus (Kupiec 1993; Smadja & McKeown 1994; Kumano & Hiralcavva 1994; Dagan et al.",
+        "1993; Wu & Xia 1994).",
+        "We have previously shown an algorithm which extracts a bilingual lexicon from noisy parallel corpus without sentence alignment (Fung & McKeown 1994; Fung 1995).",
+        "Although bilingual parallel corpora have been available in recent years, they are still relatively few in comparison to the large amount of monolingual text.",
+        "Acquiring and processing of parallel corpora are usually labour-intensive and time-consuming.",
+        "More importantly, the existence of a parallel corpus in a particular domain means some translator has translated it, therefore, the bilingual lexicon compiled from such a corpus is at best a reverse engineering of the lexicon this translator used.",
+        "On the other hand, if we can compile a dictionary of domain-specific words from non-parallel corpora of monolingual texts, the results would be much more meaningful and useful.",
+        "As demonstrated in all the bilingual lexicon compilation algorithms, the foremost task is to identify word features which are similar between a word and its translation, yet different between a word and other words which are not its translations.",
+        "In parallel corpora, this feature could be the positional co-occurrence of a word and its translation in the other language in the same sentences (Kupiec 1993; Smadja & McKeown 1994; Kumano & Hirakawa 1994; Dagan et al.",
+        "1993; Wu & Xia 1994) or in the same segments (Fung & Church 1994; Fung 1995).",
+        "In a non-parallel corpus, there is no corresponding sentence or segment pairs, so the co-occurrence feature is not applicable.",
+        "In Fung & McKeown (1994); Fung (1995), the word feature used was the positional difference vector.",
+        "Whereas this is more robust than sentence co-occurrence feature, the matching between two positional difference vectors presumes the two texts are rough translations of one anther.",
+        "Moreover, whereas the occurrence frequency of a word and that of its translation are relatively similar in a parallel corpus, they have little correlation in non-parallel texts.",
+        "Our task is, therefore, to identify a word feature correlating a pair of words even if they appear in texts which are not translations of each other.",
+        "This feature should also be language and character set independent, i.e. it should be applicable to pairs of languages very different from each other.",
+        "We propose that context heterogeneity is such a feature."
+      ]
+    },
+    {
+      "heading": "2 A Non-parallel Corpus of Chinese and English",
+      "text": [
+        "We use parts of the HKUST English-Chinese Bilingual Corpora for our experiments (Wu 1994), consisting of transcriptions of the Hong Kong Legislative Council debates in both English and Chinese.",
+        "We use the data from 1988-1992, taking the first 73618 sentences from the English text, and the next 73618 sentences from the Chinese text.",
+        "There are no overlapping sentences between the texts.",
+        "The topic of these debates varies though is to some extent confined to the same domain, namely the political and social issues of Hong Kong.",
+        "Although we select the same number of sentences from each language, there are 22147 unique words from English, and only 7942 unique words from Chinese."
+      ]
+    },
+    {
+      "heading": "3 Some Linguistic Characteristics of Chinese",
+      "text": [
+        "We have chosen Chinese and English as the two languages from which we will build a bilingual dictionary.",
+        "Since these languages are significantly different, we need to develop an algorithm which does not rely on any similarity between the languages, and which can be readily extended to other language pairs.",
+        "It is useful to point out some significant differences between Chinese and English in order to help explain the output of our experiments:",
+        "5 A vast number of acronyms are employed in Chinese, which means many single words in Chinese can be translated into compound words in English.",
+        "Hong Kong Chinese use many terms borrowed from classical Chinese which tend to be more concise.",
+        "The usage of idioms in Chinese is significantly more frequent than in English.",
+        "Points 3,4, and 5 contribute to the fact that the Chinese text of our corpus has fewer unique words than in English."
+      ]
+    },
+    {
+      "heading": "4 Context Heterogeneity of a Word",
+      "text": [
+        "In a non-parallel corpus, a domain-specific term and its translation are used in different sentences in the two texts.",
+        "Take the example of the word air in the English text.",
+        "Its concordance is shown partly in Table 4.",
+        "It occurred 176 times.",
+        "Its translation A-*X occurred 37 times in the Chinese text and part of its concordance is shown in Table 4.",
+        "They are used in totally different sentences.",
+        "Thus, we cannot hope that their occurrence frequencies would correspond to each other in any significant way.",
+        "On the other hand, air/ % are domain-specific words in the text, meaning something we breathe, as opposed to of some kind of ambiance or attitude.",
+        "They are used mostly in similar contexts, as shown in the concordances.",
+        "If we look at the content word preceding air in the concordance, and the content word following it, we notice that air is not randomly paired with other words.",
+        "There are a limited number of word bigrams (x, W) and a limited number of word bigrams (W, y) where W is the word air; likewise for The number of such unique bigrams indicate a degree of heterogeneity of this word in a text in terms of its neighbors.",
+        "We define the context heterogeneity vector of a word W to be an ordered pair (x, y) where: a",
+        "immediately preceding W in the text;",
+        "• number of different types of tokens",
+        "immediately following W in the text; number of occurrences of W in the text; The context heterogeneity of any function word, such as the, would have x and y values very close to one, since it can be preceded or followed by many different words.",
+        "On the other hand, the x value of the word am is small because it always follows the word I.",
+        "We postulate that the context heterogeneity of a given domain-specific word is more similar to that of its translation in another language than that of an unrelated word in the other language, and that this is a more salient feature than their occurrence frequencies in the two texts.",
+        "For example, the context heterogeneity of air is (119/176,47/176) = (0.676, 0.267) and the context heterogeneity of its translation in Chinese, is (29/37, 17/37) =- (0.784, 0.459) .",
+        "The context heterogeneity of the word f**ladjournment, on the other hand, is (37/175, 16/175) --= (0.211, 0.091).",
+        "Notice that although air and f*,, have similar occurrence frequencies, their context heterogeneities have very different",
+        "values, indicating that air has much more productive context than f**.",
+        "On the other hand, has more similar context heterogeneity values as those of air even though its occurrence frequency in the Chinese text is much lower."
+      ]
+    },
+    {
+      "heading": "5 Distance Measure between two Context Heterogeneity Vectors",
+      "text": [
+        "To measure the similarity between two context heterogeneity vectors, we use simple Euclidean distance E where :",
+        ", exercise , and a complete change of - conditioners to be provided - conditioners - conditioning and the 1 9 3 9 Expo in would only aggravate the problem.",
+        "- tight armour suit which might serve , noise and chemical and water and general , noise, water and wastes.",
+        "- conditioned double - deckers air air air air air air air air air air",
+        "The Euclidean distance between air and is 0.2205 whereas the distance between air and f* pi is 0.497.",
+        "We use the ordered pair based on the assumption that the word order for nouns in English and Chinese are similar most of the times.",
+        "For example, air pollution is translated into"
+      ]
+    },
+    {
+      "heading": "6 Filtering out Function Words in English",
+      "text": [
+        "There are many function words in English which do not translate into Chinese.",
+        "This is because in most Asian languages, there are very few function words compared to Indo-European languages.",
+        "Function words in Chinese or Japanese are frequently omitted.",
+        "This partly contributes to the fact that there are far fewer Chinese words than English words in two texts of similar lengths.",
+        "Since these functions words such as the, a, of will affect the context heterogeneity of most nouns in English while giving very little information, we filter them out from the English text.",
+        "This heuristic greatly increased the context heterogeneity values of many nouns.",
+        "The list of function words filtered out are the, a, an, this, that, of, by, for, in, to.",
+        "This is by no means a complete list of English function words.",
+        "More vigorous statistical training methods could probably be developed to find out which function words in English have no Chinese correspondences.",
+        "However, if one uses context heterogeneity in languages having more function words such as French, it is advisable that filtering be carried out on both texts."
+      ]
+    },
+    {
+      "heading": "7 Experiment 1: Finding Word Translation Candidates",
+      "text": [
+        "Given the simplicity of our current context heterogeneity measures and the complexity of finding translations from a non-parallel text in which many words will not find their translations, we propose to use context heterogeneity only as a bootstrapping feature in finding a candidate list of translations for a word.",
+        "In our first experiment, we hand-compiled a list of 58 word pairs as in Tables 3 and 4 in English and Chinese, and then used 58 by 58 context heterogeneity measures to match them against each other.",
+        "Note that this list consists of many single character words which have ambiguities in Chinese, English words which should have been part of a compound word, multiple translations of a single word in English, etc.",
+        "The initial results are revealing as shown by the histograms in Figure 1.",
+        "In the left figure, we show that 12 words have their translations in the top 5 candidates.",
+        "In the right figure, we show the result of filtering out the Chinese genitive n from the Chinese texts.",
+        "In this case, we can see that over 50% of the words found their translation in the top 10 candidates, although it gives fewer words with translations in top 5.",
+        "In Sections 7.1 to 7.4, we will discuss the effects of various factors on our results."
+      ]
+    },
+    {
+      "heading": "7.1 Effect of Chinese Tokenization",
+      "text": [
+        "We used a statistically augmented Chinese tokenizer for finding word boundaries in the Chinese text (Fung & Wu 1994; Wu & Fung 1994).",
+        "Chinese tokenization is a difficult problem and tokenizers always have errors.",
+        "Most single Chinese characters can be joined with other character(s) to form different words.",
+        "So the translation of a single Chinese character is ill-defined.",
+        "Moreover, in some cases, our Chinese tokenizer groups frequently co-occurring characters into a single word that does not have independent semantic meanings.",
+        "For example, (/-th item, number.",
+        "In the above cases, the context heterogeneity values of the Chinese",
+        "translation is not reliable.",
+        "However, translators would recognize this error readily and would not consider it as a translation candidate."
+      ]
+    },
+    {
+      "heading": "7.2 Effect of English Compound Words",
+      "text": [
+        "As we have mentioned, our Chinese text has many acronyms and idioms which were identified by our tokenizer and grouped into a single word.",
+        "However, the English text did not under go a collocation extraction process.",
+        "We can use the following heuristic to overcome the problem:",
+        "For a given word Wi in a trigram of (Wi_1, W, Wi+1) with context heterogeneity (x, y):",
+        "Using this method, we have improved the context heterogeneity scores of Aftilhuman rights, S2W-A IBasic Law„:411Second Reading and 4i-/Hong Kong."
+      ]
+    },
+    {
+      "heading": "7.3 Effect of Words with Multiple Functions",
+      "text": [
+        "As mentioned earlier, many Chinese words have multiple part-of-speech tags such as the Chinese for declaration/declare, development/developing, adjourned/adjournment, or expenditure/spend.",
+        "Therefore these words have one-to-many mappings with English words.",
+        "We could use part-of-speech taggers to label these words with different classes, effectively treating them as different words.",
+        "Another way to reduce one-to-many mapping between Chinese and English words could be to use a morphological analyzer in English to map all English words of the same roots with different case, gender, tense, number, capitalization to a single word type."
+      ]
+    },
+    {
+      "heading": "7.4 Effect of Word Order",
+      "text": [
+        "We had assumed that the trigram word order in Chinese and English are similar.",
+        "Yet in a non-parallel text, nouns can appear either before a verb or after, as a subject or an object and thus, it is conceivable that we should relax the distance measure to be: = \\Axi _ x2)2 + (y, y2)2 + (x1 y2)2 + (yi x2)2 We applied this measure and indeed improved on the scores for nouns such as vessels, Government, employers, debate, prosperity.",
+        "In some other languages such as French and English, word order for trigrams containing nouns could be reversed most of the time.",
+        "For example, air pollution would be translated into pollution d'air.",
+        "For adjective-noun pairs, Chinese, English and even Japanese share similar orders, whereas French has adjective-noun pairs in the reverse order most of the time.",
+        "So when we apply context heterogeneity measures to word pairs in English and French, we might map the left heterogeneity in English to the right heterogeneity in French, and vice versa."
+      ]
+    },
+    {
+      "heading": "8 Experiment 2: Finding the Word Translation Among a Cluster of Words",
+      "text": [
+        "The above experiment showed to some extent the clustering ability of context heterogeneity.",
+        "To test the discriminative ability of this feature, we choose two clusters of known English and Chinese word pairs debate!",
+        "fnal .",
+        "We obtained a cluster of Chinese words centered around pm by applying the Kvec segment co-occurrence score (Fung & Church 1994) on the Chinese text with itself.",
+        "The Kvec algorithm was previously used to find co-occurring bilingual word pairs with many candidates.",
+        "In our experiment, the co-occurrence happens within the same text, and therefore we got a candidate list for aggi that is a cluster of words similar",
+        "to it in terms of occurrence measure.",
+        "This cluster was proposed as a candidate translation list for debate.",
+        "We applied context heterogeneity measures between debate and the Chinese word list, with the result shown in Table 5 with the best translation at the top.",
+        "The asterisks in Table 5 indicate tokenizer error.",
+        "The correct translation is the third candidate.",
+        "Although we cannot say at this point that this result is significant, it is to some extent encouraging.",
+        "It is interesting to note that if we applied the same Kvec algorithm to the English part of the text, we would get a cluster of English words which contain individual translations to some of the words in the Chinese cluster.",
+        "This shows that co-occurrence measure can give similar clusters of words in different languages from non-parallel texts."
+      ]
+    },
+    {
+      "heading": "9 Non-parallel Corpora Need to be Larger than Parallel Corpora",
+      "text": [
+        "Among the 58 words we selected, there is one word service which occurred 926 times in the English text, but failed to appear even once in the Chinese text (presumably the Legco debate focused more on the issue of various public and legal services in Hong Kong during the 1988-90 time frame than later during 1991-92.",
+        "And in English they frequently accuse each other of paying lip service to various issues).",
+        "We expect there would be a great number of words which simply do not have their translations in the other text.",
+        "Words which occur very few times also have unreliable context heterogeneity.",
+        "A logical way to cope with such sparse data problem is to use larger non-parallel corpora.",
+        "Our texts each have about 3 million words, which is much smaller than the parallel Canadian Hansard used for the same purposes.",
+        "Because it was divided into two parts to form a non-parallel corpus, it is also half in size to the parallel corpus used for word alignment (Wu",
+        "& Xia 1994).",
+        "With a larger corpus, there will be more source words in the vocabulary for us to translate, and more target candidates to choose from."
+      ]
+    },
+    {
+      "heading": "10 Future Work",
+      "text": [
+        "We have explained that there are various immediate ways to improve context heterogeneity measures by including more linguistic information about Chinese and English such as word class correspondence and word order correspondence, as well as by using a larger context window.",
+        "Meanwhile, much larger non-parallel corpora are needed for compilation of bilingual lexicons.",
+        "We are currently experimenting on using some other similarity measures between word pairs from non-parallel corpora.",
+        "We plan eventually to incorporate context heterogeneity measures and other word pair similarity measures into bilingual lexicon learning paradigms."
+      ]
+    },
+    {
+      "heading": "11 Conclusion",
+      "text": [
+        "We have shown the existence of statistical correlations between words and their translations even in a non-parallel corpus.",
+        "Context heterogeneity is such a correlation feature.",
+        "We have shown initial results of matching words with their translations in a English-Chinese non-parallel corpus by using context heterogeneity measures.",
+        "Context heterogeneity can be used both as a clustering measure and a discrimination measure.",
+        "Given two corresponding clusters of words from the corpus, context heterogeneity could be used to further divide and refine the clusters into few candidate translation words for a given word.",
+        "Its results can be used to bootstrap or refine a bilingual lexicon compilation algorithm."
+      ]
+    },
+    {
+      "heading": "12 Acknowledgment",
+      "text": [
+        "I wish to thank Kathleen McKeown and Ken Church for their advice and support, and AT&T Bell Laboratories for use of software and equipments."
+      ]
+    }
+  ]
+}

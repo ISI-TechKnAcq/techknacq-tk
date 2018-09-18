@@ -1,0 +1,191 @@
+{
+  "info": {
+    "authors": [
+      "Yi-Chung Lin",
+      "Tung-Hui Chiang",
+      "Keh-Yih Su"
+    ],
+    "book": "International Conference on Computational Linguistics",
+    "id": "acl-C94-1023",
+    "title": "Automatic Model Refinement - With an Application to Tagging",
+    "url": "https://aclweb.org/anthology/C94-1023",
+    "year": 1994
+  },
+  "references": [
+    "acl-C92-1055",
+    "acl-H89-2048"
+  ],
+  "sections": [
+    {
+      "heading": "ABSTRACT",
+      "text": [
+        "Statistical NLP models usually only consider coarse information and very restricted context to make the estimation of parameters feasible.",
+        "To reduce the modeling error introduced by a simplified probabilistic model, the Classification and Regression Tree (CART) method was adopted in this paper to select more discriminative features for automatic model refinement.",
+        "Because the features are adopted.",
+        "dependently during splitting the classification tree in CART, the number of training data in each terminal node is small, which makes the labeling process of terminal nodes not robust.",
+        "This over-tuning phenomenon cannot be completely removed by cross-validation process (i.e., pruning process).",
+        "A probabilistic classification model based on the selected discriminative features is thus proposed to use the training data more efficiently.",
+        "In tagging the Brown Corpus, our probabilistic classification model reduces the error rate of the top 10 error dominant words from 5.71% to 4.35%, which shows 23.82% improvement over the unrefined model."
+      ]
+    },
+    {
+      "heading": "I. INTRODUCTION",
+      "text": [
+        "To automatically acquire knowledge from corpora, statistical methods are widely used recently (Church, 1989; Chiang, Lin & Su, 1992; Su, Chang & Lin, 1992).",
+        "The performance of a probabilistic model is affected by the estimation error due to insufficient training data and the modeling error due to lacking complete knowledge of the problem to be conquered.",
+        "In the literature, several smoothing methods (Good, 1953; Katz, 1987) have been used to effectively reduce the estimation error.",
+        "On the contrary, the problem of reducing modeling error is less studied.",
+        "Probabilistic models are usually simplified to make the estimation of parameters feasible.",
+        "However, some important information may be lost while simplifying a model.",
+        "For example, using the contextual words, instead of contextual parts of speech, enhances the prediction power for tagging parts of speech.",
+        "But, unfortunately, reducing the modeling error by increasing the degree of model granularity is usually accompanied by a large estimation error if there is not enough training data.",
+        "however, if only the discriminative features are involved (i.e., only those important parameters are used), modeling error could be significantly reduced without using a large corpus.",
+        "Those discriminative features usually vary for different words, and it would be very time-consuming to induce such features from the corpus manually.",
+        "An algorithm for automatically extracting the discriminative features from a corpus is thus highly demanded.",
+        "In this paper, the Classification and Regression Tree (CART) method (Breiman, Friedman, Olshen & Stone, 1984) is first used to extract the discriminative features.",
+        "However, CART basically regards all selected features as jointly dependent.",
+        "Nodes in different branches are trained with different sets of data, and the available training data of a node becomes less and less while CART asks more and more questions.",
+        "Therefore, CART can easily split and prune the classification tree to fit the training data and the cross-validation data respectively.",
+        "The refinement model built by CART tends to be over-tuned and its performance is consequently not robust.",
+        "A probabilistic classification model is, therefore, proposed to construct a more robust classification model.",
+        "The experimental results show that this proposed model reduces the error rate of the top 10 error dominant words from 5.71% to 4.35% (23.82%",
+        "error reduction rate) while CART only reduces the error rate to 4.67% (18.21% error reduction rate)."
+      ]
+    },
+    {
+      "heading": "2. PROBABILISTIC TAGGER",
+      "text": [
+        "Since part of speech tagging plays • an important role in the field of natural language processing (Church, 1989), it is used to evaluate the performance of various approaches in this paper.",
+        "Tagging problem can be formulated (Church, 1989; Lin, Chiang & Su, 1992) as",
+        "where PI is the category sequence selected by the tagging model, wi is the i-th word, ci is the possible corresponding category for the i-th word and cy is the 'short-hand notation of the category sequence el, c2, • • • ,c„.",
+        "The Brown Corpus is used as the test bed for tagging in this paper.",
+        "After preprocessing the Brown Corpus, a corpus of 1,050,004 words in 50,(X)0 sentences is constructed.",
+        "'It contains 54,031 different words and 83 different tags (ignoring the four designator tags \"FW,\" \"NC\" and \"TL\" (Francis & Kgera, 1982)).",
+        "'lb train and test the model, the whole corpus is divided into the training set and the testing set.",
+        "The v-fold cross-validation method (Breiman et al., 1984), where v is set to 10 in this paper, is adopted to reduce the error in performance evaluation.",
+        "The average number of words in the training sets and the testing sets are 945,004 (in 45,000 sentences) and 105,000 (in 5,000 sentences) respectively.",
+        "After applying back-off smoothing (Katz 1987) and robust learning (Lin et al., 1992) on Equation (1) to reduce the estimation error, a tagger with 1.87% error rate in the testing set is then obtained.",
+        "Although the error rate of overall testing set is small, many words are still with high error rates.",
+        "For instance, the error rate of the word \"that\" is 9.08% and the error rate of the word \"out\" is 21.09%.",
+        "To effectively improve accuracy over these words, it is suggested in this paper that the tagging model should be refined."
+      ]
+    },
+    {
+      "heading": "3. MODEL REFINEMENT",
+      "text": [
+        "For not having enough training data, usually only coarse information and rather limited context are used in probabilistic models.",
+        "Some discriminative features, therefore, may be sacrificed to make the estimation of parameters feasible.",
+        "For example, compared to the tag-level contextual information used in a bigram or a trigram model, the word-level contextual information provides more prediction power for tagging parts of speech.",
+        "I lowever, even the simplest word-level contextual information (i.e., word hi-gram) requires a large number of parameters (about 3 billion in our task).",
+        "Estimating such a large number of parameters requires a very huge corpus and is far beyond the size of the Brown Corpus.",
+        "Thus, the word-level contextual information is usually abandoned.",
+        "To reduce the modeling error introduced by a simplified probabilistic model, one appealing approach is to extract only the discriminative features for those error dominant words.",
+        "In this way, one can reduce the error rate without enlarging the corpus size.",
+        "Different error dominant words, however, might be associated with different sets of discriminative features.",
+        "'lb induce those discriminative features for each word from a corpus by hand is very time-consuming.",
+        "Automatically acquiring those features directly from a corpus is thus highly desirable.",
+        "In this section, the Classification and Regression Tree (CART) method (Breiman etch., 1984) is adopted to automatically extract the discriminative features and resolve the lexical ambiguity.",
+        "CART, however, requires a large amount of training data and validation data, because it regards all those selected features as jointly dependent.",
+        "The characteristic of being jointly dependent comes from the splitting process, which splits those children nodes only based on the data of their parent nodes.",
+        "Asa result, CART is easily tuned to fit the training data and validation data.",
+        "Its performance is thus not robust.",
+        "A probabilistic classification approach is therefore proposed to build robust refinement models with limited training data."
+      ]
+    },
+    {
+      "heading": "3.1. The error dominant words",
+      "text": [
+        "To select those words which are worth for model refinement, the top 10 error dominant words are ordered according to their contribution to overall errors, as listed in Table 1.",
+        "The second column shows their relative frequencies in the Brown Corpus.",
+        "The third column shows the error rates of those words tagged by the probabilistic tagger described in section 2.",
+        "The last column shows the contribution of the errors of each word to the overall errors.",
+        "The last row indicates that the top 10 error dominant words constitute 5.53% of the testing corpus and contribute 16.84% of the errors in the testing corpus.",
+        "Their averaged error rate is 5.71% (i.e., the ratio of the total errors of these words to their total occurrence times in the testing corpus)."
+      ]
+    },
+    {
+      "heading": "3.2. Feature selection",
+      "text": [
+        "To reduce modeling error, more discriminative information should be incorporated in tagging.",
+        "In addition to the trigram context information of lexical category, the features in Table 2 are considered to he potentially discriminative for choosing the correct lexical category of a given word.",
+        "Since the size of the parameters will be huge if all the features in Table 2 are jointly considered, it is not suitable to incorporate all of them.",
+        "Actually only some of the listed features are really discriminative for a particular word.",
+        "For instance, when we want to tag the word \"out,\" we do not care whether the word behind it (i.e., the right 1 word) is \"book,\" \"money\" or \"win",
+        "• The left-2, left-1, right-I and right-2 categories (denoted as Lcat,g(2), Lcatg(1), Reatg(1) and Rcatg(2)) • The left-1 and right-1 words (denoted as L„.,,,.j(1) and • The distance from the left period (Li,„„ioj) • The distance to the right period (/?period) • The distance from the nearest left noun (L„ • The distance to.the nearest right noun ( ?",
+        "• The distance .1- noun ) • The distance from the nearest left verb (1,„1,) to the nearest right verb (/?,,,•,)",
+        "dow;\" we only care whether the right-1 word is \"of.\" Thus, in this section, the CART (Breiman et al., 1984) method is used to extract the really discriminative features from the feature set.",
+        "The error rate criterion is adopted to measure the impurity of a node in the classification tree.",
+        "For every error dominant word, its 4/5 training tokens are used to split the classification tree; the remaining 1/5 training tokens (not the testing tokens) are used to prune that tree.",
+        "Then, all the questions asked by the pruned tree are considered to be the discriminative features."
+      ]
+    },
+    {
+      "heading": "3.3. CART classification model",
+      "text": [
+        "In our task, a two-stage approach is adopted to tag parts of speech.",
+        "The first stage is the probabilistic tagger described in section 2, which provides the most likely category sequence of the input sentence.",
+        "The second stage consists of the refined word models of the error dominant words.",
+        "In this stage, the pruned classification tree is used to re-tag the part of speech.",
+        "The results in the testing set are shown in Table 3.",
+        "In the table, the second column gives the error rates of the error dominant words in the first stage.",
+        "The third column gives the error rates after using CART to re-tag those words, and the last column gives the corresponding reduction rates.",
+        "In parenthesis it gives the performance in the validation set.",
+        "The last row in Table 3 shows that the refined models built by CART can reduce the -18.21% of error rate for the 10 error dominant words.",
+        "Only the performance of the word \"little\" deteriorated .",
+        "This is due to the robustness problem between the cross-validation data and the testing data, which is induced by the rare occurrence of the discriminative features."
+      ]
+    },
+    {
+      "heading": "3.4. Probabilistic classification model",
+      "text": [
+        "Because discriminative features are adopted dependently, CARI' can easily classify the training data and usually introduce the problem of over-tuning.",
+        "Besides, due to the variation between the validation data and the testing data, the pruning process cannot effectively diminish the problem of over-tuning introduced while growing the classification tree.",
+        "Thus, a probabilistic classification model, which uses all the features selected by CART in an independent way, is proposed in this section to robustly re-tag the lexical categories of the error dominant words.",
+        "• (-21,1 : Lcatg(2) = \"RB\" ?",
+        "• 01,2: Lcatg(2) = \"IN\" ?",
+        "• Q2,1 Lcatg(1) = \"AP\" ?",
+        "• 03,1 : Rcatg(1) = \"CD\" ?",
+        "• Q3,2 Rcatg(1) = \"JJ\" ?",
+        "• 04,1 : Rcatg(2) = \"JJ\" ?",
+        "• Q5,1 Lword(i) = \"rather\" 7 • 06,1 : Rword(1) = \"the\" ?",
+        "• Q6,2 Rword(1) = \"with\" ?",
+        "• 07,1 : Lperiod < 2 ?",
+        "• 08,1 : Lpenod < 6 ?",
+        "To use the probabilistic classification model, feature vectors are first constructed according to the questions asked by the pruned classification tree.",
+        "Assume that the 11 questions in Table 4 are asked by the classification tree for the word \"than.\" Every occurrence of \"than\" in the corpus is then accompanied by an 8-dimensional feature vector, F = [1'1, .",
+        ", The elements of the feature vector are obtained by the following rule.",
+        "j, if ( 2 is true; = 0, otherwise.",
+        "Notice that Q1,1 and 0,2 are merged into the same random variable because both of them ask about what the left-2 category is.",
+        "After constructing the feature vectors, the problem becomes to find a most probable category according to the given feature vector and it can be formulated as",
+        "argmax P(c • • • , , (3)",
+        "where c is a possible tag for the word to be re-tagged.",
+        "Assume that",
+        "The probabilistic classification model (PCM) is then defined as",
+        "The estimation and learning processes of the PCM approach are generally more robust.",
+        "As stated before, CART regards all selected features as jointly dependent.",
+        "The available training data for a node become less as more questions are asked.",
+        "On the contrary, due to the conditional independent assumption for P( • • , le) ill Equation (4), every parameter of PCM can be trained by the whole training data, and therefore, the estimation and learning processes are more robust.",
+        "Furthermore, every feature of PCM should be weighted to reflect its discriminant power because PCM regards all features of different branches in a tree as conditionally independent.",
+        "Directly using these features without weighting cannot lead to good results.",
+        "The weighting effect can be implicitly achieved by adaptive learning."
+      ]
+    },
+    {
+      "heading": "4. RESUINS AND DISCUSSION",
+      "text": [
+        "After learning the model parameters (Amari, 1967; Lin et al., 1992), the results of using the probabilistic classification model (PCM) are listed in Table 5.",
+        "As shown in the last rows of Tables 3 and 5, the error rate of PCM is smaller than that of CART in the testing set while their error rates in the validation set are almost the same.",
+        "The last row of Table 5 shows that the error rate of the 10 error dominant words is reduced from 5.71% to 4.35% (23.82% reduction rate) by refining the word models with the PCM approach.",
+        "In summary, due to dividing the features into independent groups, PCM can use the whole Table 4.",
+        "The 11 questions asked by the classification tree for the word \"than.\"",
+        "training data to train every feature and hence construct a more robust refinement model.",
+        "It is believed that this proposed probabilistic classification model (i.e., Equation (5)) can also be applied to other problems attacked by CART, such as voiced/voiceless stop classification and end-of-sentence detection, etc.",
+        "(Riley 1989)."
+      ]
+    },
+    {
+      "heading": "5. REFERENCE",
+      "text": []
+    }
+  ]
+}

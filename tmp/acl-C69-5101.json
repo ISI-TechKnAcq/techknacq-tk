@@ -1,0 +1,312 @@
+{
+  "info": {
+    "authors": [
+      "Shou-Chuan Yang"
+    ],
+    "book": "International Conference on Computational Linguistics",
+    "id": "acl-C69-5101",
+    "title": "A Search Algorithm and Data Structure for an Efficient Information System",
+    "url": "https://aclweb.org/anthology/C69-5101",
+    "year": 1969
+  },
+  "references": [],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "This paper describes a system for information storage, retrieval, and updating, with special attention to the search algorithm and data structure demanded for maximum program efficiency.",
+        "The program efficiency is especially warranted when a natural language or a,symbolic language is involved in the searching process.",
+        "The system is a basic framework for an efficient information system.",
+        "It can be implemented for text processing and document retrieval; numerical data retrieval; and for handling of large files such as dictionaries, catalogs, and personnel records, as well as graphic informations.",
+        "Currently, eight commands are implemented and operational in batch mode on a CDC 3600: STORE, RETRIEVE, ADD, DELETE, REPLACE, PRINT, COMPRESS and LIST.",
+        "Further development will be on the use of teletype console, CRT terminal, and plotter under a timesharing environment for producing immediate responses.",
+        "The maximum program efficiency is obtained through a unique search algorithm and data structure.",
+        "Instead.",
+        "of examining the recall ratio and the precision ratio at a higher level, this efficiency is measured in the most basic term of \"average number of searches\" required for looking Up an item.",
+        "In order to identify an item, at least one search is necessary even if it is found the first time.",
+        "However, through the use of the hash-address of a key or keyword, in conjunction with an indirect-chaining list-structured table, and a large available space list, the average number of searches required for retrieving a certain item is 1.25 regardless of the size of the file in question.",
+        "This is to be compared with 15.6 searches for the binary search technique in a 50,000-item file, and 5.8 searches for the letter-table method with no regard to file size.",
+        "*This study was supported in part by the National Science Foundation and the University of Wisconsin.",
+        "Best of all, since the program can use the same technique for storing and updating informations, the maximum efficiency is also applicable to them with the same ease.",
+        "Thus, it eliminates all the problems of inefficiency caused in establishing a file, and in updating a file.",
+        "I.",
+        "MOTIVATION In our daily life, there are too many instances of looking for some type of information such as checking a new vocabulary in a dictionary, finding a telephone number and/or an address in a directory, searching a book of a certain author, title, or subject in a library catalog card file, etc.",
+        "Before the desired information is found, one has to go through a number of items or entries for close examination.",
+        "The quantitative measurement is usually termed as the \"number of searches\", \"number of lookups\", or \"number of file accesses\" in mechanized information systems.",
+        "However, as King pointed out in his article in the Annual Review of Information Science and Technology, volume 3, (pp.74-75) that the most common measures of accuracy of an information system are the recall ratio and precision ratio.",
+        "These two measures have come under considerable criticism for their indifference in retrieval characteristics, being misleading and producing varying results.",
+        "They probably should be used primarily to highlight a system's unsatisfactory performance.",
+        "From the failure analysis of Hooper, King, Lancaster and others, the reasons are: incorrect query formulation, indexing errors, mechanical errors, incorrect screening, etc.",
+        "In the same volume (p. 139), Shoffner commented on the evaluation of systems that \"it is important to be able to determine the extent to which file structures and search techniques influence the recall, precision, and other measures of system performance\".",
+        "Not until very recently, file structure and search techniques were apparently unpopular topics among information scientist S except Salton and a few others.",
+        "Nevertheless, these topics have been attacked constantly -2-by system scientists for a much smaller size of file but the maximtm efficiency is a vital factor for the total system.",
+        "They ire frequently discussed under the title of \"symbol table techniques\", or \"scatter storage techniques\" as used by Morris as the title of his article.",
+        "In addition to the \"number of searches\" and the \"number of lookups\" other terminologies used by the system scientist for referencing the most basic measure are the \"number of probes\", the \"number of attempts\", and the \"search length\".",
+        "Ever since 1964 the author stepping into the computer.",
+        "profession noticed that the efficiency of a file handling system is always crippled by its file searching technique no matter how sophisticated the system.",
+        "This was especially the case during 1965 and 1966 when the author was employed at the Itek Corporation on an Air Force project of a Chinese to English machine translation experiment.",
+        "The best search technique used for dictionary lookups was the binary search which is still considered one of the best techniques available today.",
+        "For a large file with a huge number of records, entries or items, the binary search technique will still yield a substantial number of searches which is a function of the file size.",
+        "The typical files are: dictionaries of any sort, telephone directories, library catalog cards, personnel records, merchandise catalogs, document collections, etc.",
+        "For example, in a 50,000-entry file system the average number of searches for finding an entry is 15.6 calculated as log2N.",
+        "This figure will not be very satisfactory if frequent search inquiries to a file are the case.",
+        "As a result to finding better search techniques, at least three kinds of search techniques or algorithms are found to be more satisfactory than the binary search.",
+        "Namely they are: Lamb and Jacobson's \"Letter Table Method\", Peterson's \"Open-Addressing Technique\", and Johnson's \"Indirect Chaining Method\".",
+        "They have a rather interesting common feature that the file size is no longer a factor in the search efficiency.",
+        "-3-II."
+      ]
+    },
+    {
+      "heading": "EFFICIENCY OF VARIOUS SEARCH ALGORITHMS",
+      "text": [
+        "In order to have a gross understanding of various search algorithms, six of them are examined and compared in respect to their search efficiencies."
+      ]
+    },
+    {
+      "heading": "1. Linear Search",
+      "text": [
+        "This is also called sequential search or sequential scan.",
+        "The linear search of an unordered list or file is the simplest one, but is inefficient because the average number of searches for a given entry in a N-entry file will be N/2.",
+        "For example, if N = 50,000, the average number of searches for a given entry is an enormous 25,000.",
+        "It is assumed that the probability of finding a given entry in the file is one.",
+        "The average number of searches in a linear search is calculated as:",
+        "if N is a large number.",
+        "The linear search has to be performed in a consecutive storage area and this sometimes causes certain inconvenience if the required storage area is very large.",
+        "The inconvenience can be avoided by using the last computer word (or some bits of it) to index the location of the next section of storage area used and thus form a single chain for searching.",
+        "This variation of the linear search method is called the single chain method.",
+        "It differs from the linear search in storage flexibility but is otherwise the sane in the efficiency."
+      ]
+    },
+    {
+      "heading": "2. Directory Search",
+      "text": [
+        "This is also called block search.",
+        "With the aid of a directory which contains the addresses of every Bth entry of the ordered file, a better result can be achieved because the average number of searches is greatly reduced.",
+        "For the best result, choosing the blocking factor B = 220 in the example above, the answer is 223.6 searches whiCh is calculated as:"
+      ]
+    },
+    {
+      "heading": "3. Binary Search Using the binary search method will yield a more satisfactory",
+      "text": [
+        "result.",
+        "The search starts with the midpoint of the file, and goes to the midpoint of the associated remaining half if a match fails.",
+        "The comparison of their values will decide which half of the file should be tried next time.",
+        "This process will be repeated until a match is found.",
+        "The average number of searches in the example is calculated through the following formula as 15.6 searches:",
+        "if N is a large number."
+      ]
+    },
+    {
+      "heading": "4. Letter Table Method",
+      "text": [
+        "This attractive method as suggested by Lamb and Jacobson in 1961 for the dictionary lookup in a machine translation system did not receive good attention for its possible applications in general information systems.",
+        "The reasons could be the immediate response to the numerous letter tables after the second level which indicated its inefficiency in storage, and that no clear search efficiency and update efficiency were expressed.",
+        "Suppose only the twenty-six English letters are involved, in theory there are twenty-six tables at the first level, 262 -5-tables at the second level, 263 tables at the third level, etc.",
+        "The number of letter tables will in practice be reduced drastically after the second level because of the actual limitation in letter combination in forming a vocabulary.",
+        "However, no studies of this sort are available for the calculation of storage requirement to disprove its storage inefficiency.",
+        "The average number of searches or the expected search length of this method can not be calculated as a function of the file or dictionary size.",
+        "It is simply the average number of letters or characters of a certain Language plus one space character or any other delimiter.",
+        "For the English language, it is a favorable 5.8 searches (S = 4.8 + 1), with no concern of the file size.",
+        "Its update efficiency is compatible with its search efficiency and may be estimated at less than twice the average number of searches.",
+        "In order to achieve the above efficiency, the letter tables at each level should be structured in alphabetic order, and every letter should be converted into a numeric value such as A = 1, B = 2, C = 3, ... ,= 26 and the space delimiter = 0",
+        "an empty space is encountered, that space becomes the home for the new entry.\" Peterson did some simulations of open addressing by generating random numbers and storing them into a 500-entry table, and the result of the average number of searches from nine different runs is compared with the calculation obtained through Morris' formula or Salton's formula (L is the loading factor or the percentage of table fullness at the time of search):",
+        "It is thus clear that unless the table is nearly full, the average number of searches will be surprisingly small.",
+        "For example, if the loading factor is equal or less than 0.9 the average number of searches will be an amazing 1.965.",
+        "This can be achieved by allowing an extra ten percent of the table size.",
+        "In this case, its storage efficiency will became less attractive.",
+        "However, its search efficiency and update efficiency are excellent due to its extremely low average number of searches."
+      ]
+    },
+    {
+      "heading": "6. Indirect Chaining Method",
+      "text": [
+        "Since this method makes the same two assumptions as open addressing method and is heavily dependent upon the hash addressing, a more descriptive name for this method is suggested as Hash-AddresseJ Indirect-Chaining Search (HAICS).",
+        "Other names found in the literature are scatter index tables, direct chaining (a variation in chaining structure), closed addressing (direct and indirect chaining), and virtual scatter tables (matching additional hashed bits).",
+        "The HAICS method uses a structured four-field table, an additional non-addressable overflow arew of the table or a separate -8-overflow table, and a free storage area called the available space list.",
+        "It is aimed to fully utilize all spaces reserved for the table before using the overflow area and the free storage area.",
+        "This method treats the addressable table area as end-rounded, i.e., the first address of the table is considered following the last address.",
+        "When overflow occurs, the nonaddressable overflow area is made available as an extended table area.",
+        "This is so arranged to achieve better storage efficiency since in most cases there is no need for the additional overflow area and thus it can be omitted at the beginning or added on when the need arises.",
+        "The IMICS chaining table has four fields: keyword (key or data), index, link and pointer.",
+        "The keyword field is usually one computer word in size for accomodating symbols which identifies the entry.",
+        "The index field should have enough bits in size to specify the largest relative address in the available space list, so that the variable length entry stored in the available space list could be indexed from this table.",
+        "The link field is used to indicate the linkage to the next table address where information of entries of the same hashed value can be found.",
+        "The pointer field is designated to contain the address of the first entry of entries with the same hashed value.",
+        "Both the link field and the pointer field should have a field length in bits large enough to store the largest relative address of the addressable table area, i.e., the size of the addressable table.",
+        "Entries are entered at their hashed addresses first, and then upon collision allotted to the next (or surrounded) empty addresses.",
+        "Their pointers and links are set up for the proper chaining.",
+        "When an entry is being looked up, the first step is to check the pointer of the entry at hashed address, then go to the pointed address and start searching from this beginning entry.",
+        "If it is not found, the entry pointed by the link of current entry is searched until -9-it is found or there is no further link.",
+        "The latter case indicates that there is no match for this search.",
+        "When the entry is found through keyword identification, the address stored in the index field will direct the actual entry storage in the available space list.",
+        "The index field and the available space list are needed only if the entries are of variable length so that storage space can be conserved.",
+        "In the case of fixed length entries, the available space list is no longer needed and the index field in the table should be changed into an entry field with the desired fixed length.",
+        "A great advantage of the hash addressing is that to update entries in a file requires no sorting or resorting of any kind.",
+        "In the HAICS method, to delete an entry is to follow the algorithm until the entry is retrieved, and then to kook up the next entry in the chain to the previous entry.",
+        "All the storage previously occupied by this entry is freed for later use.",
+        "To add an entry will use the same algorithm to retrieve the last entry in a particular chain and then to set up the linkage to the next empty space in the table and have the information of the added entry stored there.",
+        "The added entry itself is stored in some free storage area in the available space list being indexed in the chaining table.",
+        "This method was first introduced in 1961 by Johnson and its average number of searches is calculated simply as:",
+        "More interesting yet, this formula is still valid when the loading factor L is greater than one which means the number of entries exceeds the allotted table size and the information of overflow entries are kept in the overflow area while entries themselves are again placed in the available space list.",
+        "The cost of overflow is increased linearly at merely 0.5 searches per 100% -10-increase of overflow.",
+        "This provision virtually eliminates the /ear of overflow which frequently causes almost unmanageaBle difficulties and at very high expense.",
+        "Before the table is full as in the usual case, the average number of searches of the indirect chaining method is a hard-tobelieve 1.25 with a maximum of 1.5 when the table is about full.",
+        "It is at these two figures and the above-mentioned update efficiency and overflow advantage that the author believes some storage inefficiency and programming complexity should be tolerated painlessly.",
+        "Table 2.Average number of searches in indirect chaining",
+        "It is understood from the previous comparison of various search algorithms that the turning point for the excellent performance in search and update efficiencies is at the hash addressing which is essentially a simple procedure applying a certain hash function upon a search key or keywrod.",
+        "Since the same keyword will always be hashed into the same hash value for table addressing, the criteria for a keyword selection or construction to identify an entry is the characteristic of uniqueness.",
+        "And, in order to minimize the undesired collision upon hashed addresses, a good hash function should be selected such that it would yield a balanced distribution of hashed values within the range of the table size."
+      ]
+    },
+    {
+      "heading": "1. Keyword Construction",
+      "text": [
+        "Under the consideration of the programming and computing efficiency and of the storage efficiency, usually a keyword of one computer word size is more desirable, e.g., eight-character keyword in a 48-bit word machine.",
+        "In machine files such as dictionaries, thesauruses, keyword indices, and merchandise catalogs, the keyword is almost readily available for hashing.",
+        "If the keyword is longer than the allowable number of characters, a simple word truncation at the right end or some word compression schemes can be used to reduce the word size to a desired amount of number of characters.",
+        "-13-For example, the standard word abbreviation, and a simple procedure to eliminate all the vowels and one of the two same consecutive consonants in a word will all be acceptable for this purpose.",
+        "In cases of author indices and catalogs, membership rosters, alphabetical telephone directories, taxation records, census, personnel records, student files, and any file using a person's name as the primary source of indexing will have the convenience in using the last name plus one space character and the initials as the keyword.",
+        "The word compression scheme is certainly applicable if it is necessary.",
+        "When title indices and catalogs, subject indices and catalogs, business telephone directories, scientific and technical dictionaries, lexicons and idiom-and-phrase dictionaries, and other descriptive multi-word information are desired, the first character of each nontrivil word may be selected in the original word sequence to form a keyword.",
+        "For example, the rather lengthy title of this paper may have a keyword as SADSIRS.",
+        "Several known information systems are named exactly in this manner such as SIR (Raphael's Semantic Information Retrieval), SADSAM (Lindsay's Sentence Appraiser and Diagrammer and Semantic Analyzing Machine), BIRS (Vinsonhaler's Basic Indexing and Retrieval System), and CGC (Klein and Simmons' Computational Grammar Coder).",
+        "An alternative to meet the need of the multi-word situation but with a possible improvement in the uniqueness of the resulting hashed value is to perform some arithmetic or logical manipulation on the binary representation of the multi-word.",
+        "When the multi-word is stored in consecutive computer words, each binary representation of a computer word is treated as an individual constant.",
+        "Then either an arithmetic operation (e.g., ADD, SUBTRACT, MULTIPLY, and DIVIDE) or a logical operation (e.g., AND, OR) is to be performed on these computer words to collapse them into one single computer word as the -14-keyword.",
+        "The resulting keyword from this kind of manipulation is not human readable but will serve its purpose for hash addressing.",
+        "In some cases where a unique number is assigned to an entry, there is no need to hash this number provided that number is inside the range of the allotted table size.",
+        "This is mostly seen when a record or document is arranged in its accession number or location index.",
+        "Otherwise the number can be treated as letters and be constructed in one of the methods described above."
+      ]
+    },
+    {
+      "heading": "2. Hash Function",
+      "text": [
+        "The different functions used for random number generations can also serve as the hash function if a likely one-to-one relation can be established between the keyword and the resulting random number.",
+        "This is also subject to the restriction that only numbers inside the range of table size are acceptable.",
+        "Frequently this method will not give a balanced distribution of table addresses and thus affect the search and update efficiencies.",
+        "The arithmetic or logical manipulation described above for handling multi-word items can also be used as a hash function.",
+        "One method called division hash code is suggested by Maurer that the binary representation of a keyword is treated as an integer and divided by the table size.",
+        "The remainder of this division is thus inside the range of the table size and is used as the hash value.",
+        "As Maurer noticed this method has the disadvantage that sometimes it does not produce indices which are equally distributed.",
+        "Three methods of computing hash addresses with proven satisfactory results were described very neatly by Morris: -15-\"If the keys are names or other objects that fit into a single machine word, a popular method of generating a hash address from the key is to choose some bits from the middle of the square of the key--enough bits to be used as an index to address any item in the table.",
+        "Since the value of the middle bits of the square depends on all of bits of the key, we can expect that different keys will give rise to different hash addresses with high probability, more or less independently of whether the keys share some common feature, say all beginning with the same bit pattern.",
+        "\"If the keys are multiword items, then some bits from the product of the words making up the key may be satisfactory as long as care is taken that the calculated address does not turn out to be zero most of the time.",
+        "The most dangerous situation in this respect is when blanks are coded internally as zeros or when partial word items are padded to full word length with zeros.",
+        "\"A third method of computing a hash address is to cut the key up into N-bit sections, where N is the number of bits needed for the hash address, and then to form the sum of all of these sections.",
+        "The low order N bits of the sum is used as the hash address.",
+        "This method can be used for single-word keys as well as for multiword keys.",
+        "...\" All these three method assume one slight restriction that the size of the table has to be a power of two because of the binary bit selection.",
+        "Personally the author prefers the first method of these three due to the extremely simple programming involved.",
+        "Depending on different machines, the main operation requires about five machine language instructions: load A register with the keyword, integer multiply with the keyword, left shift A and Q registers X bits so that the desired bits is at the left end of the Q register, clear A register, left shift A & Q registers again Y bits so that the desired bits are resided at the right end of the A register (CDC 3600 COMPASS).",
+        "-16-If the second method described by Morris is used, the keyword construction for multi-word item can be eliminated if there is no risk of the kind described.",
+        "The third method is more interesting because it has the generality of accepting both single-word and multi-word items but at a slight cost of some more programming which is to be offset by the cost of multi-word construction.",
+        "IV.",
+        "RUCS DATA STRUCTURE In response to the needs of search and update efficiencies, the data structure for the RUCS technique has to be organized in a much more sophisticated way with some additional storage requirement over the entries themselves.",
+        "As previously described under the Indirect Chaining Method, it requires a fixed-size four-field addressable chaining table for bookkeeping the keyword and all the information for the chaining mechanism, a reserved free storage area called the available space list for storing the variable length entries themselves, and an added-on non-addressable overflow table area for overflow chainings.",
+        "The overall HAMS data structure is quite list oriented but it is packed into the form of arrays for a more efficient indexing and searching procedure.",
+        "A test program has been written in CDC 3600 Fortran (a variation of Fortran IV) for the convenience of adapting to other computers.",
+        "The discussions following will frequently refer to the Fortran language and the list structure for a better clarification."
+      ]
+    },
+    {
+      "heading": "1. The Chaining Table",
+      "text": [
+        "The four-field table can be easily set up as four single dimensional arrays or as a four-dimensional array at the cost of several wasted bits in the computer word for storing the index to the available space list, the link to the next table address, or the pointer to indicate the beginning of a chained -17-sub-list.",
+        "The savings are less computer word-packing and unpacking operations.",
+        "The positions of each four-field table item in relation to the first item,i.e., the hash addresses, can be viewed as the main list of the table.",
+        "The linked entries of the same hashed address are treated as a sub-list.",
+        "Since the relative position of each table item is identified with its bashed address, there is no need to set up an address index for each item.",
+        "Besides, since each entry can be hash-addressed with an average number of searches at 1.25 and that most chains are not much longer than one or two entries, it is not necessary to have a backward link within a chain.",
+        "The layout of the chaining table is shown in Table 4 with some sample linkages indicated in hand-drawn circles and arrows.",
+        "N. PAR VE., MADISON, WIS. SUNSET BUID.",
+        "LOS ANGELS.",
+        "CALIF 11..857 MASS AVE.,IDGE, MASS.",
+        "hiparp list 2.",
+        "The Available Space List",
+        "This can be a single one-dimensional array for the best storage efficiency in accomodating variable length entries.",
+        "The beginning of an entry is indexed in the index field of the chaining table the relative position of the beginning computer word in the available space list.",
+        "This is also shown in the examples of Figure 1.",
+        "The ending of an entry can either be indicated by a special symbol such as two consecutive blanks or ECE as the abbreviation of end-of-entry, or calculated as the entry length and placed at the beginning of an entry.",
+        "Multidimensional arrays are usually wasteful for storing variable length entries.",
+        "If the entries are of fixed length then, as described before, there is no need to have a separate available space list.",
+        "These fixed length entries can be put directly in the enlarged index field of the chaining table for a more efficient processing."
+      ]
+    },
+    {
+      "heading": "3. The Overflow Table",
+      "text": [
+        "The overflow table is structured the same way as the Chaining table except that it is not accessable through the hash function.",
+        "It serves as an emergency device only after the chaining table is fully utilized and additional storage area is available at that time.",
+        "When the overflow table is established to meet the emergency, its array names and the size are made available to the HAICS procedure as an extended area for the chaining table.",
+        "V. HAICS ALGORITHMS FOR STORING, RETRIEVING, UPDATING, AND UTILITY"
+      ]
+    },
+    {
+      "heading": "FUNCTIONS",
+      "text": [
+        "The logical procedure of the RUCS technique is described in algorithms for easy adaption to procedure-oriented languages such as Fortran and Algol.",
+        "Currently, eight commands have been implemented and operational on the CDC 3600 test program: STORE, RETRIEVE, ADD, DELETE, REPLACE, PRINT, COMPRESS, and LIST.",
+        "They can be functionally classified into three groups: the main algorithms for STORE and RETRIEVE; the updating algorithms for ADD, DELETE, and REPLACE; and the utility algorithms for PRINT, COMPRESS, and LIST.",
+        "-21-The two main algorithms are frequently utilized by other algorithms except PRINT.",
+        "These algorithms are presented in detail in the following: 1.",
+        "Algorithm STORE (S) This algorithm is to be used for establishing a HAICS file at the very beginning.",
+        "It is assumed that the arrays for the chaining table and the available space list have been set up properly, and that keywords and the hash function have been constructed or selected appropriately through out the subsequent uses of this file.",
+        "-252.",
+        "Algorithm RETRIEVE (R) With a given keyword, this algorithm will retrieve the entry which is associated with keyword under the same assumptions made in Algorithm STORE.",
+        "move the entry in ASL starting from ASL(J) to a working area until an ECE is encountered, and exit on success.",
+        "This algorithm is used when an additional or new entry is put into the already established HAICS file.",
+        "It is an operation of \"adding\" an entry to the end of a chain of its hashed address, rather than breaking up the chain and \"inserting\" the entry according to some order or hierarchy.",
+        "This is so because each chain in the HAICS file is mostly very short with only one or two entries and the \"inserting\" will gain very little in search and update efficiencies.",
+        "-26-This algorithm is different from Algorithm STORE in that no clear-up operations are performed on the arrays of the Chaining Table and the Available Space List.",
+        "In addition, a relative address in the Available Space List is accepted as the first available address to store the added entries themselves.",
+        "trace back the previous link which contains I and set it to zero when it is found, otherwise trace back the original pointer and set it to zero, exit on success.",
+        "This is an algorithm designed to serve as a \"Garbage Collector\" in the list processing languages for better storage efficiency.",
+        "In practical applications, the Available Space List is a huge free storage area which can be on a secondary bulk storage device Such as a drum or disk for random access.",
+        "After several updating functions performed on the HAICS file, there will inevitably be some space groups residing in the middle of the used portion of the Available Space List.",
+        "And eventually it will reach a situation that the end of the Available Space List is reached but with many space groups scattered in the middle.",
+        "To remedy this situation, a periodical operation of the COMPRESS command is desirable to repack the Available Space List for a better storage utilization.",
+        "Many strategies or hierarchies can be used to achieve this purpose with some variations in computing efficiency.",
+        "The current algorithm starts with the last entry in the Available Space List and moves it to the first accomodatable space group found from -35-the beginning of the List.",
+        "The process is repeated until all the accomodatable space groups found are filled and thus a large .space group is accumulated at the end of the Available Space List for subsequent additions of new entries.",
+        "ClSearch for the largest INDEX(I) in the Chaining Table, then set J = INDEX(I) C2Count the length of this last entry in ASL starting at ASL(J) until an EOE is found C3Check an internal table of space groups in ASL to find an accomodatable space group such that the number of spaces in a space group is greater than the length of the last entry, go to Step C6 if it is not found, go to Step C4 if it is found C4Move the last entry to the space group found, go to Step C5 if some spaces are left unused, otherwise exit on success.",
+        "C5Store information of the space group to the internal table, exit on success.",
+        "C6Search ASL from its beginning for a space group, go to Step C10 if it is not found, go to Step C7 if it is found C7If the space group found is accomodatahle, then go to Step C4, otherwise go to Step C8 C8Store information of the space group found to the internal table C9Search ASL continuously for a space group, go to Step C10 if it is not found before the search reached the original location of the last entry, go to Step C7 if it is found C10Exit on table not compressable.",
+        "CllRepeat for additional compression upon exit on success by entering at Step Cl.",
+        "A sample result of the COMPRESS algorithm upon Tables 9 and 11 is shown in the following Tables 12 and 13:",
+        "In contrast to the Algorithm PRINT, LIST will initiate an alphabetical sort on the keywords stored in the Chaining Table, and output an alphabetical list of all entries in the HAICS file.",
+        "The final output of this algorithm performed on Tables 12 and 13 is illustrated in Table 14.",
+        "LlSort array KEYWORD(I) alphabetically and carry along the original sequence in the array, I, during the sort process",
+        "The STORE efficiency, i.e., the accumulative average number of searches for the STORE algorithm, as shown in Table 15 reveals that starting with an empty chaining table, it is a low 0.286 at 87.57, fullness of the table.",
+        "Most entries are entered into this table with no search at all which implies a good balanced distribution of keyword hash values.",
+        "The ADD efficiency is a function of the STORE efficiency.",
+        "And in this sample's statistics the ADD efficiency obtained through the addition of four entries to make a full chaining table, is in fact the same as if these four entries are placed at the end of the STORE command.",
+        "Thus the ADD efficiency of 0.75 for four entries can be combined with the STORE efficiency for twenty-eight entries and the result is a 0.344 of STORE efficiency for a full 32-entry chaining table.",
+        "It is noted that the ADD efficiency is always greater than (or equal to) the STORE efficiency due to the non emptiness of the chaining table.",
+        "The RETRIEVE efficiency is always identical with the search efficiency as indicated in Table 3 which is an average of 1.25 for the indirect chaining method.",
+        "The accumulative average number of searches does fall into the range between the minimum of 1.0 and the maximum of 1.5 which is a 1.263 at 59.47, table fullness.",
+        "-43-Both the DELETE and REPLACE efficiencies are functions of the RETRIEVE efficiency or the search efficiency.",
+        "The sample statistics of accumulative average number of searches of 1.2 for deleting five entries and of 1.333 for replacing three entries gives some indication that the DELETE and REPLACE efficiencies are compatible with the RETRIEVE efficiency.",
+        "As mentioned before, the above discussion is preliminary and even premature.",
+        "The statistics in Tables 15 and 16 do not cover some unusual circumstances although it is a typical example of several regular test runs.",
+        "To support, or oppose, the above discussion will demand several further extensive tests of each of these five efficiencies under a controlled and isolated environment."
+      ]
+    },
+    {
+      "heading": "2. A Framework for Information Systems",
+      "text": [
+        "The HAICS method is a basic framework aimed to improve the total efficiency of an information system.",
+        "It can be programmed in a number of languages from the fundamental machine language or assembly language of a particular family of computers to the high-level procedure-oriented languages such as Fortran and Algol which are acceptable to most of the computers.",
+        "With an amazing 1.25 average number of searches per entry, this method will certainly make natural language processing not much worse than the numerical computation.",
+        "It is ready to be implemented for text processing and document retrieval; numerical data retrieval; and for handling of large files such as dictionaries, catalogs, and personnel records, as well as graphic informations.",
+        "In the test program coded in Fortran and a machine language COMPASS, eight commands as described before are currently implemented and operational in batch mode on a CDC 3600.",
+        "Further development will be on the use of teletype console, CRT terminal, and plotter under a time-sharing -44-environment for producing immediate responses.",
+        "This is under the ideal of placing the most complete encyclopedia or a tailored index-reference work under one's fingertip.",
+        "Specifically, the dictionary lookup operation as the principal operation of an information system, is no longer a lengthy and painful procedure and thus a barrier in natural language processing.",
+        "Linguistic analysis may be provided with a complete freedom in referring back and forth any entry in the dictionary and the grammar, and the information gained at any stage of analysis can be stored and retrieved in the same way.",
+        "Document retrieval may go deeper in content analysis and providing a synonym dictionary for some better query descriptor transformations and matching functions.",
+        "As Shoffner noted, \"it is important to be able to determine the extent to which file structure and search techniques influence recall, precision, and other measures of system performance,\" This paper tends to support Shoffner's statement by presenting an analysis of current search techniques and a detailed description of the HAICS method which is a possible framework for most information systems."
+      ]
+    }
+  ]
+}
