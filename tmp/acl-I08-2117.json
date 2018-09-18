@@ -1,0 +1,200 @@
+{
+  "info": {
+    "authors": [
+      "Manabu Sassano"
+    ],
+    "book": "Proceedings of the Third International Joint Conference on Natural Language Processing",
+    "id": "acl-I08-2117",
+    "title": "An Experimental Comparison of the Voted Perceptron and Support Vector Machines in Japanese Analysis Tasks",
+    "url": "https://aclweb.org/anthology/I08-2117",
+    "year": 2008
+  },
+  "references": [],
+  "sections": [
+    {
+      "text": [
+        "An Experimental Comparison of the Voted Pereeptron and Support Vector",
+        "Machines in Japanese Analysis Tasks",
+        "Yahoo Japan Corporation 6-10-1 Roppongi, Minato-ku, Tokyo 106-6182 Japan msassano@yahoo-corp.jp",
+        "We examine various aspects of the voted pereeptron and support vector machines in classification tasks in NLP rather than ranking tasks.",
+        "These aspects include training time, accuracy and learning curves.",
+        "We used Japanese dependency parsing as a main task for experiments, and Japanese word segmentation and bunsetsu (base phrase in Japanese) chunking as auxiliary tasks.",
+        "In our experiments we have observed that the voted pereeptron is comparable to SVM in terms of accuracy and, in addition, as to learning time and prediction speed the voted pereeptron is considerably better than SVM."
+      ]
+    },
+    {
+      "heading": "1. Introduction",
+      "text": [
+        "Support vector machines (SVM) (Vapnik, 1995) have been shown to be effective for many natural language processing (NLP) tasks (e.g., (Kudo and Matsumoto, 2001; Kudo and Matsumoto, 2002)).",
+        "However, there are still some practical difficulties when we apply SVM to NLP tasks.",
+        "The weakness of SVM is that they are not easy to implement and their learning process is slow, especially with polynomial kernels.",
+        "(Freund and Schapire, 1999) propose the voted pereeptron, which is an improved version of Pereeptron (Rosenblatt, 1958), and they give theoretical analysis and have proved a good performance for the handwritten digit recognition.",
+        "Although Collins and his colleagues use the voted pereeptron for ranking in various NLP tasks (Collins, 2002b; Collins and Duffy, 2002; Collins, 2002a) and obtain impressive results, the use as a classifier has been not sufficiently examined.",
+        "In particular, it would be an interesting question whether or not the voted pereeptron is comparable to SVM for NLP tasks that are formalized as a classification one.",
+        "In this paper we focus on comparison of SVM and the voted pereeptron to investigate the usefulness of the voted pereeptron in NLP tasks.",
+        "We would like to know the strength and weakness of the voted pereeptron.",
+        "We choose three tasks for this purpose.",
+        "These tasks are Japanese word segmentation, bunsetsu (base phrase in Japanese) chunking, and dependency parsing.",
+        "Experiments indicate that SVM and the voted pereeptron are equally good for the three tasks in terms of accuracy.",
+        "However, the voted pereeptron is superior to SVM in terms of learning time, prediction time, and memory footprint."
+      ]
+    },
+    {
+      "heading": "2. The Voted Pereeptron",
+      "text": [
+        "Following (Freund and Schapire, 1999), we show the training and prediction algorithm of the voted pereeptron in Figure 1.",
+        "The voted pereeptron as well as SVM can use a kernel function.",
+        "We show in Figure 2 the algorithm of the voted pereeptron with a kernel function.",
+        "This algorithm seems to require 0(k) kernel calculations.",
+        "However, we can avoid them by taking advantage of the recurrence vj+i ■ x = Vj ■ x + yUjK{xUrx)."
+      ]
+    },
+    {
+      "heading": "3. Task Description",
+      "text": [
+        "We used Japanese dependency parsing as a main task for experiments and Japanese word segmenta-",
+        "'Herbrich describes an optimized version of the algorithm of the kernel pereeptron (Herbrich, 2002, page 322).",
+        "We can use the same technique in training of the kernel version of the voted pereeptron.",
+        "Training",
+        "Input: a labeled training set: ((xi,yi),...,(xm,ym)).",
+        "number of epochs: T",
+        "Output: a list of weighted perceptrons:",
+        "• Initialize: /■• := (I. tu := 0. n := 0.",
+        "• Repeat T times:",
+        "* If y = y then cu := c*.",
+        "+ 1.",
+        "else vh+i ■= vh + yiXi\\ Ch+i ■■= 1; k := fc + 1.",
+        "Prediction",
+        "Given: the list of weighted perceptrons: ((vi,ci),--- ,(Vk,Ck)) an unlabeled instance: x compute a predicted label y as follows:",
+        "Input: {(xi,yi),..., (xm,ym)) and T Output: a list of mistaken examples and weights:",
+        "• Initialize: /■• := (I. tu := 0,ci := 0.",
+        "* Compute prediction:",
+        "* If y = y then cj, := cu + 1.",
+        "Cfc+i := 1; k := fc + 1.",
+        "Given: {(ui,a), ■■■, (uh,Ch)) and x compute a predicted label y as follows:",
+        "y := sign(s).",
+        "tion and bunsetsu chunking as auxiliary tasks.",
+        "Japanese dependency parsing is to determine the dependency structure of a given sentence which is represented as a sequence of bunsetsus (base phrases in Japanese).",
+        "We employ the Stack Dependency Analysis (SDA) algorithm (Sassano, 2004; Nivre, 2003), which is very simple and easy to implement.",
+        "Sassano (2004) has proved its efficiency in terms of time complexity and reported the best accuracy on the Kyoto University Corpus Version 2 (Kurohashi and Nagao, 1998).",
+        "This algorithm, which can be used with any classifier that determines whether a given bunsetsu modifies another, is suitable for our study since we intend to test both SVM and the voted per-ceptron.",
+        "We use a set of standard features for this task.",
+        "By the \"standard features\" here we mean the feature set commonly used in (Uchimoto et al., 1999; Sekine et al., 2000; Kudo and Matsumoto, 2000; Kudo and Matsumoto, 2002; Sassano, 2004).",
+        "We employ the features below for each bunsetsu:",
+        "2.",
+        "Rightmost Function Word - major minor POS, conjugation type, conjugation form, surface form (lexicalized form)"
+      ]
+    },
+    {
+      "heading": "3.. Punctuation (periods, and commas)",
+      "text": []
+    },
+    {
+      "heading": "4.. Open parentheses and close parentheses",
+      "text": [
+        "5.",
+        "Location - at the beginning of the sentence or at the end of the sentence.",
+        "In addition, features as to the gap between two bunsetsus are also used.",
+        "They include: distance, particles, parentheses, and punctuation.",
+        "Following (Ramshaw and Marcus, 1995), we encode bunsetsu chunking as a tagging problem.",
+        "In bunsetsu chunking, we use the chunk tag set {B, 1} where B marks the first word of some bunsetsu and words marked I are inside a bunsetsu.",
+        "In our experiments on bunsetsu chunking, we estimated the chunk tag of each word using five",
+        "Table 1 : The Size of the Training Data words and their derived attributes.",
+        "These five words are the word to be estimated and its two preceding/following words.",
+        "Features are extracted from the fallowings for each word: word (token) itself, major POS, minor POS, conjugation type, conjugation form, the leftmost character, the character type of the leftmost character, the rightmost character, and the character type of the rightmost character.",
+        "A character type has a value which indicates a script.",
+        "This value can be one of the following: kanji (Chinese character), hiragana (Japanese syllabic character), katakana (another syllabic character), number, Latin letter, or symbol.",
+        "Japanese word segmentation can be formulated as a classification task (Shinnou, 2000).",
+        "Let a Japanese character sequence be s = c\\C2 ■ ■ ■ cm and a boundary hi exist between Cj_i and Cj.",
+        "The b{ is either +1 (word boundary) or – 1 (non-boundary).",
+        "The word segmentation task can be defined as determining the class of the b{.",
+        "We assume that each character Cj has two attributes.",
+        "The first attribute is a character type (t{).",
+        "The second one is a character code (k{).",
+        "We use here five characters to decide a word boundary.",
+        "A set of the attributes of Cj-i, Cj, Cj+i, and c^+2 is used to predict the label of the b{."
+      ]
+    },
+    {
+      "heading": "4. Experimental Results and Discussion 4.1 Corpus",
+      "text": [
+        "We used the Kyoto University Corpus Version 2 (Kurohashi and Nagao, 1998).",
+        "Analysis systems used in any of our experiments were trained on the articles on January 1 st through 8th (7,958 sentences) and tested on the articles on January 9th (1,246 sentences).",
+        "The articles on January 10th were used for development.",
+        "The usage of these articles is the same as in (Uchimoto et al., 1999; Sekine et al., 2000; Kudo and Matsumoto, 2002; Sassano, 2004).",
+        "The size of the training data set is given in Table 1.",
+        "We selected the best value of the misclassification cost C of SVM by using the development test set.",
+        "We carried out training SVM with 0.0001, 0.001, 0.01, 0.1, and 1 as a value of C and measured accuracy on the development test set.",
+        "We then used models with these best values of C on the test set.",
+        "Similarly, as to the best value of the number of epoch T of the voted perceptron, we applied the same procedure and found the best value of T for the development test set.",
+        "We use polynomial kernels with the degree of 3 for all the experiments.",
+        "The main reason for this is as follows.",
+        "Polynomial kernels with the degree of 3 have been widely used for Japanese analysis tasks and they have reported better performance than that of other kernels.",
+        "A cubic kernel would be a good first choice.",
+        "In particular, cubic kernels are used for Japanese dependency parsing in many papers (e.g., (Kudo and Matsumoto, 2000; Kudo and Matsumoto, 2002; Sassano, 2004)).",
+        "Thus there are additional benefits that we can compare our results with others.",
+        "We show in Table 2 the summary of performance for the three tasks with p-values of McNemar's test (Gillick and Cox, 1989) at .05 significance level.",
+        "SVM outperforms the voted perceptron in all the three tasks.",
+        "In the cases of both JWS and JBC, the differences between SVM and the voted perceptron are statistically significant.",
+        "However, in the case of JDP the difference is not significant.",
+        "Since absolute differences are little in any of the cases, there would be no serious impact in many practical applications whichever you may choose.",
+        "Figures 3, 4 and 5 show how accuracy changes at each epoch.",
+        "In the cases of JWS and JBC, the accuracy peaks at the epoch of around 15.",
+        "On the other hand, in the case of JDP, the accuracy peaks at the epoch of 2 and then it fluctuates a little and declines gradually.",
+        "JWS",
+        "JBC",
+        "JDP",
+        "# of features",
+        "11916",
+        "121081",
+        "40842",
+        "# of examples",
+        "350584",
+        "198514",
+        "98689",
+        "Voted Perceptron – i-SVM – x-_i_i_i_i_ Number of sentences",
+        "We here show the learning curves (Figure 6) of SVM and the voted perceptron for the JDP task.",
+        "Both curves exhibit a similar shape.",
+        "Now let us see the learning time of SVM and the voted perceptron.",
+        "We examined the learning time(Figure 7) of the JDP task.",
+        "We used LIB SVM (Chang and Lin, 2001) for SVM and an original tool written in C++ for the voted perceptron.",
+        "LIB SVM used 300MB memory for kernel caching, while our tool for the voted perceptron used no extra memory.",
+        "The learning time of the voted perceptron is more than five times faster than that of SVM although the tool for the voted perceptron requires less memory.",
+        "Learning time somewhat may be affected by the implementation details of these tools.",
+        "Therefore, we counted the number of dot product computation, which directly indicates the learning cost.",
+        "Figure 8 shows the number of dot product calculations in the case of training of JDP with 498 sentences.",
+        "The voted perceptron requires considerably fewer calculations of dot products than SVM does.",
+        "This means the learning of the voted perceptron can be much faster than that of SVM.",
+        "We also measured the number of support vectors in models of both SVM and the voted perceptron.",
+        "Figure 9 shows the change of support vectors of the voted perceptron in the case of JDP with the full training data depending on the number of epochs.",
+        "As (Freund and Schapire, 1999) pointed out, the number of support vectors of the voted perceptron is significantly fewer than that of SVM.",
+        "This leads to faster prediction of the voted perceptron."
+      ]
+    },
+    {
+      "heading": "5. Related Work",
+      "text": [
+        "Carreras et al.",
+        "(2003) uses a voted perceptron for named entity recognition (NER).",
+        "However, they have not compared their results with systems using",
+        "Voted Perceptron – i-",
+        "SVMs.",
+        "Therefore, it is not clear that the NER system with the voted perceptron has any advantages over NER systems with SVM.",
+        "Collins' work (Collins, 2002b; Collins and Duffy, 2002; Collins, 2002a) on the voted perceptron focuses mainly on ranking tasks in various problems.",
+        "It does not treat classification tasks directly and there is no comparison with SVM."
+      ]
+    },
+    {
+      "heading": "6. Conclusion",
+      "text": [
+        "In this paper we have compared SVM with the voted perceptron in three tasks of Japanese analysis.",
+        "In our experiments we have observed that the voted perceptron is comparable to SVM in terms of accuracy and, in addition, as to learning time and prediction speed the voted perceptron is considerably better than SVM.",
+        "These observations are consistent with the theoretical analysis and experimental results in (Freund and Schapire, 1999).",
+        "The voted perceptron is found to be a strong alternative to SVM in classification tasks in NLP as well as ranking tasks.",
+        "If you choose SVM eventually, the voted perceptron would be very useful when designing a kernel because the same kernel function can be used in both SVM and the voted perceptron and you can obtain benefits from the easiness of implementation and the learning speed of the voted perceptron.",
+        "We have a plan to apply the voted perceptron to text classification and other diverse tasks in NLP.",
+        "We would like to report experimental results and clear the effectiveness and the weakness of the voted perceptron."
+      ]
+    }
+  ]
+}

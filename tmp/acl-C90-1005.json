@@ -1,0 +1,193 @@
+{
+  "info": {
+    "authors": [
+      "Uri Zernik",
+      "Paul S. Jacobs"
+    ],
+    "book": "International Conference on Computational Linguistics",
+    "id": "acl-C90-1005",
+    "title": "Tagging for Learning: Collecting Thematic Relations from Corpus",
+    "url": "https://aclweb.org/anthology/C90-1005",
+    "year": 1990
+  },
+  "references": [],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "Recent work in text analysis has suggested that data on words that frequently occur together reveal important information about text content.",
+        "Co-occurrence relations can serve two main purposes in language processing.",
+        "First, the statistics of co-occurrence have been shown to produce accurate results in syntactic analysis.",
+        "Second, the way that words appear together can help in assigning thematic roles in semantic interpretation.",
+        "This paper discusses a method for collecting co-occurrence data, acquiring lexical relations from the data, and applying these relations to semantic analysis."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Two text processing problems rely heavily on co-occurrence patterns– the way that words appear together, possibly idiosyncraticly.",
+        "First, statistically weighted co-occurrence information can assist in the \"bracketing\" of noun groups, which can otherwise lead to a combinatoric explosion of parse trees [1].",
+        "Second, co-occurrence relations can provide evidence of semantic information for thematic-role assignment, an important task that is otherwise fraught with inaccuracy.",
+        "Only co-occurrence patterns collected over a corpus can help to determine which is object and which is recipient in PAID DIVIDEND (IS SECURE) vs.",
+        "PAID SHAREHOLDERS (ARE SATISFIED).",
+        "A sufficiently rich lexicon would include the semantic preferences for distinguishing these thematic roles, but such a lexicon does not yet exist.",
+        "Co-occurrence patterns are a means of probing a global corpus for clues that help resolve ambiguity at the local sentence level.",
+        "Patterns such as PAID TO SHAREHOLDERS and PAID THEM THE DIVIDEND are detected in the corpus at large.",
+        "Through these latter examples, in which the distinction between recipient and object relative to the dative verb PAY is made explicit, the former cases in which the relation is implicit can be resolved.",
+        "In contrast to previous work which addressed the identification of surface relations, i.e., SVO triples [2], in our work we address the acquisition of semantic relations, focussing at the assigment of thematic roles.",
+        "This task (i.e. tagging for acquisition) requires high reliability and so it relies less on statistical properties and more on deterministic local marking.",
+        "In this paper we discuss a technique for parsing and semanticly analyzing complex sentences with the aid of co-occurrence relations, and show how these relations are acquired from tagged corpus."
+      ]
+    },
+    {
+      "heading": "1.1 The Phenomenon",
+      "text": [
+        "Consider, for example, the sentence below, taken from the Dow-Jones newswire:",
+        "For this sentence, which is not exotic or unusual in its complexity, there are 24 non-trivial different parse trees.",
+        "Human readers, in contrast to most programs, can quickly identify groups of words that \"hang together\" such as COMPANY PAID A DIVIDEND, STOCK DIVIDEND, and CASH DIVIDEND, and use these clusters to understand the sentence unambiguously.",
+        "Moreover, a human reader can easily recognize SHAREHOLDERS as recipient and DIVIDEND as the object of PAY.",
+        "Along these lines, our program develops the capability to identify such patterns by training on a large corpus of examples."
+      ]
+    },
+    {
+      "heading": "1.2 The Training Corpus",
+      "text": [
+        "The training corpus, from which our lexical information is extracted, consists of more than ten mil",
+        "lion words from the Dow Jones newswire (10 months worth of stories).",
+        "For the root PAY, for instance, we collected more than 6000 examples, 20 of which are given below.",
+        "To exploit this data, a system must transform common patterns into operational templates, encoding a core relation between the words.",
+        "The sections that follow describe the evolution and implementation of this acquisition technique."
+      ]
+    },
+    {
+      "heading": "2 Co-occurrence: Previous Work",
+      "text": [
+        "Garside [4] and Church et al.",
+        "[1] provided a major impetus for this line of work.",
+        "In Church's work, a collection of English collocations bootstrapped from a tagged corpus facilitated the construction of an adaptive \"tagger\", a program that annotates a text with part-of-speech information.",
+        "Frank Smadja [7] continued Church's effort by collecting operational pairs such as verb-noun and adjective-noun pairs.",
+        "Smadja used these pairs to constrain lexical choice in a language generator; for example, the system prefers \"deposit a check\" to \"place a check\" based on the frequency of co-occurrence of deposit and check.",
+        "Ido Dagan [3] pursued this topic further by projecting co-occurrences beyond the local context, using collocations for anaphora resolution.",
+        "For example in, THE CAR WAS DRIVING ON THE ROAD.",
+        "SUDDENLY IT BRAKED.",
+        "CAR is selected over ROAD as the anaphor of IT, since CAR BRAKE is a stronger collocation than ROAD BRAKE.",
+        "Interestingly, this idea complements Wilks' preference semantics [8], in which preference is based on a semantic hierarchy.",
+        "In Dagan's method, preferences are based on word patterns acquired from corpus.",
+        "Our work further emphasizes global-sentence connections.",
+        "An example that highlights the use of co-occurrence is given on the next page.",
+        "What is the attachment of THAT?",
+        "THAT could potentially attach to almost any preceding word, e.g., FEDERAL THAT, BOARD THAT, CONVERSION THAT, SAID THAT, etc.",
+        "The affinity of the word pair SAY THAT (although it does not appear in this sentence as a collocation) supports the appropriate attachment.",
+        "Furthermore, co-occurrence relations support thematic-role assignment.",
+        "This is important for our ultimate objective of producing more accurate conceptual information from news stories [5].",
+        "The text below illustrates one type of problem in role assignment:",
+        "Who paid what to whom and when?",
+        "Co-occurrence-based analysis generates lexical relations such as subj-verb, verb-obj, and verb-obj2, relations which are further mapped into appropriate thematic and semantic roles.",
+        "The program thus determines that COMPANY is the payer of PAID, SHAREHOLDERS the payee, and DIVIDEND the payment."
+      ]
+    },
+    {
+      "heading": "3 Lexical Representation",
+      "text": [
+        "An acquired lexical structure called a Thematic Relations (Figure 2) facilitates this analysis.",
+        "For a pair of content words, a relation provides (1) a strength of association (or \"mutual affinity\"), and (2) a structure type.",
+        "This table is acquired from corpus by a tagger based on morphology and local syntax."
+      ]
+    },
+    {
+      "heading": "4 Extracting Co-occurrence Relations from Corpus",
+      "text": [
+        "The algorithm operates in three steps: (1) tag the corpus for morphology and part of speech, (2) collect collocations using relative frequency, and (3) use tagging to determine lexical relations within collocations."
+      ]
+    },
+    {
+      "heading": "4.1 Part-of-speech Tagging",
+      "text": [
+        "Since the corpus size is about 10-million words, a full-fledged global sentence parsing is prohibitively expensive, and tagging must be carried out by localist methods, i.e., by means of morphology and local syntactic markers.",
+        "There are three degrees of difficulty of cases to be tagged.",
+        "Morphology-based Tagging: Only a few words can be tagged using morphology alone.",
+        "While PAYMENT and SHAREHOLDERS are unambiguously nouns, morphology-based tagging is ambiguous for most words.",
+        "For example, PAID and SAID could be either verb or adjective (i.e. participle modifier); STOCK and CASH could be either noun or verb.",
+        "Syntax-based Tagging: Local syntactic markers help to remove most cases of ambiguity.",
+        "For example, was SAID (read: the word SAID preceded by was) can be unambiguously tagged a verb; the PAID shareholders, is an adjective; and the STOCK is definitely a noun.",
+        "Statistics-Based Tagging: Taggers reported by [4; 1] have capitalized on a large collection of bi-grams plus statistically weighted grammar rules.",
+        "In this method, statistical properties are acquired from a large training corpus which was tagged manually.",
+        "Statistical methods have proved very effective, and attained a high level of accuracy [6]."
+      ]
+    },
+    {
+      "heading": "4.2 Problematic Cases",
+      "text": [
+        "Some cases prove even more difficult and cannot be resolved by localist methods.",
+        "Consider the following two examples.",
+        "• \"The company preferred stock PAID ...\" .",
+        "In this clause, PAID, could be either an adjective or a verb (see \"the horse raced past the barn\").",
+        "Indeed, this clause could probably be determined by a global parse, however, this would be too expensive computationally.",
+        "• \"CONVINCING MANAGEMENT proved tough\" is even harder since it presents a Necker cube situation (i. e. changing the interpretation of either word seems immediately to change the interpretation of the pair).",
+        "Is it an adjective-noun or is it a verb-noun pair?",
+        "In general, the analysis of such pairs requires deeper understanding of word relationships.",
+        "Consider another example:"
+      ]
+    },
+    {
+      "heading": "LATER IN THE DAY BUYING INTEREST DIMINISHED ...",
+      "text": [
+        "Again, it is difficult to tell whether INTEREST in BUYING diminished or the BUYING of IN-TERESTs diminished.",
+        "Thus, local clues do not contribute towards the proper resolution of such cases.",
+        "The incorrect resolution of such cases, which unfortunately are pervasive in the corpus, impinges on two objectives: performance and learning.",
+        "In order to perform text analysis, in the first case one must determine whether management was convinced, or the management convinced some second party; in the second case, one must determine the subject of the main verb of the sentence, i.e., which is the subject of DIMINISHED?",
+        "Many applications require an unambiguous result.",
+        "Thus a call must be made one way or another.",
+        "Statistical means might make that call slightly more judiciuos on the average.",
+        "However, when tagging is used for learning of thematic roles, inappropriate resolution of such cases can drastically contaminate the final results by biasing it in a certain direction.",
+        "Results are far more accurate when ambiguous cases are left out altogether."
+      ]
+    },
+    {
+      "heading": "4.3 Tagging for Learning",
+      "text": [
+        "Our tagger is based on a 7,000-root lexicon that facilitates accurate morphological analysis, and about 100 local-syntax rules.",
+        "It produces tagging for about 60% of the content words in the corpus.",
+        "Tagged output for a sample sentence is given below.",
+        "A 4-tuple in the sentence above is a word/root/affix/part-of-speech.",
+        "As expected, many content words in this sentence cannot be unambiguously tagged, and are marked ?, i.e., undetermined.",
+        "In particular, notice that PAID remains unresolved.",
+        "Fortunately, most PAY cases in the corpus are simpler and are appropriately tagged.",
+        "For purposes of thematic role acquisition the identification of passive and active voice is crucial.",
+        "In the sample sentence above, PAID is appropriately tagged as a verb in the active voice (marked as VA)."
+      ]
+    },
+    {
+      "heading": "4.4 Collecting Collocations",
+      "text": [
+        "Based on the tagging above (the root field), all collocations in the corpus are counted, and the following table is generated.",
+        "This table is similar to Smadja's [7], and it provides the position of collocative words relative to PAY, and the total count within 4 words in either direction."
+      ]
+    },
+    {
+      "heading": "4.5 Determining Lexical Relations",
+      "text": [
+        "Lexical relations are determined using the known functionality of the verb (see [9]) and supporting examples.",
+        "PAY is marked in the lexicon as a dative verb.",
+        "Consider 5 cases containing the pair PAY SHAREHOLDER, from which the thematic relation is induced (VA stands for verb, active voice; VP for verb, passive voice; AD for adjective)."
+      ]
+    },
+    {
+      "heading": "STINGHOUSE SAID IT INTENDS TO ONTROL OF THE COMPANY WITHOUT THE CASH PORTION OF THE PRICE CIPATING SHAREHOLDERS/nn WILL PER SHARE. THE DIVIDEND IS ENTS A SHARE FROM 37.5 CENTS,",
+      "text": [
+        "Examples (1), (4), and (5) support the hypothesis that SHAREHOLDER is an object2 (the recipient) of PAY."
+      ]
+    },
+    {
+      "heading": "5 Current Status and Conclusions",
+      "text": [
+        "Based on a number of tagged sentences, the system determines that SHAREHOLDERS are recipients of PAY, while DIVIDENDS are objects.",
+        "This generalized lexical relation enables the semantic resolution of more difficult cases such as DIVIDEND PAYMENT and COMPANY PAID STOCK DIVIDEND.",
+        "The implemented system using these techniques includes several elements: (1) morphology analysis - currently produces accurate results for all the required cases; (2) tagging - produces results for only 60% of the required examples; more detailed rules could improve this figure to about 70%; (3) rule forming - currently works only with dative verbs such as PAY and SELL.",
+        "A number of important pieces of recent research have highlighted the power of co-occurrence information in text.",
+        "In the techniques described here, we have extended this research to use co-occurrence information for discriminating thematic roles.",
+        "These techniques combine data acquisition from a tagged corpus with relation-driven language analysis to derive thematic knowledge from the text."
+      ]
+    }
+  ]
+}

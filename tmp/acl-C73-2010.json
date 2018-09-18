@@ -1,0 +1,78 @@
+{
+  "info": {
+    "authors": [
+      "Franco Meletti"
+    ],
+    "book": "International Conference on Computational Linguistics",
+    "id": "acl-C73-2010",
+    "title": "Proportion Between Number of Words and Number of Forms in the Works of the \"Index Thomisticus\"",
+    "url": "https://aclweb.org/anthology/C73-2010",
+    "year": 1973
+  },
+  "references": [],
+  "sections": [
+    {
+      "heading": "PROPORTION BETWEEN NUMBER OF WORDS AND NUMBER OF FORMS IN THE WORKS OF THE \" INDEX THOMISTICUS \" 1. THE PROBLEM",
+      "text": [
+        "At the conclusion of his long work of elaboration of the Index Thomisticus (the concordance of all the works of St. Thomas Aquinas), Father ROBERTO BUSA s.j.",
+        "proposed the following problem to me: For each of the 179 elaborated works, we know the exact number of words and the exact number of graphic forms.",
+        "Obviously, from this data it also results that the ratio between the number of forms and the number of words decreases with an increasing number of words.",
+        "Does a formula exist that will compare two works of different length so that one can affirm that one work has comparatively more forms than another?",
+        "For instance, the work with the code number 017-QDI contains 10,238 words and 1,471 forms.",
+        "Does this work have comparatively more or less forms than work 012-QDV which has 114,991 words and 9,016 forms?",
+        "Father Busa asked me for the pure quantitative data.",
+        "He also told me that he would not interpret or evaluate this data in terms of \" lexical wealth \" as he doubts that anything can be concluded in this regard on the basis of this data alone.",
+        "Indeed, he believes that lexical wealth must be measured on the basis of a much wider range of parameters."
+      ]
+    },
+    {
+      "heading": "2. THE ANSWER",
+      "text": [
+        "Following the process reported below, a relation between the number of words (W) and the number of graphic forms (F) has been found: it results that this relationship can be expressed with a straight line on a bi-logarithmic diagram:",
+        "where log A and B are two constants which characterize the linear function.",
+        "Therefore the function F f(W) is expressed by a generalized parabola: (2) F = A • (W/10,000)B The values of A and B are the following for the set of the works of the entire Index Thomisticus Corpus and for the various groups of works according to the subdivisions indicated below:"
+      ]
+    },
+    {
+      "heading": "3. GRAPHIC AND CALCULUS PROCEDURE",
+      "text": [
+        "To establish first of all whether a relationship exists between the values of W and F in the works of the Index Thomisticus Corpus, the points corresponding to couples W, F are traced on a bi-logarithmic diagram, that is with scales log W and log F. The choice of the logarithmic scales was suggested directly by the distribution of the values of W and F arranged in increasing order.",
+        "These values on a logarithmic scale would result well distributed along the entire W and F interval.",
+        "From the diagram log W – log F it immediately appeared clear that a straight line could well approximate the distribution of the points all over the W interval, from minimal to maximal values (see figure 1).",
+        "Therefore the relationship between log W and log F is linear as expressed in (1) and the function F = f(W) is as expressed in (2).",
+        "The expression (2) has been preferred to the expression F = A • WB, because in (2) the constant A has a significant value, that is the number of forms corresponding to 10,000 words, mean value in the interval of log W. It is evident that the expressions (1) and (2) are valid only within the intervals of the respective works.",
+        "For lower values of W the function F = f(W) obviously links with the straight line F = W, which is valid for very short texts.",
+        "The constants log A and B of (1) were computed by least-squares polynomial approximation on the logarithmic diagram.",
+        "The complete results of the computations are reported in Tables 3",
+        "and 4, for the entire Index Thomisticus Corpus; for two major divisions of the Corpus: Thomistic Works and Parathomistic Works (works of other authors included in the Corpus); for four divisions of Thomistic works: Proper Works (OPERA PROPRIA), Commentaries (COM-MENTARIA: Aristotle's, Bible's, etc.",
+        "), Stenographic reports (REPORTATIONES), works of dubious authenticity (OPERA DUBIAE AUTHENTICITATIS).",
+        "In Tables 3 and 4 the following values are reported:",
+        " – the constants log A, A, B, – the log F RMS deviation, that is, the RMS deviation between the true values of log F and the mean values of log F computed by (1), – the max.",
+        "upper deviation, that is the ratio (F„„alF„, can) max, for values F„„, > Fmean, – the max.",
+        "lower deviation, that is the ratio (F,,.„,/F„, )"
+      ]
+    },
+    {
+      "heading": "4. NOTES, RESERVATIONS AND COMMENTS",
+      "text": [
+        "The values of the constants A and B with reference to four divisions of 118 Thomistic works (Tables 2 and 4) present not significant differences, which are included in the random variations.",
+        "On the other hand, the constants A and B of the Thomistic works compared with those of the Parathomistic works (Table 1 and 3) present significant differences, using the Student-Fisher's test (see Figure 2)."
+      ]
+    },
+    {
+      "heading": "Thomistic Works Parathomistic Works",
+      "text": [
+        "In Table 4 one can notice that among the Thomistic works the Stenographic reports (REPORTATIONES), which are distinct from the truly dictated works (these are among the proper works), present a RMS deviation of F which is about half of that of the other groups of Thomistic works; is this a significant fact?",
+        "The straight-line behaviour of the function F -,--f(W) on the logarithmic diagram is seen along the whole interval of W, from the",
+        "minimum of about W 200 up to a maximum of about 600,000 words, without showing a tendency to flatten with regard to the W axis.",
+        "However the sum of the words of the entire Thomistic Corpus (W 10,600,085) presents a number of graphic forms F = 132,125 which is lower than the mean (extrapolated) value computed by the expression (1); but this point does not much exceed the double of the RMS deviation (see figure 1)."
+      ]
+    },
+    {
+      "heading": "5. LIST OF THE WORKS OF THE CORPUS OF THE INDEX THOMISTICUS",
+      "text": [
+        "Serial number, abbreviation, title, number of words, number of graphic forms are reported for every work."
+      ]
+    }
+  ]
+}

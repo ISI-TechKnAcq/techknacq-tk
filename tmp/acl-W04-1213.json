@@ -1,0 +1,182 @@
+{
+  "info": {
+    "authors": [
+      "Nigel Collier",
+      "Jin-Dong Kim"
+    ],
+    "book": "International Joint Workshop on Natural Language Processing in Biomedicine and Its Applications NLPBA BioNLP",
+    "id": "acl-W04-1213",
+    "title": "Introduction to the Bio-Entity Recognition Task at JNLPBA",
+    "url": "https://aclweb.org/anthology/W04-1213",
+    "year": 2004
+  },
+  "references": [
+    "acl-W03-0419",
+    "acl-W04-1214",
+    "acl-W04-1215",
+    "acl-W04-1216",
+    "acl-W04-1217",
+    "acl-W04-1218",
+    "acl-W04-1219",
+    "acl-W04-1220",
+    "acl-W04-1221"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "We describe here the JNLPBA shared task of bio-entity recognition using an extended version of the GENIA version 3 named entity corpus of MEDLINE abstracts.",
+        "We provide background information on the task and present a general discussion of the approaches taken by participating systems."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Bio-entity recognition aims to identify and classify technical terms in the domain of molecular biology that correspond to instances of concepts that are of interest to biologists.",
+        "Examples of such entities include the names of proteins, genes and their locations of activity such as cells or organism names as shown in Figure 1.",
+        "Entity recognition is a core component technology in several higher level information access tasks such as information extraction (template filling), summarization and question answering.",
+        "These tasks aim to help users find structure in unstructured text data and aid in finding relevant factual information.",
+        "This is becoming increasingly important with the massive increase in reported results due to high throughput experimental methods.",
+        "Bio-entity recognition by computers remains a significantly challenging task.",
+        "Despite good progress in newswire entity recognition (e.g. (MUC, 1995; Tjong Kim Sang and De Meul-der, 2003)) that has led to ‘near human’ levels of performance, measured in the high 90s for F-score (van Rijsbergen, 1979), similar methods have not performed so well in the bio-domain leaving an accuracy gap of some 30 points of F-score.",
+        "Challenges occur for example due to ambiguity in the left boundary of entities caused by descriptive naming, shortened forms due to abbreviation and aliasing, the difficulty of creat",
+        "ing consistently annotated human training data with a large number of classes, etc.",
+        "In order to make progress it is becoming clear that several points need to be considered: (1) extension of feature sets beyond the lexical level (part of speech, orthography etc.)",
+        "and use of higher-levels of linguistic knowledge such as dependency relations, (2) potential for reuse of external domain knowledge resources such as gazetteers and ontologies, (3) improved quality control methods for building annotation collections, (4) fine grained error analysis beyond the F-score statistics.",
+        "The JNLPBA shared task 1 is an open challenge task and as such we allowed participants to use whatever methodology and knowledge sources they liked in the bio-entity task.",
+        "The systems were evaluated on a common benchmark data set using a common evaluation method.",
+        "Although it is not directly possible to compare systems due to the diversity of resources used the F-score results provide an approximate indication of how useful each method is."
+      ]
+    },
+    {
+      "heading": "2 Data",
+      "text": [
+        "The training data used in the task came from the GENIA version 3.02 corpus (Kim et al.,",
+        "2003).",
+        "This was formed from a controlled search on MEDLINE using the MeSH terms ‘human’, ‘blood cells’ and ‘transcription factors’.",
+        "From this search 2,000 abstracts were selected and hand annotated according to a small taxonomy of 48 classes based on a chemical classification.",
+        "Among the classes, 36 terminal classes were used to annotate the GENIA corpus.",
+        "The GENIA corpus is important for two major reasons: the first is that it provides the largest single source of annotated training data for the NE task in molecular biology and the second is in the breadth of classification.",
+        "Although 36 classes is a fraction of the classes contained in major taxonomies it is still the largest class set that has been attempted so far for the NE task.",
+        "In this respect it is an important test of the limits of human and machine annotation capability.",
+        "For the shared task we decided however to simplify the 36 classes and used only the classes protein, DNA, RNA, cell line and cell type.",
+        "The first three incorporate several subclasses from the original taxonomy while the last two are interesting in order to make the task realistic for post-processing by a potential template filling application.",
+        "For testing purposes we used a newly annotated collection of MEDLINE abstracts from the GENIA project.",
+        "404 abstracts were used that were annotated for the same classes of entities: Half of them were from the same domain as the training data and the other half of them were from the super-domain of ‘blood cells’ and ‘transcription factors’.",
+        "Our hope was that this should provide an important test of generalizability in the methods used."
+      ]
+    },
+    {
+      "heading": "3 Evaluation",
+      "text": [
+        "The 2,000 abstracts of the GENIA corpus version 3.02 which had already been made publicly available were formatted for IOB2 notation and made available as training materials.",
+        "For testing, additional 404 abstracts were randomly selected from an unpublished set of the GENIA corpus and the annotations were rechecked by a biologist.",
+        "The training set consists of abstracts retrieved from the MEDLINE database with MeSH terms ‘human’, ‘blood cells’ and ‘transcription factors’, and their publication year ranges over 1990-1999.",
+        "Most parts of the test set include abstracts retrieved with the same set of MeSH terms, and their publication year ranges over 1978-2001.",
+        "To see the effect of publication year, the test set was roughly divided into four subsets: 1978-1989 set (which represents an old age from the viewpoint of the models that will be trained using the training set), 1990-1999 set (which represents the same age as the training set), 2000-2001 set (which represents a new age compared to the training set) and S/1998-2001 set (which represents roughly a new age in a super domain).",
+        "The last subset represents a super domain and the abstracts was retrieved with MeSH terms, ‘blood cells’ and ‘transcription factors’ (without ‘hu-man’)'.",
+        "Table 1 illustrates the size of the data sets Table 2 shows the number of entities annotated in each data seta.",
+        "As seen in the table, the annotation density of proteins increases over the ages significantly, whereas the annotation density of DNAs and RNAs increases in the 1990-1999 set and slightly decreases in the 2000-2001 set.",
+        "This tendency roughly corresponds to the expansion in the subject area as a whole that can be estimated from statistics on the MeSH terms introduced in each age shown in Table 3.",
+        "This observation suggests that the density of mention of a class of entities in academic papers is affected by the amount of interest the entity receives in each age.",
+        "Figure 2 shows the ratio of annotated structures in each set.",
+        "In accordance with our expectation, the 1990-1999 set has the most similar annotation trait with the training set.",
+        "The 2000-2001 set is also similar to the training set, but the 1978-1989 set had quite a different distribution of entity classes.",
+        "The variation of domain does not seem to make any significant difference to the distribution of entities mentioned.",
+        "One reason may be the large fraction of abstracts from the same domain in the super domain set.",
+        "In fact, among 206 abstracts in the super domain set, 140 abstracts (69%) are also from the same domain.",
+        "It also corresponds to the fraction in the whole MEDLINE database: among 9,362 abstracts that can be retrieved with MeSH terms, ‘blood cells’ and ‘transcription factors’, 6,297 abstracts (67%) can also be retrieved with MeSH terms ‘human’, ‘blood cells’ and ‘transcription factors’.",
+        "To simplify the annotation task to a simple linear sequential analysis problem, embedded structures have been removed leaving only the",
+        "outermost structures (i.e. the longest tag sequence).",
+        "Consequently, a group of coordinated entities involving ellipsis are annotated as one structure like in the following example: ... in [lymphocytes] and [T- and B-lymphocyte] count in ...",
+        "In the example, “T- and B-lymphocyte” is annotated as one structure but involves two entity names, “T-lymphocyte” and “B-lymphocyte”, whereas “lymphocytes” is annotated as one and involves as many entity names."
+      ]
+    },
+    {
+      "heading": "4 Evaluation Methodology",
+      "text": [
+        "Results are given as F-scores using a modified version of the CoNLL evaluation script and are defined as F = (2PR)/(P + R), where P denotes Precision and R Recall.",
+        "P is the ratio of the number of correctly found NE chunks to the number of found NE chunks, and R is the ratio of the number of correctly found NE chunks to the number of true NE chunks.",
+        "The script outputs three sets of F-scores according to exact boundary match, right and left boundary matching.",
+        "In the right boundary matching only right boundaries of entities are considered without matching left boundaries and vice versa."
+      ]
+    },
+    {
+      "heading": "5 Participating Systems 5.1 Classification Models",
+      "text": [
+        "models were SVMs with totally five systems adopting SVMs as the classification models either in isolation (Park et al., 2004; Lee et al., 2004) or in combination with other models (Zhou and Su, 2004; Song et al., 2004; Rossler, 2004).",
+        "HMMs were employed by one system in isolation (Zhao, 2004) and by two systems in combination with SVMs (Zhou and Su, 2004; Rossler, 2004).",
+        "Similarly, CRFs were employed by one system in isolation (Settles, 2004) and by another system in combination with SVMs (Song et al., 2004).",
+        "It is somewhat surprising that Maximum Entropy Models were applied by only one system (Finkel et al., 2004), while it was the most successfully applied model in the CoNLL-2003 Shared Task of Named Entity Recognition, and at this time also the MEMM system yields quite good performance.",
+        "One interpretation on this may be the CRF is often regarded as a kind of version-upped model of the MEMM (in the sense that both are conditional, exponential models) and thus is replacing MEMM.",
+        "5.2 Features and External Resources It has been found that utilizing various sources of information is crucial to get good performance in this kind of task.",
+        "Table 4 outlines some of the features exploited by the systems participating in the JNLPBA 2004 shared task (the table also lists the classification models employed and external resources exploited by the systems to provide the outline of the systems at a glance).",
+        "Lexical features (words) were widely exploited by three systems that didn’t employ SVMs.",
+        "It seems that this may be due to SVMs’ high time complexity and actually other two SVM systems also employed lexical features only in a limited way.",
+        "Instead, affixes, orthographic features or word shapes that are all generalized forms of lexical features were actively exploited by most of the systems.",
+        "The ATCG sequence feature is an example of domain specific orthographic features and was incorporated in three systems.",
+        "Park et al.",
+        "(2004) suggested the use of word variation features, a unique way of selecting substrings from words, but the effectiveness was not reported.",
+        "Part-of-speech information was incorporated in five systems: four of them utilized domain-specialized part-of-speech taggers (Zhou and Su, 2004; Finkel et al., 2004; Song et al., 2004; Park et al., 2004) and the other utilized general-purpose taggers (Lee et al., 2004).",
+        "BeseNP tags and deep syntactic features were also exploited by several systems but the effectiveness was not clearly examined.",
+        "The top-ranked two systems incorporated information from gazetteers and employed abbreviation handling mechanisms, which were reported to give good effect.",
+        "However, one participant (Settles, 2004) reported that their attempt to utilize gazetteers (together with other resources) had failed in gaining better overall performance.",
+        "To overcome the shortage of training materials, several systems attempted to use external resources.",
+        "Gazetteers are also examples of such resources.",
+        "MEDLINE database was explored as a source of a large corpus that is similar to the training corpus, but one participant (Rossler, 2004) reported the attempt was not successful.",
+        "Finkel et al.",
+        "(2004) exploited BNC corpus and World Wide Web as knowledge sources and achieved good performance., but the effectiveness of the use of such resources was not clearly examined.",
+        "Song et al.",
+        "(2004) exploited automatically generated virtual examples and reported good effect on both recall and precision.",
+        "Lee et al.",
+        "(2004) utilized external protein and gene taggers instead of using gazetteers but the effectiveness was not reported."
+      ]
+    },
+    {
+      "heading": "5.3 Performances",
+      "text": [
+        "Table 5 lists entity recognition performance of each system on each test set.",
+        "The baseline model (BL) utilizes lists of entities of each class collected from the training set, and performs longest match search for entities through the test set.",
+        "Frequency of each entity with each class is referred to break ties.",
+        "It may be notable that SVMs worked much better in combination with other models, while other models showed reasonable performance even in isolation.",
+        "This fact suggests that global optimization over whole sequence (e.g, Viterbi optimization) is crucial in this type of tasks.",
+        "As is well known, the outputs of SVMs are not easy to use in global optimization.",
+        "It seems (Zhou and Su, 2004) overcomes the drawback of SVMs by mapping the SVM output into probability, and complementing it with Markov models.",
+        "Their remarkable performance seems due to the well designed classification model and the",
+        "rich set of features.",
+        "As is naturally expected, most systems (5 out of 8) show their best performance on the 1990- 1999 set which is believed to have the most similar annotation trait.",
+        "The same tendency is observed more clearly with recall (7 out of 8 show their best performance on the 1990-1999 set) while no such tendency is observed with precision.",
+        "If we accept such tendency of showing best performance on the most similar test set as natural, one interpretation on the observation might be that positive information has been well exploited while negative information has not.",
+        "Clearly, a such case is the baseline model which utilizes only positive information and no negative information.",
+        "Finkel et al.",
+        "(2004) explicitly pointed out the problem of “abusing” positive information with regard to using gazetteers, and utilized frequency information from BNC corpus to prevent such “abusement” .",
+        "Settles (2004)’s CRF system deserves special note in the sense that it achieved comparable performance to top ranked systems with a rather simple feature set.",
+        "This fact may suggest that integration of information is as much important as development of useful features.",
+        "As the resulting performance may not seem very successful, other systems suggest interesting approaches: Song et al.",
+        "(2004) reports about the effectiveness of using virtual examples.",
+        "Zhao (2004) reports about the usefulness of unlabeled MEDLINE corpus as a complement to expensive and limited size of labeled corpus.",
+        "Rossler (2004) reports their experience to adapt an NER system for German to biomedical domain.",
+        "Park et al.",
+        "(2004) reports their efforts to find out useful information by corpus comparison.",
+        "Lee et al.",
+        "(2004) suggests the use of external protein/gene taggers instead of using gazetteers."
+      ]
+    },
+    {
+      "heading": "6 Conclusion",
+      "text": [
+        "While it is not entirely meaningful to rank systems performance according to simple F-scores,",
+        "the accuracy results do nevertheless show some important trends that may help guide future system developers in the bio-entity task.",
+        "It is clear that we have to move beyond simple lexical features if we want to obtain high levels of performance in molecular biology and the top performing systems were seen to be those that employed strong learning models (SVM, MEMM and CRF), rich feature sets, support for ‘difficult’ constructions such as parenthesized expressions and a sophisticated mix of external resources such as gazette lists and ontologies which provide terminological resources.",
+        "It is also interesting to observe that we have seen the beginning of a trend in the use of the Web which can provide online access to dynamically updated resources or sophisticated search for sets of similar terms."
+      ]
+    },
+    {
+      "heading": "7 Acknowledgements",
+      "text": [
+        "We gratefully acknowledge Prof. Jun’ichi Tsu-jii, University of Tokyo, for his generous support of the shared task.",
+        "The GENIA corpus is a product of the GENIA project which is supported by the Information Mobility Project (CREST, JST) and the Genome Information Science Project (MEXT)."
+      ]
+    }
+  ]
+}

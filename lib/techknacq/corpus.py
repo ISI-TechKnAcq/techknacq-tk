@@ -17,7 +17,7 @@ from xml.sax.saxutils import escape
 from unidecode import unidecode
 from nltk import bigrams
 
-from techknacq.lx import SentTokenizer, StopLexicon, find_short_long_pairs
+from lib.techknacq.lx import SentTokenizer, StopLexicon, find_short_long_pairs
 
 class Corpus:
     def __init__(self, path=None, pool=None):

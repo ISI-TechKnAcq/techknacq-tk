@@ -1,0 +1,327 @@
+{
+  "info": {
+    "authors": [
+      "George Anton Kiraz"
+    ],
+    "book": "International Conference on Computational Linguistics",
+    "id": "acl-C94-1029",
+    "title": "Multi-Tape Two-Level Morphology: A Case Study in Semitic Non-Linear Morphology",
+    "url": "https://aclweb.org/anthology/C94-1029",
+    "year": 1994
+  },
+  "references": [
+    "acl-E87-1003"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "This paper presents an implemented multi-tape two level model capable of describing Semitic non-linear morphology.",
+        "The computational framework behind the current work is motivated by [Kay 1987]; the formalism presented here is an extension to the formalism reported by [Pulman and Hepple 1993].",
+        "The objectives of the current work are: to stay as close as possible, in spirit, to standard two-level morphology, to stay close to the linguistic description of Semitic stems, and to present a model which can be used with ease by the Semitist.",
+        "The paper illustrates that if finite-state transducers (FSTs) in a standard two-level morphology model are replaced with multi-tape auxiliary versions (AFSTs), one can account for Semitic root-and-pattern morphology using high level notation."
+      ]
+    },
+    {
+      "heading": "1 INTRODUCTION",
+      "text": [
+        "This paper aims at presenting a computational morphology model which can handle the non-linear phenomenon of Semitic morphology.",
+        "The approach presented here builds on two-level morphology [Koskenniemi 1983], extending it to achieve the desired objective.",
+        "The contribution of this paper inay be summarised as follows: With regards to the two-level model, we extend this model by allowing it to have multiple tapes on die lexical level and retaining the one tape on the surface level; hence, 'multi-tape two-level morphology'.",
+        "Feasible pairs in the standard two-level model become 'feasible tuple pairs' in our multi-tape model.",
+        "With regards to the formalism, we have chosen a two-level formalism and extended it to be able to write multi-tape two-level grammars which involve non-linear operations.",
+        "To achieve this, we made all lexical expressions n-tuple regular expressions.",
+        "In addition, we introduced the notion of `ellipsis', which in* Supported by a Benefactor Studentship from Si, John's College.",
+        "This research was done under the supervision of Dr Stephen G. Putman whom I thank for guidance, support and Medback.",
+        "Thanks to Dr John Carroll for editorial comments, Arturo nsijillo for useful 'chats' and Tanya Bowden for Prolog tips.",
+        "tlicates the (optional) omission from left-context lexical expressions of tuples; this accounts for spreading.",
+        "Two-level implementations either work directly on rules or compile rules into FSTs.",
+        "For the latter case, we propose an auxiliary finite-state transducer into winch multi-tape two-level rules can be compiled.",
+        "The machine scans 'turtle pairs' instead of pairs of symbols.",
+        "The outline of the paper is as follows: Section 2 introduces the root-and-pattern nature of Semitic morphology.",
+        "Section 3 provides a review of the previous proposals for handling Semitic morphology.",
+        "Section 4 presents our proposal, extending two-level morphology, and proposing a formalism which is adequate for writing non-linear grammars using hit.,01 level notation.",
+        "Section 5 applies our model on the Arabic verb.",
+        "Section 6 presents an auxiliary automaton into which multi-tape two-level rules can be compiled.",
+        "Finally, section 7 gives concluding remarks."
+      ]
+    },
+    {
+      "heading": "2 ROOT-AND-PATTERN MORPHOLOGY",
+      "text": [
+        "Non-linear root-and-pattern morphology is best illustrated in Semitic.",
+        "A Semitic stein consists of a root and a vowel melody, arranged according to a canonical pattern.",
+        "For example, Arabic I klittibl `caused to write' is composed from the root morpheme {lab} 'notion of writing' and the vowel melody morpheme {MI `perfect passive', the two are arranged according to the pattern morpheme ICVCCVC I 'causative'.",
+        "Table 1 (next page) gives the Arabic perfective verbal forms (from [McCarthy 19811) .1 As indicated by [McCarthy 1081], Oie data in Table I provides stems in underlying morphological forms.",
+        "Hence, it should be noted that: mood, case, gender and number marking is not shown; many stems experience phonological processing to give surface forms, e.g. inkatab/ /?tinkatab/ (form 7); the root morphemes shown are not cited in the literature in all forms, e.g. there is no such verb as * / takattab/ (form 5), but there is itakassab/ from the root morpheme (ksb); the quality of the second vowel in is different from one root to another, e.g. /qatal/ to kill', /qabil/ `to accept', /kabur/ `to become big', from the root Toorphomes {gli} , Ighll and Octal, respectively.",
+        "Some forms do 110, (W.C.111' in the passive."
+      ]
+    },
+    {
+      "heading": "5.2 Vocalisation",
+      "text": [
+        "Orthographically, Semitic texts appear in three forms: consonantal texts do not incorporate any vowels but matres lectioniss , e.g. ktb for I katabl (form 1, active), I katibl (form 1, passive) and /kutub/ 'books', but kaatb for I kaatabl (form 3, active) and Ikaatibl 'writer'; partially vocalised texts incorporate some vowels to clarify ambiguity, e.g. kutb for /kutib/ (form 1, passive) to distinguish it from I katabl (form 1, active); and vocalised texts incorporate full vocalisation, e.g. staktab (form 10, active).",
+        "This phenomenon is taken care of by the following rules:",
+        "One additional rule is required to allow the omission of vowels which experience spreading (see Rule 17 below)."
+      ]
+    },
+    {
+      "heading": "5.3 Gemination and Spreading",
+      "text": [
+        "The only two phonological changes in the Arabic stem are gemination and spreading, e.g. Rukuttib/ (form 5) from the morphemes {tviC1v1C2C2V2C3}, {kt,b} and {ni}.",
+        "The gemination of the second radical [t] and the spreading of the first vowel [u] can be expressed by Rule 14 and Rule 15, respectively:",
+        "In fact, gemination can be considered as a case or spreading; Rule 14 becomes,",
+        "This allows for Rukuilib/ (form 5) and //thuntab/ (form 12).",
+        "We also need to allow a vowel which originally surfaces by spreading to be omitted in the surface in unvocalised words.",
+        "This is accomplished by the following rule:",
+        "Note that the segments in Suitt, in the above rides do not appear in LEx, rather in biG.",
+        "This means that, if rules are to be compiled into automata, the automata have to remember the segments from LLC.9 This leads us on thinking about what sort of automata are needed to describe a multi-tape two-level grammar."
+      ]
+    },
+    {
+      "heading": "6 COMPILATION INTO AUTOMATA",
+      "text": [
+        "We define the following automaton into which rules can be compiled: A multi-tape P.-register auxiliary finite-state automaton (AFSA) with n-tapes consists of: n read tapes and heads, a finite state control, and a read write storage tape of length f, where P < w, and w is die length of the input strings (cf. APDA in [Hoperoft and Ullman 1979]).",
+        "The automaton is illustrated in Fig. 5 (next page).1 In one move, depending on the state of the finite control, along with the symbols scanned by the input and storage heads, the AFSA may do any or all of the following: 91f the implementation works directly on rules, this can he twhieved by unification.",
+        "A in the diagram."
+      ]
+    },
+    {
+      "heading": "3.2 Previous Proposals",
+      "text": [
+        "Working within standard two-level morphology, [Kataja and Koskenniemi 1988] went around the problem.",
+        "Nominal forms, such as Ikitaabl 'book', were entered in the lexicon.",
+        "Verbal forms were derived by a 'lexicon component'.",
+        "A verb, such as inkatib/ (form 7), has the lexical entries k 2_12` t Y24' b aElaYili 2-3 where 214 is the alphabet of the root and 157,2 the alphabet of the vocalism/affixes.",
+        "The lexicon component takes the intersection of these two expressions and produces inkutib/.",
+        "Now Inkutibl is fed on the lexical tape of a standard two-level system which takes care of conditional phonetic changes (assimilation, deletion, etc.)",
+        "and produces 1?inkutibl .3 A similar approach was used by [Lavie at al.",
+        "1988] for Hebrew using a 'pre-lexical compiler'.",
+        "[Kay 1987] proposed a finite-state approach using four tapes for root, CV-skeleton, vowel melody and surface, each having an independent head, i.e. the machine can scan from one lexical tape without moving the head on other lexical tapes.",
+        "The absence of motion is indicated by ad hoc notation coded in the lexical strings.",
+        "[Beesley 1991], working on Arabic, implemented a two-level system with 'detours', where, according to [Sproat 1992, p. 163-64], detouring involves multiple dictionaries being open at a time, one for roots and one for templates with vowels pre-compiled (as in Harris' description).",
+        "Other non two-level models were proposed (there is no place here for a review of these works): [Kornai 1991] proposed a model for amosegmental phonology using FSTs, where non-linear autosegmental representations are coded as linear strings.",
+        "[Bird and Ellison 1992] proposed a model based on one-level phonology using FSA to model representations and rules.",
+        "[Wiebe 1992] proposed modelling autosegmental phonology using multi-tape FSTs, where autosegmental representations are coded in arrays.",
+        "[Pulman and Hepple 1993] proposed a fortnalism for bidirectional segmental phonological processing, mid proposed using it for Arabic.",
+        "The next subsection presents the development of this formalism."
+      ]
+    },
+    {
+      "heading": "3.3 Previous Formalisms",
+      "text": [
+        "[Black et at.",
+        "1987] pointed out that previous two-level rules (cf. 3.1) affect one character at a time and proposed a formalism which maps between (equal numbered) sequences of surface and lexical characters of the form, SURF tnt LEX 3Initial consonant clusters, CC, take a prosthetic /1\"i/.",
+        "A lexical string maps to a surface string HT they can be partitioned into pairs of lexical-surface sub-sequences, where each pair is licence(' by a rule.",
+        "[Ruessink 1989] added explicit; contexts and allowed unequal sequences.",
+        "[Pulman and Hepple 1993] developed the formalism further, allowing feature-based representations interpreted via unification.",
+        "The developed formalism is based on the existence of only two levels of representation: surface and lexical.",
+        "Two types of rules are provided:",
+        "11.LC= right lexical context The special symbol * indicates an empty context, windi is always satisfied.",
+        "The operator states that LEx may surface as Sour in the given context, while the operator adds the condition that whims LEX appears in the given context, then the surface description must satisfy Suitt'.",
+        "The later caters for obligatory rules.",
+        "The advantage of this formalism over others is that it allows inter alio inappings betmeen lexical and surface strings of unequal lengths.\" Rules 1 3 can be expressed in this formalism as follows:5",
+        "where C,,tin' uth ,,,(6,4 or the root,.",
+        "They conclude that their representation is closer to die linguistic analysis of I Canis tInut McCarthy.",
+        "The only disadvantage is that, lexical elements, sc.",
+        "pattern and vocalism, appear in rules resulting in one rule per template-vocalism."
+      ]
+    },
+    {
+      "heading": "4 A MUM-TAPE Two-LEVEL APPR.OACH",
+      "text": [
+        "Now we present our proposed model.",
+        "Section 4.1 defines a multi-tape two-level model.",
+        "Section 4.2 expands the formalistn presented in section 3.3 making it.",
+        "a multi-tape two-level formalism.",
+        "Fig.",
+        "5 AFST (i.e. One surface tape); further, we assume that, uninput tapesless one proves otherwise, all morphological processes require that P1 (hence, we shall ignore in in 6).",
+        "For Semitic, n=3.",
+        "The A1.4'ST for Rule 15 is illustrated below.",
+        "storage move its 71 input heads independently one position to the right; print a symbol on the cell scam ied by the storage head and (optionally) move that head ono position to the right or left,.",
+        "More formally an AFSA is a sextuple of the form (Q,F, 6, go ,where: Q is a finite set of states; is the machine's alphabet; r: C r. is the storage alphabet; 6 is the transition function, a map from Q x a xi' to Q x xRI, where a is (ai,...,a) and ai C >;; go E.:is the initial state; I,' c Q is the set of final states.",
+        "The transition function 6(p, a, r)(QV), 10 ill the Machine can move from state p to state q while scanning the a-tuple a from the input tapes and r from the current storage cell, and upon entering state q, writes the symbol 711 onto the current storage cell and moves the storage head according to in C A multi-tape (-register auxiliary finite-state transducer (AFST) with n input tapes itu-1 k our tapes is an AFSA with (a I k)-tapes.",
+        "AFSTs behave like AFSAs, but scan triple pairs.",
+        "Note that an AFST with ak = 1 and e o is equivalent to a FST.",
+        "The rules are compiled into AFSTs in the same lines of standard two-level morphology.",
+        "We shall use a specbil case of AFSTs: We hypothesise tliat, in lines with tier conflation, for all morphological processes, k:-,1 Transitions marked with Def (for default) take place when a is a feasible tuple pair, other than those explicitly shown.",
+        "The empty string is represented by Cl.",
+        "rrhe transitions are: S(so, De f ,= (so, 0) allows strings not related to this rule to be accepted; 6(so, (v1,0, X) : X, (I) = (si , X) enters the ride writing X in the storage cell; S(s, (vi , 0, X):X, 0)=(Si, X)and 6(s2, (vi, 0, X) : X, 0)(Si, X) ensure backtracking; S(si, De f , (1)(s, , 0) represents ellipsis; S(Si ,, 0, 0) : X, X) \"n- (s2,0) retrieves the contents of the storage cell; S(s2, (v,, 0, 0) :(s2, 0) allows consecutive reading operations, e.g. [aa] in / trzkaatab/ (form 6).",
+        "6(s2, /)c f , 0) = (Si , 0) allows non-consecutive real hog operations, e.g. the three [als in Rakattab/ (form 5)."
+      ]
+    },
+    {
+      "heading": "7 CONCLUSION",
+      "text": [
+        "miter has shown that a multi tape two-level approach using the Pulman-1fepple/Rnessink/131ack et al.",
+        "formalism with the extensions mentioned is capable of describing the whole range of Arabic sterns.",
+        "Why do we need storage in the automata'?",
+        "It, is known that an automaton with finite storage can be replaced with a larger one without storage (a simple solution is 1,o duplicate the machine for each case); hence,"
+      ]
+    },
+    {
+      "heading": "3.1 Two-Level Morphology",
+      "text": [
+        "Tins approach (Hines two levels of strings in recognition and synthesis: lexical and surface.",
+        "the former is a representation of lexical strings; the latter is a representation of surface strings.",
+        "A tnapping scheme between the two levels is described by rules which are compiled into ESTs; the set of ESTs run in parallel.",
+        "One case of two-level rules takes the following form: a :Iic : (1 ___ 0 : f i.e. lexical a corresponds to surface I when proceeded by lexical c corresponding to surface (land followed by lexical 0 corresponding to surface J.",
+        "The operator is one of four types: -.=-> for a context restriction rule, <, for a surface coercion rule, tc> for a composite rule (i.e. a composition of => and -;,), and for all exclusion rule.",
+        "Here is an example from [Ritchie 1992]: Fig. 2 Two-level description of moved o 1 vr+ e d in I clsurface 'rile process can be described by the rules:",
+        "using finite storage (especially with I?",
+        "< 1 and a small finite set of r) does not give the machine extra power.",
+        "The reason for using storage is to minimise the number of machines and states.",
+        "With regards to the implementation, first we implemented a small system in order to test the usage of AFSTs in our model.",
+        "Once this was established, we made a second implementation based on the work of [Pulman and Hepple 1993].",
+        "This implementation differs from theirs as follows: Lexical expressions are atuples, i.e. implemented as lists-of-lists instead of listsof-characters.",
+        "A facility to check ellipsis in rules was added.",
+        "The lexicon consists of multiple trees, one tree per tape.",
+        "Finally, a morphosyntactic parser was added.",
+        "We conclude this paper by looking at the possibility of using our model for tonal languages."
+      ]
+    },
+    {
+      "heading": "7.1 Beyond Semitic",
+      "text": [
+        "This approach may be capable of describing other types of non-linear morphology, though we have not yet looked at a whole range of examples.",
+        "The following may form a theoretical framework for a number of non-linear phenomena.",
+        "Consider suprasegmental morphology in tonal languages.",
+        "Tense in Ngbaka, a language of Zaire, is indicated by tone, e.g. {kpolo} 'return' gives I kp6161 (Low), /kinilal (Mid), Ikp6161 (Low-High), and I kpOhil (High) [Nicla 19491.",
+        "This can be expressed with the stem morpheme tkpolol on one tape and the tonal morphemes {L}, {LT-I} and on a second tape with the following rules:"
+      ]
+    },
+    {
+      "heading": "References",
+      "text": [
+        "[Beesley 1991] K. 1,3eesley.",
+        "'Computer Analysis of Arabic Morphology.",
+        "It Comrie and NI.",
+        "Eid (eds.)",
+        "Perspectives on Arabic Linguistics HI.",
+        "[Bird arid Ellison 1992] S. Bird and T. Ellison.",
+        "One Level Phonolog y. Edinburgh research Papers in Cognitive Science, No.",
+        "EUCCS/RP-51 (updated version 1993).",
+        "[Black et al.",
+        "1987] A.",
+        "Black, G. Ritchie, S. Pulman, 0.",
+        "Russel.",
+        "'Formalisms for Morphographernic Description.'",
+        "EA CL-[Goldsmith 1976] .1.",
+        "Goldsmith.",
+        "Autosegmental Phmtology, Doctoral dissertation, M1'1'.",
+        "Published later as Autosegmental and Metrical Phonology (Oxford 1990.)",
+        "[Harris 1941] N. Harris.",
+        "'Linguistic Structure of Hebrew.'",
+        "Journal of the American Oriental Society: 61.",
+        "[Hoperoft, and Ullman 1979] .1.",
+        "Hoperoft and J. Ullman.",
+        "Introduction to Automata Theory, Languages, and Computation.",
+        "(Addison-Wesley).",
+        "[Kataja and Koskenniemi 1988] L. Kataja and K. Koskenniemi.",
+        "'Finite State Description of Semitic Morphology.'",
+        "COLINC-88.",
+        "[Kay 1987] M. Kay.",
+        "`Nonconcatenative Finite-State Morphology.'",
+        "ACL Proceedings, 3rd Ruropean Meeting.",
+        "[Kornai 1991] A. Kornai.",
+        "Formal Phonology.",
+        "Ph.D. thesis, Stanford University.",
+        "[Koskennierni 1983] K. Koskennierni.",
+        "Two Level morrhologY.",
+        "Ph.D. thesis, University of Ilelsinki.",
+        "[Lavie et al.",
+        "19881 A. Lavie, A. Itai, U. Oman.",
+        "'On the Applicability of Two Level Morphology to the Inflection of Ilebrew Verbs.'",
+        "l'roceeding.s.",
+        "of AUG' III.",
+        "[McCarthy 1981] .1.",
+        "J. McCarthy.",
+        "'A Prosodic Theory of Non*",
+        "where C is a consonant, V is a vowel and T is a tonal segment (these rules are for the above data only).",
+        "The transitions for IkpO161 are shown below: For all other cases one needs to add a rule for spreading the tonal morpheme."
+      ]
+    },
+    {
+      "heading": "7.2 Future Work",
+      "text": [
+        "Currently, we are looking at describing the Semitic stern using moraic [McCarthy and Prince 1990a] and affixational [McCarthy 1992] analyses of Semitic steins.",
+        "Another area of interest is to look at the formal properties of the formalism and of the AFSM.",
+        "[McCarthy and Prince 1090a],I. McCarthy and A. S. Prince.",
+        "'Prosodic Morphology and 'Peru platic Morphology,' In M. Eid and .1.",
+        "McCarthy (eds.)",
+        "Perspectives on Arabic Linguistics II.",
+        "[NIcC[arthy 1992] .1.",
+        ".1.",
+        "McCarthy.",
+        "\"l'ernplaim Form in Prosodic Morphology.'",
+        "(to appear in the proceedings or the 'or-toil Linguistics Society of Mid-American!.",
+        "[N Ida 1949] E. Nida.",
+        "Morphology: The Descriptive Analysis of Wards.",
+        "(Universi).y of Michigan Press.)",
+        "[Pulinan and Ilepple 1993] S. Pulman and R4.",
+        "Hepple.",
+        "'A leattire-basmi formalism for two-level phonology: a description and implementation.'",
+        "Computer Speech and Language 7.",
+        "[Ritchie 1992] G. Ritchie.",
+        "'Languages Generated by Two-Level Morphological Rules.'",
+        "CL 18.",
+        "Rtiessink 1989] 11.",
+        "Ruensink.",
+        "'Two Level Formalism.'",
+        "Utrecht Working Papers iii NLP, No.",
+        "5.",
+        "[Sproat 1992] It.",
+        "Sproat.",
+        "Morphology and Computation.",
+        "(Cambridge, Mass.",
+        ": MIT) [Wiebe 1992] 0.",
+        "Wiebe.",
+        "Modelling Autosegmental Phonology with Multi-Thpe Finite State Transducers.",
+        "M.Sc.",
+        "Thesis.",
+        "Simon Eraser University."
+      ]
+    },
+    {
+      "heading": "4.1 A Multi-Tape Two-Level Model",
+      "text": [
+        "This work follows [Kay 1987] in using three tapes for the lexical level: pattern tape (PT), root tape (HT) and vocalism tape (VT), and one surface tape (ST).",
+        "In synthesis, the lexical tapes are in read mode and the surface tape is in write mode; in recognition, the opposite state of affairs holds.",
+        "One of the lexical tapes is called the primary lexical tape (PM') through which all lexical morphemes which fall out of the domain of root-and-pattern morphology are passed (e.g. prefixes, suffixes, particles, prepositions).",
+        "Since characters in PT correspond to those on ST, PT was chosen as PLT.",
+        "There is linguistic support for a lexical tapes mapping to one surface tape.",
+        "As described by [McCarthy 1986], when a word is uttered, it is pronounced in a linear string of segments (corresponding to the linear ST in this model), i.e. the multi-tier representation is linearised.",
+        "McCarthy calls this process tier conflation."
+      ]
+    },
+    {
+      "heading": "4.2 A Multi-Tape Two-Level Formalism",
+      "text": [
+        "The Pulman-Ilepple/Ruessink/Illack al, formalism is adopted here with two extensions.",
+        "The first extension is that all expressions in the lexical side of the rules (i.e. LLC, Lux and 11.1,C) are a-tuple regular expressions of the form: (x1 , x2, If a regular expression ignores all tapes but PI X, the parentheses can be ignored; hence, (11 is the same as :r where x is on PLT.",
+        "Having a-tuple lexical expressions and 1-tuple surface expression corresponds to having a-tapes on the lexical level and one on the surface.",
+        "The second extension is giving LLC the ability to contain ellipsis, ... , which indicates the (optional) omission from LbC of tuples, provided that the tuples to the left of ... are the first to appear on the left of LEx.",
+        "For example, the LbC expression",
+        "matches ill), axib, ax1x2b, axi x2 ...b, where x y (a).",
+        "In standard two-level morphology we talk of feasible pairs.",
+        "Here we talk of feasible tuple pairs of the form (x1, x2, ,() : (y) For example, Rule 8 (see below) gives rise to fccur feasible tuple pairs (Ci, X, ):(X),1 < i < 1.",
+        "The set of feasible tuple pairs is determined the same way as the set of feasible pairs in standard two-level grammiirs.",
+        "Now that we have presented our proposal, we are ready to apply it to the Arabic data of Table 1.",
+        "5 ANALYSIS OF '11111il ARABIC VERB Section 5.1 presents the default and boundary rules for Arabic in the two-level formalism.",
+        "Section 5.2 gives rules which handle vocalised-, non-vocalised-, and partially vocalised texts.",
+        "Finally, we shall see the use of ellipsis to account Int gemination and spreading in section 5.3."
+      ]
+    },
+    {
+      "heading": "5.1 Default and Boundary Rules",
+      "text": [
+        "The default and boundary rules for Arabic in the multi tape formalism are:'",
+        "Here is the derivation of /dhunrijal (fmini Q3) from Lice three morphemes fc1c2vinc:iv2c41,7 {dhri} and {nib and the suffix `3rd person' which falls out of the domain of root-and-pattern morphology and, hence, takes its place on PLT.",
+        "The numbers between ST and the lexical tapes indicate the rules which sanction the moves.",
+        "We find that default, and boundary rules represent a wide range of Semitic stems.",
+        "Variahles are indicated by upper-ruse letters ;tin!",
+        ":,ttonlic elements Icy 1.wer case-letters."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,269 @@
+{
+  "info": {
+    "authors": [
+      "John Nerbonne",
+      "Petra Smit"
+    ],
+    "book": "International Conference on Computational Linguistics",
+    "id": "acl-C96-2140",
+    "title": "GLOSSER-RuG: In Support of Reading",
+    "url": "https://aclweb.org/anthology/C96-2140",
+    "year": 1996
+  },
+  "references": [],
+  "sections": [
+    {
+      "text": [
+        "Vakgroep Alfa-informatica Rijksuniversiteit Groningen nerbomickdet.rug.nl, smitMet:rug.n1"
+      ]
+    },
+    {
+      "heading": "Abstract",
+      "text": [
+        "This paper reports on ongoing work a CALL system to facilitate foreign language learning: GLOSSER-RuG.",
+        "The system is particularly dependent on advanced morphological analysis.",
+        "Following a brief introduction to the project, the paper describes the architecture of GLOSSER-RuG.",
+        "Then we describe in detail the main components/modules that are part of the implemented prototype.",
+        "Finally, implementation issues and details involving the user interfaces of the tool are discussed.",
+        "We outline the design of an integrated system to support the reading of French text by Dutch speakers."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "This paper reports on our ongoing research towards a computer-assisted language learning (CALL) tool, GLOSSER-RuG.",
+        "After only several months, a first prototype was operational.",
+        "This demonstrates that useful language-learning and language-assistance systems are presently within reach – given the availability of key components such as morphological analysis software and on-line dictionaries.",
+        "In the case of GLOSS1:1,-RuG, this was morphological analysis software made available by Rank Xerox, Grenoble (Chanod and Tapanainen 1995; Daniel Bauer and Zaenen 1995) and an online French-Dutch dictionary provided by Van Dale Lexicographic (VanDale 1993).",
+        "The system integrates previously existing software modules, and supplies the minimal additional ones together with interfaces in order to support the reading of French text by Dutch speakers.",
+        "Following a brief introduction to and motivation for the project, the paper describes the architecture of GLOSSER-RuG.",
+        "We describe the main components/modules that are part of this prototype, including implementation and the user-interface,"
+      ]
+    },
+    {
+      "heading": "1.1 Motivation",
+      "text": [
+        "(Zaenen and Nunberg 1995) notes that, even as fully automatic machine translation has receded as a reasonable and-term goal for natural language processing, several goals have emerged which are less ambitious, but useful and attainable.",
+        "These focus less on eliminating language barriers and more on assisting people in learning and understanding the wide range of languages in current, use.",
+        "It is still the case that language differences form a substantial barrier to the free flow of ideas and technologies: ideas are effectively only accessible only to those in command of the language they are expressed in.",
+        "But since an ever increasing number of people encounter texts electronically, automated methods of language processing may be brought to bear on tins problem.",
+        "GLOSSER-RuG is designed to help people who know a. bit of :French but cannot read it quickly or reliably.",
+        "It allows a native Dutch person to learn more about French morphology, it removes the tedious task of thumbing through the dictionary and it gives examples from corpora.",
+        "GLOSSER-RuG may also be contrasted with more traditional computer assisted language learning (CALL) software (Last 1992) which has focused primary on providing exercises, answer keys, and links to grammar explanations.",
+        "GLOSSER-RuG on the other hand, focuses on providing assistance to novice readers • - whether these are activeley involved in educational programs or not, and the focus is clearly on the level of word, including the grammatical information associated with inflectional endings.",
+        "We therefore regard traditional CALL software as complementary in purpose."
+      ]
+    },
+    {
+      "heading": "2 Design",
+      "text": [
+        "We envision a user of intermediate level in ['much (school level, not university level).",
+        "While the veer reads a text, s/he can select with a mouse an unknown or unfamiliar word.",
+        "The program snakes available:",
+        "• the internal structure of the word, incl.",
+        "the gratninatical information encoded in morphology • the dictionary entry of the word in a bilingual french-Dutch dictionary; and • other examples of the word from corpora",
+        "A user-interface allows the range or information to be tailored to individual preference.",
+        "The useful.. Hess of the first, two sorts of information is evident.",
+        "We chose to include the third sort as well because corpora seemed likely to he valuable iH providing examples more concretely and certainly more extensively than other son rces.",
+        "They may provide a sense of collocation or even nuances of meaning.",
+        "The realization of these design goals required extensive knowledge bases about Eretich morphology and lexicon.",
+        "• Most crucially, the morphological knowledge base provides the link between the inflected forms found in texts arid the \"citation forms\" found in dictionaries (Sproat 1992).",
+        "1,1∎AIM1vTIZATION recovers citation forms from inflected forms and is a primary task of morphological analysis.",
+        "A substantial morphological knowledge base is likewise necessary if one is to provide information about, the grammatical significance of morphological information.",
+        "The only effective means of providing such a knowledge base is through morphological analysis software.",
+        "Even if one could imagine storing all the inflected forms of a language such as French, the information associated with those forms is available today only from analysis software.",
+        "The software is needed to create the store of information.",
+        "Even apart from this: people occasionally create new words.",
+        "Analysis programs can provided information about, these, since most, are formed according to very general and regular morphological processes.",
+        "• Obviously, the quality of the online dictionary is absolutely essential.",
+        "'Ile only feasible option is to use an existing dictionary.",
+        "()to; investigative user studies indicate that the dictionary is the most important factor in user satisfaction.",
+        "• The essential design questions vis-a-vis the corpus were (i) how large must, the corpus he in order to guarantee a high expectation that, the roost frequent words would he found; and (ii) what sort.",
+        "of access techniques are needed on it corpus of the requisite size - given that, access must, succeed within at most a very few seconds.",
+        "We were further concerned to use l,t,xf,s from a variety of genres, and we attempted (with very limited success) to find bilingual French-Dutch texts.",
+        "To-date we have only the bible and the treaty of Maastricht, in bilingual form."
+      ]
+    },
+    {
+      "heading": "2.1 Morphological Analysis",
+      "text": [
+        "As we have seen, morphological analysis is necessary if one wishes to access atm online dictionary.",
+        "Since large coverage analysis packages represent very major development.",
+        "efforts, (lLOSSER-Itu(l was fortunate in having access to LOCO/C9, a state-of-the-art, system provided by It auk Xerox.",
+        "Some examples of its analyses:",
+        "• vont as aller+IndP+PL+P3+FinV; • bion as bien+Masc+SG+Noun, arid bien+Adv; and • chats as chat+Masc+PL+Noun.",
+        "The information front the morphological parse enables a dictionary lookup and the grammati-al informal, ion is directly useful to readers.",
+        "But, there are also examples of words which could have different grammatical meanings."
+      ]
+    },
+    {
+      "heading": "2.2 Dictionary",
+      "text": [
+        "LOSSER-11u( was likewise fortunate in obtaining the use of an online version of the Vannale dictionary Iledrndaags hrons.",
+        "Vanl)ale is the premier publisher of Dutch dictionaries.",
+        "In Iledendaags Frans, for example, the word baiser could be a noun as well as a verb and contains therefore the following information (the actual data structures are different, and confidential).",
+        "Corp.: Appelee I luma ni genesis unites (L'Unitedu genre humain), cette encyclique denoncediverses formes de nationalistne et la montee puissance d'Ftsts tautens% de desordre, tout occult& a des preparatifs de verse.",
+        "La personne hum eine, voulue par Dieu et placee au centre du dispositif de la societe, est batouee lorsque le regne de Pargent se conjugue avec Pagnassivite d'un regime oh la preeminence de la race ou de la classe remplace le souci drain politique au service de tons.",
+        "Certes, le conintunisme est teojours designs cotinne Padversaire principal, le danger supreme.",
+        "Ma isles diverscs figures d'utt nationalism ex acerbe soot, dies aussi, denoncees coronae mensongeres et contraires au plan de Dieu.",
+        "On sent ccpendant entre les lignes une moindre sr:Write d leer endroit qua regard du communione.",
+        "De petunia silences CF quo l'encyclique dit air le racism s'inspire de ce quo John I a Fargo a dejd dolt pour stigmatises le racistne anti-Noir qui sdvit aux (hats-Unis.",
+        "fills reprend en time l'essentiel des condemnations tres fermes quo Pie XI vicar de dotter dans son enryclique stir Ic nazisme (Mit Brennender Sorge, mars 1937).",
+        "I litter, en effet, s'etait rejoin trop trite d'entendre le pope pastes d'un communism rr intrinsequetnent pervert (7) a. II ne soupconnait pas que, quelques jours plus lard, une condemnation en regle du nazistne sous forme d'encyclique wrists introduite clandestinement en Allemagne et, a la barbe des autorites, sera it lue solennellement en chaise dans mouses les eglises le ditnanche de la (aeries Rameaux de 1937.",
+        "Soot mix en accusation : o la pretendue conception des anciens Germains o, it base de pa tolleisine, d'identification entre Dieu et Ic .",
+        "destin impersonnel 0, entre pites et la race, le potpie, l'Etat, les homilies au pouvoirbeef l'idolatrie dun Dieu et d'une religion purement nationaux-(8).",
+        "Crest ors la question des juifs persecutes que le projet d'encyclique do 1938 se Mete le plus foible.",
+        "II est largo/lent Oil:snake de re que le Pere Gundlach a &sit dans un article intitule",
+        "Cases like these suggest a potentially crippling problem for the GLOSSER-RuG concept: if words are in general ambiguous, then providing morphological analyses for them may be too tiresome to be of genuine use to language learners.",
+        "A long list of potential analyses is potentially of very little use.",
+        "Since indeed most words are multiply ambiguous, a problem looms."
+      ]
+    },
+    {
+      "heading": "2.3 Disambiguation",
+      "text": [
+        "The solution to this problem is disambiguation: to find the right entry in the dictionary, a part-of-speech (POS) disambiguator is applied before morphological analysis in order to obtain the contextually most plausible morphological analysis.",
+        "For example in the sentence B donne-moi an baiser 'Good, give me a kiss', the disambiguator should return a tag for the word baiser indicating [masculine] noun and in the sentence II ne peal pas baiser `IIIe can't kiss' the word baiser should be assigned with a tag indicating verb [infinitive].",
+        "The combination of POS disambiguator and morphological analysis suffice to provide the contextually most likely analysis nearly all the time.",
+        "Stochastic POS disambiguation is implemented in the Rank Xerox Locolex package."
+      ]
+    },
+    {
+      "heading": "2.4 Corpus",
+      "text": [
+        "The results of disambiguation and morphological analysis serve not only as input to dictionary lookup but also to corpus search.",
+        "The current iin.plementation of this search uses only string matching to find further tokens.",
+        "Our design calls for bExEm.E-based search however, and a preliminary version of this has also been implemented.",
+        "In order to determine the size of corpus needed, we experimented with a frequency list of the 10,000 most frequent words.",
+        "A corpus of 2 M13 contained 85% of these, and a corpus of 6 MB 100%.",
+        "Our goal is 100% coverage of the words found in Hedendaagse Frans, and 100% coverage of the most frequent 20,000 words, and we are close to it.",
+        "The current corpus size is 8 MB.",
+        "As the corpus grows, the time for incremental search likwise grows linearly.",
+        "When the average search time grew to several seconds (on a 70 MIPS UNIX server), it became apparent that some sort of indexing was needed.",
+        "This was implemented and is described in (van Slooten 1995).",
+        "The indexed lookup is most satisfactory -- not only has the absolute time dropped an order of magnitude, but the time appears to be constant when corpus size is varied between 1 and 10 MB.",
+        "Lexeme-based search looks not only for further occurrences of the same string, but also for inflectional variants of the word.",
+        "if the selected word is livre+Masc+SG+Noun, the search should find other tokens of this and also tokens of the plural form livres.",
+        "This is made possible by lemmatizing the entire corpus in a preprocessing step, and retaining the results in an index of lemmata."
+      ]
+    },
+    {
+      "heading": "2.5 User Interface",
+      "text": [
+        "'file text the user is reading is displayed in the main window.",
+        "Each of the three sorts of information is displayed in separate windows: vi OR-PHOLOGY, the results of morphological analysis; fticTtoNARv, the French-Dutch dictionary entry; and EXAMPLES, the examples of the word Found in corpora search.",
+        "See Figure 1 for an example.",
+        "In case the disambiguator / morphological-analyser cannot decide which analysis is more likely, the user is allowed to select winch he is interested in (this feature toggles for users who prefer fewer choices).",
+        "With pedagogical software there is a danger of assuming too mach expertise on the part of users.",
+        "In MX/SSE:BANG this danger could take the form of displaying further unknown words in either the dictionary or the examples windows.",
+        "To obviate this at least partially, both of these windows have been made sensitive to G LOSSEll, PAC's search.",
+        "Thus, if, e.g., corpus search turns up examples with further unknown words, these may be submitted to GLOSSER-RnG for analysis, lookup and examples.'"
+      ]
+    },
+    {
+      "heading": "2.6 Summary of Design",
+      "text": [
+        "The prototype was designed to consist of the following modules: a a disamhiguator, morphological analyser, a dictionary lookup and a corpora search as shown on the next page.",
+        "Corpus lemma-tization and indexation based on lemma are done off-line.",
+        "In the next section we will illustrate these modules in more detail."
+      ]
+    },
+    {
+      "heading": "3 A. session with GLOSSER-RuG",
+      "text": [
+        "'the present section steps through the various modules in order to illustrate the system more concretely and in order to motivate some further design decisions."
+      ]
+    },
+    {
+      "heading": "3.1. An Example",
+      "text": [
+        "When the user selects a word in a. text for example ecrit in the sentence: ...La cohere dtait ecrit sur son visage... `Tins is a, point at winch input from traditional language pedagogy could be very useful especially reading material_ that has been screened and edited to be accessible to a, particular level."
+      ]
+    },
+    {
+      "heading": "3.2 Preprocessing",
+      "text": [
+        "The program must first extract from the text the sentence in which the word occurs.",
+        "It does this on the basis of punctuation, paying special attention to the occurrence of abbreviations (e.g., .c., P.1.)",
+        "and titles (e.g., dn mom.",
+        "etc.",
+        ")."
+      ]
+    },
+    {
+      "heading": "3.3 The morphological analyser",
+      "text": [
+        "After this so-called preprocessing, the morpliolog-ical analyser is called to get the morphological information of the selected word, i.e. the kixeme and possible tags according to result of the morphological analysis.",
+        "As the example shows the morphological analyser gives four possible [grammatical] readings of the selected word and two base forms [lexemes].",
+        "It should be noted that the preprocessing phase isn't necessary for the morphological analyser."
+      ]
+    },
+    {
+      "heading": "3.4 Disauabiguator",
+      "text": [
+        "As mentioned in the previous section the morphological analysis information might not be enough to get the right entry in the dictionary.",
+        "In this example there are many possible base forms of the selected word, nainely:",
+        "In order to get the right entry, in this case entry 1, one has to consider to whole sentence.",
+        "Research on POS-tagging has proved it to be a good method to disambiguate a sentence.",
+        "The disambiguator assigns every word of the sentence a tag.",
+        "In this example the disambiguator chooses the ecrire+Masc+SG+PaPrt reading as the most likely one, as shown in Figure 3."
+      ]
+    },
+    {
+      "heading": "3.5 Dictionary Lookup",
+      "text": [
+        "Alter disambiguation the lexeme with the most likely tag is used to get the right entry of the selected word in the dictionary.",
+        "The dictionary lookup process is straightforward.",
+        "The exact structure of the dictionary source files is confidential, but it is well-structured, and allows uncomplicated access.",
+        "'The right file is opened and searched until a match with the lexeme occurs.",
+        "If this is the case the information of this lexeme is printed in pretty form on the screen.",
+        "In the case the user reads a French word in the dictionary output and wants to get the dictionary entry of this particular word, s/he can select this word in the dictionary output and alter a push on the search button the selected word is morphological analysed and, if possible, disambiguated and with the lexeme another dictionary lookup will taken place and the information found will be placed in another DICTIONARY window on the screen.",
+        "According to the morphological analyser the selected word as has two base forms namely avoir, indicating a verb [avoir+ INDP+SG+P2+Avoir]and as, indicating a noun [as +Mas c+INVPL+NOUN].",
+        "To choose the right base form, one consults the disambiguator, but it selects the 'verb' tag instead of the wanted 'noun' tag.",
+        "In this case the dictionary lookup module will fetch the wrong entry, namely of avoir.",
+        "In order to get the right entry, namely as, it is possible for the alert user of GLOSSER-ING to override the decision of the disambiguator.",
+        "The user can select the other ('wanted') tag, push the search button, and accordingly get the right dictionary entry and corpora examples on the sceen."
+      ]
+    },
+    {
+      "heading": "3.7 Corpora Search",
+      "text": [
+        "The selected word and its lexeme form also the input for the Corpora Search module.",
+        "This component uses indexed files (van Slooten 1995).",
+        "The index is set up in two parts.",
+        "The first part is an index to generate a key for every word.",
+        "This index is used for all files in the corpus2.",
+        "This key is then used in the second part where for every file in the corpus two extra index files are generated.",
+        "These files contain information about the position of' words by their key in the corpus file up to a certain maximum (e.g. 50) of occurrences.",
+        "As the index consists of two parts, so does the lookup.",
+        "The first part is to get all the keys of words starting with a particular string from the first index.",
+        "Then these keys can be used to search in the second index, one index file for each corpus, for occurrences of the word denoted by these keys.",
+        "If the Corpora Search Module has as input ecrit [the selected word] and ecrire [the base form] the following examples (a.o.)",
+        "will be found: 2 The corpora text are collected from different sides on the WWW.",
+        "As in the DICTIONARY window it is also possible to select another French word in the Corpora output and push the Search button.",
+        "The morphological analysis and disambiguation of this selected word and the dictionary entry will accordingly he displayed in the relevant windows."
+      ]
+    },
+    {
+      "heading": "4 Final Remarks",
+      "text": [
+        "The intergration of existing morphological processing tools has led to a powerful CALL tool.",
+        "The tool provides a dictionary lookup, it gives examples from corpora and displayes morphological information, all on-line.",
+        "Other languages could be easily implemented in the overall skeleton of GLOSSER-IlluG.",
+        "Although development of the prototype GLOSSER- HAG is still ongoing, these first results look very promising.",
+        "The prototype was sufficiently advanced in February for Groningen communications students to conduct an investigative user study.",
+        "Although we'll report on this seperately, it indicated user interestin the near future we're planning to index the corpora on basis of lexemes.",
+        "Later we wish to extend the software with for example a teaching and diagnosting module so that the tool matures to real CALL software."
+      ]
+    },
+    {
+      "heading": "5 Acknowledgements",
+      "text": [
+        "The work is supported by grant number 343 to the University of Groningen from the EU Copernicus program.",
+        "The Copernicus partners consulted on a common design, in particular Lauri Karttunen (Rank Xerox, Grenoble, France), Elena Paskale-va (Linguistic Modelling Laboratory Bulgarian Academy of Sciences, Bulgaria), Gabor Proszeky (MorphoLogic, Hungary), Roosmaa (Tartu University, Estonia), Maria Stambolieva (institute of Bulgarian Language, Bulgarian Academy of Sciences), and Ulle Viks (Institute of the Estonian Language, Estonia).",
+        "A tilw van Slooten designed and programmed the corpus indexing and search routines.",
+        "Lauri Karttunen (Grenoble) ad-vized on the use of morphology and Gertjan van Noord (Groningen) on TCL/TIK."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,551 @@
+{
+  "info": {
+    "authors": [
+      "Valentin I. Spitkovsky",
+      "Hiyan Alshawi",
+      "Daniel Jurafsky"
+    ],
+    "book": "EMNLP",
+    "id": "acl-D13-1204",
+    "title": "Breaking Out of Local Optima with Count Transforms and Model Recombination: A Study in Grammar Induction",
+    "url": "https://aclweb.org/anthology/D13-1204",
+    "year": 2013
+  },
+  "references": [
+    "acl-C04-1022",
+    "acl-C08-1074",
+    "acl-C10-2062",
+    "acl-C10-2094",
+    "acl-D07-1096",
+    "acl-D10-1117",
+    "acl-D11-1117",
+    "acl-D11-1118",
+    "acl-D12-1028",
+    "acl-D12-1063",
+    "acl-D12-1121",
+    "acl-E03-1009",
+    "acl-J03-1001",
+    "acl-J93-2004",
+    "acl-N09-1012",
+    "acl-N09-1069",
+    "acl-N09-3008",
+    "acl-N10-1003",
+    "acl-N10-1091",
+    "acl-N10-1116",
+    "acl-N12-1069",
+    "acl-P02-1017",
+    "acl-P04-1061",
+    "acl-P07-1049",
+    "acl-P08-1061",
+    "acl-P09-1057",
+    "acl-P10-1076",
+    "acl-P10-1106",
+    "acl-P10-1152",
+    "acl-P10-1158",
+    "acl-P11-1053",
+    "acl-P11-1108",
+    "acl-P12-2004",
+    "acl-P13-1028",
+    "acl-P13-1044",
+    "acl-P92-1017",
+    "acl-P95-1026",
+    "acl-P98-2240",
+    "acl-W00-0717",
+    "acl-W05-0620",
+    "acl-W06-2920",
+    "acl-W09-1803",
+    "acl-W10-2902",
+    "acl-W11-0303",
+    "acl-W98-1411",
+    "acl-W99-0613"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "Many statistical learning problems in NLP call for local model search methods.",
+        "But accuracy tends to suffer with current techniques, which often explore either too narrowly or too broadly: hill-climbers can get stuck in local optima, whereas samplers may be inefficient.",
+        "We propose to arrange individual local optimizers into organized networks.",
+        "Our building blocks are operators of two types: (i) transform, which suggests new places to search, via non-random restarts from already-found local optima; and (ii) join, which merges candidate solutions to find better optima.",
+        "Experiments on grammar induction show that pursuing different transforms (e.g., discarding parts of a learned model or ignoring portions of training data) results in improvements.",
+        "Groups of locally-optimal solutions can be further perturbed jointly, by constructing mixtures.",
+        "Using these tools, we designed several modular dependency grammar induction networks of increasing complexity.",
+        "Our complete system achieves 48.6% accuracy (directed dependency macro-average over all 19 languages in the 2006/7 CoNLL data) ?",
+        "more than 5% higher than the previous state-of-the-art."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Statistical methods for grammar induction often boil down to solving non-convex optimization problems.",
+        "Early work attempted to locally maximize the likelihood of a corpus, using EM to estimate probabilities of dependency arcs between word bigrams (Paskin 2001a; 2001b).",
+        "That parsing model has since been extended to make unsupervised learning more feasible (Klein and Manning, 2004; Headden et al., 2009; Spitkovsky et al., 2012b).",
+        "But even the latest techniques can be quite error-prone and sensitive to initialization, because of approximate, local search.",
+        "In theory, global optima can be found by enumerating all parse forests that derive a corpus, though this is usually prohibitively expensive in practice.",
+        "A preferable brute force approach is sampling, as in Markov-chain Monte Carlo (MCMC) and random restarts (Hu et al., 1994), which hit exact solutions eventually.",
+        "Restarts can be giant steps in a parameter space that undo all previous work.",
+        "At the other extreme, MCMC may cling to a neighborhood, rejecting most proposed moves that would escape a local attractor.",
+        "Sampling methods thus take unbounded time to solve a problem (and can't certify optimality) but are useful for finding approximate solutions to grammar induction (Cohn et al., 2011; Marec?ek and ?Zabokrtsky?, 2011; Naseem and Barzilay, 2011).",
+        "We propose an alternative (deterministic) search heuristic that combines local optimization via EM with non-random restarts.",
+        "Its new starting places are informed by previously found solutions, unlike conventional restarts, but may not resemble their predecessors, unlike typical MCMC moves.",
+        "We show that one good way to construct such steps in a parameter space is by forgetting some aspects of a learned model.",
+        "Another is by merging promising solutions, since even simple interpolation (Jelinek and Mercer, 1980) of local optima may be superior to all of the originals.",
+        "Informed restarts can make it possible to explore a combinatorial search space more rapidly and thoroughly than with traditional methods alone."
+      ]
+    },
+    {
+      "heading": "2 Abstract Operators",
+      "text": [
+        "Let C be a collection of counts ?",
+        "the sufficient statistics from which a candidate solution to an optimization problem could be computed, e.g., by smoothing and normalizing to yield probabilities.",
+        "The counts may be fractional and solutions could take the form of multinomial distributions.",
+        "A local optimizer L will convert C into C?",
+        "= LD(C) ?",
+        "an updated collection of counts, resulting in a probabilistic model that is no less (and hopefully more) consistent with a data set D than the original C:",
+        "Unless C?",
+        "is a global optimum, we should be able to make further improvements.",
+        "But if L is idempotent (and ran to convergence) then L(L(C)) = L(C).",
+        "Given only C and LD, the single-node optimization network above would be the minimal search pattern worth considering.",
+        "However, if we had another optimizer L?",
+        "?",
+        "or a fresh starting point C?",
+        "?",
+        "then more complicated networks could become useful."
+      ]
+    },
+    {
+      "heading": "2.1 Transforms (Unary)",
+      "text": [
+        "New starts could be chosen by perturbing an existing solution, as in MCMC, or independently of previous results, as in random restarts.",
+        "We focus on intermediate changes to C, without injecting randomness.",
+        "All of our transforms involve selective forgetting or filtering.",
+        "For example, if the probabilistic model that is being estimated decomposes into independent constituents (e.g., several multinomials) then a subset of them can be reset to uniform distributions, by discarding associated counts from C. In text classification, this could correspond to eliminating frequent or rare tokens from bags-of-words.",
+        "We use circular shapes to represent such model ablation operators: (2)C An orthogonal approach might separate out various counts in C by their provenance.",
+        "For instance, if D consisted of several heterogeneous data sources, then the counts from some of them could be ignored: a classifier might be estimated from just news text.",
+        "We will use squares to represent dataset filtering: (3)C Finally, if C represents a mixture of possible interpretations over D ?",
+        "e.g., because it captures the output of a ?soft?",
+        "EM algorithm ?",
+        "contributions from less likely, noisier completions could also be suppressed (and their weights redistributed to the more likely ones), as in ?hard?",
+        "EM.",
+        "Diamonds will represent plain (single) steps of Viterbi training: (4)C"
+      ]
+    },
+    {
+      "heading": "2.2 Joins (Binary)",
+      "text": [
+        "Starting from different initializers, say C1 and C2, it may be possible for L to arrive at distinct local optima, C?1 6= C?2 .",
+        "The better of the two solutions, according to likelihood LD of D, could then be selected ?",
+        "as is standard practice when sampling.",
+        "Our joining technique could do better than either",
+        "2 , by entertaining also a third possibility, which combines the two candidates.",
+        "We construct a mixture model by adding together all counts from C?1 and C?2 into C+ = C?1 + C?2 .",
+        "Original initializers C1, C2 will, this way, have equal pull on the merged model,1 regardless of nominal size (because C?1 , C?2 will have converged using a shared training set, D).",
+        "We return the best of C?1 , C?2 and C?+ = L(C+).",
+        "This approach may uncover more (and never returns less) likely solutions than choosing among C?1 , C?2 alone:",
+        "We will use a shorthand notation to represent the combiner network diagrammed above, less clutter:"
+      ]
+    },
+    {
+      "heading": "3 The Task and Methodology",
+      "text": [
+        "We apply transform and join paradigms to grammar induction, an important problem of computational linguistics that involves notoriously difficult objectives (Pereira and Schabes, 1992; de Marcken, 1995; Gimpel and Smith, 2012, inter alia).",
+        "The goal is to induce grammars capable of parsing unseen text.",
+        "Input, in both training and testing, is a sequence of tokens labeled as: (i) a lexical item and its category, (w, cw); (ii) a punctuation mark; or (iii) a sentence boundary.",
+        "Output is unlabeled dependency trees."
+      ]
+    },
+    {
+      "heading": "3.1 Models and Data",
+      "text": [
+        "We constrain all parse structures to be projective, via dependency-and-boundary grammars (Spitkovsky et al., 2012a; 2012b): DBMs 0?3 are head-outward generative parsing models (Alshawi, 1996) that distinguish complete sentences from incomplete fragments in a corpus D: Dcomp comprises inputs ending with punctuation; Dfrag = D ?",
+        "Dcomp is everything",
+        "else.",
+        "The ?complete?",
+        "subset is further partitioned into simple sentences, Dsimp ?",
+        "Dcomp, with no internal punctuation, and others, which may be complex.",
+        "As an example, consider the beginning of an article from (simple) Wikipedia: (i) Linguistics (ii) Linguistics (sometimes called philology) is the science that studies language.",
+        "(iii) Scientists who study language are called linguists.",
+        "Since the title does not end with punctuation, it would be relegated to Dfrag.",
+        "But two complete sentences would be in Dcomp, with the last also filed under Dsimp, as it has only a trailing punctuation mark.",
+        "Spitkovsky et al. suggested two curriculum learning strategies: (i) one in which induction begins with clean, simple data, Dsimp, and a basic model, DBM-1 (2012b); and (ii) an alternative bootstrapping approach: starting with still more, simpler data ?",
+        "namely, short inter-punctuation fragments up to length l = 15, Dlsplit ?",
+        "Dlsimp ?",
+        "and a bare-bones model, DBM-0 (2012a).",
+        "In our example, Dsplit would hold five text snippets: (i) Linguistics; (ii) Linguistics; (iii) sometimes called philology; (iv) is the science that studies language; and (v) Scientists who study language are called linguists.",
+        "Only the last piece of text would still be considered complete, isolating its contribution to sentence root and boundary word distributions from those of incomplete fragments.",
+        "The sparse model, DBM-0, assumes a uniform distribution for roots of incomplete inputs and reduces conditioning contexts of stopping probabilities, which works well with split data.",
+        "We will exploit both DBM-0 and the full DBM,2 drawing also on split, simple and raw views of input text.",
+        "All experiments prior to final multilingual evaluation will use the Penn English Treebank's Wall Street Journal (WSJ) portion (Marcus et al., 1993) as the underlying tokenized and sentence-broken corpus D. Instead of gold parts-of-speech, we plugged in 200 context-sensitive unsupervised tags, from Spitkovsky et al. (2011c),3 for the word categories."
+      ]
+    },
+    {
+      "heading": "3.2 Smoothing and Lexicalization",
+      "text": [
+        "All unlexicalized instances of DBMs will be estimated with ?add one?",
+        "(a.k.a.",
+        "Laplace) smoothing, 2We use the shorthand DBM to refer to DBM-3, which is equivalent to DBM-2 if D has no internally-punctuated sentences (D=Dsplit), and DBM-1 if all inputs also have trailing punctuation (D=Dsimp); DBM0 is our shorthand for DBM-0.",
+        "using only the word category cw to represent a token.",
+        "Fully-lexicalized grammars (L-DBM) are left un-smoothed, and represent each token as both a word and its category, i.e., the whole pair (w, cw).",
+        "To evaluate a lexicalized parsing model, we will always obtain a delexicalized-and-smoothed instance first."
+      ]
+    },
+    {
+      "heading": "3.3 Optimization and Viterbi Decoding",
+      "text": [
+        "We use ?early-switching lateen?",
+        "EM (Spitkovsky et al., 2011a, ?2.4) to train unlexicalized models, alternating between the objectives of ordinary (soft) and hard EM algorithms, until neither can improve its own objective without harming the other?s.",
+        "This approach does not require tuning termination thresholds, allowing optimizers to run to numerical convergence if necessary, and handles only our shorter inputs (l ?",
+        "15), starting with soft EM (L = SL, for ?soft lateen?).",
+        "Lexicalized models will cover full data (l ?",
+        "45) and employ ?early-stopping lateen?",
+        "EM (2011a, ?2.3), re-estimating via hard EM until soft EM's objective suffers.",
+        "Alternating EMs would be expensive here, since updates take (at least) O(l3) time, and hard EM's objective (L = H) is the one better suited to long inputs (Spitkovsky et al., 2010).",
+        "Our decoders always force an inter-punctuation fragment to derive itself (Spitkovsky et al., 2011b, ?2.2).4 In evaluation, such (loose) constraints may help attach sometimes and philology to called (and the science... to is).",
+        "In training, stronger (strict) constraints also disallow attachment of fragments?",
+        "heads by non-heads, to connect Linguistics, called and is (assuming each piece got parsed correctly)."
+      ]
+    },
+    {
+      "heading": "3.4 Final Evaluation and Metrics",
+      "text": [
+        "Evaluation is against held-out CoNLL shared task data (Buchholz and Marsi, 2006; Nivre et al., 2007), spanning 19 languages.",
+        "We compute performance as directed dependency accuracies (DDA), fractions of correct unlabeled arcs in parsed output (an extrinsic metric).5 For most WSJ experiments we include also sentence and parse tree cross-entropies (soft and hard EMs?",
+        "intrinsic metrics), in bits per token (bpt)."
+      ]
+    },
+    {
+      "heading": "4 Concrete Operators",
+      "text": [
+        "We will now instantiate the operators sketched out in ?2 specifically for the grammar induction task.",
+        "Throughout, we repeatedly employ single steps of Viterbi training to transfer information between sub-networks in a model-independent way: when a module's output is a set of (Viterbi) parse trees, it necessarily contains sufficient information required to estimate an arbitrarily-factored model down-stream.6"
+      ]
+    },
+    {
+      "heading": "4.1 Transform #1: A Simple Filter",
+      "text": [
+        "Given a model that was estimated from (and therefore parses) a data set D, the simple filter (F ) attempts to extract a cleaner model, based on the simpler complete sentences of Dsimp.",
+        "It is implemented as a single (unlexicalized) step of Viterbi training:"
+      ]
+    },
+    {
+      "heading": "(7)C F",
+      "text": [
+        "The idea here is to focus on sentences that are not too complicated yet grammatical.",
+        "This punctuation-sensitive heuristic may steer a learner towards easy but representative training text and, we showed, aids grammar induction (Spitkovsky et al., 2012b, ?7.1)."
+      ]
+    },
+    {
+      "heading": "4.2 Transform #2: A Symmetrizer",
+      "text": [
+        "The symmetrizer (S) reduces input models to sets of word association scores.",
+        "It blurs all details of induced parses in a data set D, except the number of times each (ordered) word pair participates in a dependency relation.",
+        "We implemented symmetrization also as a single unlexicalized Viterbi training step, but now with proposed parse trees?",
+        "scores, for a sentence in D, proportional to a product over non-root dependency arcs of one plus how often the left and right tokens (are expected to) appear connected:"
+      ]
+    },
+    {
+      "heading": "(8)C S",
+      "text": [
+        "The idea behind the symmetrizer is to glean information from skeleton parses.",
+        "Grammar inducers can sometimes make good progress in resolving undirected parse structures despite being wrong about the polarities of most arcs (Spitkovsky et al., 2009,",
+        "extra chance to make heads or tails of syntactic relations, after learning which words tend to go together.",
+        "6A related approach ?",
+        "initializing EM training with an M-step ?",
+        "was advocated by Klein and Manning (2004, ?3).",
+        "At each instance where a word a?",
+        "attaches z?",
+        "on (say) the right, our implementation attributes half its weight to the intended construction, ya?",
+        "z?, reserving the other half for the symmetric structure, z?",
+        "attaching a?",
+        "to its left: xa?",
+        "z?.",
+        "For the desired effect, these aggregated counts are left unnormalized, while all other counts (of word fertilities and sentence roots) get discarded.",
+        "To see why we don't turn word attachment scores into probabilities, consider sentences a?",
+        "z?",
+        "and c?",
+        "z?.",
+        "The fact that z?",
+        "co-occurs with a?",
+        "introduces an asymmetry into z?",
+        "'s relation with c?",
+        ": P( z?",
+        "|c?)",
+        "= 1 differs from P( c?",
+        "|z?)",
+        "= 1/2.",
+        "Normalizing might force the interpretation yc?",
+        "z?",
+        "(and also y a?",
+        "z?",
+        "), not because there is evidence in the data, but as a side-effect of a model's head-driven nature (i.e., factored with dependents conditioned on heads).",
+        "Always branching right would be a mistake, however, for example if z?",
+        "is a noun, since either of a?",
+        "or c?",
+        "could be a determiner, with the other a verb."
+      ]
+    },
+    {
+      "heading": "4.3 Join: A Combiner",
+      "text": [
+        "The combiner must admit arbitrary inputs, including models not estimated from D, unlike the transforms.",
+        "Consequently, as a preliminary step, we convert each input Ci into parse trees of D, with counts C?i, via Viterbi-decoding with a smoothed, unlexicalized version of the corresponding incoming model.",
+        "Actual combination is then performed in a more precise (unsmoothed) fashion: C?i are the (lexicalized) solutions starting from C?i; and C?+ is initialized with their sum,"
+      ]
+    },
+    {
+      "heading": "5 Basic Networks",
+      "text": [
+        "We are ready to propose a non-trivial subnetwork for grammar induction, based on the transform and join operators, which we will reuse in larger networks."
+      ]
+    },
+    {
+      "heading": "5.1 Fork/Join (FJ)",
+      "text": [
+        "Given a model that parses a base data set D0, the fork/join subnetwork will output an adaptation of that model for D. It could facilitate a grammar induction process, e.g., by advancing it from smaller",
+        "to larger ?",
+        "or possibly more complex ?",
+        "data sets.",
+        "We first fork off two variations of the incoming model based on D0: (i) a filtered view, which focuses on cleaner, simpler data (transform #1); and (ii) a symmetrized view that backs off to word associations (transform #2).",
+        "Next is grammar induction over D. We optimize a full DBM instance starting from the first fork, and bootstrap a reduced DBM0 from the second.",
+        "Finally, the two new induced sets of parse trees, for D, are merged (lexicalized join):",
+        "The idea here is to prepare for two scenarios: an incoming grammar that is either good or bad for D. If the model is good, DBM should be able to hang on to it and make improvements.",
+        "But if it is bad, DBM could get stuck fitting noise, whereas DBM0 might be more likely to ramp up to a good alternative.",
+        "Since we can't know ahead of time which is the true case, we pursue both optimization paths simultaneously and let a combiner later decide for us.",
+        "Note that the forks start (and end) optimizing with soft EM.",
+        "This is because soft EM integrates previously unseen tokens into new grammars better than hard EM, as evidenced by our failed attempt to reproduce the ?baby steps?",
+        "strategy with Viterbi training (Spitkovsky et al., 2010, Figure 4).",
+        "A combiner then executes hard EM, and since outputs of transforms are trees, the end-to-end process is a chain of lateen alternations that starts and ends with hard EM.",
+        "We will use a ?grammar inductor?",
+        "to represent subnetworks that transition from Dlsplit to Dl+1split, by taking transformed parse trees of inter-punctuation fragments up to length l (base data set, D0) to initialize training over fragments up to length l + 1: (11)C l+1 The FJ network instantiates a grammar inductor with l = 14, thus training on inter-punctuation fragments up to length 15, as in previous work, starting from an empty set of counts, C = ?.",
+        "Smoothing causes initial parse trees to be chosen uniformly at random, as suggested by Cohen and Smith (2010): (12)?",
+        "15"
+      ]
+    },
+    {
+      "heading": "5.2 Iterated Fork/Join (IFJ)",
+      "text": [
+        "Our second network daisy-chains grammar inductors, starting from the single-word inter-punctuation fragments in D1split, then retraining on D2split, and so forth, until finally stopping at D15split, as before: (13)1 2 14 15 We diagrammed this system as not taking an input, since the first inductor's output is fully determined by unique parse trees of single-token strings.",
+        "This iterative approach to optimization is akin to deterministic annealing (Rose, 1998), and is patterned after ?baby steps?",
+        "(Spitkovsky et al., 2009, ?4.2).",
+        "Unlike the basic FJ, where symmetrization was a no-op (since there were no counts in C = ?",
+        "), IFJ makes use of symmetrizers ?",
+        "e.g., in the third inductor, whose input is based on strings with up to two tokens.",
+        "Although it should be easy to learn words that go together from very short fragments, extracting correct polarities of their relations could be a challenge: to a large extent, outputs of early inductors may be artifacts of how our generative models factor (see ?4.2) or how ties are broken in optimization (Spitkovsky et al., 2012a, Appendix B).",
+        "We therefore expect symmetrization to be crucial in earlier stages but to weaken any high quality grammars, nearer the end; it will be up to combiners to handle such phase transitions correctly (or gracefully)."
+      ]
+    },
+    {
+      "heading": "5.3 Grounded Iterated Fork/Join (GIFJ)",
+      "text": [
+        "So far, our networks have been either purely iterative (IFJ) or static (FJ).",
+        "These two approaches can also be combined, by injecting FJ's solutions into IFJ's more dynamic stream.",
+        "Our new transition subnetwork will join outputs of grammar inductors that either (i) continue a previous solution (as in IFJ); or (ii) start over from scratch (?grounding?",
+        "to an FJ):",
+        "up to length 15 (WSJ15split) and its subset of simple, complete sentences (WSJ15simp, with exact tree accuracies ?",
+        "TA)."
+      ]
+    },
+    {
+      "heading": "6 Performance of Basic Networks",
+      "text": [
+        "We compared our three networks?",
+        "performance on their final training sets, WSJ15split (see Table 1, which also tabulates results for a cleaner subset, WSJ15simp).",
+        "The first network starts from C = ?, helping us establish several straw-man baselines.",
+        "Its empty initializer corresponds to guessing (projective) parse trees uniformly at random, which has 21.4% accuracy and sentence string cross-entropy of 8.76bpt."
+      ]
+    },
+    {
+      "heading": "6.1 Fork/Join (FJ)",
+      "text": [
+        "FJ's symmetrizer yields random parses of WSJ14split, which initialize training of DBM0.",
+        "This baseline (B) lowers cross-entropy to 6.18bpt and scores 57.0%.",
+        "FJ's filter starts from parse trees of WSJ14simp only, and trains up a full DBM.",
+        "This choice makes a stronger baseline (A), with 5.89bpt cross-entropy, at 62.2%.",
+        "The join operator uses counts from A and B, C1 and C2, to obtain parse trees whose own counts C?1 and C?2 initialize lexicalized training.",
+        "From each C?i, an optimizer arrives at C?i .",
+        "Grammars corresponding to these counts have higher cross-entropies, because of vastly larger vocabularies, but also better accuracies: 59.2 and 62.3%.",
+        "Their mixture C+ is a simple sum of counts in C?1 and C?2 : it is not expected to be an improvement but happens to be a good move, resulting in a grammar with higher accuracy (64.0%), though not better Viterbi cross-entropy (7.27 falls between 7.08 and 7.30bpt) than both sources.",
+        "The combiner's third alternative, a locally optimal C?+, is then obtained by re-optimizing from C+.",
+        "This solution performs slightly better (64.2%) and will be the local optimum returned by FJ's join operator, because it attains the lowest cross-entropy (7.04bpt)."
+      ]
+    },
+    {
+      "heading": "6.2 Iterated Fork/Join (IFJ)",
+      "text": [
+        "IFJ's iterative approach results in an improvement: 70.5% accuracy and 6.96bpt cross-entropy.",
+        "To test how much of this performance could be obtained by a simpler iterated network, we experimented with ablated systems that don't fork or join, i.e., our classic ?baby steps?",
+        "schema (chaining together 15 optimizers), using both DBM and DBM0, with and without a transform in-between.",
+        "However, all such ?linear?",
+        "networks scored well below 50%.",
+        "We conclude from these results that an ability to branch out into different promising regions of a solution space, and to merge solutions of varying quality into better models, are important properties of FJ subnetworks."
+      ]
+    },
+    {
+      "heading": "6.3 Grounded Iterated Fork/Join (GIFJ)",
+      "text": [
+        "Grounding improves GIFJ's performance further, to 71.4% accuracy and 6.92bpt cross-entropy.",
+        "This result shows that fresh perspectives from optimizers that start over can make search efforts more fruitful."
+      ]
+    },
+    {
+      "heading": "7 Enhanced Subnetworks",
+      "text": [
+        "Modularity and abstraction allow for compact representations of complex systems.",
+        "Another key benefit is that individual components can be understood and improved in isolation, as we will demonstrate next."
+      ]
+    },
+    {
+      "heading": "7.1 An Iterative Combiner (IC)",
+      "text": [
+        "Our basic combiner introduced a third option, C?+, into a pool of candidate solutions, {C?1 , C?2}.",
+        "This new entry may not be a simple mixture of the originals, because of non-linear effects from applying L to C?1 + C?2 , but could most likely still be improved.",
+        "Rather than stop at C?+, when it is better than both originals, we could recombine it with a next best solution, continuing until no further improvement is made.",
+        "Iterating can't harm a given combiner's cross-entropy (e.g., it lowers FJ's from 7.04 to 7.00bpt), and its advantages can be realized more fully in the larger networks (albeit without any end-to-end guarantees): upgrading all 15 combiners in IFJ would improve performance (slightly) more than grounding (71.5 vs. 71.4%), and lower cross-entropy (from 6.96 to 6.93bpt).",
+        "But this approach is still a bit timid.",
+        "A more greedy way is to proceed so long as C?+ is not worse than both predecessors.",
+        "We shall now state our most general iterative combiner (IC) algorithm: Start with a solution pool p = {C?i }ni=1.",
+        "Next, construct p?",
+        "by adding C?+ = L(",
+        "i ) to p and removing the worst of n+ 1 candidates in the new set.",
+        "Finally, if p = p?, return the best of the solutions in p; otherwise, repeat from p := p?.",
+        "At n = 2, one could think of taking L(C?1 + C?2 ) as performing a kind of bisection search in some (strange) space.",
+        "With these new and improved combiners, the IFJ network performs better: 71.9% (up from 70.5 ?",
+        "see Table 1), lowering cross-entropy (down from 6.96 to 6.93bpt).",
+        "We propose a distinguished notation for the ICs:"
+      ]
+    },
+    {
+      "heading": "7.2 A Grammar Transformer (GT)",
+      "text": [
+        "The levels of our systems?",
+        "performance at grammar induction thus far suggest that the space of possible networks (say, with up to k components) may itself be worth exploring more thoroughly.",
+        "We leave this exercise to future work, ending with two relatively straightforward extensions for grounded systems.",
+        "Our static bootstrapping mechanism (?ground?",
+        "of GIFJ) can be improved by pretraining with simple sentences first ?",
+        "as in the curriculum for learning DBM-1 (Spitkovsky et al., 2012b, ?7.1), but now with a variable length cut-off l (much lower than the original 45) ?",
+        "instead of starting from ?",
+        "directly:",
+        "The output of this subnetwork can then be refined, by reconciling it with a previous dynamic solution.",
+        "We perform a mini-join of a new ground's counts with Cl, using the filter transform (single steps of lexicalized Viterbi training on clean, simple data), ahead of the main join (over more training data):",
+        "This template can be unrolled, as before, to obtain our last network (GT), which achieves 72.9% accuracy and 6.83bpt cross-entropy (slightly less accurate with basic combiners, at 72.3% ?",
+        "see Table 1).",
+        "8 Full Training and System Combination All systems that we described so far stop training at D15split.",
+        "We will use a two-stage adaptor network to transition their grammars to a full data set, D45:",
+        "The first stage exposes grammar inducers to longer inputs (inter-punctuation fragments with up to 45 tokens); the second stage, at last, reassembles text snippets into actual sentences (also up to l = 45).8 After full training, our IFJ and GT systems parse Section 23 of WSJ at 62.7 and 63.4% accuracy, better than the previous state-of-the-art (61.2% ?",
+        "see Table 2).",
+        "To test the generalized IC algorithm, we merged our implementations of these three strong grammar induction pipelines into a combined system (CS).",
+        "It scored highest: 64.4%.",
+        "The quality of bracketings corresponding to (non-trivial) spans derived by heads of our dependency structures is competitive with the state-of-the-art in unsupervised constituent parsing.",
+        "On the WSJ sentences up to length 40 in Section 23, CS attains similar F1-measure (54.2 vs. 54.6, with higher recall) to 8Note that smoothing in the final (unlexicalized) Viterbi step masks the fact that model parts that could not be properly estimated in the first stage (e.g., probabilities of punctuation-crossing arcs) are being initialized to uniform multinomials.",
+        "tion 23 of WSJ (all sentences and up to length ten) for recent systems, our full networks (IFJ and GT), and three-way combination (CS) with the previous state-of-the-art.",
+        "PRLG (Ponvert et al., 2011), which is the strongest system of which we are aware (see Table 3).9"
+      ]
+    },
+    {
+      "heading": "9 Multi-Lingual Evaluation",
+      "text": [
+        "Last, we checked how our algorithms generalize outside English WSJ, by testing in 23 more set-ups: all 2006/7 CoNLL test sets (Buchholz and Marsi, 2006; Nivre et al., 2007), spanning 19 languages.",
+        "Most recent work evaluates against this multilingual data, with the unrealistic assumption of part-of-speech tags.",
+        "But since inducing high quality word clusters for many languages would be beyond the scope of our paper, here we too plugged in gold tags for word categories (instead of unsupervised tags, as in ?3?8).",
+        "We compared to the two strongest systems we knew:10 MZ (Marec?ek and ?Zabokrtsky?, 2012) and SAJ (Spitkovsky et al., 2012b), which report average accuracies of 40.0 and 42.9% for CoNLL data (see Table 4).",
+        "Our fully-trained IFJ and GT systems score 40.0 and 47.6%.",
+        "As before, combining these networks with our own implementation of the best previous state-of-the-art system (SAJ) yields a further improvement, increasing final accuracy to 48.6%.",
+        "9These numbers differ from Ponvert et al's (2011, Table 6) for the full Section 23 because we restricted their eval-ps.py script to a maximum length of 40 words, in our evaluation, to match other previous work: Golland et al's (2012, Figure 1) for CCM and LLCCM; Huang et al's (2012, Table 2) for the rest.",
+        "10During review, another strong system (Marec?ek and Straka, 2013, scoring 48.7%) of possible interest to the reader came out, exploiting prior knowledge of stopping probabilities (estimated from large POS-tagged corpora, via reducibility principles)."
+      ]
+    },
+    {
+      "heading": "10 Discussion",
+      "text": [
+        "CoNLL training sets were intended for comparing supervised systems, and aren't all suitable for unsupervised learning: 12 languages have under 10,000 sentences (with Arabic, Basque, Danish, Greek, Italian, Slovenian, Spanish and Turkish particularly small), compared to WSJ's nearly 50,000.",
+        "In some treebanks sentences are very short (e.g., Chinese and Japanese, which appear to have been split on punctuation), and in others extremely long (e.g., Arabic).",
+        "Even gold tags aren't always helpful, as their number is rarely ideal for grammar induction (e.g., 42 vs. 200 for English).",
+        "These factors contribute to high variances of our (and previous) results (see Table 4).",
+        "Nevertheless, if we look at the more stable average accuracies, we see a positive trend as we move from a simpler fully-trained system (IFJ, 40.0%), to a more complex system (GT, 47.6%), to system combination (CS, 48.6%).",
+        "Grounding seems to be more important for the CoNLL sets, possibly because of data sparsity or availability of gold tags."
+      ]
+    },
+    {
+      "heading": "11 Related Work",
+      "text": [
+        "The surest way to avoid local optima is to craft an objective that doesn't have them.",
+        "For example, Wang et al. (2008) demonstrated a convex training method for semi-supervised dependency parsing; Lashkari and Golland (2008) introduced a convex reformulation of likelihood functions for clustering tasks; and Corlett and Penn (2010) designed",
+        "sentences) for our full networks (IFJ and GT), previous state-of-the-art systems of Spitkovsky et al. (2012b) and Marec?ek and ?Zabokrtsky?",
+        "(2012), and three-way combination with SAJ (CS, including results up to length ten).",
+        "a search algorithm for encoding decipherment problems that guarantees to quickly converge on optimal solutions.",
+        "Convexity can be ideal for comparative analyses, by eliminating dependence on initial conditions.",
+        "But for many NLP tasks, including grammar induction, the most relevant known objective functions are still riddled with local optima.",
+        "Renewed efforts to find exact solutions (Eisner, 2012; Gormley and Eisner, 2013) may be a good fit for the smaller and simpler, earlier stages of our iterative networks.",
+        "Multi-start methods (Solis and Wets, 1981) can recover certain global extrema almost surely (i.e., with probability approaching one).",
+        "Moreover, random restarts via uniform probability measures can be optimal, in a worst-case-analysis sense, with parallel processing sometimes leading to exponential speed-ups (Hu et al., 1994).",
+        "This approach is rarely emphasized in NLP literature.",
+        "For instance, Moore and Quirk (2008) demonstrated consistent, substantial gains from random restarts in statistical machine translation (but also suggested better and faster replacements ?",
+        "see below); Ravi and Knight (2009, ?5, Figure 8) found random restarts for EM to be crucial in parts-of-speech disambiguation.",
+        "However, other reviews are few and generally negative (Kim and Mooney, 2010; Martin-Brualla et al., 2010).",
+        "Iterated local search methods (Hoos and Stu?tzle, 2004; Johnson et al., 1988, inter alia) escape local basins of attraction by perturbing candidate solutions, without undoing all previous work.",
+        "?Large-step?",
+        "moves can come from jittering (Hinton and Roweis, 2003), dithering (Price et al., 2005, Ch.",
+        "2) or smoothing (Bhargava and Kondrak, 2009).",
+        "Non-improving ?sideways?",
+        "moves offer substantial help with hard satisfiability problems (Selman et al., 1992); and injecting non-random noise (Selman et al., 1994), by introducing ?uphill?",
+        "moves via mixtures of random walks and greedy search strategies, does better than random noise alone or simulated annealing (Kirkpatrick et al., 1983).",
+        "In NLP, Moore and Quirk's (2008) random walks from previous local optima were faster than uniform sampling and also increased BLEU scores; Elsner and Schudy (2009) showed that local search can outperform greedy solutions for document clustering and chat disentanglement tasks; and Mei et al. (2001) incorporated tabu search (Glover, 1989; Glover and Laguna, 1993, Ch.",
+        "3) into HMM training for ASR.",
+        "Genetic algorithms are a fusion of what's best in local search and multi-start methods (Houck et al., 1996), exploiting a problem's structure to combine valid parts of any partial solutions (Holland, 1975; Goldberg, 1989).",
+        "Evolutionary heuristics proved useful in the induction of phonotactics (Belz, 1998), text planning (Mellish et al., 1998), factored mod-eling of morphologically-rich languages (Duh and Kirchhoff, 2004) and plot induction for story generation (McIntyre and Lapata, 2010).",
+        "Multi-objective genetic algorithms (Fonseca and Fleming, 1993) can handle problems with equally important but conflicting criteria (Stadler, 1988), using Pareto-optimal ensembles.",
+        "They are especially well-suited to language, which evolves under pressures from competing (e.g., speaker, listener and learner) constraints, and have been used to model configurations of vowels and tone systems (Ke et al., 2003).",
+        "Our transform and join mechanisms also exhibit some features of genetic search, and make use of competing objec",
+        "tives: good sets of parse trees must make sense both lexicalized and with word categories, to rich and impoverished models of grammar, and for both long, complex sentences and short, simple text fragments.",
+        "This selection of text filters is a specialized case of more general ?data perturbation?",
+        "techniques ?",
+        "even cycling over randomly chosen mini-batches that partition a data set helps avoid some local optima (Liang and Klein, 2009).",
+        "Elidan et al. (2002) suggested how example-reweighing could cause ?informed?",
+        "changes, rather than arbitrary damage, to a hypothesis.",
+        "Their (adversarial) training scheme guided learning toward improved generalizations, robust against input fluctuations.",
+        "Language learning has a rich history of reweighing data via (cooperative) ?starting small?",
+        "strategies (Elman, 1993), beginning from simpler or more certain cases.",
+        "This family of techniques has met with success in semi-supervised named entity classification (Collins and Singer, 1999; Yarowsky, 1995),11 parts-of-speech induction (Clark, 2000; 2003), and language model-ing (Krueger and Dayan, 2009; Bengio et al., 2009), in addition to unsupervised parsing (Spitkovsky et al., 2009; Tu and Honavar, 2011; Cohn et al., 2011)."
+      ]
+    },
+    {
+      "heading": "12 Conclusion",
+      "text": [
+        "We proposed several simple algorithms for combining grammars and showed their usefulness in merging the outputs of iterative and static grammar induction systems.",
+        "Unlike conventional system combination methods, e.g., in machine translation (Xiao et al., 2010), ours do not require incoming models to be of similar quality to make improvements.",
+        "We exploited these properties of the combiners to reconcile grammars induced by different views of data (Blum and Mitchell, 1998).",
+        "One such view retains just the simple sentences, making it easier to recognize root words.",
+        "Another splits text into many inter-punctuation fragments, helping learn word associations.",
+        "The induced dependency trees can themselves also be viewed not only as directed structures but also as skeleton parses, facilitating the recovery of correct polarities for unlabeled dependency arcs.",
+        "By reusing templates, as in dynamic Bayesian network (DBN) frameworks (Koller and Friedman, 11The so-called Yarowsky-cautious modification of the original algorithm for unsupervised word-sense disambiguation.",
+        "2009, ?6.2.2), we managed to specify relatively ?deep?",
+        "learning architectures without sacrificing (too much) clarity or simplicity.",
+        "On a still more speculative note, we see two (admittedly, tenuous) connections to human cognition.",
+        "First, the benefits of not normalizing probabilities, when symmetrizing, might be related to human language processing through the base-rate fallacy (Bar-Hillel, 1980; Kahneman and Tversky, 1982) and the availability heuristic (Chapman, 1967; Tversky and Kahneman, 1973), since people are notoriously bad at probability (Attneave, 1953; Kahneman and Tversky, 1972; Kahneman and Tversky, 1973).",
+        "And second, intermittent ?unlearning?",
+        "?",
+        "though perhaps not of the kind that takes place inside of our transforms ?",
+        "is an adaptation that can be essential to cognitive development in general, as evidenced by neuronal pruning in mammals (Craik and Bialystok, 2006; Low and Cheng, 2006).",
+        "?Forgetful EM?",
+        "strategies that reset subsets of parameters may thus, possibly, be no less relevant to unsupervised learning than is ?partial EM,?",
+        "which only suppresses updates, other EM variants (Neal and Hinton, 1999), or ?dropout training?",
+        "(Hinton et al., 2012; Wang and Manning, 2013), which is important in supervised settings.",
+        "Future parsing models, in grammar induction, may benefit by modeling head-dependent relations separately from direction.",
+        "As frequently employed in tasks like semantic role labeling (Carreras and Ma`rquez, 2005) and relation extraction (Sun et al., 2011), it may be easier to first establish existence, before trying to understand its nature.",
+        "Other key next steps may include exploring more intelligent ways of combining systems (Surdeanu and Manning, 2010; Petrov, 2010) and automating the operator discovery process.",
+        "Furthermore, we are optimistic that both count transforms and model recombination could be usefully incorporated into sampling methods: although symmetrized models may have higher cross-entropies, hence prone to rejection in vanilla MCMC, they could work well as seeds in multi-chain designs; existing algorithms, such as MCMCMC (Geyer, 1991), which switch contents of adjacent chains running at different temperatures, may also benefit from introducing the option to combine solutions, in addition to just swapping them."
+      ]
+    },
+    {
+      "heading": "Acknowledgments",
+      "text": [
+        "We thank Yun-Hsuan Sung, for early-stage discussions on ways of extending ?baby steps,?",
+        "Elias Ponvert, for sharing all of the relevant experimental results and evaluation scripts from his work with Jason Baldridge and Katrin Erk, and the anonymous reviewers, for their helpful comments on the draft version of this paper.",
+        "Funded, in part, by Defense Advanced Research Projects Agency (DARPA) Deep Exploration and Filtering of Text (DEFT) Program, under Air Force Research Laboratory (AFRL) prime contract no.",
+        "FA8750-13-2-0040.",
+        "Any opinions, findings, and conclusion or recommendations expressed in this material are those of the authors and do not necessarily reflect the view of the DARPA, AFRL, or the US government.",
+        "Once again, the first author thanks Moofus."
+      ]
+    }
+  ]
+}

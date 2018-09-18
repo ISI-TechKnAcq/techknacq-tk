@@ -1,0 +1,206 @@
+{
+  "info": {
+    "authors": [
+      "Hyouk R. Park",
+      "Young S. Han",
+      "Kang H. Lee"
+    ],
+    "book": "International Conference on Computational Linguistics",
+    "id": "acl-C96-1087",
+    "title": "A Probabilistic Approach to Compound Noun Indexing in Korean Texts",
+    "url": "https://aclweb.org/anthology/C96-1087",
+    "year": 1996
+  },
+  "references": [],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "In this paper we address the problem of compound noun indexing that is about segmenting or decomposing compound nouns into promising index terms.",
+        "Compound nouns as index terms that usually subscribe to specific notions tend to increase the precision of retrieval performance.",
+        "The use of the component nouns of a compound noun as index terms, on the other hand, may improve the recall performance, but can decrease the precision.",
+        "Our proposed method to handle compound nouns with a goal to increase the recall while preserving the precision computes the relevance of the component nouns of a compound noun to the document content by comparing the document sets that are supported by the component nouns and the terms of the document.",
+        "The operational content of a term is represented as the probabilistic distribution of the term over the document set.",
+        "Experiments with a set of 1,000 documents show that our method gains 33% increase of retrieval performance corn-pared to the indexing method without compound noun analysis, and is as good as manual decomposition by human experts."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Automatic indexing renders a form of document representation that visualizes the content of the document more explicitly.",
+        "Indices that are carefully chosen to represent a document will bring about the improvement of retrieval performance in accuracy and time efficiency.",
+        "The potential of a candidate index is often judged on the basis of its discriminating power over a document set as well as its linguistic significance in the document.",
+        "Thus, a good index term should distinguish a certain class of documents from the rest of the documents and be relevant to the subject matters of the class of documents to be indexed by the term.",
+        "In general, automatic indexing consists of the identification of index terms and the assignment of weights to the terms (Salton 1983).",
+        "An index term can be either a simple noun or a compound noun composed of more than one simple nouns.",
+        "Compound nouns tend to carry more specific contextual information than simple nouns, thus they are likely to contribute to the retrieval precision.",
+        "Compound nouns may contain useful simple nouns that usually refer general contexts, and thus will boost the recall of retrieval.",
+        "Processing compound nouns is decomposing them into simple nouns and evaluating the simple nouns as potential index terms.",
+        "In both identifying and evaluating index terms, compound nouns require a different strategy from that for simple nouns.",
+        "The identification of compound nouns involves a certain degree of linguistic or statistical analysis that varies from simple stemming to morphological analysis (Fagan 1989).",
+        "What makes it even more complicated to handle compound nouns in Korean documents lies in the convention of writing compound nouns.",
+        "In Korean, it is allowed to write compound nouns with or without intervening blanks between constituent nouns.",
+        "Arbitrarily long compound nouns are possible and not rare in real texts.",
+        "The decomposition of a compound noun is particularly problematic because of the severe ambiguity of segmentations.",
+        "In this paper, we propose a method to identify and evaluate the candidate index terms from compound nouns.",
+        "First, each possible decomposition of a compound noun is identified.",
+        "To' see the potential of the component nouns of the decomposition, we observe how the component nouns are distributed over the total document set, and",
+        "also examine how the simple and compound nouns of the current document are distributed over the same document set.",
+        "The similarity of the two distributions implies how consistently the two term sets will behave given a query at retrieval time.",
+        "The proposed method assumes a dictionary of nouns that is automatically constructed from the document set.",
+        "This is the practice that has never been tried in Korean document indexing, but has some important merits.",
+        "A laborious work for the manual construction of nominal dictionaries is not needed.",
+        "Since the noun dictionary contains only those in a document set, the ambiguity in analyzing words is greatly reduced.",
+        "Previous researches on the problem of compound noun indexing in Korean have been done in two directions.",
+        "One approach adopts a full-scale morphological analysis to decompose a word into a sequence of the smallest morpheme units that are all treated as index terms.",
+        "The other approach tries to avoid the complexity of the full scale analysis by using bigrams as in (Fujii 1993; Lee 1996; Ogawa 1993).",
+        "Since these methods take all the components of compound nouns as index terms without evaluation, irrelevant terms can decrease retrieval precision.",
+        "Experiments on 1000 documents show that our evaluation scheme gave results closer to the human intuition and maintained the highest precision ratio of the existing methods.",
+        "In the following section, a brief review of related work on automatic indexing for Korean documents is made.",
+        "Section 3 explains the proposed method in detail.",
+        "The verification of the method through experiments is described in section 4.",
+        "Section 5 concludes the paper."
+      ]
+    },
+    {
+      "heading": "2 Related Work",
+      "text": [
+        "The previous approaches to compound noun indexing are based either on full scale morphological analysis (Karig :1995; Kim 1983; Lee 1995; Seo 1993) or on the syllabic patterns (Fujii 1993 ; Lee 1996; Ogawa 1993).",
+        "Morphological analysis will return morphologically valid component words constituting a given compound word.",
+        "Since this method does not exclude invalid or meaningless words, it can result in the degradation of precision.",
+        "Besides the employment of full morphological analysis is often too expensive and requires costly maintenance.",
+        "Simpler methods segment compound nouns mechanically into unigram or bigram words that are all regarded as index terms (Lee 1996).",
+        "Bigram indexes shows better precision than unigrams, but can suffer from big index size.",
+        "In general, the existing methods for compound noun analysis have been focused mainly on recall performance with little attention to the precision.",
+        "The work presented in this paper tries to achieve the improvement of recall without the deterioration of preci",
+        "lion."
+      ]
+    },
+    {
+      "heading": "3 Probabilistic Compound Noun Indexing",
+      "text": [
+        "In this section, we describe the algorithm to recognize and evaluate candidate index terms from compound nouns.",
+        "Figure 1 summarizes the algorithm.",
+        "The tokenizer produces a list of simple and compound nouns by utilizing the noun dictionary and the basic stemming rules.",
+        "The noun dictionary is used to identify whether a noun is simple or compound, and the basic stemming rules are used to differentiate nominal words from others such as function words and verbs.",
+        "The noun dictionary is automatically constructed from the observation on the document set.",
+        "The compound noun analyzer investigates if the components of compound nouns are appropriate as indexes.",
+        "The index terms that include simple nouns produced as a result of compound noun analysis are weighted, which finishes the indexing.",
+        "Let S and C denote the sets of simple and compound nouns, respectively.",
+        "Simple nouns are, by definition, those that do not have any of their substrings as a noun according to the dictionary.",
+        "Compound nouns are those one or more substrings of which are recognized as nouns.",
+        "Let T {'h, T2, = S U C be the set of all simple and compound nouns of a document set.",
+        "Also, let I) {Dr, 1)2i , Ddl be the set of all documents.",
+        "A document is represented as a list of",
+        "composition is a sequence of nouns (TI12 In many cases, there are more than one decomposition, but only a few of them are sensible with respect to the context of the document.",
+        "Indiscreet use of the component nouns may bring about the improvement of reall, but can lead to the significant decrease of precision.",
+        "in the following discussions, we describe the details of the algorithm to select useful component nouns from compound nouns."
+      ]
+    },
+    {
+      "heading": "3.1 Dictionary buildup",
+      "text": [
+        "It is very difficult to provide an IR system with the sufficient list of nouns.",
+        "Because the notni-nals outnumber and grow faster than other categories of words, it is more efficient to handle non-nominal words manually.",
+        "We consider building noun dictionary by identifying the remaining string as a noun after eliminating non-nominal part of a word.",
+        "The non-nominals are verbs, adverbs, adjectives, prefixes, and suffixes.",
+        "The words in non-nominal dictionaries do not include those that can also be used as nouns, which is riot a problem since unlike in English, the multi-categorial words in Korean tend to be invariant of meaning.",
+        "The non-nominal dictionaries are made usually by manual work.",
+        "Those recognized as non-nominal words but not as function words are regarded as nouns.",
+        "There can be multiple interpretations in segmenting a word clue to the ambiguity of function words as illustrated in the following example.",
+        "wencalo wencalo (reactor),",
+        "One way to deal with the problem is to use the probability of each function word and choose the one with the highest value.",
+        "More accurate measure would be made using a Hidden Markov Model that is about a stochastic process of function words.",
+        "The function words are classified into 32 groups according to their roles and position in sentences.",
+        "In particular, each segmentation of a word is evaluated as follows.",
+        "P(Ct, is the probability of the function category of current word given the category of the previous word.",
+        "P(n) is the probability of candidate noun and P(f In) is the probability of a Function word given the candidate noun.",
+        "The best sequence of these segmentations for a sentence can be obtained.",
+        "The candidate nouns a of the best sequence are then 'added to the noun dictionary."
+      ]
+    },
+    {
+      "heading": "3.2 Tokenizing and compound noun analysis",
+      "text": [
+        "Tokenizing aims at recognizing simple and compound nouns from a text and reporting them as the the final index terms.",
+        "The method for dictionary making is also used for tokenizing.",
+        "Since the dictionary making method gives a list of candidate nouns, we only need to check if a candidate is a compound noun and judge if the components of the candidate compound noun are consistent with the content of the document,.",
+        "To deal with the notion of consistency, we have to define the meaning of a. term or a set of terms.",
+        "It is a well recognized practice to regard the discriminating power of a term as the value of the term.",
+        "The quality of the discriminating power is the distribution of the term over a document set.",
+        "We define the distribution of a term as the mean• ing of the term.",
+        "Similarly the meaning of a set of terms is the distribution of terms on the document set.",
+        "Let M be the distribution of a term Ti over a document set D = Di • • • 1),, such that",
+        "One definition of A1(.)",
+        "may be as follows.",
+        "For the case of multiple terms, _ M (Irk , Di) The similarity between two terms (or sets of terms) can be defined as any of vector similarity nieasures.",
+        "The measurement of relative information of the two distributions corresponding to the two terms gives the distance between the distributions.",
+        "Given two distributions Mi and Rah for Ti and Ti respectively, the discrimination 1,0 is defined as follows 1988).",
+        "Since we want the dissimilarity between two distributions, divergence that is a symmetric version of discrimination is more appropriate for our case.",
+        "It is defined as follows (Blalta, 1988).",
+        "Figure 2 illustrates the different distributions of terms over the same document set suggesting the usefulness of the distributions as the representation of the terms.",
+        "'the divergence 14•1 gives about the information (uncertainty) of the two distributions as compared with each other, and has the following characteristics.",
+        "• The more uniform the distribution is, the larger L(.)",
+        "will be.",
+        "• The more the two distributions agree, the less 1(•) will be.",
+        "The characteristics are useful because good index terms should be less uniform and share similar contexts with other terms in a document.",
+        "In this respect, information theoretic measure is more concrete and tints possibly more accurate than vector similarity measures.",
+        "liOr each decomposition • • 0,7'. )",
+        "of a compound noun Ck, , what we want to see is how different the decomposed terms and the document, terms are.",
+        "That is, • .,13'},Dk) becomes the score or the particular decomposition.",
+        "What, we select here is one decomposition with the lowest divergence.",
+        "Letting r and r denote a decomposition and the best decomposition respectively,",
+        "The following summarizes the procedure of extracting siurple nouns front coilipOillid MMus.",
+        "1.",
+        "Remove non-nom lila!",
+        "words using the method for dictionary making.",
+        "2.",
+        "Identify compound nouns using nominal dictionary.",
+        "3.",
+        "For each decomposition Ti of a compound noun compute L(Ti 0).",
+        "4.",
+        "Select ri with the lowest 1,(ri , 1))."
+      ]
+    },
+    {
+      "heading": "3.3 Index weighting",
+      "text": [
+        "There are three well known methods for weighting index terms.",
+        "They are based on the information ()Universe document frequency, discriminaLion value, and probabilistic value (Salton 1988).",
+        "It turned out that these methods lead to similar performance, but inverse.",
+        "document frequency is by far the simplest of them in terms of tine complexity and required resources (Salton 1988; Ilarmann 1992).",
+        "-Inverse document frequency method is also shown to work with little performance variation across different domains.",
+        "For this reason, we adopted inverse document frequency in the experiments.",
+        "ft is defined as follows.",
+        "where 111isi is the weight of the term in the j'th document, is the number of occurrences of the CHI term in the document, and dfi is the number of documents in which the term occurs"
+      ]
+    },
+    {
+      "heading": "4 Experiments",
+      "text": [
+        "The goal of experiments is to validate the proposed algorithm for analyzing compound nouns by comparing it with the manual analysis and the bigram method.",
+        "The test, data set consists of 1000 science abstracts written in Korean (Nitn 1994).",
+        "All norninals are manually identified and compound nouns were decomposed into appropriate simple nouns by an expert indexer.",
+        "In the first experiment., our proposed algorithm is asked to do the same thing over the test data, and retrieval perfor • 'minces on the two different outcomes (manually indexed and automatically indexed abstracts) are compared.",
+        "In the second experiments, the performances of the proposed method and bigrairt method are compared to observe how the precision is affected.",
+        "As is shown at table 1, the portion of compound HOW'S is about 9% of total nouns found in the test set, but, can make, critical effects on the retrieval performance because often compound nouns carrying n tore specific information become a more accurate index to the documents.",
+        "Figure 3 and Table 2 summarize the performance of the indexing methods: manual analysis, the proposed probabilistic method, and the bigram method.",
+        "'['lie proposed method showed a slightly better performance (around 3% - 4%) than manual indexing or bigram indexing.",
+        "However, our method has was more efficient titan bigram indexing in terms of the number of index terms and the average number of retrieved documents per a query.",
+        "The average ambiguity of a compound noun is 1.43, and this low ambiguity must have contributed to the high agreement ratio of the proposed indexing method with manual indexing.",
+        "'Ile low ambiguity is partly attributed to the noun dictionary that has no unnecessary entries",
+        "not found at the documents."
+      ]
+    },
+    {
+      "heading": "5 Conclusion",
+      "text": [
+        "The compound analysis in automatic indexing aims at the improvement of recall performance by extracting useful component nouns from compound nouns.",
+        "The task for Korean texts requires extra efforts due to the complexity of inflections.",
+        "The proposed method gives better potential of sustaining the precision while improving the recall than other approaches by making use of probabilistic distributions of terms as the representation of meaning of the terms.",
+        "The proposed method to evaluate the components of compound nouns is unique in that it defines and uses term representation, which explains the superiority of the method to other methods.",
+        "The method requires little human involvement and is very promising for the implementation of practical systems by achieving efficiency and accuracy at the same time."
+      ]
+    }
+  ]
+}

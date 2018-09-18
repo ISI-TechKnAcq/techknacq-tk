@@ -1,0 +1,193 @@
+{
+  "info": {
+    "authors": [
+      "Hyuk-Chul Kwon",
+      "Lauri Karttunen"
+    ],
+    "book": "International Conference on Computational Linguistics",
+    "id": "acl-C94-2206",
+    "title": "Incremental Construction of a Lexical Transducer for Korean",
+    "url": "https://aclweb.org/anthology/C94-2206",
+    "year": 1994
+  },
+  "references": [
+    "acl-C92-1025",
+    "acl-J92-1003"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "The paper describes the construction of a lexical transducer for Korean that can be used for stemming and generation.",
+        "The method contains two innovations: (1) two-level rules as well-formedness constraints in the initial phase; (2) the combination of intersection and composition of rule transducers in a deep cascade for the final result."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "This paper presents an incremental construction method of a lexical transducer (LT) for Korean.",
+        "A lexical transducer, first described by Karttunen, Kaplan, and Zaenen (KKZ) (Karttunen, 1992a), is a specialized finite-state transducer (EST) that maps canonical citation forms of words and morphological categories to inflected surface forms, and vice versa.",
+        "Li's have many advantages for stemming, morphological analysis, and generation.",
+        "'They are (i) bidirectional: the same structure can be used for stemming and generation. (ii) efficient: the recognition and generation of word forms does not require the application of any morphological rules at runtime.",
+        "Ilirs for .English and French have been built at X e-Mg: PARC within a framework known as two-level morphology (Koslwrmiemi, 1983).",
+        "As described by KKZ (Karttunen, 1992a), this can be done in three steps: (i) we construct a simple finite-state automaton (LA) that defines all valid lexical forms (LFs) of the language.",
+        "A BF is a concatenation of sterns and morphemes in their canonical dictionary representation.",
+        "(ii) We describe morphological alternations by means of two-level rules(Koskenniemi, 1983; Kart-This paper was partially supported by Korean Science and Engineering Inundation.",
+        "tunen, 1993), compile the rules to finite-state transducers, and intersect them to form a single rule transducer (1-a).",
+        "(iii) We merge the LA with the HT by composition producing the LT that has on its lexical side every valid lexical form of the language and on the surface side the corresponding realization as determined by the morphological alternations of the language.",
+        "KKZ argued that for French, it was best to divide step (ii) into two stages.",
+        "A three-level description was required to give a linguistically satisfactory account of the plural formation of compound nouns.",
+        "KKZ opted for two cascading two-level rule systems that are corn-piled separately, then intersected laterally and finally composed to a single fi,`F.",
+        "The task of building a morphological analyzer for a language such as Korean or Japanese is a much higher challenge than it is for English and French.",
+        "A Korean verb may have more than fifty thousand inflected forms.",
+        "The Korean writing system (fIangul) does not consistently distinguish between single and corn-pound nouns.",
+        "Because Bangui uses syllabic characters, changes in syllable structure are directly reflected in the orthography.",
+        "Because of the complexity of the morphological alternations in Korean, it is very difficult, although not impossible in principle, to describe them in a single two-level rule system or in a system that is limited to just three levels like the K KZ system for French.",
+        "The most natural.",
+        "description of the Korean alternation is a cascade of rules of greater depth."
+      ]
+    },
+    {
+      "heading": "2 Morphological Alternations in Korean",
+      "text": [
+        "The llangal is a phonemic syllable-based script where morphological alternations that change the syllable structure of the word are reflected in the orthography (Korean Ministry of Education, 1988; Kim, 1990).",
+        "This paper uses the so-called Yale system for representing Ilangul in a Romanized form, except that we \" e-je/(word)\" which is a spacing unit of Hangul can consist, of a verb stem, several endings and postpositions.",
+        "The A.I Lab of Dept.",
+        "of Computer Science, Pusan National Univ.",
+        "has more than 50,000 \"c-jet\" generated from \"mck-ta (eat)\"",
+        "use ?AMC and oa instead of WC and wa of the Yale system because we and wa do not show that they are diphthongs, composed of Wit and c and of o and a respectively.",
+        "Examples (1) and (2) involve three simple morphological alternations: (i) the realization of a stern final p in irregular predicates as a vowel in front of vowel-initial suffixes; (ii) left-to-right vowel harmony based on partitioning of vowels into 'light' ([-Ulight]:a, 0, 0a), 'dark' and 'neutral'([-light]); (iii) the realization of a morpheme boundary as a syllable boundary or as nothing.",
+        "A syllable boundary is introduced before the last consonant of irregular p verbs/adjectives when a vowel-initial suffix follows and the p itself is realized as o if the preceding vowel is [-f-light], otherwise WU by vowel harmony.",
+        "Only some of the predicates ending in p are irregular.",
+        "En verbs that end in a vowel such as C7D71 'to give', the vowel may merge with a suffix-initial vowel to form a diphthong or it may retain its syllabic status in a two-vowel sequence.",
+        "We use \"+\" in the lexical representation to mark morpheme boundaries, \"-\" to mark syllable boundaries, \"0\" to represent deletion (surface side) and epenthesis (lexical side), and two diacritic markers {pVerbl for an irregular p verb and {-Verb), for a regular verb to represent classes of verbal sterns.",
+        "The (a) part of both (1) and (2) are lexical forms and (h) and (c) are corresponding surface words.",
+        "Because rump is an irregular p verb, the following phoneme a/c is a vowel and the preceding syllable .11M is [-light], p in (1) (a) is realized as via.",
+        "The a/c is realized as c because the preceding surface vowel 'WU is [-light].",
+        "At the same time, Wit and c are contracted into a diphthong wue which is described as the deletion of \"+\" in (a) of (1).",
+        "These two changes are linked in that one imist not be allowed to happen without the other.",
+        "Otherwise cwit-wit-e-se and CW71-7thle- s e would be generated, but only CW7l- Mlle C is grammatical.",
+        "On the other hand, in the case of the regular verb mu, both rant-c-se and the contracted variant cionc-se are acceptable.",
+        "These rules can be described easily by two-level rriorphology as follows.",
+        "(13) (i) A syllable boundary (\"-\") is introduced before a stem-final p in irregular p verbs/adjectives when a vowel-initial suffix follows.",
+        "(ii) A stern final p in irregular p verbs/adjectives is realized as a if the preceding vowel is [-i-light], otherwise W7t (iii) a/c is realized as a if the preceding vowel is [-I-light], otherwise c. (iv) (a) The morpheme boundary following irregular p verbs/adjectives is deleted fore a vowel-initial suffix and realized as syllable boundary elsewhere.",
+        "(b) The morpheme boundary in regular verbs/adjectives can be deleted or realized as a syllable boundary depending 00 context.",
+        "With the help of the Xerox two-level rule compiler ('twolc')(Karttimen, 1992b) the rules can be compiled to finite state transducers and intersected to a single transducer.",
+        "Describing such phenomena as parallel rules may be complicated because each rule /nay be a formulation of effects caused by several phonological rules.",
+        "For example, in formalizing (ii) as a two-level rule we must take into account both irregular conjugation of p verbs/adjectives and vowel harrnony.",
+        "'I'his is a not a desirable state of affairs.",
+        "We will come back to this point later."
+      ]
+    },
+    {
+      "heading": "3 Construction of a Korean Lexical Transducer(LT)",
+      "text": [
+        "The first step in the construction of a lexical transducer is to create a simple finite-state automaton for all valid lexical forms of Korean.",
+        "The lexical automaton (LA) is composed with the first set of rule transducers (WIT The resulting transducer has on its \"upper\" side, the valid lexical forms, and on the \"lower\" side, intermediate representations derived by the first set of rules.",
+        "This intermediate transducer is composed with the second set of rule transducers and the process is iterated several times.",
+        "At each stage in the process, the lexical side remains unchanged and the intermediate representations are changed by the new set of rules.",
+        "The final result is a transducer that associates the valid lexical forms with their proper surface realizations.",
+        "Conceptually this is similar to what happens in a traditional phonological derivation.",
+        "However, note that, rules apply to the lexicon as a whole rather than to individual words and the result of each application is a new transducer.",
+        "Because the intermediate levels disappear in the composition, the resulting 1,1' is equally well suited to, morphological analysis as it is for generation.",
+        "The compilation and intersection of rule transducers was done with the twolc compiler, the construction",
+        "of the LA and the compositions we carried out with the Xerox interactive finite-state calculus (`ifsm')."
+      ]
+    },
+    {
+      "heading": "3.1 Construction of Lexical Automa",
+      "text": [
+        "The ifsm-utility enabled us to assemble the LA incrementally.",
+        "The first step was to divide the total list of morphemes into sublexicons on the basis of their morphological type and to make a text file for each sublexicon.",
+        "We added diacritic markers to the edges of certain types of morphemes in order to be able to enforce morphotactic constraints on valid morpheme sequences.",
+        "Each sublexicon was compiled separately to a finite-state automaton.",
+        "The sublexicons were used to construct the LA with the help of the regular expression facility in the ifsm-toolkit.",
+        "For example, having corn-piled a simple automaton from the list of simple nouns, we could expand it to an infinite lexicon of compound nouns with the regular expression \"noun.",
+        "auto\" [# \"noun.auto\"]* This regular expression reads the noun automaton from a file and concatenates it with itself any number of times and marks the internal word boundaries with The first version of the LA was made in this way by combining sublexicons with regular operations (concatenation, union, iteration).",
+        "In order to enforce rnorphotactic constraints on the concatenation of sonic classes of suffixes, we wrote a set of'two-level rules that require or prohibit the occurrence of particular diacritics at certain suffix boundaries.",
+        "Lexical forms that do not satisfy the morphotactic constraints get eliminated in the composition with the well-formedness rules.",
+        "The diacritics themselves are realized as zero so that they are not present in the lower side of the resulting transducer.",
+        "The final form of the lexical automaton is obtained by extracting the lower-side from that transducer as a simple automaton.",
+        "We believe that this incremental method of lexicon construction is better suited to morphologically complex languages than the lexicon format commonly used in two-level morphology, In standard two-level lexicons, individual entries contain information about which sublexicon they may concatenate with.",
+        "The entire lexical structure is compiled in one step to large letter tree (Karttunen, 1993; Antworth, 1990).",
+        "Our method is more tractable in two ways.",
+        "Firstly, the lexicon can be developed and refined stepwise.",
+        "Secondly, the morphotactic rules of the language are described explicitly as the regular expressions that construct the LA in conjunction with the well-formedness constraints that eliminate certain types of concatenations.",
+        "In two-level lexicons of the standard variety, the rnorphotactic structure of the language is not described explicitly at all.",
+        "Rather, it is expressed in a very opaque and indirect way, in the sequences of links between entries and sublexicons.",
+        "Sprout argued that two-level morphology of mor-photactics leads to a somewhat inelegant model of long-distance dependencies and suggested the unfication scheme, due to Bear, as a solution (Sprout, 1992).",
+        "But unification scheme introduces additional runtime overhead.",
+        "The above approach can easily and explicitly describe the fact that \"-able\" attaches to verbs formed with the prefix \"en-\" and does not require additional runtime overhead.",
+        "We give a few examples of the difficulties in the description of Korean morpholactics.",
+        "There are two different types of endings: (i) non-final (verbal) endings for tense, modality, subject honorific or aspect, and (ii) final (verbal) endings as complementizer, nomi-nalizer and adjectivizer.",
+        "The non-final endings are placed in front of final endings and must be followed by a suffix of the second type.",
+        "(4) shows the ordering restrictions of non-final endings.",
+        "The parentheses indicate optionality.",
+        "(4) compiles to a lexicon covering 20 different compound non-final ending sequences including null.",
+        "This representation is clearly more informative than a simple listing of the members of the class.",
+        "The prohibition of \"Past+Perf-I-Will+Retro\" in (4) can not he described by an adjacency table.",
+        "In (4) we do riot need any morphotactic diacritics on the left because all non-final endings can combine with any verb arid adjective stems and the combination of non-final and final endings is controlled by the diacritics of the latter group.",
+        "(5) shows three entries in the sublexicon of final endings.",
+        "The elements in square brackets are morphotactic diacritics.",
+        "(Square brackets indicate grouping, the vertical bar marks a disjunction.)",
+        "The diacritics are deleted by well-formedness rules when the final endings are combined with other morphemes.",
+        "The diacritics on the left of nun and nun-ka shows that they can not combine with adjectives.",
+        "(5) [Verb Adj Hon I Past I Will I Perf] t a {Dec) ;",
+        "marking; \";\": the end of declaration, the meaning is the same as \"I\")",
+        "The diacritic markers {Dec), {Que} and {Con} have two roles as the feature of the morphemes and as the right-hand context,.",
+        "They remain in limit LA because they are the feature of each morpheme.",
+        "Hy concatenating the subnetworks of compound non-final endings and final endings, We get, a sublexicon of ending sequence OS shown in (6).",
+        "The.",
+        "[Verb Add diacritics indicate that non-final endings can combine with any verb stems and adjective stems.",
+        "This concatenation produces an initial lexicon of 07198 (2*20*2378-1-2378) different, sequences where 20 is the number of compound non-final endings and 2378 is the number of sequences of final endings with their morphotactic diacritics.",
+        "This set, is reduced to 7888 by a set of well-formedness rules that eliminate unwanted sequences and delete the morphot actic The composition of the initial lexicon with_ the well-formedness roles produces a transducer From which the lower side is extracted as a simple automa• ton and used in the construction of the final I,A.",
+        "Allowing nouns to freely compound with nouns creates a problem because it gives rise to many unaccept,able or unlikely compounds.",
+        "Vor example, the form curung-kola-i has five alternate analyses:",
+        "Our solution was to constrain compounding with a welformedness rule that excludes compounds with monosyllabic nouns (Kwon, 1000).",
+        "The complexity of the morphological alternations jn Korean is so high that we need an easy way to give constraints incrementally.",
+        "Our approach is a consistent and explicit way of describing morphoLactic rules including long-distance dependencies."
+      ]
+    },
+    {
+      "heading": "3.2 Composition of Lexical .A.utotnaton with Rule Transducers",
+      "text": [
+        "After constructing the Korean I,A, we derive from it, a lexical transducer by composing the LA with rule transducers (lid's) in several stages.",
+        "At, each stage the previous result is composed wit II an lid' derived by intersection from several two-level The rule sets include (i) morpheme generation rules, (ii) roles for irregular verbs/adjectives, (iii) deletion rules, (iv) vowel harmony rules and (v) contraction rules.",
+        "Morpheme generation rules give a surface realization to morphological tags, such as Past, lion(orific), etc.",
+        "Miles for irregular verbs deal with final consonants and syllabification.",
+        "Deletion rules eliminate one of two adjacent vowels on morpheme boundaries.",
+        "Vowel harmony rules realize the harnionizing archiphonemes WU as o or vril and it as a or c depending on the quality of the preceding vowel.",
+        "('ontraction rules involve the merging of adjacent, vowels to a diphthong or a single vowel as a result of the loss of the intervening syllable b011nda.ry.",
+        "Although it is possible in principle to write just one two-level rule system that describes all the alternations in parallel, it is very difficult in practice to create a rule system with that degree of complexity.",
+        "The complexity arises from the fact that, the formulation of every rule ill a two-level system depends on every rule that has some effect on the context, of the rule that, we are trying to express.",
+        "ror example, if there is a rule that, forces X to he deleted in front of a 17 mid another rule that, introduces Z between X and 'V, great care must be exercised by the rule writer to make sure that both rules are specified in a way that leaves room for the other rule to have its effect but does not, depend on it if the deletion of X and the insertion of Z, are two independent, alternations.",
+        "The portioning of rules into sets and the interleaving of intersection and composition greatly simplifies the task of creating and updating the rule system.",
+        "Rides that apply ill different environments and do not, affect each other can be compiled and intersected easily, whereas rules that involve alternations in overlapping contexts are most easily handled by placing them in different levels in the cascade.",
+        "In effect the rides are partially ordered.",
+        "Sproat also noticed that, rule interactions which may be ca,sy to state in terms of ordered rules, are often much inure difficult to state ill one two level rule system (Sproat, 1992).",
+        ":rot.",
+        "Korean, the partitioning of the rules for morphological alternations into the five sets described above appears to be the optimal choice.",
+        "Each of the rules in the Haupt( standard orthography published in March of 1988(Korean Ministry of Education, 1988) is described in the corresponding two-level rule separately in our implementation.",
+        "The order of rides takes the role of rule interactions.",
+        "In this cascade, the alternations described in section 2 as example (3) are split between three levels: (8) (i) Rides for irregular predicates: A syllable boundary is introduced before the steni-final p in irregular p verbs/adjectives when it vowel-initial suffix follows.",
+        "The following Riorplierne boundary is deleted arid p is realized as the harmonizing archiplionerne W",
+        "The intermediate level, (b), is eliminated in the cascade, thus the final lexical transducer maps (a) directly to (c)."
+      ]
+    },
+    {
+      "heading": "4 Conclusion",
+      "text": [
+        "The success of our work on Korean further underscores the point made by KKZ(Karttunen, 1992a) that the most salient property of two-level morphology is not the number of levels but the fact two-level rules describe regular relations (just like classical phonological rewrite rules) (Kaplan, 1988; Ritchie, 1992).",
+        "Consequently, it is possible to combine sets of parallel two-level rules by intersection and merge them with the lexicon and other rule systems in a cascade of compositions.",
+        "The complexities of Korean morphology make it desirable both for linguistic and computational reasons to allow for many more intermediate levels than assumed in previous works on English and French.",
+        "Regardless of the number of intervening levels, the outcome is a single lexical transducer that directly maps lexical forms to their inflected surface realizations, and vice versa.",
+        "In the construction of the lexical automaton for Korean, we have put two-level rules to a novel use as well-formedness constraints on lexical forms.",
+        "The sublexicons from which the LA is constructed contain (ha-critic marks on the outer edge that identify the type of morphological constituents that the lexicon contains.",
+        "The role of rules in the LA constructions is to enforce morphotactics and, at the same tune, to eliminate the diacritics that encode therm.",
+        "Theoretically, we can get the same IN to compose the morphotactic and phonological rules all together into one rule and compose it with the initial LA or to compose the initial LA with each rule of the mom-pholactic and phonological rules one by one in order.",
+        "Practically, the composition of all the rnorphotactic and phonological rules into one rule causes the combinatorial explosion of states.",
+        "This shows that ordered rules can be used to avoid the combinatorial explosion of states in one two level rule system too."
+      ]
+    }
+  ]
+}

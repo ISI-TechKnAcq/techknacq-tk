@@ -1,0 +1,106 @@
+{
+  "info": {
+    "authors": [
+      "Ryoji Hamabe",
+      "Kiyotaka Uchimoto",
+      "Tatsuya Kawahara",
+      "Hitoshi Isahara"
+    ],
+    "book": "International Conference on Computational Linguistics and Annual Meeting of the Association for Computational Linguistics – Poster Sessions",
+    "id": "acl-P06-2042",
+    "title": "Detection of Quotations and Inserted Clauses and Its Application to Dependency Structure Analysis in Spontaneous Japanese",
+    "url": "https://aclweb.org/anthology/P06-2042",
+    "year": 2006
+  },
+  "references": [
+    "acl-C04-1159",
+    "acl-N01-1025"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "Japanese dependency structure is usually represented by relationships between phrasal units called bunsetsus.",
+        "One of the biggest problems with dependency structure analysis in spontaneous speech is that clause boundaries are ambiguous.",
+        "This paper describes a method for detecting the boundaries of quotations and inserted clauses and that for improving the dependency accuracy by applying the detected boundaries to dependency structure analysis.",
+        "The quotations and inserted clauses are determined by using an SVM-based text chunking method that considers information on morphemes, pauses, fillers, etc.",
+        "The information on automatically analyzed dependency structure is also used to detect the beginning of the clauses.",
+        "Our evaluation experiment using Corpus of Spontaneous Japanese (CSJ) showed that the automatically estimated boundaries of quotations and inserted clauses helped to improve the accuracy of dependency structure analysis."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "The “Spontaneous Speech: Corpus and Processing Technology” project sponsored the construction of the Corpus of Spontaneous Japanese (CSJ) (Maekawa et al., 2000).",
+        "The CSJ is the biggest spontaneous speech corpus in the world, consisting of roughly 7M words with the total speech length of 700 hours, and is a collection of monologues such as academic presentations and simulated public speeches.",
+        "The CSJ includes transcriptions of the speeches as well as audio recordings of them.",
+        "Approximately one tenth of the speeches in the CSJ were manually annotated with various kinds of information such as morphemes, sentence boundaries, dependency structures, and discourse structures.",
+        "In Japanese sentences, word order is rather free, and subjects or objects are often omitted.",
+        "In Japanese, therefore, the syntactic structure of a sentence is generally represented by the relationships between phrasal units, or bunsetsus in Japanese, based on a dependency grammar, as represented in the Kyoto University text corpus (Kurohashi and Nagao, 1997).",
+        "In the same way, the syntactic structure of a sentence is represented by dependency relationships between bunsetsus in the CSJ.",
+        "For example, the sentence “",
+        "Sydney, July 2006. c�2006 Association for Computational Linguistics pendency structure analysis, such as ambiguous clause boundaries, independent bunsetsus, crossed dependencies, self-corrections, and inversions.",
+        "In this study, we address the problem of ambiguous clause boundaries in dependency structure analysis in spontaneous speech.",
+        "We treated the other problems in the same way as Shitaoka et al.",
+        "(Shitaoka et al., 2004).",
+        "For example, inversions are represented as dependency relationships going in the direction from right to left in the CSJ, and their direction was changed to that from left to right in our experiments.",
+        "In this paper, therefore, all the dependency relationships were assumed to go in the direction from left to right (Uchimoto et al., 2006).",
+        "There are several types of clause boundaries such as sentence boundaries, boundaries of quotations and inserted clauses.",
+        "In the CSJ, clause boundaries were automatically detected by using surface information (Maruyama et al., 2003), and sentence boundaries were manually selected from them (Takanashi et al., 2003).",
+        "Boundaries of quotations and inserted clauses were also defined and detected manually.",
+        "Dependency relationships between bunsetsus were annotated within sentences (Uchimoto et al., 2006).",
+        "Our definition of clause boundaries follows the definition used in the CSJ.",
+        "Shitaoka et al.",
+        "worked on automatic sentence boundary detection by using SVM-based text chunking.",
+        "However, quotations and inserted clauses were not considered.",
+        "In this paper, we focus on these problems in a context of ambiguous clause boundaries."
+      ]
+    },
+    {
+      "heading": "Quotations",
+      "text": [
+        "In written text, quotations are often bracketed by",
+        "lyze dependency structures.",
+        "This method is a two-step procedure, and the first step is preparation of a dependency matrix in which each element represents the likelihood that one bunsetsu depends on another.",
+        "The second step of the analysis is finding an optimal set of dependencies for the entire sentence.",
+        "The likelihood of dependency is represented by a probability, using a dependency probability model.",
+        "The model in this study (Uchimoto et al., 2000) takes into account not only the relationship between two bunsetsus but also the relationship between the left bunsetsu and all the bunsetsu to its right.",
+        "We implemented this model within a maximum entropy modeling framework.",
+        "The features used in the model were basically attributes related to the target two bunsetsus: attributes of a bunsetsu itself, such as character strings, parts of speech, and inflection types of a bunsetsu together with attributes between bunsetsus, such as the distance between bunsetsus, etc.",
+        "Combinations of these features were also used.",
+        "In this work, we added to the features whether there is a boundary of quotations or inserted clauses between the target bunsetsus.",
+        "If there is, the probability that the left bunsetsu depends on the right bunsetsu is estimated to be low.",
+        "In the CSJ, some bunsetsus are defined to have no modifiee.",
+        "In our experiments, we defined their dependencies as follows.",
+        "• The rightmost bunsetsu in a quotation or an inserted clause depends on the rightmost one in the sentence.",
+        "• If a sentence boundary is included in a quotation or an inserted clause, the bunsetsu to the immediate left of the boundary depends on the rightmost bunsetsu in the quotation or the inserted clause.",
+        "• Other bunsetsus that have no modifiee depend on the next one."
+      ]
+    },
+    {
+      "heading": "3.2 Detection of Quotations and Inserted Clauses",
+      "text": [
+        "We regard the problem of clause boundary detection as a text chunking task.",
+        "We used Yam-Cha (Kudo and Matsumoto, 2001) as a text chunker, which is based on Support Vector Machine (SVM).",
+        "We used the chunk labels consisting of three tags which correspond to sentence boundaries, boundaries of quotations, and boundaries of inserted clauses, respectively.",
+        "The tag for sentence",
+        "Explanation of tag Beginning of a clause End of a clause Interior of a clause (except B and E) Exterior of a clause"
+      ]
+    },
+    {
+      "heading": "Clause consisting of one bunsetsu",
+      "text": [
+        "boundaries can be either E (the rightmost bunsetsu in a sentence) or I (the others).",
+        "The tags for the boundaries of quotations and inserted clauses are shown in Table 1.",
+        "An example of chunk labels assigned to each bunsetsu in a sentence is as follows.",
+        "ex) “",
+        "(a) Results of clause boundary detection The results obtained by the method described in Section 3.2 are shown in Table 2.",
+        "The table shows five kinds of results:",
+        "• results obtained without dependency structure (in the first chunking step) • results obtained with dependency structure analyzed for the open test (in the second chunking step) • results obtained with dependency structure analyzed for the closed test (in the second chunking step) • results obtained with manually annotated dependency structure (in the second chunking step) • the rate that the ends of clauses are detected correctly",
+        "These results indicate that around 90% of quotations were detected correctly, and the boundary detection accuracy of quotations was improved by using automatically analyzed dependency structure.",
+        "We found that features (4) and (5) in Section 3.2 obtained from automatically analyzed dependency structure contributed to the improvement.",
+        "In the following example, a part of the quotation"
+      ]
+    }
+  ]
+}

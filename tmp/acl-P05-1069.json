@@ -1,0 +1,403 @@
+{
+  "info": {
+    "authors": [
+      "Christoph Tillmann",
+      "Tong Zhang"
+    ],
+    "book": "Annual Meeting of the Association for Computational Linguistics",
+    "id": "acl-P05-1069",
+    "title": "A Localized Prediction Model for Statistical Machine Translation",
+    "url": "https://aclweb.org/anthology/P05-1069",
+    "year": 2005
+  },
+  "references": [
+    "acl-N03-1017",
+    "acl-N03-2036",
+    "acl-N04-1023",
+    "acl-N04-4026",
+    "acl-P02-1040",
+    "acl-P03-1021",
+    "acl-W02-1001",
+    "acl-W02-1021",
+    "acl-W03-1002",
+    "acl-W99-0604"
+  ],
+  "sections": [
+    {
+      "text": [
+        "where the Arabic words are romanized.",
+        "The following orientation sequence is generated: o1 = N, 02 = L, 03 = N, 01 = R."
+      ]
+    },
+    {
+      "heading": "Abstract",
+      "text": [
+        "In this paper, we present a novel training method for a localized phrase-based prediction model for statistical machine translation (SMT).",
+        "The model predicts blocks with orientation to handle local phrase reordering.",
+        "We use a maximum likelihood criterion to train a log-linear block bigram model which uses real-valued features (e.g. a language model score) as well as binary features based on the block identities themselves, e.g. block bigram features.",
+        "Our training algorithm can easily handle millions of features.",
+        "The best system obtains a 18.6 % improvement over the baseline on a standard Arabic-English translation task."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "In this paper, we present a block-based model for statistical machine translation.",
+        "A block is a pair of phrases which are translations of each other.",
+        "For example, Fig. 1 shows an Arabic-English translation example that uses 4 blocks.",
+        "During decoding, we view translation as a block segmentation process, where the input sentence is segmented from left to right and the target sentence is generated from bottom to top, one block at a time.",
+        "A monotone block sequence is generated except for the possibility to swap a pair of neighbor blocks.",
+        "We use an orientation model similar to the lexicalized block reordering model in (Tillmann, 2004; Och et al., 2004): to generate a block b with orientation o relative to its predecessor block b'.",
+        "During decoding, we compute the probability P(bl , o') of a block sequence bl with orientation of as a product of block bigram probabilities:",
+        "where bz is a block and oz E I L(eft), R(ight), Neutral) I is a three-valued orientation component linked to the block b2 (the orientation o2-1 of the predecessor block is currently ignored.).",
+        "Here, the block sequence with orientation (b', ol) is generated under the restriction that the concatenated source phrases of the blocks b2 yield the input sentence.",
+        "In modeling a block sequence, we emphasize adjacent block neighbors that have Right or Left orientation.",
+        "Blocks with neutral orientation are supposed to be less strongly ’linked’ to their predecessor block and are handled separately.",
+        "During decoding, most blocks have right orientation (o = R), since the block translations are mostly monotone.",
+        "The focus of this paper is to investigate issues in discriminative training of decoder parameters.",
+        "Instead of directly minimizing error as in earlier work (Och, 2003), we decompose the decoding process into a sequence of local decision steps based on Eq.",
+        "1, and then train each local decision rule using convex optimization techniques.",
+        "The advantage of this approach is that it can easily handle a large amount of features.",
+        "Moreover, under this view, SMT becomes quite similar to sequential natural language annotation problems such as part-of-speech tagging, phrase chunking, and shallow parsing.",
+        "The paper is structured as follows: Section 2 introduces the concept of block orientation bigrams.",
+        "Section 3 describes details of the localized log-linear prediction model used in this paper.",
+        "Section 4 describes the on-line training procedure and compares it to the well known perceptron training algorithm (Collins, 2002).",
+        "Section 5 shows experimental results on an Arabic-English translation task.",
+        "Section 6 presents a final discussion."
+      ]
+    },
+    {
+      "heading": "2 Block Orientation Bigrams",
+      "text": [
+        "This section describes a phrase-based model for SMT similar to the models presented in (Koehn et al., 2003; Och et al., 1999; Tillmann and Xia, 2003).",
+        "In our paper, phrase pairs are named blocks and our model is designed to generate block sequences.",
+        "We also model the position of blocks relative to each other: this is called orientation.",
+        "To define block sequences with orientation, we define the notion of block orientation bigrams.",
+        "Starting point for collecting these bigrams is a block set",
+        "sisting of a source phrase S and a target phrase T. J is the source phrase length and I is the target phrase length.",
+        "Single source and target words are denoted by sj and ti respectively, where j = 1, • • • , J and i = 1, • • • , I.",
+        "We will also use a special single-word block set F, c F which contains only blocks for which J = I = 1.",
+        "For the experiments in this paper, the block set is the one used in (Al-Onaizan et al., 2004).",
+        "Although this is not investigated in the present paper, different blocksets may be used for computing the block statistics introduced in this paper, which may effect translation results.",
+        "For the block set F and a training sentence pair, we carry out a two-dimensional pattern matching algorithm to find adjacent matching blocks along with their position in the coordinate system defined by source and target positions (see Fig. 2).",
+        "Here, we do not insist on a consistent block coverage as one would do during decoding.",
+        "Among the matching blocks, two blocks b' and b are adjacent if the target phrases T and T' as well as the source phrases S and S' are adjacent.",
+        "b' is predecessor of block b if b' and b are adjacent and b' occurs below b.",
+        "A right adjacent successor block b is said to have right orientation o = R. A left adjacent successor block is said to have left orienta"
+      ]
+    },
+    {
+      "heading": "Local Block Orientation",
+      "text": [
+        "y axis: target",
+        "tion o = L. There are matching blocks b that have no predecessor, such a block has neutral orientation (o = N).",
+        "After matching blocks for a training sentence pair, we look for adjacent block pairs to collect block bigram orientation events c of the type c = (b', o, b).",
+        "Our model to be presented in Section 3 is used to predict a future block orientation pair (b, o) given its predecessor block history V. In Fig. 1, the following block orientation bigrams occur: (•, N, bi),(bi, L, b2),(•, N, bs),(bs, R, b4).",
+        "Collecting orientation bigrams on all parallel sentence pairs, we obtain an orientation bigram list c",
+        "Here, n �is the number of orientation bigrams in the s-th sentence pair.",
+        "The total number N of orientation bigrams N = �s=1 ns is about N = 7.8 million for our training data consisting of S = 273 000 sentence pairs.",
+        "The orientation bigram list is used for the parameter training presented in Section 3.",
+        "Ignoring the bigrams with neutral orientation N reduces the list defined in Eq.",
+        "2 to about 5.0 million orientation bigrams.",
+        "The Neutral orientation is handled separately as described in Section 5.",
+        "Using the reduced orientation bigram list, we collect unigram orientation counts No (b): how often a block occurs with a given orientation o E {L,R}.",
+        "NL(b) > 0.25 • NR (b) typically holds for blocks b involved in block swapping and the orientation model po (b) is defined as:",
+        "In order to train a block bigram orientation model as described in Section 3.2, we define a successor set 6, (b') for a block b' in the s-th training sentence pair:",
+        "The successor set ↔✍✠☛✕ is defined for each event in the list ❺❼✒ .",
+        "The average size of ↔✍✠☛✕ is ✂✆➏ successor blocks.",
+        "If we were to compute a Viterbi block alignment for a training sentence pair, each block in this block alignment would have at most ✂ successor: Blocks may have several successors, because we do not inforce any kind of consistent coverage during training.",
+        "During decoding, we generate a list of block orientation bigrams as described above.",
+        "A DP-based beam search procedure identical to the one used in (Tillmann, 2004) is used to maximize over all oriented block segmentations ✍✠✏✒ ✓ ✡✏✒ ✕.",
+        "During decoding orientation bigrams ✍✠☛✓ ◆✓ ✠✕ with left orientation are only generated if ❏➒ ✍✠✕ ➙ ➌ for the successor block ✠."
+      ]
+    },
+    {
+      "heading": "3 Localized Block Model and Discriminative Training",
+      "text": [
+        "In this section, we describe the components used to compute the block bigram probability ✛✍✠✘✓ ✡✘ ✢✠✘✣✒ ✓ ✡✘✣ ✒✕ in Eq.",
+        "1.",
+        "A block orientation pair ✍✡☛✓ ✠☛➝ ✡✓ ✠✕ is represented as a feature-vector ➞ ✍✠✓ ✡➝ ✠☛✓ ✡☛✕ ❘ ➠➡.",
+        "For a model that uses all the components defined below, ➢ is ✞.",
+        "As feature-vector components, we take the negative logarithm of some block model probabilities.",
+        "We use the term ’float’ feature for these feature-vector components (the model score is stored as a float number).",
+        "Additionally, we use binary block features.",
+        "The letters (a)-(f) refer to Table 1: Unigram Models: we compute (a) the unigram probability ✛✍✠✕ and (b) the orientation probability ✛➐ ✍✠✕.",
+        "These probabilities are simple relative frequency estimates based on unigram and unigram orientation counts derived from the data in Eq.",
+        "2.",
+        "For details see (Tillmann, 2004).",
+        "During decoding, the unigram probability is normalized by the source phrase length.",
+        "Two types of Trigram language model: (c) probability of predicting the first target word in the target clump of ✠✘ given the final two words of the target clump of ✠✘✣✒, (d) probability of predicting the rest of the words in the target clump of ✠✘.",
+        "The language model is trained on a separate corpus.",
+        "Lexical Weighting: (e) the lexical weight ✛✍S ✢ T✕ of the block ✠ ❍ ✍S✓ T✕ is computed similarly to (Koehn et al., 2003), details are given in Section 3.4.",
+        "Binary features: (f) binary features are defined using an indicator function ➞ ✍✠✓ ✠☛✕ which is ✂ if the block pair ✍✠✓ ✠☛✕ occurs more often than a given threshold ❏, e.g ❏ ❍ ➊.",
+        "Here, the orientation ✡ between"
+      ]
+    },
+    {
+      "heading": "3.1 Global Model",
+      "text": [
+        "In our linear block model, for a given source sentence s, each translation is represented as a sequence of block/orientation pairs ❚✠✏✒ ✓ ✡✏✒ } consistent with the source.",
+        "Using features such as those described above, we can parameterize the probability of such a sequence as ✌✍✠✏✒ ✓ ✡✏✒✢➧✓ s✕, where ➧ is a vector of unknown model parameters to be estimated from the training data.",
+        "We use a log-linear probability model and maximum likelihood training – the parameter ➧ is estimated by maximizing the joint likelihood over all sentences.",
+        "Denote by ➨✍s✕ the set of possible block/orientation sequences ❚✠✏✒ ✓ ✡f } that are consistent with the source sentence s, then a log-linear probability model can be represented as",
+        "where ➞ ✍✠l , o✏✕ denotes the feature vector of the corresponding block translation, and the partition function is:",
+        "A disadvantage of this approach is that the summation over ➨✍s✕ can be rather difficult to compute.",
+        "Consequently some so✒histicated approximate inference methods are needed to carry out the computation.",
+        "A detailed investigation of the global model will be left to another study.",
+        "w mode th bloc bigra probabilit a ✛✍✠✘ ✡ ◆ } ✠ ✒ ✡ ✒ in Eq.",
+        "1.",
+        "We distinguish the two cases (1 ✡ ❚◆ an (2 ✡ ❏ Orientation is modeled only in the context of immediate neighbors for blocks that have left or right or entation.",
+        "The log-linear model is defined as:"
+      ]
+    },
+    {
+      "heading": "3.2 Local Model Restrictions",
+      "text": [
+        "In the following, we consider a simplification of the direct global model in Eq.",
+        "4.",
+        "As in (Tillmann, 2004), where s is the source sentence, ➞ ✍✠✓ ✡➝ ✠☛✓ ✡☛✕ is a locally defined feature vector that depends only on the current and the previous oriented blocks ✍✠✓ ✡✕ and ✍✠☛✓ ✡☛✕.",
+        "The features were described at the beginning of the section.",
+        "The partition function is given by",
+        "The set O(b', o'; s) is a restricted set of possible successor oriented blocks that are consistent with the current block position and the source sentence s, to be described in the following paragraph.",
+        "Note that a straightforward normalization over all block orientation pairs in Eq.",
+        "5 is not feasible: there are tens of millions of possible successor blocks b (if we do not impose any restriction).",
+        "source phrase with b } The set P(b) contains the block b itself and the block target phrases of blocks in that set might differ.",
+        "To restrict the number of alternatives further, the elements of P(b) are sorted according to the unigram count N(b\") and we keep at most the top 9 blocks for each source interval s. We also use a modified alternative set F, (b), where the block b as well as the elements in the set 171(b) are single word blocks.",
+        "The partition function is computed slightly differently during training and decoding: Training: for each event (b', o, b) in a sentence pair s in Eq.",
+        "2 we compute the successor set 6, (b').",
+        "This defines a set of ’true’ block successors.",
+        "For each true successor b, we compute the alternative set P(b).",
+        "A(b', o'; s) is the union of the alternative set for each successor b.",
+        "Here, the orientation o from the true successor b is assigned to each alternative in P(b).",
+        "We obtain on the average 12.8 alternatives per training event (b', o, b) in the list ei .",
+        "Decoding: Here, each block b that matches a source interval following b' in the sentence s is a potential successor.",
+        "We simply set O(b', o'; s) = P(b).",
+        "Moreover, setting Z (b', o'; s) = 0.5 during decoding does not change performance: the list P(b) just restricts the possible target translations for a source phrase.",
+        "Under this model, the log-probability of a possible translation of a source sentence s, as in Eq.",
+        "1, can be written as In P(bi , of Iw, s) _ (7)",
+        "In the maximum-likelihood training, we find w by maximizing the sum of the log-likelihood over observed sentences, each of them has the form in Eq.",
+        "7.",
+        "Although the training methodology is similar to the global formulation given in Eq.",
+        "4, this localized version is computationally much easier to manage since the summation in the partition function Z(bi-1, of-1; s) is now over a relatively small set of candidates.",
+        "This computational advantage is the main reason that we adopt the local model in this paper."
+      ]
+    },
+    {
+      "heading": "3.3 Global versus Local Models",
+      "text": [
+        "Both the global and the localized log-linear models described in this section can be considered as maximum-entropy models, similar to those used in natural language processing, e.g. maximum-entropy models for POS tagging and shallow parsing.",
+        "In the parsing context, global models such as in Eq.",
+        "4 are sometimes referred to as conditional random field or CRF (Lafferty et al., 2001).",
+        "Although there are some arguments that indicate that this approach has some advantages over localized models such as Eq.",
+        "5, the potential improvements are relatively small, at least in NLP applications.",
+        "For SMT, the difference can be potentially more significant.",
+        "This is because in our current localized model, successor blocks of different sizes are directly compared to each other, which is intuitively not the best approach (i.e., probabilities of blocks with identical lengths are more comparable).",
+        "This issue is closely related to the phenomenon of multiple counting of events, which means that a source/target sentence pair can be decomposed into different oriented blocks in our model.",
+        "In our current training procedure, we select one as the truth, while consider the other (possibly also correct) decisions as non-truth alternatives.",
+        "In the global modeling, with appropriate normalization, this issue becomes less severe.",
+        "With this limitation in mind, the localized model proposed here is still an effective approach, as demonstrated by our experiments.",
+        "Moreover, it is simple both computationally and conceptually.",
+        "Various issues such as the ones described above can be addressed with more sophisticated modeling techniques, which we shall be left to future studies."
+      ]
+    },
+    {
+      "heading": "3.4 Lexical Weighting",
+      "text": [
+        "The lexical weight p(S I T) of the block b = (S, T) is computed similarly to (Koehn et al., 2003), but the lexical translation probability p(slt) is derived from the block set itself rather than from a word alignment, resulting in a simplified training.",
+        "The lexical weight is computed as follows: Here, the single-word-based translation probability p(sj I ti) is derived from the block set itself.",
+        "b = (sj, ti) and b' _ (sj, tk,) are single-word blocks, where source and target phrases are of length 1.",
+        "Nr, (sj, tl) is the number of blocks bk, _ (sj, tk,) for k E 1, I for which"
+      ]
+    },
+    {
+      "heading": "4 Online Training of Maximum-entropy Model",
+      "text": [
+        "The local model described in Section 3 leads to the following abstract maximum entropy training formulation: In this formulation, w is the weight vector which we want to compute.",
+        "The set Ai consists of candidate labels for the i-th training instance, with the true label y2 E O2.",
+        "The labels here are block identities , Ai corresponds to the alternative set A(b', o'; s) and the ’true’ blocks are defined by the successor set 6(b').",
+        "The vector xi j is the feature vector of the i-th instance, corresponding to label j E O2.",
+        "The symbol x is shorthand for the feature-vector .f (b, o; b', o').",
+        "This formulation is slightly different from the standard maximum entropy formulation typically encountered in NLP applications, in that we restrict the summation over a subset Ai of all labels.",
+        "Intuitively, this method favors a weight vector such that for each i, w .xi, y,i – W .xz, j is large when j z/- yz.",
+        "This effect is desirable since it tries to separate the correct classification from the incorrect alternatives.",
+        "If the problem is completely separable, then it can be shown that the computed linear separator, with appropriate regularization, achieves the largest possible separating margin.",
+        "The effect is similar to some multi-category generalizations of support vector machines (SVM).",
+        "However, Eq.",
+        "8 is more suitable for non-separable problems (which is often the case for SMT) since it directly models the conditional probability for the candidate labels.",
+        "A related method is multi-category perceptron, which explicitly finds a weight vector that separates correct labels from the incorrect ones in a mistake driven fashion (Collins, 2002).",
+        "The method works by examining one sample at a time, and makes an update w – w + (xi, y, – Xi,j) when wT (.xz, y,i – .xz,j) is not positive.",
+        "To compute the update for a training instance i, one usually pick the j such that w (.xz, y,.",
+        " – .xz,j) is the smallest.",
+        "It can be shown that if there exist weight vectors that separate the correct label yz from incorrect labels j E Ai for all j 7-L yz, then the perceptron method can find such a separator.",
+        "However, it is not entirely clear what this method does when the training data are not completely separable.",
+        "Moreover, the standard mistake bound justification does not apply when we go through the training data more than once, as typically done in practice.",
+        "In spite of some issues in its justification, the perceptron algorithm is still very attractive due to its simplicity and computational efficiency.",
+        "It also works quite well for a number of NLP applications.",
+        "In the following, we show that a simple and efficient online training procedure can also be developed for the maximum entropy formulation Eq.",
+        "8.",
+        "The proposed update rule is similar to the perceptron method but with a soft mistake-driven update rule, where the influence of each feature is weighted by the significance of its mistake.",
+        "The method is essentially a version of the so-called stochastic gradient descent method, which has been widely used in complicated stochastic optimization problems such as neural networks.",
+        "It was argued recently in (Zhang, 2004) that this method also works well for standard convex formulations of binary-classification problems including SVM and logistic regression.",
+        "Convergence bounds similar to perceptron mistake bounds can be developed, although unlike perceptron, the theory justifies the standard practice of going through the training data more than once.",
+        "In the non-separable case, the method solves a regularized version of Eq.",
+        "8, which has the statistical interpretation of estimating the conditional probability.",
+        "Consequently, it does not have the potential issues of the perceptron method which we pointed out earlier.",
+        "Due to the nature of online update, just like perceptron, this method is also very simple to implement and is scalable to large problem size.",
+        "This is important in the SMT application because we can have a huge number of training instances which we are not able to keep in memory at the same time.",
+        "In stochastic gradient descent, we examine one training instance at a time.",
+        "At the i-th instance, we derive the update rule by maximizing with respect to the term associated with the instance",
+        "exp (wT xi, y.i ) in Eq.",
+        "8.",
+        "We do a gradient descent localized to this instance as w – w – 71z a Li (w), where 71z > 0 is a parameter often referred to as the learning rate.",
+        "For Eq.",
+        "8, the update rule becomes:",
+        "exp(wT.xz �j Similar to online algorithms such as the perceptron, we apply this update rule one by one to each training instance (randomly ordered), and may go-through data points repeatedly.",
+        "Compare Eq.",
+        "9 to the perceptron update, there are two main differences, which we discuss below.",
+        "The first difference is the weighting scheme.",
+        "Instead of putting the update weight to a single (most mistaken) feature component, as in the perceptron algorithm, we use a soft-weighting scheme, with each feature component j weighted by a factor exp(wT x2j )/ EA,cAi exp(wT x2,k,).",
+        "A component j with larger w xi j gets more weight.",
+        "This effect is in principle similar to the perceptron update.",
+        "The smoothing effect in Eq.",
+        "9 is useful for non-separable problems",
+        "since it does not force an update rule that attempts to separate the data.",
+        "Each feature component gets a weight that is proportional to its conditional probability.",
+        "The second difference is the introduction of a learning rate parameter 712.",
+        "For the algorithm to converge, one should pick a decreasing learning rate.",
+        "In practice, however, it is often more convenient to select a fixed 712 = 71 for all i.",
+        "This leads to an algorithm that approximately solve a regularized version of Eq.",
+        "8.",
+        "If we go through the data repeatedly, one may also decrease the fixed learning rate by monitoring the progress made each time we go through the data.",
+        "For practical purposes, a fixed small 71 such as 71 = 10 is usually sufficient.",
+        "We typically run forty updates over the training data.",
+        "Using techniques similar to those of (Zhang, 2004), we can obtain a convergence theorem for our algorithm.",
+        "Due to the space limitation, we will not present the analysis here.",
+        "An advantage of this method over standard maximum entropy training such as GIS (generalized iterative scaling) is that it does not require us to store all the data in memory at once.",
+        "Moreover, the convergence analysis can be used to show that if na is large, we can get a very good approximate solution by going through the data only once.",
+        "This desirable property implies that the method is particularly suitable for large scale problems."
+      ]
+    },
+    {
+      "heading": "5 Experimental Results",
+      "text": [
+        "The translation system is tested on an Arabic-to-English translation task.",
+        "The training data comes from the UN news sources.",
+        "Some punctuation tokenization and some number classing are carried out on the English and the Arabic training data.",
+        "In this paper, we present results for two test sets: (1) the devtest set uses data provided by LDC, which consists of 1043 sentences with 25 889 Arabic words with 4 reference translations.",
+        "(2) the blind test set is the MT03 Arabic-English DARPA evaluation test set consisting of 663 sentences with 16 278 Arabic words with also 4 reference translations.",
+        "Experimental results are reported in Table 2: here cased BLEU results are reported on MT03 Arabic-English test set (Papineni et al., 2002).",
+        "The word casing is added as post-processing step using a statistical model (details are omitted here).",
+        "In order to speed up the parameter training we filter the original training data according to the two test sets: for each of the test sets we take all the Arabic substrings up to length 12 and filter the parallel training data to include only those training sentence pairs that contain at least one out of these phrases: the ’LDC’ training data contains about 273 thousand sentence pairs and the ’MT03’ training data contains about 230 thousand sentence pairs.",
+        "Two block sets are derived for each of the training sets using a phrase-pair selection algorithm similar to (Koehn et al., 2003; Tillmann and Xia, 2003).",
+        "These block sets also include blocks that occur only once in the training data.",
+        "Additionally, some heuristic filtering is used to increase phrase translation accuracy (Al-Onaizan et al., 2004)."
+      ]
+    },
+    {
+      "heading": "5.1 Likelihood Training Results",
+      "text": [
+        "We compare model performance with respect to the number and type of features used as well as with respect to different reordering models.",
+        "Results for 9 experiments are shown in Table 2, where the feature types are described in Table 1.",
+        "The first 5 experimental results are obtained by carrying out the likelihood training described in Section 3.",
+        "Line 1 in Table 2 shows the performance of the baseline block unigram ’MON’ model which uses two ’float’ features: the unigram probability and the boundary-word language model probability.",
+        "No block reordering is allowed for the baseline model (a monotone block sequence is generated).",
+        "The ’SWAP’ model in line 2 uses the same two features, but neighbor blocks can be swapped.",
+        "No performance increase is obtained for this model.",
+        "The ’SWAP & OR’ model uses an orientation model as described in Section 3.",
+        "Here, we obtain a small but significant improvement over the baseline model.",
+        "Line 4 shows that by including two additional ’float’ features: the lexical weighting and the language model probability of predicting the second and subsequent words of the target clump yields a further significant improvement.",
+        "Line 5 shows that including binary features and training their weights on the training data actually decreases performance.",
+        "This issue is addressed in Section 5.2.",
+        "The training is carried out as follows: the results in line 1-4 are obtained by training ’float’ weights only.",
+        "Here, the training is carried out by running only once over 10 % of the training data.",
+        "The model including the binary features is trained on the entire training data.",
+        "We obtain about 3.37 million features of the type defined in Eq.",
+        "3 by setting the threshold N = 3.",
+        "Forty iterations over the training data take about 2 hours on a single Intel machine.",
+        "Although the online algorithm does not require us to do so, our training procedure keeps the entire training data and the weight vector w in about 2 gigabytes of memory."
+      ]
+    },
+    {
+      "heading": "For blocks with neutral orientation o = N, we train",
+      "text": [
+        "a separate model that does not use the orientation model feature or the binary features.",
+        "E.g. for the results in line 5 in Table 2, the neutral model would use the features (a), (c), (d,), (c), but not (b) and (,f).",
+        "Here, the neutral model is trained on the neutral orientation bigram subsequence that is part of Eq.",
+        "2."
+      ]
+    },
+    {
+      "heading": "5.2 Modified Weight Training",
+      "text": [
+        "We implemented the following variation of the likelihood training procedure described in Section 3, where we make use of the ’LDC’ devtest set.",
+        "First, we train a model on the ’LDC’ training data using 5 float features and the binary features.",
+        "We use this model to decode"
+      ]
+    },
+    {
+      "heading": "3 ’SWAP & OR’ (a),(b),(c) 33.9 f 1.4 4 ’SWAP & OR’ (a)-(e) 37.7 f 1.5 5 ’SWAP & OR’ (a)-(f) 37.2 f 1.6 6 ’SWAP & OR’ (a)-(e) (ldc devtest) 37.8 f 1.5 7 ’SWAP & OR’ (a)-(f) (ldc devtest) 38.2 f 1.5 8 ’SWAP & OR’ (a)-(e) (mt03 test) 39.0 f 1.5 9 ’SWAP & OR’ (a)-(f) (mt03 test) 39.3 f 1.6",
+      "text": [
+        "the devtest ’LDC’ set.",
+        "During decoding, we generate a ’translation graph’ for every input sentence using a procedure similar to (Ueffing et al., 2002): a translation graph is a compact way of representing candidate translations which are close in terms of likelihood.",
+        "From the translation graph, we obtain the 1000 best translations according to the translation score.",
+        "Out of this list, we find the block sequence that generated the top BLEU-scoring target translation.",
+        "Computing the top BLEU-scoring block sequence for all the input sentences we obtain:",
+        "where N' � 9400.",
+        "Here, N' is the number of blocks needed to decode the entire devtest set.",
+        "Alternatives for each of the events in el ' are generated as described in Section 3.2.",
+        "The set of alternatives is further restricted by using only those blocks that occur in some translation in the 1000-best list.",
+        "The 5 float weights are trained on the modified training data in Eq.",
+        "10, where the training takes only a few seconds.",
+        "We then decode the ’MT03’ test set using the modified ’float’ weights.",
+        "As shown in line 4 and line 6 there is almost no change in performance between training on the original training data in Eq.",
+        "2 or on the modified training data in Eq.",
+        "10.",
+        "Line 8 shows that even when training the float weights on an event set obtained from the test data itself in a cheating experiment, we obtain only a moderate performance improvement from 37.7 to 39.0.",
+        "For the experimental results in line 7 and 9, we use the same five float weights as trained for the experiments in line 6 and 8 and keep them fixed while training the binary feature weights only.",
+        "Using the binary features leads to only a minor improvement in BLEU from 37.8 to 38.2 in line 7.",
+        "For this best model, we obtain a 18.6 % BLEU improvement over the baseline.",
+        "From our experimental results, we draw the following conclusions: (1) the translation performance is largely dominated by the ’float’ features, (2) using the same set of ’float’ features, the performance doesn’t change much when training on training, devtest, or even test data.",
+        "Although, we do not obtain a significant improvement from the use of binary features, currently, we expect the use of binary features to be a promising approach for the following reasons: • The current training does not take into account the block interaction on the sentence level.",
+        "A more accurate approximation of the global model as discussed in Section 3.1 might improve performance.",
+        "• As described in Section 3.2 and Section 5.2, for efficiency reasons alternatives are computed from source phrase matches only.",
+        "During training, more accurate local approximations for the partition function in Eq.",
+        "6 can be obtained by looking at block translations in the context of translation sequences.",
+        "This involves the computationally expensive generation of a translation graph for each training sentence pair.",
+        "This is future work.",
+        "• As mentioned in Section 1, viewing the translation process as a sequence of local discussions makes it similar to other NLP problems such as POS tagging, phrase chunking, and also statistical parsing.",
+        "This similarity may facilitate the incorporation of these approaches into our translation model."
+      ]
+    },
+    {
+      "heading": "6 Discussion and Future Work",
+      "text": [
+        "In this paper we proposed a method for discriminatively training the parameters of a block SMT decoder.",
+        "We discussed two possible approaches: global versus local.",
+        "This work focused on the latter, due to its computational advantages.",
+        "Some limitations of our approach have also been pointed out, although our experiments showed that this simple method can significantly improve the baseline model.",
+        "As far as the log-linear combination of float features is concerned, similar training procedures have been proposed in (Och, 2003).",
+        "This paper reports the use of 8",
+        "features whose parameter are trained to optimize performance in terms of different evaluation criteria, e.g. BLEU.",
+        "On the contrary, our paper shows that a significant improvement can also be obtained using a likelihood training criterion.",
+        "Our modified training procedure is related to the discriminative re-ranking procedure presented in (Shen et al., 2004).",
+        "In fact, one may view discriminative rerank-ing as a simplification of the global model we discussed, in that it restricts the number of candidate global translations to make the computation more manageable.",
+        "However, the number of possible translations is often exponential in the sentence length, while the number of candidates in a typically reranking approach is fixed.",
+        "Unless one employs an elaborated procedure, the candidate translations may also be very similar to one another, and thus do not give a good coverage of representative translations.",
+        "Therefore the reranking approach may have some severe limitations which need to be addressed.",
+        "For this reason, we think that a more principled treatment of global modeling can potentially lead to further performance improvements.",
+        "For future work, our training technique may be used to train models that handle global sentence-level reorder-ings.",
+        "This might be achieved by introducing orientation sequences over phrase types that have been used in ((Schafer and Yarowsky, 2003)).",
+        "To incorporate syntactic knowledge into the block-based model, we will examine the use of additional real-valued or binary features, e.g. features that look at whether the block phrases cross syntactic boundaries.",
+        "This can be done with only minor modifications to our training method."
+      ]
+    },
+    {
+      "heading": "Acknowledgment",
+      "text": [
+        "This work was partially supported by DARPA and monitored by SPAWAR under contract No.",
+        "N66001-99-28916.",
+        "The paper has greatly profited from suggestions by the anonymous reviewers."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,348 @@
+{
+  "info": {
+    "authors": [
+      "Yoshihiko Hayashi"
+    ],
+    "book": "International Conference on Computational Linguistics",
+    "id": "acl-C92-2100",
+    "title": "A Three-Level Revision Model for Improving Japanese Bad-Styled Expressions",
+    "url": "https://aclweb.org/anthology/C92-2100",
+    "year": 1992
+  },
+  "references": [
+    "acl-A88-1027",
+    "acl-C90-2063",
+    "acl-P91-1030"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "This paper proposes a three-level revision model for improving badly-styled Japanese expressions, especially in the field of technical communication.",
+        "The model is a mixture of the regeneration-based model and the rewriting-based model.",
+        "The first level divides long sentences, while the second level improves several badly-styled expressions with iterative partial rewriting operations.",
+        "The last level performs regeneration, in which word ordering and punctuation to reduce the reading ambiguity are currently involved.",
+        "Experimental results show that our model is effective in realizing practical revision support systems."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "It is well known that \"revision is a large part of the writing process \"Ili.",
+        "To provide computational aids for revision, several style-checkers and revision support systems have been developed121,t 31.",
+        "However, few systems have the capability of providing alternatives for the expression determined to be badly styledI41.",
+        "In addition, these systems simply show the alternative expressions, the user must rewrite the original sentence while referring to the suggested expressions.",
+        "We have developed a prototype of our sentence-level Japanese revision support system called REVISE-SI.5).",
+        "In the system, the user can improve his/her sentences by simply selecting the most appropriate alternative from the candidates that the system generates.",
+        "This paper proposes a three-level revision model for improving badly-styled Japanese expressions.",
+        "We focus on the field of technical communication.",
+        "An architecture of the revision support system based on the model is presented.",
+        "Experimental results are shown that prove the effectiveness of the prototype system and the validity of the proposed model.",
+        "2 Computational Aids to Revision 2.1 Targets of the Computational Aids Mishimal6I has summarized the key conditions for efficient technical communication via texts as follows: (1) The reader must be able to easily understand the text (Easy-understanding).",
+        "(2) The readers must be able to correctly understand the text (Correct-understanding).",
+        "(3) The contents of the text must meet the reader's purposes.",
+        "From this viewpoint, the task of revision is text rewriting or regenerating to make the original text satisfy these conditions.",
+        "The last condition is too hard to support computationally; however, the first two conditions are promising because we can apply natural language processing technologies.",
+        "Therefore, we concentrate on the first Iwo conditions in designing the computer-assisted revision system.",
+        "2.2 Revising as Regeneration or Rewriting Is there just one computational revision model which is suitable for use?",
+        ".",
+        "Two models illustrated in Fig.l are the two extremes and will give the basis for constructing a practical model: one is the Regeneration-based model (a) and the other is the Rewriting-based model (b).",
+        "The regeneration-based model is a strong model; namely, if all of its components are perfectly constructed, the output text will he understandable and contain no badly-styled expressions.",
+        "However, if sonic, component is incomplete, there is a possibility of some input text being fatally flawed.",
+        "Therefore, for this model to be practical, as a minimum, the following two major problems must be overcome: (I) The Analyzer must correctly capture the intermediate representation of the input text at a certain processing level."
+      ]
+    },
+    {
+      "heading": "ACTES DE COLING-92, NmsrrEs, 23-28 Aoiirr 1992 6 6 5 PROC. OP COLING-92, NAtsrrEs, Auc. 23-28, 1992",
+      "text": [
+        "(2) The Generator must be equipped with the complete set of prescriptive generation grammar.",
+        "The first problem is serious, especially in revision support systems, and hard to be overcome.",
+        "This is because input text may contain badly-styled expressions that prevent correct computational analyses.",
+        "Moreover, a solution to the second problem is also problematic, because no perfect sets of prescriptive generation grammar have been developed to date.",
+        "Furthermore, even if such a set could be developed, single-pass generation has been pointed out to have many drawbacks in producing optimal texts' I In spite of these problems, the regeneration-based model is crucial for offsetting the weaknesses of the rewriting-based model.",
+        "In the rewriting-based model, on the other hand, the original text is iteratively rewritten to improve each badly-styled expression that has been detected; only detected expressions are revised.",
+        "This means that the rewriting-based model is a weak but practical model.",
+        "Even if the set of revision rules is incomplete, the revision process will not destroy the original text entirely; the worst case is that the revision will be insufficient.",
+        "Moreover, if the set of revision rules successfully cover numerous badly-styled expressions, it is expected that the system can achieve good performance.",
+        "Thus, if most of the considered style improvements can be handled with this model, we should combine it with the regeneration-based model."
+      ]
+    },
+    {
+      "heading": "3 Classification of Japanese Badly-styled Expressions",
+      "text": [
+        "To investigate these issues, we have classified typical sentence-level Japanese badly-styled expressions.",
+        "The classification was mainly used examples from several books on technical writing161,171 as well as general writingI81.",
+        "Textual data from published manuals on computer systems was also investigated.",
+        "The result is briefly outlined in Table.).",
+        "The viewpoints for classification are:",
+        "(1) Whether the item affects easy-understanding or correct-understanding?",
+        "(2) In which linguistic structure does the item occur?",
+        "(3) Is the item general or peculiar to technical writing?",
+        "(4) Can the item be improved with an individual revision rule?",
+        "The investigation showed that items peculiar to technical writing mainly affect easy-understanding, while general itetns principally affect correct-understanding.",
+        "In addition, most of the items peculiar to technical writing can be improved by the application of discrete revision rules.",
+        "Fig.2 exemplifies a revision rule for a typical badly-styled expression peculiar to technical writing; the expression directs the user's actions, but the actions are described in reverse order.",
+        "We can identify most badly-styled expressions peculiar to technical writing by referring to particular partial syntactic structure patterns.",
+        "As shown in Fig.2, such patterns allow bad-styles to be detected and rewritten.",
+        "Therefore, it is valid to adopt the rewriting-based model as the center component of our model.",
+        "Type of the expression: Directing the user's operation"
+      ]
+    },
+    {
+      "heading": "Fig.2 A Partial Rewriting Operation as Structural Conversion with",
+      "text": [
+        "Lexical Operations."
+      ]
+    },
+    {
+      "heading": "4 The Three-level Revision Model and the Prototype System",
+      "text": []
+    },
+    {
+      "heading": "4.1 The Model",
+      "text": [
+        "The previous section has shown that the rewriting-based model is applicable for most of the style improvements peculiar to technical writing.",
+        "Table.",
+        "), however, shows that there are a couple of items which are poorly handled by the model.",
+        "They arc:",
+        "(a) excessively long complex sentences, and (b) ambiguous modification structures.",
+        "These items cannot be detected and corrected by the particular revision rules, because they do not have unique syntactic patterns.",
+        "These errors cannot be characterized by particular words and/or particular linguistic attributes such as, modality, tense, etc..",
+        "Thus these badly-styled expressions cannot be easily corrected with the particular structural conversion operations.",
+        "We are proposing a three-level revision model which combines the rewriting-based and regeneration-based models.",
+        "The first level is for dividing excessively long complex sentences and is based on the regeneration-based model at the morphological level.",
+        "The second level is for improving several badly-styled expressions and is based on the rewriting-based model.",
+        "The third level is for syntactic/semantic level regeneration, in which word ordering and punctuating to reduce the number of structural ambiguities arc involved.",
+        "Our model is a three-level sequential model.",
+        "Here, the order of the components has the following computational significance:",
+        "(1) As shown in 5.1, excessively long complex sentences can be identified and divided with morphological level information191.",
+        "(2) If long sentences are divided at the early stage of the total process, processing loads for the remaining operations are significantly reduced.",
+        "(3) The style improving process should precede the syntactic/semantic level regeneration process, because the regeneration process should start with a well-formed syntactic/semantic structure."
+      ]
+    },
+    {
+      "heading": "4.2 Issues in Improving Style",
+      "text": [
+        "Most style improvements can be realized by sequential application of the revision rules.",
+        "However, there are two major design issues.",
+        "One is how to feedback the result of each rewriting operation to the initially produced analysis results.",
+        "The other is the handling of structural ambiguity.",
+        "That is, if the ambiguity is not eliminated, combinatorial explosion is inevitable in many aspects of the system.",
+        "On the other hand, overall structural disambiguation is computationally expensive due to processes such as semantic analysis and context analysis.",
+        "Moreover, uniform application of these processes violates one of the basic requirements of any writing aid; that is, it is unacceptable to incur high computational costs by processing good expressions that require no revision.",
+        "We have three approaches to deal with these issues:",
+        "(1) First, we detect all of the potential had styles while accepting structural ambiguity.",
+        "Each bad style is connected to an associated partial rewriting operation specified by its pattern.",
+        "These operations are defined in a rule-base, so that the detection process is the activation of these rules.",
+        "(2) We then try to apply activated rules under an expectation-driven control strategy.",
+        "That is, the system schedules the order of rule applications using a priority that reflects how important the rewriting operation is in improving the sentence.",
+        "The scheduled application of a rule initiates the structural disambiguation of the applicable expression.",
+        "(3) During the revision process, internal data, such as that generated by morphological or syntactic analyses and by the bad-style detection process, varies as a result of the partial rewriting operations.",
+        "To avoid duplicative",
+        "Acres DE COLING-92, N66,rrus, 23-28 Aoirr 1992 66 7 Pgoc.",
+        "OF COLING-92, tskorrEs, AuG. 23-28, 1992 analysis and detection, we accurately know what has been revised, and ensure the consistency of the internal data with respect to the revision.",
+        "This scheme solves the feedback problem mentioned before."
+      ]
+    },
+    {
+      "heading": "4.3 The Architecture of the Prototype System",
+      "text": [
+        "Figure.3 shows the architecture of the prototype system REVISES based on the three-level revision model and the above design principles.",
+        "IMorphological Analyzer"
+      ]
+    },
+    {
+      "heading": "5 Generating Alternative Expressions",
+      "text": [
+        "Each component in our revision model generates alternative expressions for the user.",
+        "This section gives a brief outline of the generation of alternative expressions in each level component."
+      ]
+    },
+    {
+      "heading": "5.1 Dividing Long Sentences",
+      "text": [
+        "Before dividing a long complex sentences, first the component must decide whether the sentence should be divided or not, If the sentence is so determined, then, the component must identify the division point.",
+        "The top level clause boundary indicates the division point.",
+        "Finally the divided sentences must be generated.",
+        "These processes can be conducted with morphological level information; that is, they do not require full syntactic parsing or any semantic interpretation.",
+        "In the first step, the decision is made with a discriminate function that computes the weighted sum of the number of characters, the number of Bunsetsus and the number of predicates (verbs and adjectives), etc.. Weighting coefficients and the threshold value for decision were determined through experiments.",
+        "rFig.3 Architecture of the REVISES The Morphological Analyzer divides the sentence string into word sequences.",
+        "At this time, basic operational units (called 'Bunsetsu') are recognized.",
+        "The sentence dividing algorithm in the Sentence Dividor utilizes the result of the morphological analysis, and is outlined in 5.1.",
+        "The sentence dividing process is recursively invoked until each divided sentence satisfies some predefined condition that prevents further division.",
+        "Next, the Syntactic Analyzer finds all possible binary relations between modifier Bunsetsu and modified Bunsetsu.",
+        "The result is represented in a network called a Kakari-Uke network which represents all possible syntactic structure intensionally.",
+        "The Diagnoser, which utilizes the detection counterpart of the revision rule, finds all possible badly-styled expressions.",
+        "The result semi-fires the conversion counterpart of the associated revision rule and constructs the agenda which lists the semi-fired rule instances.",
+        "The Revision Process Controller sequences the successive execution of partial rewriting operations, and the Data Consistency Manager maintains consistency between the current sentence string and the internal data during the dynamic rewriting process.",
+        "Finally, the regeneration process is invoked to generate a sentence with less reading ambiguity.",
+        "10 *?",
+        "'1 ts WIth'igt (a) Top Level Clause Boundary U111g4 ir',5 L t.% t",
+        "The process advances while saving the result.",
+        "YVIt b'Rt /PA i) Thus the result remains, even if error occurs.",
+        "XV/9igt.",
+        "l., titstWb'R The result remains, even if error occurs.",
+        "tritHg4LisffiAL1f-TG-Ct.)< t_-6T-f-.",
+        "Because the process advances while saving the result."
+      ]
+    },
+    {
+      "heading": "Fig.4 An Example of the Sentence Division.",
+      "text": [
+        "The second step roughly analyzes the Mira-sentence connective structurel9) and produces a shallow level intermediate representation as illustrated in Fig.4(a).",
+        "The key to this process is the inter-predicates dependency relation analysis which utilizes a set of dependency rules.",
+        "These rules are based on the classification of predicate expressions (including modal, tense, aspectual suffixes) in terms of the strength in forming connective structures.",
+        "One significant point in the process is that the connective structure must not be fully disambiguated, because the main purpose of the analysis is identification of the division point; namely, there are cases where the division point can be uniquely identified, nevertheless the connective structure is ambiguous.",
+        "Regenerator AcrEs DE COUNG-92, NAtinEs, 23-28 Aoin 1992 6 6 8 PROC.",
+        "OF COLING-92, NAtcrEs, Atm.",
+        "23-28, 1992 l'he final step generates the divided sentences string by applying generation rules to the intermediate representation.",
+        "Fig.4(b) gives the generated alternatives ((b-1),(b-2)) for the example in Fig.4(a).",
+        "In the process, ordering of the divided sentences and choice of the conjunctive expression which provide cohesion between divided sentences are major considerations.",
+        "In Fig.4(a), two top level clauses are connected with a causal relation.",
+        "Thus associated conjunctive expressions (underlined in Fig.4(b)) are generated according to die alternatives in sentence ordering.",
+        "To determine which is better, contexual processing is required; however the determination is currently left to the user's selection.",
+        "5,2 Rewriting through Partial Structural"
+      ]
+    },
+    {
+      "heading": "Conversions",
+      "text": [
+        "Main stream of the algorithm in style improvement component is summarized in Fig.5.",
+        "The rest of this subsection briefly introduces topics in each step (details are given in [51).",
+        "Detect all Possible Bad-styled Expression ; Construct the Agenda and the Revision Process Manager ; while (T) do Select an unmarked rule instance with the highest priority from the agenda ; if there is no such rule instance then break ; Test its presupposition ; if the presupposition holds then [ Apply the associated partial rewriting operation ; if the operation succeeds then Analyze the difference and maintain data consistency ; ) Mark the instance as \"done\" ; end while ; Fig.5 Main Stream of the Algorithm in Style Improvement Component."
+      ]
+    },
+    {
+      "heading": "Detection of Badly-styled Expressions",
+      "text": [
+        "The Diagnoser detects badly-styled expressions from the Kakari-Uke network which contains all detectable syntactic structures.",
+        "The process is the semi-firing of the partial rewriting rules, because each detected badly-styled expression is associated with a rewriting rule specified by the type of the bad-style pattern.",
+        "'Semifiring' means that some of the focused rules are deactivated later in response to on-demand structural disambiguation or partial rewriting.",
+        "From the computational viewpoint, the detection process should be regarded as a sort of feature extraction process.",
+        "This allows the diagnosis process to he realized as an interpretation of the data-flow network; namely, the terminal node finally activated indicate which associated badly-styled expression has been detected and node own data provides justification.",
+        "Constructing Agenda and Revision Process Manager The rules semi-fired through the process described in the previous section are instantiated based on their justifications.",
+        "The instances are then placed on the agenda.",
+        "These justifications specify the partial syntactic structures concerned with the detection patterns.",
+        "Therefore, these are presuppositions to the application of the associated rewriting operations.",
+        "A justification is represented as a conjunction of predicates for modification relations between two Bunsetsus (called the Kakari-Uke condition) and predicate on the Bunsetsu properties (called the Bunsetsu property condition).",
+        "For instance, the conjunctive formula stated below is the justification of the detection pattern shown in Fig.2.",
+        "-,direct.ive(Z) A modity(X,Y) A moclify(Y,Z) The literal of the formula is called a primitive condition.",
+        "Literals must be treated as a sort of assumption, because all of them have the possibility of becoming unsatisfied due to structural disambiguation and/or partial rewriting operations.",
+        "The Revision Process Manager for managing the presuppositions is constructed at the same time as the agenda.",
+        "It holds a list of Bunsetsu property conditions and a list of the Kakari-Uke conditions.",
+        "The data structure is suitable for managing all presuppositions systematically because rule instances that share the same primitive condition are immediately found through a data slot which is indexed by the primitive conditions, and contains pointers to the rule instances.",
+        "Eva:lotion-Driven Control and On-deinand Disambiguation The priorities preassigned to the instances on the agenda sequence the successive application of partial rewriting operations within the revision process.",
+        "That is, important rewriting operations are assigned high priority values, and are scheduled to for earlier application, even if their presuppositions are not confirmed prior to their application.",
+        "To actually apply a scheduled rewriting operation, its presupposition is tested first.",
+        "At this time, the Disamhiguator which involves the application of heuristic disambiguation rules and/or user-interactions is invoked, and the minimum range of structural ambiguities is resolved in expectation of applying the scheduled rewriting operation.",
+        "If the presupposition is confirmed to be satisfied, the associated partial rewriting operation is applied.",
+        "Before commencing any partial rewriting operation, a sub-network concerned with scope of the rewriting is first extracted from the Kakari-Uke network according to the given scope name such as 'simple sentence' and 'noun phrase', etc.. Second, the extracted sub-network is converted into a set of dependency trees, wherein each element is an explicitly represented possible syntactic structure.",
+        "Third, the partial rewriting rule defined by the structural conversion with the lexical operations is applied to the trees.",
+        "Alternative expressions are generated from rule application.",
+        "A partial rewriting operation is completed by user selection or rejection of the generated expressions.",
+        "The partial dependency trees giving the selected partial expression are then converted to the sub-network again, and restored in the Kakari-Uke network.",
+        "This process is iterated until the agenda has no more applicable rule instances.",
+        "Because the structural disambiguation and the partial rewriting operations affect internal data, the system must maintain the consistency of internal data whenever these operations are invoked.",
+        "Brand-new information may be obtained as a result of the invoked operations, i.e., the acceptance/rejection of some modification or the change of some Bunsetsu structure.",
+        "The new information can be considered as newly added constraints so that data consistency can be maintained by propagating these constraints to the dependent internal data.",
+        "For instance, if the Revision Process Manager is notified by the Difference Analyzer that a particular Bunsetsu no longer has a certain property according to a particular partial rewriting operation, the rule instances which share the condition are immediately deactivated.",
+        "Another typical example of the constraint propagation is created by structural disambiguation.",
+        "If some Kakari-Uke relation is confirmed by the Disambiguator, exclusive Kakari-Uke relations are rejected at this time.",
+        "This causes the deactivation of the rule instances which have these rejected Kakari-Uke relations as their primitive conditions."
+      ]
+    },
+    {
+      "heading": "5.3 Word Ordering and Punctuating as Regeneration",
+      "text": [
+        "Appropriate word ordering and punctuating help reduce the ambiguity in reading.",
+        "Furthermore, it increases readability.",
+        "In Japanese, however, word order is relatively free at the sentence constituent level and there are no strict grammatical restrictions on punctuation.",
+        "Thus optimal word order and punctuation can not be decided only with syntactic information; reading and writing preferences must be considered.",
+        "Our regeneration algorithm takes the syntactic structure (dependency tree structure) as its input and regenerates a new syntactic structure with less reading ambiguities.",
+        "The algorithm employs the following heuristics based on the preferences in word orderings 101:",
+        "(1) Constituents which include the thematic marker (post position 'ha') are put at the head of the sentence, and punctuation marks are put after them.",
+        "(2) Punctuation marks are placed on clause boundaries.",
+        "(3) Heavier constituents (containing more Bunsetsus) are made to precede light constituents on the same syntactic level.",
+        "The algorithm first determines the constituent which includes the thematic marker.",
+        "The constituent is positioned at the head of the sentence and a punctuation marker (Japanese comma) follows it.",
+        "Next, the punctuating mark is added to the Bunsetsu which indicates the top level clause boundary.",
+        "Then, at each syntactic level, constituents are sorted by their weight.",
+        "Of course, the initially located constituents that include thematic markers are not moved by this constituent sorting operation.",
+        "Finally, if the regenerated sentence string differs from the original, it is submitted for user confirmation.",
+        "Figure.6 gives an example.",
+        "In this example, B2 is the Bunsetsu that contains the thematic marker and B5 indicates the top-level clause boundary.",
+        "According to the regeneration algorithm, the segment (131-1132) is placed at the head of the sentence and the Japanese comma is added.",
+        "The segment (134-135) precedes segment (133) because of its weight (two Bunsetsus) and another comma is added."
+      ]
+    },
+    {
+      "heading": "6 Evaluation",
+      "text": [
+        "An evaluation experiment to show the effectiveness of the prototype system and the validity of the proposed revision model was made by using 113 sentences taken from published manuals and constructed examples.",
+        "The points for evaluation were how much the the system contributes to easy-understanding and correct-understanding."
+      ]
+    },
+    {
+      "heading": "6.1 Readability",
+      "text": [
+        "There is no established way to evaluate understandability of texts.",
+        "In this paper, we treated understandability as roughly equivalent to readability, because readability is encompassed by understandability.",
+        "The readability measure used in the experiment was proposed by Tateishi,etall11) for Japanese texts.",
+        "The method computes the readability with the following formula which utilizes surface level information.",
+        "The term RS' indicates the readability; higher values indicate the text is more readable.",
+        "The coefficients were determined through statistical analyses to normalize the mean value to 50 and the standard deviation to 10.",
+        "RS' = -0.12 x Is - 1.37 x la + 7.4 x - 23.18 x lc - 5.4 x lk -4.67 x cp + 115.79 These terms are, Is: length of the sentences, la:mean length of alphabetical characters run, lh: mean length of Hiragana characters run, lc: mean length of Kanji character runs, lk: mean length of Katakana character runs, cp: mean number of commas per sentence.",
+        "The system increased the RS' value by 42.5 to 49.0.",
+        "This means that the readability was increased by the system.",
+        "Sentence division and punctuation were the main contributors to this improvement."
+      ]
+    },
+    {
+      "heading": "6.2 Structural Ambiguity",
+      "text": [
+        "It is also difficult to quantitatively estimate correct-understanding.",
+        "In this paper, we estimate the level of correct-understanding from the structural ambiguity, because structurally ambiguous sentences/expressions Acres DE COLING-92, NANIES, 23-28 Aoirr 1992 6 7 0 Paoc.",
+        "OF COLING-92, NAnn-Es, Atm.",
+        "23-28, 1992 obviously degrade correct-understanding.",
+        "However, measuring systernatic[121 or reading ambiguity with algorithms is still a difficult problem.",
+        "Thus we use computational ambiguity to approximate systematic ambiguity.",
+        "'the Japanese dependency structure analyzer developed by Shirai1131 was used for this purpose.",
+        "The original texts led to 18.4 analyses per sentence on average.",
+        "After the texts were corrected by the prototype system, only 7.9 analyses were produced.",
+        "This means that the system successfully reduced the amount of structural ambiguity.",
+        "The major contributors to this improvement were sentence division and word ordering.",
+        "Style improvements leading to drastic changes in the syntactic structure also contributed to this improvement.",
+        "Incidentally, after revision, only 4.9 possible syntactic structures remained per sentence on average within the internal data of the system.",
+        "This is a fair bit less than the result from the reanalysis of the revised text.",
+        "Thus where the revised text is processed further (for instance, translation, summarization), the use of the internal data will help to reduce the effect of disambiguations on the remaining processes."
+      ]
+    },
+    {
+      "heading": "6.3 Validity of the Model",
+      "text": [
+        "The validity of the proposed revision model was not directly evaluated in the experiments.",
+        "However, the validity of the component order is evident, because structural ambiguity is continuously reduced with each processing step.",
+        "If the style improvement component preceded the sentence division component, the structural conversion processes to improve the badly-styled expressions would handle numerous fruitless syntactic structures and generate too many inappropriate alternative expressions.",
+        "Moreover, if the syntactic/semantic regeneration component preceded the style improvement component, each structural conversion rule would be constructed as to preserve the word order and punctuation marks; this would affect the writability of the rules."
+      ]
+    },
+    {
+      "heading": "7 Concluding Remarks",
+      "text": [
+        "This paper has proposed a three-level revision model for improving badly-styled Japanese expressions and introduced a prototype revision support system based on the model.",
+        "Experimental results show that the system successfully improves the readability of texts and reduces the contained structural ambiguities.",
+        "The three-level model effectively realizes a practical revision support system.",
+        "However, a remaining requirement from the real technical writing field is that expert knowledge from technical writers should be accumulated to cover a wider variety of badly-styled expressions.",
+        "In addition, contextual information must be handled, both for providing contextually adequate alternative expressions and for improving contextually-poor expressions and rhetorical structures.",
+        "The proposed model and the prototype system as its embodiment, will give a powerful foundation to some other applications, including intellectual tutoring systems and pre-editing systems for machine-translation."
+      ]
+    },
+    {
+      "heading": "Acknowledgments",
+      "text": [
+        "The author wishes to extend his gratitude to Gen-ichiro Kikui, who developed the rewriting rule application mechanism and to Eiji Takeishi, for his contributions in developing the sentence division module.",
+        "Thanks are also due to the members of the Message Processing Systems Laboratory for their helpful discussions."
+      ]
+    }
+  ]
+}

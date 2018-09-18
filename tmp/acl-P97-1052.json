@@ -1,0 +1,222 @@
+{
+  "info": {
+    "authors": [
+      "Josef van Genabith",
+      "Richard Crouch"
+    ],
+    "book": "Annual Meeting of the Association for Computational Linguistics",
+    "id": "acl-P97-1052",
+    "title": "On Interpreting F-Structures as UDRSs",
+    "url": "https://aclweb.org/anthology/P97-1052",
+    "year": 1997
+  },
+  "references": [
+    "acl-C96-1045",
+    "acl-E93-1047",
+    "acl-E95-1001",
+    "acl-P92-1005"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "We describe a method for interpreting abstract flat syntactic representations, LFG f-structures, as underspecified semantic representations, here Underspecified Discourse Representation Structures (UDRSs).",
+        "The method establishes a one-to-one correspondence between subsets of the LFG and UDRS formalisms.",
+        "It provides a model theoretic interpretation and an inferential component which operates directly on underspecified representations for f-structures through the translation images of f-structures as UDRSs."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Lexical Functional Grammar (LFG) f-structures (Kaplan and Bresnan, 1982; Dalrymple et al., 1995a) are attribute-value matrices representing high level syntactic information abstracting away from the particulars of surface realization such as word order or inflection while capturing underlying generalizations.",
+        "Although f-structures are first and foremost syntactic representations they do encode some semantic information, namely basic predicate argument structure in the semantic form value of the PRED attribute.",
+        "Previous approaches to providing semantic components for LFGs concentrated on providing schemas for relating (or translating) 1 structures (in)to sets of disambiguated semantic representations which are then interpreted model theoretically (Halvorsen, 1983; Halvorsen and Kaplan, 1988; Fenstad et al., 1987; Wedekind and Kaplan, 1993; Dalrymple et al., 1996).",
+        "More recently, (Genabith and Crouch, 1996) presented a method for providing a direct and underspecified interpretation of f-structures by interpreting them as quasi-logical forms (QLFs) (Alshawi and Crouch, 1992).",
+        "The approach was prompted by striking structural similarities between f-structure",
+        "both of which are flat representations which allow underspecification of e.g. the scope of quantifica-tional NPs.",
+        "In this companion paper we show that f-structures are just as easily interpretable as UDRSs (Reyle, 1993; Reyle, 1995): We do this in terms of a translation function T from f-structures to UDRSs.",
+        "The recursive part of the definition states that the translation of an f-structure is simply the union of the translation of its component parts:",
+        "While there certainly is difference in approach and emphasis between f-structures, QLFs and UDRSs",
+        "the motivation for flat (underspecified) representations in each case is computational.",
+        "The details of the LFG and UDRT formalisms are described at length elsewhere: here we briefly present the very basics of the UDRS formalism; we define a language of wff-s (well-formed f-structures); we define a mapping r from f-structures to UDRSs together with a reverse mapping r-1 and we show correctness with respect to an independent semantics (Dalrymple et al., 1996).",
+        "Finally, unlike QLF the UDRS formalism comes equipped with an inference mechanism which operates directly on the underspecified representations without the need of considering cases.",
+        "We illustrate our approach with a simple example involving the UDRS deduction component (see also (KOnig and Reyle, 1996) where amongst other things the possibility of direct deductions on f-structures is discussed)."
+      ]
+    },
+    {
+      "heading": "2 Underspecified Discourse Representation Structures",
+      "text": [
+        "In standard DRT (Kamp and Reyle, 1993) scope relations between quantificational structures and operators are unambiguously specified in terms of the structure and nesting of boxes.",
+        "UDRT (Reyle, 1993; Reyle, 1995) allows partial specifications of scope relations.",
+        "Textual definitions of UDRSs are based on a labeling (indexing) of DRS conditions and a statement of a partial ordering relation between the labels.",
+        "The language of UDRSs is based on a set L of labels, a set Ref of discourse referents and a set Rel of relation symbols.",
+        "It features two types of conditions:'",
+        "UDRSs are pairs of a set of type 2 conditions with a set of type 1 conditions:",
+        "• A UDRS K is a pair (C, C) where C = (L,<) is an upper semi-lattice of labels and C a set of conditions of type 1 above such that if /i : E",
+        "1 The definition abstracts away from some of the complexities in the full definitions of the UDRS language (Reyle, 1993).",
+        "The full language also contains type 1 conditions of the form 1 : cr(li , ,1„) indicating that (Ii,.. ,ln) are contributed by a single sentence etc.",
+        "The construction of UDRSs, in particular the specification of the partial ordering between labeled conditions in r, is constrained by a set of meta-level constraints (principles).",
+        "They ensure, e.g., that verbs are subordinated with respect to their scope inducing arguments, that scope sensitive elements obey the restrictions postulated by whatever syntactic theory is adopted, that potential antecedents are scoped with respect to their anaphoric potential etc.",
+        "Below we list the basic cases:",
+        "• Clause Boundedness: the scope of genuinely quantificational structures is clause bounded.",
+        "If lq and /ei are the labels associated with the quantificational structure and the containing clause, respectively, then the constraint lq <1,1 enforces clause boundedness.",
+        "• Scope of Indefinites: indefinites labeled 12 may take arbitrarily wide scope in the representation.",
+        "They cannot exceed the top-level DRS IT , i.e. l < 1-r. • Proper Names: proper names, 7r, always end up in the top-level DRS, IT.",
+        "This is specified lexically by 1-r : 71\" The semantics is defined in terms of disambiguations 6.",
+        "It takes its cue from the definition of the consequence relation; in the most recent version (Reyle, 1995) with correlated disambiguations 81 ve (re co, )",
+        "resulting in a conjunctive interpretation of a goal UDRS.3 In contrast to other proof systems the UDRS proof systems (Reyle, 1993; Reyle, 1995; KOnig and Reyle, 1996) operate directly on underspecified representations avoiding (whenever possible) the need to consider disambiguated cases.4"
+      ]
+    },
+    {
+      "heading": "3 A language of well-formed",
+      "text": []
+    },
+    {
+      "heading": "f-structures",
+      "text": [
+        "The language of wff-s (well-formed f-structures) is defined below.",
+        "The basic vocabulary consists of five disjoint sets: GF, (subcategorizable grammatical functions), GF„ (non-subcategorizable grammatical functions), SF (semantic forms), ATR (attributes) and ATOM (atomic values):",
+        "• GF, = {SUB.",
+        "], OBJ, COMP, XCOMP, ...} • GF„,= {ADJUNCTS, RELMODS, ...} • SF = {coach() , support (I SUBJ, 1 OBJ), ...} • ATR= {SPEC, NUM, PER, GEN ...} • ATOM = {a, some, every, most, .",
+        ".",
+        ", SG, PL, The formation rules pivot on the semantic form PRED values.",
+        "• if 11() E SF then [FRED il() E wff-s • if (pilL • • , (pnll E wff-s and Ha",
+        "_rn COn ii where for any two substructures OLII and Op occurring in gji, 1 m except possibly where =-=-- 0-5",
+        "• if a E ATR, v E ATOM, ça E wff-s where son is of the form [PIED 11 and a fl E wff-s",
+        "The side condition in the second clause ensures that only identical substructures can have identical tags.",
+        "Tags are used to represent reentrancies and will often appear vacuously.",
+        "The definition captures f-structures that are complete, coherent and consistent .6"
+      ]
+    },
+    {
+      "heading": "4 An f-structure – UDRS return trip",
+      "text": [
+        "In order to illustrate the basic idea we will first give a simplified graphical definition of the translation r from f-structures to UDRSs.",
+        "The full textual definitions are given in the appendix.",
+        "The (U)DRT construction principles distinguish between genuinely 5Where E denotes syntactic identity modulo permutation of attribute-value pairs.",
+        "6Proof: simple induction on the formation rules for wif-s using the definitions of completeness, coherence and consistency (Kaplan and Bresnan, 1982).",
+        "Because of lack of space here we can not consider non-subcategorizable grammatical functions.",
+        "For a treatment of those in a QLF-style interpretation see (Genabith and Crouch, 1996).",
+        "The notions of substructure occurring in an f-structure and dom(co) can easily be spelled out formally.",
+        "The definition given above uses textual representations of f-structures.",
+        "It can easily be recast in terms of hierarchical sets, finite functions, directed graphs etc.",
+        "quantificational NPs and indefinite NPs.7 Accordingly we have",
+        "The formulation of the reverse translation r-1 from UDRSs back into f-structures depends on a map between argument positions in UDRS predicates and grammatical functions in LFG semantic forms:",
+        "This is, of course, the province of lexical mapping theories (LMTs).",
+        "For our present purposes it will be sufficient to assume a lexically specified mapping.",
+        "'Proper names are dealt with in the full definitions in the appendix.",
+        "If the lexical map between argument positions in UDRS predicates and grammatical functions in LFG semantic forms is a function it can be shown that for all co E wff-s:",
+        "Proof is by induction on the complexity of co.",
+        "This establishes a one-to-one correspondence between subsets of the UDRS and LFG formalism.",
+        "Note that 7-1 is a partial function on UDRS representations.",
+        "The reason is that in addition to full underspecification UDRT allows partial underspecification of scope for which there is no correlate in the original LFG f-structure formalism."
+      ]
+    },
+    {
+      "heading": "5 Correctness of the Translation",
+      "text": [
+        "A correctness criterion for the translation can be defined in terms of preservation of truth with respect to an independent semantics.",
+        "Here we show correctness with respect to the linear logic (a)8 based LFG semantics of (Dalrymple et al., 1996): NV)] fr(V)1 Correctness is with respect to (sets of) disambiguations and truth.9",
+        "where (5 is the UDRS disambiguation and F-11 the linear logic consequence relation.",
+        "Without going into details (5 works by adding subordination constraints turning partial into total orders.",
+        "In the absence of scope constraintsl° for a UDRS with n quantificational structures Q (that is including indefinites) this results in n!",
+        "scope readings, as required.",
+        "Linear logic deductions 1-11 produce scopings in terms of the order 8 The notation a(p) is in analogy with the LFG u - projection and here refers to the set of linear logic meaning constructors associated with (p. 8 This is because the original semantics in (Dalrymple et al., 1996) is neither underspecified nor dynamic.",
+        "See e.g. (Genabith and Crouch, 1997) for a dynamic and underspecified version of a linear logic based semantics.",
+        "\"Here we need to drop the clause boundedness constraint.",
+        "in which premises are consumed in a proof.",
+        "Again, in the absence of scope constraints this results in n!",
+        "scopings for n quantifiers Q.",
+        "Everything else being equal, this establishes correctness with respect to sets of disambiguations."
+      ]
+    },
+    {
+      "heading": "6 A Worked Example",
+      "text": [
+        "We illustrate our approach in terms of a simple example inference.",
+        "The translations below are obtained with the full definitions in the appendix.",
+        "El Every coach supported a player.",
+        "Smith is a coach.",
+        "Smith supported a player.",
+        "Premise 11 is ambiguous between an wide scope and a narrow scope reading of the indefinite NP.",
+        "and p we can conclude LI which is not ambiguous.",
+        "Assume that the following (simplified) f-structures (4, Op and 1j1 are associated with IA , Ei and LI respectively:",
+        "the graphical representation of which is given in Figure 1 (on the previous page).",
+        "For 03 we get",
+        "In the calculus of (Reyle, 1995) we obtain the UDRS /Co associated with the conclusion in terms of an application of the rule of detachment (DET):",
+        "which turns out to be the translation image under r of the f-structure l associated with the conclusion II .11 Summarizing we have that indeed: T ) r T T T e which given that T is correct does come as too much of a surprise.",
+        "The possibility of defining deduction rules directly on f-structures is discussed in (KOnig and Reyle, 1996).",
+        "\"Note that the conclusion UDRS K11 can be \"collapsed\" into the fully specified DRS"
+      ]
+    },
+    {
+      "heading": "7 Conclusion and Further Work",
+      "text": [
+        "In the present paper we have interpreted f-structures as UDRSs and illustrated with a simple example how the deductive mechanisms of UDRT can be exploited in the interpretation.",
+        "(KOnig and Reyle, 1996) amongst other things further explores this issue and proposes direct deduction on LFG f-structures.",
+        "We have formulated a reverse translation from UDRSs back into f-structures and established a one-to-one correspondence between subsets of the LFG and UDRT formalisms.",
+        "As it stands, however, the level of f-structure representation does not express the full range of subordination constraints available in UDRT.",
+        "In this paper we have covered the most basic parts, the easy bits.",
+        "The method has to be extended to a more extensive fragment to prove (or disprove) its mettle.",
+        "The UDRT and QLF (Genabith and Crouch, 1996) interpretations of f-structures invite comparison of the two semantic formalisms.",
+        "Without being able to go into any great detail, QLF and UDRT both provide underspecified semantics for ambiguous representations A in terms of sets en} of fully disambiguated representations ei which can be obtained from A.",
+        "For a simple core fragment (disregarding dynamic effects, wrinkles of the UDRS and QLF disambiguation operations D. and 7,5 etc.)",
+        "everything else being equal, for a given sentence S with associated QLF and UDRS representations Aq and Au, respectively, we have that Dq(Aq) = fo, , } and Du(Au) = , • • • , eun} and pairwise DI] = [[en for 1 < i < n and E Dq(Aq) and 014 E Du(Au).",
+        "That is the QLF and UDRT semantics coincide with respect to truth conditions of representations in corresponding sets of disambiguations.",
+        "This said, however, they differ with respect to the semantics assigned to the underspecified representations Aq and Au.",
+        "[[Aq]] is defined in terms of a supervaluation construction over .",
+        ", 0,} (Alshawi and Crouch, 1992) resulting in the three-valued:",
+        "The UDRT semantics is defined classically and takes its cue from the definition of the semantic consequence relation for UDRS.",
+        "In (Reyle, 1995): vsl(r°1 A\") (where E6' = E D(E)) which implies that a goal UDRS is interpreted conjunctively: lAul95 = 1 if for all eti` E V(A), [0:195 = 1 16,495 = 0 otherwise while the definition in (Reyle, 1993): V61 Rbj (F6' A63) results in a disjunctive interpretation:",
+        "It is easy to see that the UDRS semantics [ou195 and [0493 each cover the two opposite ends of the QLF semantics [od: lot195 covers definite truth while 1°,4193 covers definite falsity.",
+        "On a final note, the remarkable correspondence between LFG f-structure and UDRT and QLF representations (the latter two arguably being the major recent underspecified semantic representation formalisms) provides further independent motivation for a level of representation similar to LFG f-structure which antedates its underspecified semantic cousins by more than a decade."
+      ]
+    },
+    {
+      "heading": "8 Appendix",
+      "text": [
+        "We now define a translation 7 from f-structures to UDRSs.",
+        "The (U)DRT construction principles distinguish between genuinely quantificational NPs, indefinite NPs and proper names.",
+        "Accordingly we have",
+        "• 711 flu : xu,/u : n(xo), < IT, /[1.",
+        "< 1 • 70([pRED no II ) := 1/T : xo : n(x El ), < IT}",
+        "The first clause defines the recursive part of the translation function and states that the translation of an f-structure is simply the union of the translations of its component parts.",
+        "The base cases of the definition are provided by the three remaining clauses.",
+        "They correspond directly to the construction principles discussed in section 2.",
+        "The first one deals with genuinely quantificational NPs, the second one with indefinites and the third one with proper names.",
+        "Note that the definitions ensure clause boundedness of quantificational NPs < , allow indefinites to take arbitrary wide scope• {1 II </T] and assign proper names to the top level of the resulting UDRS {1-,- : xi] , IT : II(x0)) as required.",
+        "The indices are our bookkeeping devices for label and variable management.",
+        "F-structure reen-trancies are handled correctly without further stipulation.",
+        "Atomic attribute-value pairs can be included as unary definite relations.",
+        "For the reverse mapping assume a consistent UDRS labeling (e.g. as provided by the T mapping) and a lexically specified mapping between subcategorizable grammatical functions in LFG semantic form and argument positions in the corresponding UDRT predicates:",
+        "The scaffolding which allows us to (re)construct a f-structure from a UDRS is provided by UDRS subordination constraints and variables occurring in UDRS conditions.12 The translation recurses on the semantic contributions of verbs.",
+        "To translate a UDRS K = (L,C) merge the structural with the content constraints into the equivalent K' = U C. Define a function a (\"dependents\") on referents, labels and merged UDRSs as in Figure 2.",
+        "0 is constrained to O(7J, IC) C K. Given a discourse referent x and a UDRS, a picks out components of the UDRS corresponding to proper names, indefinite and genuinely quantificational NPs with x as implicit argument.",
+        "Given a label 1, a picks out the transitive closure over sentential complements and their dependents.",
+        "Note that for simple, non-recursive UDRSs K, 0 defines a partition",
+        "'The definition below ignores subordination constraints.",
+        "It assumes proper UDRSs, i.e. UDRS where all the discourse referents are properly bound.",
+        "Thus the definition implements the \"garbage in - garbage out\" principle.",
+        "It also assumes that discourse referents in \"quantifier prefixes\" are disjoint.",
+        "It is straightforward to extend the definition to take account of subordina-kion constraints if that is desired but, as we remarked above, the translation image (the resulting f-structures) cannot in all cases reflect the constraints."
+      ]
+    },
+    {
+      "heading": "[PRED no]Ej",
+      "text": [
+        "Note that 7-1 is a partial function from UDRSs to f-structures.",
+        "The reason is that that f-structures do not represent partial subordination constraints, in other words they are fully underspecified.",
+        "Finally, note that 7 and T-1 are recursive (they allow for arbitrary embeddings of e.g. sentential complements).",
+        "This may lead to structures outside the first-order UDRT-fragment.",
+        "As an example the reader may want to check the translation in Figure 3 and furthermore verify that the reverse translation does indeed take us back to the original (modulo renaming of variables and labels) UDRS."
+      ]
+    },
+    {
+      "heading": "9 Acknowledgements",
+      "text": [
+        "Early versions of this have been presented at Fra-CaS workshops (Cooper et al., 1996) and at IMS, Stuttgart in 1995 and at the LFG96 in Grenoble.",
+        "We thank our FraCaS colleagues and Anette Frank and Mary Dalrymple for discussion and support."
+      ]
+    }
+  ]
+}

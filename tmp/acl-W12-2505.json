@@ -1,0 +1,289 @@
+{
+  "info": {
+    "authors": [
+      "Qian Yu",
+      "Aurèlien Max",
+      "François Yvon"
+    ],
+    "book": "Proceedings of the NAACL-HLT 2012 Workshop on Computational Linguistics for Literature",
+    "id": "acl-W12-2505",
+    "title": "Aligning Bilingual Literary Works: a Pilot Study",
+    "url": "https://aclweb.org/anthology/W12-2505",
+    "year": 2012
+  },
+  "references": [
+    "acl-C10-1124",
+    "acl-C10-2010",
+    "acl-J05-4003",
+    "acl-J93-1006",
+    "acl-J93-2003",
+    "acl-P91-1022",
+    "acl-P91-1023"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "Electronic versions of literary works abound on the Internet and the rapid dissemination of electronic readers will make electronic books more and more common.",
+        "It is often the case that literary works exist in more than one language, suggesting that, if properly aligned, they could be turned into useful resources for many practical applications, such as writing and language learning aids, translation studies, or databased machine translation.",
+        "To be of any use, these bilingual works need to be aligned as precisely as possible, a notoriously difficult task.",
+        "In this paper, we revisit the problem of sentence alignment for literary works and explore the performance of a new, multi-pass, approach based on a combination of systems.",
+        "Experiments conducted on excerpts of ten masterpieces of the French and English literature show that our approach significantly outperforms two open source tools."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "The alignment of bitexts, i.e. of pairs of texts assumed to be mutual translations, consists in finding correspondences between logical units in the input texts.",
+        "The set of such correspondences is called an alignment.",
+        "Depending on the logical units that are considered, various levels of granularity for the alignment are obtained.",
+        "It is usual to align paragraphs, sentences, phrases or words (see (Wu, 2010; Tiedemann, 2011) for recent reviews).",
+        "Alignments are used in many fields, ranging from Translation Studies and Computer Assisted Language Learning (CALL) to Multilingual Natural Language Processing (NLP) applications (Cross-Lingual Information Retrieval, Writing Aids for Translators, Multilingual Terminology Extraction and Machine Translation (MT)).",
+        "For all these applications, sentence alignments have to be computed.",
+        "Sentence alignment is generally thought to be fairly easy and many efficient sentence alignment programs are freely available1.",
+        "Such programs rely on two main assumptions: (i) the relative order of sentences is the same on the two sides of the bi-text, and (ii) sentence parallelism can be identified using simple surface cues.",
+        "Hypothesis (i) warrants efficient sentence alignment algorithms based on dynamic programming techniques.",
+        "Regarding (ii), various surface similarity measures have been proposed: on the one hand, length-based measures (Gale and Church, 1991; Brown et al., 1991) rely on the fact that the translation of a short (resp.",
+        "long) sentence is short (resp.",
+        "long).",
+        "On the other hand, lexical matching approaches (Kay and Ro?scheisen, 1993; Simard et al., 1993) identify sure anchor points for the alignment using bilingual dictionaries or surface similarities of word forms.",
+        "Length-based approaches are fast but error-prone, while lexical matching approaches seem to deliver more reliable results.",
+        "Most state-of-the-art approaches use both types of information (Langlais, 1998; Simard and Plamondon, 1998; Moore, 2002; Varga et al., 2005; Braune and Fraser, 2010).",
+        "In most applications, only high-confidence one-to-one sentence alignments are considered useful and kept for subsequent processing stages.",
+        "Indeed, when the objective is to build subsentential align-1See, for instance, the Uplug toolbox which integrates several sentence alignment tools in a unified framework: http://sourceforge.net/projects/uplug/",
+        "ments (at the level of words, terms or phrases), other types of mappings between sentences are deemed to be either insufficiently reliable or inappropriate.",
+        "As it were, the one-to-one constraint is viewed as a proxy to literalness/compositionality of the translation and warrants the search of finer-grained alignments.",
+        "However, for certain types of bitexts2, such as literary texts, translation often departs from a straight sentence-by-sentence alignment and using such a constraint can discard a significant proportion of the bitext.",
+        "For MT, this is just a regrettable waste of potentially useful training material (Uszko-reit et al., 2010), all the more so as parallel literary texts constitute a very large reservoir of parallel texts online.",
+        "For other applications implying to mine, visualize or read the actual translations in their context (second language learning (Nerbonne, 2000; Kraif and Tutin, 2011), translators training, automatic translation checking (Macklovitch, 1994), etc.",
+        "), the entire bitext has to be aligned.",
+        "Furthermore, areas where the translation is only partial or approximative need to be identified precisely.",
+        "The work reported in this study aims to explore the quality of existing sentence alignment techniques for literary work and to explore the usability of a recently proposed multiple-pass approach, especially designed for recovering many-to-one pairings.",
+        "In a nutshell, this approach uses sure one-to-one mappings detected in a first pass to train a discriminative sentence alignment system, which is then used to align the regions which remain problematic.",
+        "Our experiments on the BAF corpus (Simard, 1998) and on a small literary corpus consisting of ten books show that this approach produces high quality alignments and also identifies the most problematic passages better than its competitors.",
+        "The rest of this paper is organized as follows: we first report the results of a pilot study aimed at aligning our corpus with existing alignment methods (Section 2).",
+        "In Section 3, we briefly describe our two-pass method, including some recent improvements, and present experimental performance on the BAF corpus.",
+        "Attempts to apply this technique to our larger literary corpus are reported and discussed in 2Actual literary bitexts are not so easily found over the Internet, notably due to (i) issues related to variations in the source text and (ii) issues related to the variations, over time, of the very notion of what a translation should be like.",
+        "Section 4.",
+        "We discuss further prospects and conclude in Section 5."
+      ]
+    },
+    {
+      "heading": "2 Book alignment with off-the-shelf tools",
+      "text": []
+    },
+    {
+      "heading": "2.1 A small bilingual library",
+      "text": [
+        "The corpus used in this study contains a random selection of ten books written mostly in the 19th and in the early 20th century: five are English classics translated into French, and five are French classics translated into English.",
+        "These books and their translation are freely available3 from sources such as the Gutenberg project4 or wikisource5, and are representative of the kinds of collections that can be easily collected from the Internet.",
+        "These texts have been preprocessed and tokenized using in-house tools, yielding word and sentence counts in Table 1."
+      ]
+    },
+    {
+      "heading": "2.2 Baseline sentence alignments",
+      "text": [
+        "Baseline alignments are computed using two open-source sentence alignment packages, the sentence alignment tool of Moore (2002)6, and Hunalign (Varga et al., 2005).",
+        "These two tools were chosen as representative of the current state-of-the-art in sentence alignment.",
+        "Moore's approach implements a two-pass, coarse-to-fine, strategy: a first pass, based on sentence length cues, computes a first alignment according to the principles of length-based approaches (Brown et al., 1991; Gale and Church, 1991).",
+        "This alignment is used to train a simplified version of IBM model 1 (Brown et al., 1993), which provides the alignment system with lexical association scores; these scores are then used to refine the measure of association between sentences.",
+        "This approach is primarily aimed at delivering high confidence, one-to-one, sentence alignments to be used as training material for data-intensive MT.",
+        "Sentences that cannot be reliably aligned are discarded from the resulting alignment.",
+        "Hunalign7, with default settings, also implements a two-pass strategy which resembles the approach of Moore.",
+        "Their main difference is that Hunalign also produces many-to-one and one-to-many alignment links, which are needed to ensure that all the input sentences appear in the final alignment.",
+        "Both systems also deliver confidence measures for the automatic alignment: a value between 0 and 1 for Moore's tool, which can be interpreted as a posterior probability; the values delivered by Hunalign are less easily understood, and range from?1 to some small positive real values (greater than 1).",
+        "Sentence alignment tools are usually evaluated using standard recall [R] and precision [P] measures, combined in the F-measure [F], with respect to some manually defined gold alignment (Ve?ronis and Langlais, 2000).",
+        "These measures can be computed at various levels of granularity: the level of alignment links, of sentences, of words, and of characters.",
+        "As gold references only specify alignment links, the other references are automatically derived in the most inclusive way.",
+        "For instance, if the reference alignment links state that the pair of source sentences f1, f2 is aligned with target e, the reference sentence alignment will contain both (f1, e) and 7ftp://ftp.mokk.bme.hu/Hunglish/src/hunalign; we have used the version that ships with Uplug.",
+        "(f2, e); likewise, the reference word alignment will contain all the possible word alignments between tokens in the source and the target side.",
+        "For such metrics, missing the alignment of a large ?block?",
+        "of sentences gets a higher penalty than missing a small one; likewise, misaligning short sentences is less penalized than misaligning longer ones.",
+        "As a side effect, all metrics, but the more severe one, ignore null alignments.",
+        "Our results are therefore based on the link-level and sentence-level F-measure, to reflect the importance of correctly predicting unaligned sentences in our applicative scenario.",
+        "Previous comparisons of these alignment tools on standard benchmarks have shown that both typically yield near state-of-the-art performance.",
+        "For instance, experiments conducted using the literary subpart of the BAF corpus (Simard, 1998), consisting of a hand-checked alignment of the French novel De la Terre a` la Lune (From the Earth to the Moon), by Jules Verne, with a slightly abridged translation available from the Gutenberg project8, have yielded the results in Table 2 (Moore's system was used with its default parameters, Hunalign with the realign option).",
+        "All in all, for this specific corpus, Moore's strategy delivers slightly better sentence alignments than",
+        "paragraph size for various baselines Hunalign does; in particular, it is able to identify 1 to-1 links with a very high precision."
+      ]
+    },
+    {
+      "heading": "2.3 Aligning a small library",
+      "text": [
+        "In a first series of experiments, we simply run the two alignment tools on our small collection to see howmuch of it can be aligned with a reasonable confidence.",
+        "The main results are reproduced in Figure 1, where we display both the number of 1-to-1 links extracted by the baselines (as dots on the Figure), as well as the average size of pseudo-paragraphs (see definition below) in French and English.",
+        "As expected, less 1-to-1 links almost always imply larger blocks.",
+        "As expected, these texts turn out to be rather difficult to align: in the best case (Swann's way (SW)), only about 80% of the total sentences are aligned by Moore's system; in the more problematic cases (Emma (EM) and Vanity Fair (VF)), more than 50% of the book content is actually thrown away when one only looks at Moore's alignments.",
+        "Hunalign's results look more positive, as a significantly larger number of one-to-one correspondences is found.",
+        "Given that this system is overall less reliable than Moore's approach, it might be safe to filter these alignments and keep only the surer ones (here, keeping only links having a score greater than 0.5).",
+        "The resulting number of sentences falls way below what is obtained by Moore's approach.",
+        "To conclude, both systems seem to have more difficulties with the literary material considered here than with other types of texts.",
+        "In particular, the proportion of one-to-one links appears to be significantly smaller than what is typically reported for other genres; note, however, that even in the worst case, one-to-one links still account for about 50% of the text.",
+        "Another finding is that the alignment scores which are output are not very useful: for Moore, filtering low scoring links has very little effect; for Hunalign, there is a sharp transition (around a threshold of 0.5): below this value, filtering has little effect; above this value, filtering is too drastic, as shown on"
+      ]
+    },
+    {
+      "heading": "3 Learning sentence alignments",
+      "text": [
+        "In this section, we outline the main principles of the approach developed in this study to improve the sentence alignments produced by our baseline tools, with the aim to salvage as many sentences as possible, which implies to come up with a way for better detecting many-to-one and one-to-many correspondences.",
+        "Our starting point is the set of alignments delivered by Moore's tool.",
+        "As discussed above, these alignments have a very high precision, at the expense of an unsatisfactory recall.",
+        "Our sentence alignment method considers these sentence pairs as being parallel and uses them to train a binary classifier for detecting parallel sentences.",
+        "Using the predictions of this tool, it then attempts to align the remaining portions of the bitext (see Figure 2).",
+        "In Figure 2, Moore's links are displayed with solid lines; these lines delineate parallel pseudo-paragraphs in the bitexts (appearing in boxed areas), which we will try to further decompose.",
+        "Note that two configurations need to be distinguished: (i) one side of a paragraph is empty: no further analysis is performed and a 0-to-many alignment is output; (ii) both sides of a paragraph are non-empty and define a i-to-j alignment that will be processed by the block alignment algorithm described below."
+      ]
+    },
+    {
+      "heading": "3.1 Detecting parallelism",
+      "text": [
+        "Assuming the availability of a set of example parallel sentences, the first step of our approach consists in training a function for scoring candidate alignments.",
+        "Following (Munteanu and Marcu, 2005), we train a Maximum Entropy classifier9 (Rathnaparkhi, 1998); in principle, many other binary classifiers would be possible here.",
+        "Our motivation for using a maxent approach was to obtain, for each possible pair of sentences (f ,e), a link posterior probability P (link|f , e).",
+        "We take the sentence alignments of the first step as positive examples.",
+        "Negative examples are artificially generated as follows: for all pairs of positive instances (e, f) and (e?, f ?)",
+        "such that e?",
+        "immediately follows e, we select the pair (e, f ?)",
+        "as a negative example.",
+        "This strategy produced a balanced corpus containing as many negative pairs as positive ones.",
+        "However, this approach may give too much weight on the length ratio feature and it remains to be seen whether alternative approaches are more suitable.",
+        "Formally, the problem is thus to estimate a conditional model for deciding whether two sentences e and f should be aligned.",
+        "Denoting Y the corresponding binary variable, this model has the follow",
+        "where {Fk(e, f), k = 1 .",
+        ".",
+        ".K} denotes a set of feature functions testing arbitrary properties of e and f , and {?k, k = 1 .",
+        ".",
+        ".K} is the corresponding set of parameter values.",
+        "Given a set of training sentence pairs, the optimal values of the parameters are set by optimizing numerically the conditional likelihood; optimization is performed here using L-BFGS (Liu and Nocedal, 1989); a Gaussian prior over the parameters is used to ensure numerical stability of the optimization.",
+        "In this study, we used the following set of feature functions: ?",
+        "lexical features: for each pair of words10 (e, f) occurring in Ve ?",
+        "Vf , there is a corresponding feature Fe,f which fires whenever e ?",
+        "e and f ?",
+        "f .",
+        "?",
+        "length features: denoting le (resp.",
+        "lf ) the length of the source (resp.",
+        "target) sentence, measured in number of characters, we include features related to length ratio, defined",
+        ".",
+        "Rather than taking the numerical value, we use a simple discretization scheme based on 6 bins.",
+        "?",
+        "cognate features: we loosely define cognates11 as words sharing a common prefix of length at least 3.",
+        "This gives rise to 4 features, which are respectively activated when the number of cognates in the parallel sentence is 0, 1, 2, or greater than 2. ?",
+        "copy features: an extreme case of similarity is when a word is copied verbatim from the source to the target.",
+        "This happens with proper nouns, dates, etc.",
+        "We again derive 4 features, depending on whether the number of identical words in f and e is 0, 1, 2 or greater than 2."
+      ]
+    },
+    {
+      "heading": "3.2 Filling alignment gaps",
+      "text": [
+        "The third step uses the posterior alignment probabilities computed in the second step to fill the gaps in the first pass alignment.",
+        "The algorithm can be glossed as follows.",
+        "Assume a bitext block comprising the sentences from index i to j in the source side of the bitext, and from k to l in the target side such that sentences ei?1 (resp.",
+        "ej+1) and fk?1 (resp.",
+        "el+1) are aligned12.",
+        "The first case is when j < i or k > l, in which case we create a null alignment for fk:l or for ei:j .",
+        "In all other situations, we compute: ?i?, j?, k?, l?, i ?",
+        "i?",
+        "?",
+        "j?",
+        "?",
+        "j, k ?",
+        "k?",
+        "?",
+        "l?",
+        "?",
+        "l,",
+        "where ei?:j?",
+        "is obtained by concatenation of all the sentences in the range [i?:j?",
+        "], and S(i, j, k, l) = (j ?",
+        "i+1)(l?k+1)?1 is proportional to the block size.",
+        "The factor ?S(i?, j?, k?, l?)",
+        "aims at penalizing large blocks, which, for the sentence-based metrics, yield much more errors than the small ones.",
+        "This strategy implies to compute O(|j ?",
+        "i + 1|2 ?",
+        "|k ?",
+        "l + 1|2) probabilities, which, given the typical size of these blocks (see above), can be performed very quickly.",
+        "These values are then iteratively visited by decreasing order in a greedy fashion.",
+        "The top-scoring block i?",
+        ": j?, k?",
+        ": l?",
+        "is retained in the final alignment; all overlapping blocks are subsequently deleted from the list and the next best entry is then considered.",
+        "This process continues until all remaining blocks imply null alignments, in which case these n ?",
+        "0 or 0 ?",
+        "n alignments are also included in our solution.",
+        "This process is illustrated in Figure 3: assuming that the best matching link is f2-e2, we delete all the links that include f2 or e2, as well as links that would imply a reordering of sentences, meaning that we also delete links such as f1-e3."
+      ]
+    },
+    {
+      "heading": "3.3 Experiments",
+      "text": [
+        "In this section, we report the results of experiments run using again Jules Verne's book from the BAF corpus.",
+        "Figures are reported in Table 3 where we contrast our approach with two simple baselines: (i) keep only Moore's links; (ii) complete Moore's links with one single many-to-many alignment for 12We enclose the source and target texts between begin and end markers to enforce alignment of the first and last sentences.",
+        "each block.",
+        "For the maxent-based approach, we also report the precision on just those links that are not predicted by Moore.",
+        "A more complete set of experiments conducted with other portions of the BAF are reported elsewhere (Yu et al., 2012) and have shown to deliver state-of-the-art results.",
+        "As expected, complementing the very accurate prediction of Moore's systems with our links significantly boosts the sentence-based alignment performance: recall rises from 0.62 to 0.80 for ?",
+        "= 0, which has a clear effect on the corresponding F-measure (from 0.76 to 0.86).",
+        "The performance differences with the default strategy of keeping those blocks unsegmented are also very clear.",
+        "Sentence-wise, maxent-based alignments are also quite precise, especially when the value of ?",
+        "is chosen with care (P=0.91 for ?=0.06); however, this optimization has a very small overall effect, given that only a limited number of alignment links are actually computed by the maxent classifier."
+      ]
+    },
+    {
+      "heading": "4 Sentence alignment in the real world",
+      "text": [
+        "In this section, we analyze the performance obtained with our combined system, using excerpts of our small corpus as test set.",
+        "For this experiment, the first two to three hundreds sentences in each book, corresponding to approximately two chapters, were manually aligned (by one annotator), using the same guidelines that were used for annotating the BAF corpus.",
+        "Except for two books (EM and VF), producing these manual alignments was found to be quite straightforward.",
+        "Results are in Table 4.",
+        "A first comment is that both baselines are significantly outperformed by our algorithm for almost all conditions and books.",
+        "For several books (LM, AM, SW), the obtained sentence alignments are almost as precise as those predicted by Moore and have a much higher recall, resulting in very good overall alignments.",
+        "The situation is, of course, much less satisfactory for other books (EM, VF, 5S).",
+        "All in all, our method salvages many useful sentence pairs that would otherwise be left unaligned.",
+        "Moore's method remains remarkably accurate throughout the whole collection, even for the most difficult books.",
+        "It also outputs a significant proportion of wrong links, which, for lack of reliable confidence estimators, are difficult to spot and contribute to introduce noise into the maxent training set.",
+        "The variation of performance can mostly be attributed to idiosyncrasies in the translation.",
+        "For instance, Emma (EM) seems very difficult to align, which can be attributed to the use of an old translation dating back to 1910 (by P. de Puliga), and which often looks more like an adaptation than a translation.",
+        "Some passages even question the possibility of producing any sensible (human) alignment between source and target13: (en) Her sister, though comparatively but little removed by matrimony, being settled in London, only sixteen miles off, was much beyond her daily reach; and many a long October and November evening must be struggled through at Hart-field, before Christmas brought the next visit from Isabella and her husband, and their little children, to fill the house, and give her pleasant society again.",
+        "(fr) La s?ur d?Emma habitait Londres depuis son mariage, c?est-a`-dire, en re?alite?, a` peu de distance; elle se trouvait 13In this excerpt, in addition to several approximations, the end of the last sentence (and their children...) is not translated in French.",
+        "ne?anmoins hors de sa porte?e journalie`re, et bien des longues soire?es d?automne devraient e?tre passe?es solitairement a` Hartfield avant que Noe?l n?amena?t la visite d?Isabelle et de son mari.",
+        "Les confessions (CO) is much most faithful to the content, yet, the translator has significantly departed from Rousseau's style14, mostly made up of short sentences, and it is often the case that several French sentences align with one single English sentence, which is detrimental to Moore, and by ricochet, to the quality of maxent predictions.",
+        "A typical excerpt: (fr) Pendant deux ans entiers je ne fus ni te?moin ni victime d?un sentiment violent.",
+        "Tout nourrissait dans mon coeur les dispositions qu?il rec?ut de la nature.",
+        "(en) Everything contributed to strengthen those propensities which nature had implanted in my breast, and during the two years I was neither the victim nor witness of any violent emotions.",
+        "The same goes for Thackeray (VF), with a lot of re-structurations of the sentences as demonstrated by the uneven number of sentences on both sides of the bitext.",
+        "Lord Jim (LJ) poses another type of difficulty: approximately 100 sentences are missing on the French side, the rest of the text being fairly parallel (more than 82% of the reference links are actually 1-to-1).",
+        "Du co?te?",
+        "de chez Swann (SW) represents the other extreme of the spectrum, where the translation sticks as much as possible to the very peculiar style of Proust: nearly 90% of the reference alignments are 1-to-1, which explains the very good F-measure for this book.",
+        "It is difficult to analyze more precisely our errors; however, a fairly typical pattern is the inference of a 1-to-1 link rather than a 2-to-1 link made up of a short and a long sentence.",
+        "An example from Hugo (TM), where our approach prefers to leave the second English sentence unaligned, even though the corresponding segment (un enfant...) is the in French sentence: (fr) Dans tout le tronc?on de route qui se?pare la premie`re tour de la seconde tour, il n?y avait que trois passants, un enfant, un homme et une femme.",
+        "(en) Throughout that portion of the highway which separates the first from the second tower, only three foot-passengers could be seen.",
+        "These were a child, a man, and a woman.",
+        "A possible walk around for this problem would be to also add a penalty for null alignments.",
+        "14Compare the number of sentences in Table 1.",
+        "For each book, we report the number of French and English test sentences, the number of reference links and standard performance measures.",
+        "For the maxent approach, we also report separately the number of empty (S = 0) and non-empty (S 6= 0) paragraphs."
+      ]
+    },
+    {
+      "heading": "5 Conclusions and future work",
+      "text": [
+        "In this paper, we have presented a novel two-pass approach aimed at improving existing sentence alignment methods in contexts where (i) all sentences need to be aligned and/or (ii) sentence alignment confidence need to be computed.",
+        "By running experiments with several variants of this approach, we have been able to show that it was able to significantly improve the bare results obtained with the sole Moore alignment system.",
+        "Our study shows that the problem of sentence alignment for literary texts is far from being solved and additional work is needed to obtain alignments that could be used in real applications, such as bilingual reading aids.",
+        "The maxent-based approach proposed here is thus only a first step, and we intend to explore various extensions: an obvious way to go is to use more resources (larger training corpora, bilingual dictionaries, etc.)",
+        "and add more features, such as part-of-speech, lemmas, or alignment features as was done in (Munteanu and Marcu, 2005).",
+        "We also plan to provide a much tighter integration with Moore's algorithm, which already computes such alignments, so as to avoid having to recompute them.",
+        "Finally, the greedy approach to link selection can easily be replaced with an exact search based on dynamic programming techniques, including dependencies with the left and right alignment links.",
+        "Regarding applications, a next step will be to produce and evaluate sentence alignments for a much larger and more diverse set of books, comprising more than 100 novels, containing books in 7 languages (French, English, Spanish, Italian, German, Russian, Portuguese) from various origins.",
+        "Most were collected on the Internet from Gutenberg, wikisource and GoogleBooks15, and some were collected in the course of the Carmel project (Kraif et al., 2007).",
+        "A number of these books are translated in more than one language, and some are raw OCR outputs and have not been cleaned from errors."
+      ]
+    },
+    {
+      "heading": "Acknowledgments",
+      "text": []
+    }
+  ]
+}

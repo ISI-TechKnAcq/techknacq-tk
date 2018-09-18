@@ -1,0 +1,250 @@
+{
+  "info": {
+    "authors": [
+      "Hideo Watanabe"
+    ],
+    "book": "International Conference on Computational Linguistics",
+    "id": "acl-C92-2115",
+    "title": "A Similarity-Driven Transfer System",
+    "url": "https://aclweb.org/anthology/C92-2115",
+    "year": 1992
+  },
+  "references": [
+    "acl-C86-1022",
+    "acl-C86-1023",
+    "acl-C86-1149",
+    "acl-C90-3001",
+    "acl-C90-3044"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "The transfer phase in machine translation (MT) systems has been considered to be more complicated than analysis and generation, since it is inherently a conglomeration of individual lexical rules.",
+        "Currently some attempts are being made to use case-based reasoning in machine translation, that is, to make decisions on the basis of translation examples at appropriate points in MT.",
+        "This paper proposes a new type of transfer system, called a Similarity-driven /inns-fee System (Sim 7ran), for use in such case-based MT (CBMT)."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "The transfer process in machine translation systems is, in general, more complicated than the processes of analysis and generation.",
+        "One reason for this is that it relies heavily on human heuristic knowledge or the linguistic intuition of the rule writers.",
+        "Unfortunately, linguistic intuition tends to be unable to control the process properly for a wide variety of inputs, because of the huge amount of data and the huge number of situations that need to be considered.",
+        "However, rule writers must rely on their linguistic intuition to some extent, because there is no linguistic theory on lexical transfer [7].",
+        "Another reason [8][13] is that the transfer task is inherently a conglomeration of individual lexical rules.",
+        "Therefore, the transfer process can be said to fall into a class of problem that cannot easily be controlled by the linguistic intuition of rule writers.",
+        "In accordance with these observations, various attempts have been made to overcome the problems of transfer; they include knowledge-based MT [12], bilingual signs [13], and Tags for MT[1].",
+        "One such approach is case-based or example-based MT [4] [9] [10] [11].",
+        "The essential idea behind all case-based MT (CBMT) methods is that the system chooses the case (or example) most similar to the given input from the case base, and applies the knowledge attached to the chosen case to the input.",
+        "Supposing that there is a corpus of parsed translation examples in which corresponding parts are linked to each other, we can regard those parsed translation",
+        "examples as translation rules.",
+        "A promising approach is therefore to make a transfer process that (1) chooses a set of translation examples, each source part of which is similar to a part of the input, and all source parts of which overlap the whole input, and (2) constructs an output by combining the target parts of those translation examples chosen.",
+        "However, this does not mean that existing transfer knowledge should be abandoned.",
+        "Rather, such transfer knowledge should be used as a fail-safe mechanism if there are no appropriate examples.",
+        "In the similarity-driven transfer system (Similar!)",
+        "we have developed, both translation examples and existing transfer knowledge are treated uniformly as translation patterns, and are called translation rules.",
+        "In Figure 1, for example, (a) is the parsed dependency structure of an input Japanese sentence, \"kare ga kusuri wo nomu.\"",
+        "Suppose that (b) is selected as the most similar translation rule for the part \"kare ga nomu\" from the translation rule-base, and that (c) is selected as the most similar translation rule for the part \"kusuri wo nomu,\" even though there are several translation candidates for the Japanese verb \"nomu.\"",
+        "This figure illustrates what we would like to do; that is, to construct (d), the translated structure by combining the target structures of the selected translation rules.",
+        "To develop this kind of system, we must consider the following issues:",
+        "(a) a metric for similarity, (b) a mechanism for combining target parts of rules, and (c) correspondence between the source part and the target part of a rule.",
+        "To handle the last two issues, I developed a model called Rules Combination Transfer (RCT) [14].",
+        "Sim Tran is RCT coupled with a similarity calculation method.",
+        "In this paper, I will introduce RCT and the similarity calculation method used in SimTran.",
+        "The next section defines the data structure for graphs, and the format of a translation rule.",
+        "Section 3 presents a method for calculating the similarity between an input and the source part of a translation rule.",
+        "Section 4 describes the flow of the transfer process in RCT.",
+        "Section 5 gives examples of translation using Sinaran, and Section 6 discusses related work.",
+        "Some concluding remarks bring the paper to an end."
+      ]
+    },
+    {
+      "heading": "2 Translation Rules",
+      "text": [
+        "A basic type of graph used in this paper is a labeled directed graph, or an Idg.2 An Idg G consists of a set of nodes N, and a set of arcs A.",
+        "Further, each node and arc has a label.",
+        "In particular, node labels are unique.",
+        "Each node consists of features, each of which is a pair of a feature name and a feature value.",
+        "If an Idg has only one root node, then it is called an rldg, and if an Idg has no cyclic path, then it is called an Idag.",
+        "Therefore, an rldag denotes au Idg that has only one root node and nu cyclic path.",
+        "A translation rule4 r consists of the following three components:",
+        "where Gm is a matching graph, G, is a construction graph, and M is a set of mappings between 0„, and Gc.",
+        "A matching graph G„, and a construction graph 0, must be at least an rldag.5 Further, nodes in G„, must be labeled uniquely; that is, each node in Gm • must have only one unique label, and the label of the node n, in 0, is determined to lie the label of the 'The term 'labeled' means that nodes and arcs are labeled, and the term 'directed' means that each arc lia.s a direction.",
+        "Further, an Idg in this paper refers to a connected graph unless otherwise specified.",
+        "3 The term dag is often used in the NLP world, and usually denotes a rooted connected labeled (as functional) directed graph.",
+        "But in this paper, dag denotes a directed acyclic graph that may have multiple roots, is not necessarily a connected graph, and does not necessarily have labels.",
+        "'In this paper, the terns rule does not mean a procedure, but rather a pattern of translation knowledge.",
+        "'Such graphs are sufficient to express almost all linguistic struct ores.",
+        "Figure 2: Sample rule for translation between Japanese and English node n„, in G„, such that /4, = Mapping between G,„ and G, designates the correspondences between nodes in Gm and For instance, in Figure '2, the Japanese word \"nagai\" (\"long\") should correspond to both of the English words \"have\" and \"long,\" because if another word governs the word \"nagai\" then its English translation 8110111d be connected to the word \"have.\"",
+        "On the other hand, if the Japanese word \"toteino\" (\"very\") modifies \"nagai\" then its English translation \"very\" should be connected to \"long.\"",
+        "This shows that for a node in a source language, two kinds of connection point, for translations of both governing structures and governed structures of the node, are needed in its translated structure.",
+        "This implies that there should be two kinds of correspondence between G, and Gm namely, (1) a mapping from a Gm node n,„ to a 0, node n, that is to be a node connected to translations Acres DE COLING-92, NAMES, 23-28 Aarr 1992 7 7 1 PROC.",
+        "OF COLING-92, NANITIS, AUG. 23-28, 1992 of structures governing am, and (2) a mapping from n„, to a G, node 74 that is to be a node connected to translations of structures governed by nm.",
+        "We call the former an upward mapping and the latter a downward mapping, and denote these two kinds of mapping as follows:",
+        "where M I is upward mapping, and M L is downward mapping.",
+        "Not all kinds of mapping should be permitted as M and M I.",
+        "A translation rule r=( G„,,M,G, ) must satisfy the following conditions:",
+        "(1)M T and M I are both injections, (2) there are no two distinct nodes x and y in 61„, such that M(x)=M(y),° and (3) M i(root(Gm))= root(G).",
+        "Condition (1) ensures that there is only one connection point in G, for each translation of governing structures and governed structures, condition (2) ensures that the label of a G node is determined uniquely, and condition (3) ensures that the result of this transfer model becomes a rooted graph (see [15] for details).",
+        "A rule satisying these conditions is said to be sound."
+      ]
+    },
+    {
+      "heading": "3 Similarity Calculation",
+      "text": [
+        "This section desribes how a similarity is calculated."
+      ]
+    },
+    {
+      "heading": "3.1 Graph Distance",
+      "text": [
+        "The similarity between a Gm and an input graph Gm is defined as the inverse of the graph distance between them.",
+        "First, the simple graph distance D9' between Gm and Gm is given as follows:",
+        "where Ri„.",
+        "and R„, are roots of Gm and Gm, respectively, D„ is a node distance, a,,, is an arc in Gm such that its source node is R„„ and GS(n, a) denotes a subgraph that is related to an arc a from n. Briefly, a simple distance is the sum of the node distance between two roots and the sum of the minimal simple distances between Gin subgraphs and G„, subgraphs that, for each arc a outgoing from the Gntroot node, are related to the all arcs a from the root nodes.",
+        "°This means that either M 1.",
+        "(x) or M .1.",
+        "(x) in equal to either M T(Y) or M 1(y) 'Distances defined in this section are not actual distances in the mathematical sense.",
+        "However, the larger G„, is, the larger this simple distance becomes.",
+        "Therefore, when normalized by the number of nodes in G„„ the graph distance D, is given as follows: 11)9(Gi„, G„.,) = D'g(Gm,G„,) where N is the number of nodes in Gm."
+      ]
+    },
+    {
+      "heading": "3.2 Node Distance",
+      "text": [
+        "When considering the distance between two words (nodes), we usually think of their semantic distance in a semantic hierarchy.",
+        "In general, no matter what semantic hierarchy we use, it is inevitable that there will be some sort of distortion.",
+        "Further, as stated before, a node consists of several features and may not have a lexical form that is a pointer to a semantic hierarchy.",
+        "Therefore, a promising approach to calculating distances between nodes is to use both a semantic hierarchy and syntactic features, that is, to use syntactic features to correct the distortion contained in the semantic hierarchy to some extent.",
+        "The node distance between a Gin node ni and a Gm node um is defined as follows:",
+        "where DI is a feature node distance, D, is a semantic node distance, NI is the number of features in n,„ for D f , and 6, is the weight of a semantic distance.",
+        "The semantic distance D, between a Gin word win and a Gm word lv„, is given by the following equation.",
+        "In SirrrTrnn, Bunrui Goi Hyou [5] code (or bghcode8) is used for calculating the semantic distance between Japanese words.",
+        "D, (win, w„,) = 0.5 Ihgh(w.„)–bgh(w,)1+5, bghmarc-I-S, where hgh(w) is the fraction part of the bghcode of w, bghrnax is the maximal difference between two bghcode fraction parts, and 6b is a penalty incurred if two words are not identical.",
+        "The feature distance Df between a Gm node Di„ and a G„, node rim is given as follows: Df(ni„, Dm) \"=\" fendf(nm, f) d f(nm, fn : fv) = 1 : fvi„) whose fni„ fn, and fn is consistent with fv;„",
+        "In the above equation, the consistency checking depends on a feature."
+      ]
+    },
+    {
+      "heading": "4 Rules Combination Transfer",
+      "text": [
+        "In this section, I present the flow of the transduction process by using RCT formalism."
+      ]
+    },
+    {
+      "heading": "4.1 Rule Selection",
+      "text": [
+        "A transfer process must first find a set of rules whose G„,s' matching parts (called projections) totally overlap an input structure, and which is the most similar to the input.",
+        "We call a union of projections a cover, and a cover identical to the input an isomorphic cover (or i-cover).",
+        "In orther words, what we want here is the i-cover that is the most similar to the input.",
+        "Further, if a G„, make a projection pj on a Gi„, then the G,,, is called the origin graph of the Aj.",
+        "A pivot is a node of Gi„ that has more than one origin graph, and a matching pivot is the origin node of a pivot.",
+        "For instance, in Figure 3, A and D are pivots.",
+        "There may be some methods for finding such an i-cover rule set.",
+        "One method is to pick up a rule whose projection does not have any arc overlapped by a cover by other selected rules until there are no uncovered arcs, if it is desirable that a rule set should have few overlaps as possible.",
+        "We have also developed another method using dynamic programming, which can choose the most similar rule set from candidate rule sets.",
+        "Briefly, it stores the most similar rule set for each combination of arcs of each node from leaves up to the root, and the most similar rule set stored in the root node is the one for the input structure (see 16) for details).",
+        "Each matching pivot in a similar i-cover rule set must have M I or M to ensure that the G,s of the d cover rule set produce a connected graph as a result.",
+        "If there are rules in the given i-cover rule set that do not satisfy this condition, they are removed from the set of rule candidates, and the cover search method is executed until an i-cover rule set that satisfies this condition is found.",
+        "Such an i-cover ride set is called a proper rule set.",
+        "Next, for each projection of the given i-cover, we must make a copy of its origin rule, or rule instance, because one rule may make more than one projection on Gi„ ."
+      ]
+    },
+    {
+      "heading": "4.2 Pre-Lexicalization",
+      "text": [
+        "It way happen that a lexical-form of a G, in the given rule instance is not a candidate translation word of its corresponding word in the input, because a lexical form in a matching node in its Gm is not necessarily the same as the input word.",
+        "In this case, such a node is lexicaliaed by candidate translation words."
+      ]
+    },
+    {
+      "heading": "4.3 Node Labeling",
+      "text": [
+        "The label of a G„, node becomes the label of its matching node in Since Gi„ nodes are labeled uniquely, G,„ nodes are also labeled uniquely.",
+        "On the other hand, the label of a C. node n, becomes the label of a G„, node (n„,) such that It, = M ((n„,) or n„ j(n.,„).",
+        "There may, however, be two nodes in G, in a rule instance that are mapped by a node in G„, with A/ l• and M j, respectively.",
+        "In the succeeding process, G, nodes with the same label are merged into one node in order to generate an output structure.",
+        "In this phase, the transferred labels of these two nodes should be different, because the two nodes should not be merged for this rule.",
+        "We must therefore relabel G,nodes of rule instances as follows: G, Node Relabeling: for any label 1 in G,, if I is distributed to two distinct nodes of G, by both M and M from a node of G„„ then a label I in a C, node, which is mapped only by AI I, or is mapped by both JO l• and M .1 and has no descendants, is changed to ."
+      ]
+    },
+    {
+      "heading": "4,'t Gluing",
+      "text": [
+        "Unification is a well-known computational tool for connecting graphs, and is widely used in natural language processing.",
+        "Usually, unification uses two functional",
+        "rldags as data and unifies them from the root node down to the leaves.",
+        "In RCT, however, we want to merge those nodes of two graphs that have the same labels, even if their root nodes are different and they are not functional, as shown in Figure 4.",
+        "Unification, however, cannot proceed in this manner, because it unifies two nodes that occupy the same position, and always starts from the root node.",
+        "For instance, in Figure 4, even if unification starts from node 13 then it fails, since it tries to unify node D of (a) and node C of (h) for arc y.",
+        "In Graph Grammars, this method of connecting two graphs is called gluing [2].",
+        "The gluing used in Graph Grammars is not concerned with the content of a node, so it must be extended in order to check the consistency among the nodes to be glued.",
+        "In Sim7ran, if two features conflict then the feature whose rule is more similar to the input is taken.",
+        "Briefly, gluing is performed as follows: First, nodes with the same label are merged if they are consistent.",
+        "If any nodes fail to be merged, then the gluing also fails.",
+        "If all the merges succeed, all arcs are reattached to the original nodes, which may or may not be merged.",
+        "As a result, some arcs with the same labels and attached to the same nodes may be merged, if they are consistent.",
+        "A glued graph is not necessarily a connected, rooted, or acyclic graph, but we usually need a connected rldag in natural language processing.",
+        "Several constraints satisfying such requirements are described in previous papers [14][15].",
+        "After the Go have been labeled and relabeled, the target structure is built by gluing the Go.",
+        "°Details of the algorithm are given in previous papers [141115)."
+      ]
+    },
+    {
+      "heading": "4.5 Post-Lexicalization",
+      "text": [
+        "The constructed target structure is still imperfect; there might be a G, node that has no lexical-form, because there are some rules made from transfer knowledge that have no lexical-forms.",
+        "Therefore, as in the pre-lexicalization phase, non-lexical G5 nodes are lex-icalized."
+      ]
+    },
+    {
+      "heading": "5 Examples",
+      "text": [
+        "This section gives examples of translation by SimTran.",
+        "Figure 5 shows how the Japanese sentence \"Kanojo no mega totemo kireina no wo sitteiru\" is translated into the English sentence \"(I) know that she has very beautiful eyes.\"",
+        "In this figure, (a) is an input sentence structure, (b),(c), and (d) are rules (precisely, rule instances), and (e) is the output structure produced.",
+        "In these rules, a mapping line not marked M I and M j Ita.s both M T and M 1.",
+        "Dotted lines designate matching or gluing correspondences between rule nodes and input or output nodes, respectively.",
+        "Further, numbers prefixed by `\"' denote node labels.",
+        "In this example, we assume type hierarchies in which, for instance, 'yougen(predicate)' is a super-category of `keiyou(adj)', and \"kanojo(she)\" is an instance of 'human'.",
+        "Note that the node labels of both \"have\" in rule instance (c) and lower 'prod' in rule instance (b) are changed from that of the corresponding Japanese word \"kirei(beautiful)\" by the G. node relabeling procedure.",
+        "Another example is shown in Figure 6, which shows how the Japanese sentence \"US ga wo fusegu tame ni buhin ni kanzei wo kakeru\" is translated into the English sentence \"US imposes tax on parts in order to blockade ...",
+        ".\"",
+        "In this example, (a) is an input structure, (b), (c) and (d) are matched rules, and (e) is the output structure produced.",
+        "The Japanese verb \"kakeru\" has several translation candidates associated with different governing words, as shown in the following table:",
+        "This table lists the top five similar rules for the part \"buhin ni kanzei wo kakeru\" of the input.",
+        "As shown",
+        "in this table, rule (c) is the most similar one.",
+        "Note that this similarity calculation was done for all rules, including non-lexical translation rules.",
+        "There were no appropriate example rules for the part \"US ga kakeru,\" and a non-lexical rule (b) was therefore selected.",
+        "Further, note that the lexical forms in *3 nodes of (c) and (e) are different, and that *4 node of (c) has no lexical form other than a preposition, whereas *4 node of (e) has a lexical form.",
+        "The former was obtained by pre-lexicalization, and the latter by post-lexicalization."
+      ]
+    },
+    {
+      "heading": "6 Related Work",
+      "text": [
+        "Although there were several early experimental projects on CBMT [4][91114 MST-II [10] is the first working prototype of a case-based transfer system, and demonstrates the promise of the CBMT approach.",
+        "It uses Japanese-to-English translation examples as translation rules, chooses the source trees of examples that are most similar to the input tree from the root node down to the leaves, and assembles those target trees to produce an output tree.",
+        "With respect to the transducing mechanism, MBT-II is a tree-to-tree transducer adopting one-to-one correspondence.",
+        "MT by LTAGs [1], although it is not an attempt of CBMT, proposed a similar mechanism to RCT scribed in this paper.",
+        "It uses paired derivation trees of English and French as translation rules.",
+        "An input sentence is parsed by the source grammar, and at the same time, its output tree is generated by derivation pairs of trees used in the parsing.",
+        "As a transducer, this mechanism is also a tree-to-tree transducer adopting one-to-one correspondence.",
+        "In contrast, the RCT employed in Sim Tran is a rldag-to-rldag transducer adopting upward and downward correspondences.",
+        "These extended correspondences are desirable for expressing the structural discrepancies that often occur in translation.",
+        "Moreover, this transducing model is a parallel production system [2] that can produce an output structure in one execution of gluing if all the G,s required to produce an output are supplied."
+      ]
+    },
+    {
+      "heading": "7 Conclusion",
+      "text": [
+        "In this paper, I described a case-based transfer system, Sim:frau, which combines RCT with a similarity calculation method.",
+        "RCT has powerful correspondences between the source structure and the target structure of a translation rule, which can express most structural discrepancies between two languages.",
+        "As a transducing mechanism, RCT is a parallel nondestructive rldag-to-rldag transducing system.",
+        "I also propose a similarity calculation method for graphs whose nodes consist of syntactic and semantic features, and show that a translation rule that has no lexical forms can be used as a default rule, that is, that such rules can provide a fail-safe mechanism if there are no appropriate translation examples."
+      ]
+    }
+  ]
+}

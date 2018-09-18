@@ -1,0 +1,259 @@
+{
+  "info": {
+    "authors": [
+      "Masaki Murata",
+      "Toshiyuki Kanamaru",
+      "Tamotsu Shirado",
+      "Hitoshi Isahara"
+    ],
+    "book": "International Conference on Computational Linguistics and Annual Meeting of the Association for Computational Linguistics – Poster Sessions",
+    "id": "acl-P06-2076",
+    "title": "Machine-Learning-Based Transformation of Passive Japanese Sentences into Active by Separating Training Data into Each Input Particle",
+    "url": "https://aclweb.org/anthology/P06-2076",
+    "year": 2006
+  },
+  "references": [
+    "acl-W00-0730"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "We developed a new method of transforming Japanese case particles when transforming Japanese passive sentences into active sentences.",
+        "It separates training data into each input particle and uses machine learning for each particle.",
+        "We also used numerous rich features for learning.",
+        "Our method obtained a high rate of accuracy (94.30%).",
+        "In contrast, a method that did not separate training data for any input particles obtained a lower rate of accuracy (92.00%).",
+        "In addition, a method that did not have many rich features for learning used in a previous study (Murata and Isahara, 2003) obtained a much lower accuracy rate (89.77%).",
+        "We confirmed that these improvements were significant through a statistical test.",
+        "We also conducted experiments utilizing traditional methods using verb dictionaries and manually prepared heuristic rules and confirmed that our method obtained much higher accuracy rates than traditional methods."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "This paper describes how passive Japanese sentences can be automatically transformed into active.",
+        "There is an example of a passive Japanese sentence in Figure 1.",
+        "The Japanese suffix reta functions as an auxiliary verb indicating the passive voice.",
+        "There is a corresponding active-voice sentence in Figure 2.",
+        "When the sentence in Figure 1 is transformed into an active sentence, (i) ni (by), which is a case postpositional particle with",
+        "the meaning of “by”, is changed into ga, which is a case postpositional particle indicating the subjective case, and (ii) ga (subject), which is a case postpositional particle indicating the subjective case, is changed into wo (object), which is a case postpositional particle indicating the objective case.",
+        "In this paper, we discuss the transformation of Japanese case particles (i.e., ni – * ga) through machine learning .1 The transformation of passive sentences into active is useful in many research areas including generation, knowledge extraction from databases written in natural languages, information extraction, and answering questions.",
+        "For example, when the answer is in the passive voice and the question is in the active voice, a question-answering system cannot match the answer with the question because the sentence structures are different and it is thus difficult to find the answer to the question.",
+        "Methods of transforming passive sentences into active are important in natural language processing.",
+        "The transformation of case particles in transforming passive sentences into active is not easy because particles depend on verbs and their use.",
+        "We developed a new method of transforming Japanese case particles when transforming passive Japanese sentences into active in this study.",
+        "Our method separates training data into each input particle and uses machine learning for each input particle.",
+        "We also used numerous rich features for learning.",
+        "Our experiments confirmed that our method was effective.",
+        "Sydney, July 2006. c�2006 Association for Computational Linguistics",
+        "2 Tagged corpus as supervised data We used the Kyoto University corpus (Kurohashi and Nagao, 1997) to construct a corpus tagged for the transformation of case particles.",
+        "It has approximately 20,000 sentences (16 editions of the Mainichi Newspaper, from January 1st to 17th, 1995).",
+        "We extracted case particles in passive-voice sentences from the Kyoto University corpus.",
+        "There were 3,576 particles.",
+        "We assigned a corresponding case particle for the active voice to each case particle.",
+        "There is an example in Figure 3.",
+        "The two underlined particles, “ga” and “wo” that are given for “ni” and “ga” are tags for case particles in the active voice.",
+        "We called the given case particles for the active voice target case particles, and the original case particles in passive-voice sentences source case particles.",
+        "We created tags for target case particles in the corpus.",
+        "If we can determine the target case particles in a given sentence, we can transform the case particles in passive-voice sentences into case particles for the active voice.",
+        "Therefore, our goal was to determine the target case particles."
+      ]
+    },
+    {
+      "heading": "3 Machine learning method (support vector machine)",
+      "text": [
+        "We used a support vector machine as the basis of our machine-learning method.",
+        "This is because support vector machines are comparatively better than other methods in many research areas (Kudoh and Matsumoto, 2000; Taira and Haruno, 2001;"
+      ]
+    },
+    {
+      "heading": "Small Margin Large Margin",
+      "text": [
+        "Data consisting of two categories were classified by using a hyperplane to divide a space with the support vector machine.",
+        "When these two categories were, positive and negative, for example, enlarging the margin between them in the training data (see Figure 42), reduced the possibility of incorrectly choosing categories in blind data (test data).",
+        "A hyperplane that maximized the margin was thus determined, and classification was done using that hyperplane.",
+        "Although the basics of this method are as described above, the region between the margins through the training data can include a small number of examples in extended versions, and the linearity of the hyperplane can be changed to non-linear by using kernel functions.",
+        "Classification in these extended versions is equivalent to classification using the following discernment function, and the two categories can be classified on the basis of whether the value output by the function is positive or negative (Cristianini and Shawe-Taylor, 2000; Kudoh, 2000):",
+        "where x is the context (a set of features) of an input example, xi indicates the context of a training datum, and yi (i = 1, ...,l, yi ∈ {1, −1}) indicates its category.",
+        "Function sgn is:",
+        "Each αi (i = 1, 2...) is fixed as a value of αi that maximizes the value of L(α) in Eq.",
+        "(3) under the conditions set by Eqs.",
+        "(4) and (5).",
+        "Although function K is called a kernel function and various functions are used as kernel functions, we have exclusively used the following polynomial function:",
+        "C and d are constants set by experimentation.",
+        "For all experiments reported in this paper, C was fixed as 1 and d was fixed as 2.",
+        "A set of xi that satisfies αi > 0 is called a support vector, (SV�)3, and the summation portion of Eq.",
+        "(1) is only calculated using examples that are support vectors.",
+        "Equation 1 is expressed as follows by using support vectors.",
+        "F4 first 1, 2, 3, 4, 5, and 7 digits of category number of P5 F5 auxiliary verb attached to P F6 word of N F7 first 1, 2, 3, 4, 5, and 7 digits of category number ofN F8 case particles and words of nominals that have dependency relationship with P and are other than N F9 first 1, 2, 3, 4, 5, and 7 digits of category number of nominals that have dependency relationship with P and are other than N F10 case particles of nominals that have dependency relationship with P and are other than N",
+        "Support vector machines are capable of handling data consisting of two categories.",
+        "Data consisting of more than two categories is generally handled using the pairwise method (Kudoh and Matsumoto, 2000).",
+        "Pairs of two different categories (N(N-1)/2 pairs) are constructed for data consisting of N categories with this method.",
+        "The best category is determined by using a two-category classifier (in this paper, a support vector machine4 is used as the two-category classifier), and the correct category is finally determined on the basis of “voting” on the N(N-1)/2 pairs that result from analysis with the two-category classifier.",
+        "The method discussed in this paper is in fact a combination of the support vector machine and the pairwise method described above."
+      ]
+    },
+    {
+      "heading": "4 Features (information used in classification)",
+      "text": [
+        "The features we used in our study are listed in Table 1, where N is a noun phrase connected to the",
+        "case particle being analyzed, and P is the phrase’s predicate.",
+        "We used the Japanese syntactic parser, KNP (Kurohashi, 1998), for identifying N, P, parts of speech and syntactic relations.",
+        "In the experiments conducted in this study, we selected features.",
+        "We used the following procedure to select them.",
+        "• Feature selection",
+        "We first used all the features for learning.",
+        "We next deleted only one feature from all the features for learning.",
+        "We did this for every feature.",
+        "We decided to delete features that would make the most improvement.",
+        "We repeated this until we could not improve the rate of accuracy."
+      ]
+    },
+    {
+      "heading": "5 Method of separating training data into each input particle",
+      "text": [
+        "We developed a new method of separating training data into each input (source) particle that uses machine learning for each particle.",
+        "For example, when we identify a target particle where the source particle is ni, we use only the training data where the source particle is ni.",
+        "When we identify a target particle where the source particle is ga, we use only the training data where the source particle is ga.",
+        "Frequently occurring target case particles are very different in source case particles.",
+        "Frequently occurring target case particles in all source case particles are listed in Table 2.",
+        "For example, when ni is a source case particle, frequently occurring",
+        "target case particles are ni or ga.",
+        "In contrast, when ga is a source case particle, a frequently occurring target case particle is wo.",
+        "In this case, it is better to separate training data into each source particle and use machine learning for each particle.",
+        "We therefore developed this method and confirmed that it was effective through experiments (Section 6)."
+      ]
+    },
+    {
+      "heading": "6 Experiments",
+      "text": []
+    },
+    {
+      "heading": "6.1 Basic experiments",
+      "text": [
+        "We used the corpus we constructed described in Section 2 as supervised data.",
+        "We divided the supervised data into closed and open data (Both the closed data and open data had 1788 items each.).",
+        "The distribution of target case particles in the data are listed in Table 3.",
+        "We used the closed data to determine features that were deleted in feature selection and used the open data as test data (data for evaluation).",
+        "We used 10-fold cross validation for the experiments on closed data and we used closed data as the training data for the experiments on open data.",
+        "The target case particles were determined by using the machine-learning method explained in Section 3.",
+        "When multiple target particles could have been answers in the training data, we used pairs of them as answers for machine learning.",
+        "The experimental results are listed in Tables 4 and 5.",
+        "Baseline 1 outputs a source case particle as the target case particle.",
+        "Baseline 2 outputs the most frequent target case particle (wo (direct object)) in the closed data as the target case particle in every case.",
+        "Baseline 3 outputs the most frequent target case particle for each source target case particle in the closed data as the target case particle.",
+        "For example, ni (indirect object) is the most frequent target case particle when the source case particle is ni, as listed in Table 2.",
+        "Baseline 3 outputs ni when the source case particle is ni.",
+        "KNP indicates the results that the Japanese syntactic parser, KNP (Kurohashi, 1998), output.",
+        "Kondo indicates the results that Kondo’s method, (Kondo et al., 2001), output.",
+        "KNP and Kondo can only work when a target predicate is defined in the IPAL dictionary or the VDIC dictionary.",
+        "Otherwise, KNP and Kondo output nothing.",
+        "“KNP/Kondo + Baseline X” indicates the use of outputs by Baseline X when KNP/Kondo have output nothing.",
+        "KNP and Kondo are traditional methods using verb dictionaries and manually prepared heuristic rules.",
+        "These traditional methods were used in this study to compare them with ours.",
+        "“Murata 2003” indicates results using a method they developed in a previous study (Murata and Isahara, 2003).",
+        "This method uses F1, F2, F5, F6, F7, F10, and F13 as features and does not have training data for any source case particles.",
+        "“Division” indicates separating training data into each source particle.",
+        "“No-division” indicates not separating training data for any source particles.",
+        "“All features” indicates the use of all features with no features being selected.",
+        "“Feature selection” indicates features are selected.",
+        "We did two kinds of evaluations: “Eval.",
+        "A” and “Eval.",
+        "B”.",
+        "There are some cases where multiple target case particles can be answers.",
+        "For example, ga and de can be answers.",
+        "We judged the result to be correct in “Eval.",
+        "A” when ga and de could be answers and the system output the pair of ga and de as answers.",
+        "We judged the result to be correct in “Eval.",
+        "B” when ga and de could be answers and the system output ga, de, or the pair of ga and de as answers.",
+        "Table 4 lists the results using all data.",
+        "Table 5 lists the results where a target predicate is defined in the IPAL and VDIC dictionaries.",
+        "There were 551 items in the closed data and 539 in the open.",
+        "We found the following from the results.",
+        "Although selection of features obtained higher rates of accuracy than use of all features in the closed data, it did not obtain higher rates of accuracy in the open data.",
+        "This indicates that feature selection was not effective and we should have used all features in this study.",
+        "Our method using all features in the open data and separating training data into each source particle obtained the highest rate of accuracy (94.30% in Eval.",
+        "B).",
+        "This indicates that our method is ef",
+        "fective.",
+        "Our method that used all the features and did not separate training data for any source particles obtained an accuracy rate of 92.00% in Eval.",
+        "B.",
+        "The technique of separating training data into each source particles made an improvement of 2.30%.",
+        "We confirmed that this improvement has a significance level of 0.01 by using a two-sided binomial test (two-sided sign test).",
+        "This indicates that the technique of separating training data for all source particles is effective.",
+        "Murata 2003 who used only seven features and did not separate training data for any source particles obtained an accuracy rate of 89.77% with Eval.",
+        "B.",
+        "The method (92.00%) of using all features (32) made an improvement of 2.23% against theirs.",
+        "We confirmed that this improvement had a significance level of 0.01 by using a two-sided binomial test (two-sided sign test).",
+        "This indicates that our increased features are effective.",
+        "KNP and Kondo obtained low accuracy rates (29.14% and 41.00% in Eval.",
+        "B for the open data).",
+        "We did the evaluation using data and proved that these methods could work well.",
+        "A target predicate in the data is defined in the IPAL and VDIC dictionaries.",
+        "The results are listed in Table 5.",
+        "KNP and Kondo obtained relatively higher accuracy rates (76.07% and 78.85% in Eval.",
+        "B for the open data).",
+        "However, they were lower than that for Baseline 3.",
+        "Baseline 3 obtained a relatively high accuracy rate (84.17% and 88.20% in Eval.",
+        "B for the open data).",
+        "Baseline 3 is similar to our method in terms of separating the training data into source particles.",
+        "Baseline 3 separates the training data into",
+        "source particles and uses the most frequent target case particle.",
+        "Our method involves separating the training data into source particles and using machine learning for each particle.",
+        "The fact that Baseline 3 obtained a relatively high accuracy rate supports the effectiveness of our method separating the training data into source particles."
+      ]
+    },
+    {
+      "heading": "6.2 Experiments confirming importance of features",
+      "text": [
+        "We next conducted experiments where we confirmed which features were effective.",
+        "The results are listed in Table 6.",
+        "We can see the accuracy rate for deleting features and the accuracy rate for using all features.",
+        "We can see that not using F25 greatly decreased the accuracy rate (about 2%).",
+        "This indicates that F25 is particularly effective.",
+        "F25 is the transformation rule Kondo used for P and N in his method.",
+        "The transformation rules in Kondo’s method were made precisely for ni (indirect object), which is particularly difficult to handle.",
+        "F25 is thus effective.",
+        "We could also see not using F7 decreased the accuracy rate (about 0.5%).",
+        "F7 has the semantic features for N. We found that the semantic features for N were also effective."
+      ]
+    },
+    {
+      "heading": "6.3 Experiments changing number of training data",
+      "text": [
+        "We finally did experiments changing the number of training data.",
+        "The results are plotted in Figure 5.",
+        "We used our two methods of all features “Division” and “Non-division”.",
+        "We only plotted the",
+        "accuracy rates for Eval.",
+        "B in the open data in the figure.",
+        "We plotted accuracy rates when 1, 1/2, 1/4, 1/8, and 1/16 of the training data were used.",
+        "“Division”, which separates training data for all source particles, obtained a high accuracy rate (88.36%) even when the number of training data was small.",
+        "In contrast, “Non-division”, which does not separate training data for any source particles, obtained a low accuracy rate (75.57%), when the number of training data was small.",
+        "This indicates that our method of separating training data for all source particles is effective."
+      ]
+    },
+    {
+      "heading": "7 Conclusion",
+      "text": [
+        "We developed a new method of transforming Japanese case particles when transforming Japanese passive sentences into active sentences.",
+        "Our method separates training data for all input (source) particles and uses machine learning for each particle.",
+        "We also used numerous rich features for learning.",
+        "Our method obtained a high rate of accuracy (94.30%).",
+        "In contrast, a method that did not separate training data for all source particles obtained a lower rate of accuracy (92.00%).",
+        "In addition, a method that did not have many rich features for learning used in a previous study obtained a much lower accuracy rate (89.77%).",
+        "We confirmed that these improvements were significant through a statistical test.",
+        "We also undertook experiments utilizing traditional methods using verb dictionaries and manually prepared heuristic rules and confirmed that our method obtained much higher accuracy rates than traditional methods.",
+        "We also conducted experiments on which features were the most effective.",
+        "We found that Kondo’s transformation rule used as a feature in our system was particularly effective.",
+        "We also found that semantic features for nominal targets were effective.",
+        "We finally did experiments on changing the number of training data.",
+        "We found that our method of separating training data for all source particles could obtain high accuracy rates even when there were few training data.",
+        "This indicates that our method of separating training data for all source particles is effective.",
+        "The transformation of passive sentences into active sentences is useful in many research areas including generation, knowledge extraction from databases written in natural languages, information extraction, and answering questions.",
+        "In the future, we intend to use the results of our study for these kinds of research projects."
+      ]
+    }
+  ]
+}

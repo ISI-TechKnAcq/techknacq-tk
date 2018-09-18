@@ -1,0 +1,340 @@
+{
+  "info": {
+    "authors": [
+      "Cosmin Munteanu",
+      "Gerald Penn"
+    ],
+    "book": "Annual Meeting of the Association for Computational Linguistics",
+    "id": "acl-P04-1029",
+    "title": "Optimizing Typed Feature Structure Grammar Parsing Through Non-Statistical Indexing",
+    "url": "https://aclweb.org/anthology/P04-1029",
+    "year": 2004
+  },
+  "references": [
+    "acl-P03-1026",
+    "acl-P99-1061"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "This paper introduces an indexing method based on static analysis of grammar rules and type signatures for typed feature structure grammars (TFSGs).",
+        "The static analysis tries to predict at compile-time which feature paths will cause unification failure during parsing at runtime.",
+        "To support the static analysis, we introduce a new classification of the instances of variables used in TFSGs, based on what type of structure sharing they create.",
+        "The indexing actions that can be performed during parsing are also enumerated.",
+        "Non-statistical indexing has the advantage of not requiring training, and, as the evaluation using large-scale HPSGs demonstrates, the improvements are comparable with those of statistical optimizations.",
+        "Such statistical optimizations rely on data collected during training, and their performance does not always compensate for the training costs."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Developing efficient all-paths parsers has been a long-standing goal of research in computational linguistics.",
+        "One particular class still in need of parsing time improvements is that of TFSGs.",
+        "While simpler formalisms such as context-free grammars (CFGs) also face slow all-paths parsing times when the size of the grammar increases significantly, TFSGs (which generally have fewer rules than large-scale CFGs) become slow as a result of the complex structures used to describe the grammatical categories.",
+        "In HPSGs (Pollard and Sag, 1994), one category description could contain hundreds of feature values.",
+        "This has been a barrier in transferring CFG-successful techniques to TFSG parsing.",
+        "For TFSG chart parsers, one of the most time-consuming operations is the retrieval of categories from the chart during rule completion (closing of constituents in the chart under a grammar rule).",
+        "Looking in the chart for a matching edge for a daughter is accomplished by attempting unifications with edges stored in the chart, resulting in many failed unifications.",
+        "The large and complex structure of TFS descriptions (Carpenter, 1992) leads to slow unification times, affecting the parsing times.",
+        "Thus, failing unifications must be avoided during retrieval from the chart.",
+        "To our knowledge, there have been only four methods proposed for improving the retrieval component of TFSG parsing.",
+        "One (Penn and Munteanu, 2003) addresses only the cost of copying large categories, and was found to reduce parsing times by an average of 25% on a large-scale TFSG (MERGE).",
+        "The second, a statistical method known as quick-check (Malouf et al., 2000), determines the paths that are likely to cause unification failure by profiling a large sequence of parses over representative input, and then filters unifications at runtime by first testing these paths for type consistency.",
+        "This was measured as providing up to a 50% improvement in parse times on the English Resource Grammar (Flickinger, 1999, ERG).",
+        "The third (Penn, 1999b) is a similar but more conservative approach that uses the profile to reorder sister feature values in the internal data structure.",
+        "This was found to improve parse times on the ALE HPSG by up to 33%.",
+        "The problem with these statistical methods is that the improvements in parsing times may not justify the time spent on profiling, particularly during grammar development.",
+        "The static analysis method introduced here does not use profiling, although it does not preclude it either.",
+        "Indeed, an evaluation of statistical methods would be more relevant if measured on top of an adequate extent of non-statistical optimizations.",
+        "Although quick-check is thought to produce parsing time improvements, its evaluation used a parser with only a superficial static analysis of chart indexing.",
+        "That analysis, rule filtering (Kiefer et al., 1999), reduces parse times by filtering out mother-daughter unifications that can be determined to fail at compile-time.",
+        "True indexing organizes the data (in this case, chart edges) to avoid unnecessary retrievals altogether, does not require the operations that it performs to be repeated once full unification is deemed necessary, and offers the support for easily adding information extracted from further static analysis of the grammar rules, while maintaining the same indexing strategy.",
+        "Flexibility is one of the reasons for the successful employment of indexing in databases (Elmasri and Navathe, 2000) and automated reasoning (Ramakrishnan et al., 2001).",
+        "In this paper, we present a general scheme for indexing TFS categories during parsing (Section 3).",
+        "We then present a specific method for statically analyzing TFSGs based on the type signature and the structure of category descriptions in the grammar rules, and prove its soundness and completeness (Section 4.2.1).",
+        "We describe a specific indexing strategy based on this analysis (Section 4), and evaluate it on two large-scale TFSGs (Section 5).",
+        "The result is a purely non-statistical method that is competitive with the improvements gained by statistical optimizations, and is still compatible with further statistical improvements."
+      ]
+    },
+    {
+      "heading": "2 TFSG Terminology",
+      "text": [
+        "TFSs are used as formal representatives of rich grammatical categories.",
+        "In this paper, the formalism from (Carpenter, 1992) will be used.",
+        "A TFSG is defined relative to a fixed set of types and set of features, along with constraints, called appropriateness conditions.",
+        "These are collectively known as the type signature (Figure 3).",
+        "For each type, appropriateness specifies all and only the features that must have values defined in TFSs of that type.",
+        "It also specifies the types of the values that those features can take.",
+        "The set of types is partially ordered, and has a unique most general type (1– “bottom”).",
+        "This order is called subsumption (C): more specific (higher) types inherit appropriate features from their more general (lower) supertypes.",
+        "Two types t1 and t2 unify (t1 u t2 �) iff they have a least upper bound in the hierarchy.",
+        "Besides a type signature, TFSGs contain a set of grammar (phrase) rules and lexical descriptions.",
+        "A simple example of a lexical description is: john>SYNSEM: (SYN: npASEM: j), while an example of a phrase rule is given in Figure 1."
+      ]
+    },
+    {
+      "heading": "2.1 Typed Feature Structures",
+      "text": [
+        "A TFS (Figure 2) is like a recursively defined record in a programming language: it has a type and features with values that can be TFSs, all obeying the appropriateness conditions of the type signature.",
+        "TFSs can also be seen as rooted graphs, where arcs correspond to features and nodes to substructures.",
+        "A node typing function θ (q) associates a type to every node q in a TFS.",
+        "Every TFS F has a unique starting or root node, qF.",
+        "For a given TFS, the feature value partial function δ (f, q) specifies the node reachable from q by feature f when one exists.",
+        "The path value partial function δ (π, q) specifies the node reachable from q by following a path of features π when one exists.",
+        "TFSs can be unified as well.",
+        "The result represents the most general consistent combination of the information from two TFSs.",
+        "That information includes typing (by unifying the types), feature values (by recursive unification), and structure sharing (by an equivalence closure taken over the nodes of the arguments).",
+        "For large TFSs, unification is computationally expensive, since all the nodes of the two TFSs are visited.",
+        "In this process, many nodes are collapsed into equivalence classes because of structure sharing.",
+        "A node x in a TFS F with root qF and a node x' in a TFS F' with root qF, are equivalent (m) with respect to F u F' iff x = qF and x = qF,, or if there is a path π such that δFLJF' (π, qF) = x and δFLJF' (π, qF') = x'.",
+        "ness declares the features that must be defined on TFSs of that type, along with the type restrictions applying to their values."
+      ]
+    },
+    {
+      "heading": "2.2 Structure Sharing in Descriptions",
+      "text": [
+        "TFSGs are typically specified using descriptions, which logically denote sets of TFSs.",
+        "Descriptions can be more terse because they can assume all of the information about their TFSs that can be inferred from appropriateness.",
+        "Each non-disjunctive description can be associated with a unique most general feature structure in its denotation called a most general satisfier (MGSat).",
+        "While a formal presentation can be found in (Carpenter, 1992), we limit ourselves to an intuitive example: the TFS from Figure 2 is the MGSat of the description: throwing THROWER: (PERSON: third n NUMBER: (singular n Nr), GENDER: masculine) n THROWN: (PERSON: third n NUMBER: Nr, GENDER: neuter) .",
+        "Descriptions can also contain variables, such as Nr.",
+        "Structure sharing is enforced in descriptions through the use of variables.",
+        "In TFSGs, the scope of a variable extends beyond a single description, resulting in structure sharing between different TFSs.",
+        "In phrase structure rules (Figure 1), this sharing can occur between different daughter categories in a rule, or between a mother and a daughter.",
+        "Unless the term description is explicitly used, we will use “mother” and “daughter” to refer to the MGSat of a mother or daughter description.",
+        "We can classify instances of variables based on what type of structure sharing they create.",
+        "Internal variables are the variables that represent internal structure sharing (such as in Figure 2).",
+        "The occurrences of such variables are limited to a single category in a phrase structure rule.",
+        "External variables are the variables used to share structure between categories.",
+        "If a variable is used for structure sharing both inside a category and across categories, then it is also considered an external variable.",
+        "For a specific category, two kinds of external variable instances can be distinguished, depending on their occurrence relative to the parsing control strategy: active external variables and inactive external variables.",
+        "Active external variables are instances of external variables that are shared between the description of a category D and one or more descriptions of categories in the same rule as D visited by the parser before D as the rule is extended (completed).",
+        "Inactive external variables are the external variable instances that are not active.",
+        "For example, in bottom-up left-to-right parsing, all of a mother’s external variable instances would be active because, being external, they also occur in one of the daughter descriptions.",
+        "Similarly, all of the leftmost daughter’s external variable instances would be inactive because this is the first description used by the parser.",
+        "In Figure 1, Agr is an active external variable in the second daughter, but it is inactive in the first daughter.",
+        "The active external variable instances are important for path indexing (Section 4.2), because they represent the points at which the parser must copy structure between TFSs.",
+        "They are therefore substructures that must be provided to a rule by the parsing chart if these unifications could potentially fail.",
+        "They also represent shared nodes in the MGSats of a rule’s category descriptions.",
+        "In our definitions, we assume without loss of generality that parsing proceeds bottom-up, with left-to-right of rule daughters.",
+        "This is the ALE system’s (Carpenter and Penn, 1996) parsing strategy.",
+        "Definition 1.",
+        "If D1i...,Dn are daughter descriptions in a rule and the rules are extended from left to right, then Ext (MGSat (Di)) is the set of nodes shared between MGSat (Di) and MGSat(D1) ... MGSat(Di_1).",
+        "For a mother description M, Ext (MGSat (M)) is the set of nodes shared with any daughter in the same rule.",
+        "Because the completion of TFSG rules can cause the categories to change in structure (due to external variable sharing), we need some extra notation to refer to a phrase structure rule’s categories at different times during a single application of that rule.",
+        "By M we symbolize the mother M after M’s rule is completed (all of the rule’s daughters are matched with edges in the chart).",
+        "D symbolizes the daughter D after all daughters to D’s left in D’s rule were unified with edges from the chart.",
+        "An important relation exists between M and M: if qM is M’s root and � qM is M’s root, then bx E M, bx E M such that Elπ for which δ (π, qM) = x and δ (π, qM& = x, θ (x) C θ (x� .",
+        "In other words, extending the rule extends the information states of its categories monotonically.",
+        "A similar relation exists between D and D. The set of all nodes x in M such that Elπ for which δ (π, qM) = x and δ(π, qM& = xx will be denoted by [xJ – 1 (and likewise for nodes in D).",
+        "There may be more than one node in [xJ – 1 because of unifications that occur during the extension of M to M."
+      ]
+    },
+    {
+      "heading": "3 The Indexing Timeline",
+      "text": [
+        "Indexing can be applied at several moments during parsing.",
+        "We introduce a general strategy for indexed parsing, with respect to what actions should be taken at each stage.",
+        "Three main stages can be identified.",
+        "The first one consists of indexing actions that can be taken off-line (along with other optimizations that can be performed at compile-time).",
+        "The second and third stages refer to actions performed at run time.",
+        "Stage 1.",
+        "In the off-line phase, a static analysis of grammar rules can be performed.",
+        "The complete content of mothers and daughters may not be accessible, due to variables that will be instantiated during parsing, but various sources of information, such as the type signature, appropriateness specifications, and the types and features of mother and daughter descriptions, can be analyzed and an appropriate indexing scheme can be specified.",
+        "This phase of indexing may include determining: (1a) which daughters in which rules will certainly not unify with a specific mother, and (1b) what information can be extracted from categories during parsing that can constitute indexing keys.",
+        "It is desirable to perform as much analysis as possible off-line, since the cost of any action taken during run time prolongs the parsing time.",
+        "Stage 2.",
+        "During parsing, after a rule has been completed, all variables in the mother have been extended as far as they can be before insertion into the chart.",
+        "This offers the possibility of further investigating the mother’s content and extracting supplemental information from the mother that contributes to the indexing keys.",
+        "However, the choice of such investigative actions must be carefully studied, since it might burden the parsing process.",
+        "Stage 3.",
+        "While completing a rule, for each daughter a matching edge is searched in the chart.",
+        "At this moment, the daughter’s active external variables have been extended as far as they can be before unification with a chart edge.",
+        "The information identified in stage (1b) can be extracted and unified as a precursor to the remaining steps involved in category unification.",
+        "These steps also take place at this stage."
+      ]
+    },
+    {
+      "heading": "4 TFSG Indexing",
+      "text": [
+        "To reduce the time spent on failures when searching for an edge in the chart, each edge (edge’s category) has an associated index key which uniquely identifies the set of daughter categories that can potentially match it.",
+        "When completing a rule, edges unifying with a specific daughter are searched for in the chart.",
+        "Instead of visiting all edges in the chart, the daughter’s index key selects a restricted number of edges for traversal, thus reducing the number of unification attempts.",
+        "The passive edges added to the chart represent specializations of rules’ mothers.",
+        "When a rule is completed, its mother M is added to the chart according to M’s indexing scheme, which is the set of index keys of daughters that might possibly unify with M. The index is implemented as a hash, where the hash function applied to a daughter yields the daughter’s index key (a selection of chart edges).",
+        "For a passive edge representing M, M’s indexing scheme provides the collection of hash entries where it will be added.",
+        "Each daughter is associated with a unique index key.",
+        "During parsing, a specific daughter is searched for in the chart by visiting only those edges that have a matching key, thus reducing the time needed for traversing the chart.",
+        "The index keys can be computed off-line (when daughters are indexed by position), or during parsing."
+      ]
+    },
+    {
+      "heading": "4.1 Positional Indexing",
+      "text": [
+        "In positional indexing, the index key for each daughter is represented by its position (rule number and daughter position in the rule).",
+        "The structure of the index can be determined at compile-time (first stage).",
+        "For each mother M in the grammar, a collection L(M) = {(Ri,Dj)I daughters that can match M} is created (M’s indexing scheme), where each element of L(M) represents the rule number Ri and daughter position Dj inside rule Ri (1 < j < arity(Ri)) of a category that can match with M. For TFSGs it is not possible to compute off-line the exact list of mother-daughter matching pairs, but it is possible to rule out certain non-unifiable pairs before parsing – a compromise that pays off with a very low index management time.",
+        "During parsing, each time an edge (representing a rule’s mother M) is added to the chart, it is inserted into the hash entries associated with the positions (Ri,Dj) from the list L(M) (the number of entries where M is inserted is IL(M) 1).",
+        "The entry associated with the key (Ri,Dj) will contain only categories that can possibly unify with the daughter at position (Ri, Dj) in the grammar.",
+        "Because our parsing algorithm closes categories depth-first under leftmost daughter matching, only daughters Di with i > 2 are searched for in the chart (and consequently, indexed).",
+        "We used the EFD-based modification of this algorithm (Penn and Munteanu, 2003), which needs no active edges, and requires a constant two copies per edges, rather than the standard one copy per retrieval found in Prolog parsers.",
+        "Without this, the cost of copying TFS categories would have overwhelmed the benefit of the index."
+      ]
+    },
+    {
+      "heading": "4.2 Path Indexing",
+      "text": [
+        "Path indexing is an extension of positional indexing.",
+        "Although it shares the same underlying principle as the path indexing used in automated reasoning (Ramakrishnan et al., 2001), its functionality is related to quick check: extract a vector of types from a mother (which will become an edge) and a daughter, and test the unification of the two vectors before attempting to unify the edge and the daughter.",
+        "Path indexing differs from quick-check in that it identifies these paths by a static analysis of grammar rules, performed off-line and with no training required.",
+        "Path indexing is also built on top of positional indexing, therefore the vector of types can be different for each potentially unifiable mother-daughter pair."
+      ]
+    },
+    {
+      "heading": "4.2.1 Static Analysis of Grammar Rules",
+      "text": [
+        "Similar to the abstract interpretation used in program verification (Cousot and Cousot, 1992), the static analysis tries to predict a runtime phenomenon (specifically, unification failures) at compile-time.",
+        "It tries to identify nodes in a mother that carry no relevant information with respect to unification with a particular daughter.",
+        "For a mother M unifiable with a daughter D, these nodes will be grouped in a set StaticCut(M� D).",
+        "Intuitively, these nodes can be left out or ignored while com☎☎ puting the unification of M and D. The StaticCut can be divided into two subsets: StaticCut (M, D) RigidCut(M,D) U VariableCut(M D)✁ The RigidCut represents nodes that can be left out because neither they, nor one of their δπ-ancestors, can have their type values changed by means of external variable sharing.",
+        "The VariableCut represents nodes that are either externally shared, or have an externally shared ancestor, but still can be left out.",
+        "Definition 2.",
+        "RigidCut(M,D) is the largest subset of nodes x ✞ M such that, ✝y ✞ D for which x my:",
+        "1. x ✞ Ext(M), y ✞ Ext(D), 2.",
+        "✝x' ✞ Ms.t.",
+        "✟π s.t.",
+        "δ(π,x') = x, x' O Ext(M), and 3.",
+        "✝y' ✞ D s.t.",
+        "✟π s.t.",
+        "δ(π,y') = y, y' 0 Ext(D).",
+        "1. x ✞ RigidCut (M, D), and 2.",
+        "✝y ✞ D for which x m y, ✝s :] θ (x) , ✝t :] θ (y), s u t exists.",
+        "In words, a node can be left out even if it is externally shared (or has an externally shared ancestor) if all possible types this node can have unify with all possible types its corresponding nodes in D can have.",
+        "Due to structure sharing, the types of nodes in M and D can change during parsing, by being specialized to one of their subtypes.",
+        "Condition 2 ensures that the types of these nodes will remain compatible (have a least upper bound), even if they specialize during rule completion.",
+        "An intuitive example (real-life examples cannot be reproduced here – a category in a typical TFSG can have hundreds of nodes) is presented in Figure 4.",
+        "When computing the unification between a mother and a daughter during parsing, the same outcome (success or failure) will be reached by using ☎ a reduced representation of the mother (M'`D), with nodes in StaticCut(M,D) removed from M. Proposition 1.",
+        "For a mother M and a daughter D, ifM u D � before parsing, and M (as an edge in the chart) and D exist, then during parsing (1) M'D u D� >MLiD�, (2)M'`DLiDT>MLiDT.",
+        "☎Proof.",
+        "The second part (M'`D u D T >M Lib T) of ☎ Proposition 1 has a☎straightforward proof: if M'`D u D T, then ✟☎z ✞ M'`D U D such that � ✟ t for which ✝x☎ ✞ ☛zl., t �_ θ (☎x� .",
+        "Since k\"D C_ M, ✟☎z ✞ M U D such that � ✟ t for which ✝x☎ ✞ ☛zl t ::1θ (☎x� , and therefore, Mu D T. The first part of the proposition will be proven by ☎ ☎ showing that ✝☎z ✞ M U D, a consistent type can be ☎ assigned to ☛☎z☞, where ☛☎z☞,, is the set of nodes in M ☎ and D equivalent to ☎z with respect to the unification of M and D.1 Three lemmata need to be formulated: Lemma 1.",
+        "Ifx☎ ✞ M and x ✞ ☛☎x☞ ✄1, then θ (☎x� :] θ (x).",
+        "Similarly, for y☎ ✞ D, y ✞ ☛☎y☞✄1, θ(y) :] θ(y).",
+        "Lemma 2.",
+        "If types t0, t1 , ✁✁✁ , tn are such that ✝t'0 t0, ✝i ✞ (1, ✁✁✁ , n), to u ti �, then ✟t ::1 t0 such that ✝i ✞ (1,✁✁✁,n), t :] ti.",
+        "In proving the first part of Proposition 1, four cases are identified: Case A: I p. n ki = 1 and I [l,, n DI = 1, Case B: I p. n mi = 1 and I p. n DI > 1, Case C: I [zz.",
+        "n mi > 1 and j [zj.",
+        "n Dj = 1, Case D: I p. n ki > 1 and I p. n bi > 1.",
+        "Case A is trivial, and D is a generalization of B and C.",
+        "Subcase B.i: E ,x V 1PD.",
+        "by E [zl,, n D, y m x.",
+        "Therefore, according to Lemma 3, ]x E [xj – 1, Ely E [j – 1 such that x m y.",
+        "Thus, according to Condition 2 of Definition 3, Vs :] θ (y) , Vt :] θ (x),",
+        "set [zl,, n M can be divided into two subsets: Sii = {x E [zl,, n .413 E MPD }, and Si = {x E [zl,, n 1L11x E � M,x� 0 MPD, and x E VariableCut(M,D)}.",
+        "If _x were in RigidCut (M, D), then necessarily [lz ,, nMl � � would be 1.",
+        "Since Sii C M'`D and M'`D LID , , then Elt' :] θ (yP) such that bxz E Sii, t' ::1 θ (x� (*).",
+        "However, Vx– E Sii, xx m y.",
+        "Therefore, according to Lemma 3, bxx E Sii, ]x E [I – 1, Ely E [j – 1 such that x gay.",
+        "Thus, since x E VariableCut (M, D), Condition 2 of Definition 3 holds, and therefore, according to Lemma 1, Vs �_ θ (x� , bs2 � 6 (y) , s1 u s2 �.",
+        "More than this, since t' ::1θ (y) (for the type t' from (*)), bs1 :] θ (x�, Vs'' � t', s1 u s' � , and hence, Vs2'",
+        "t s'2 uθ (x� Thus, according to Lemma 2 and to (*), Elt :] t' �_ θ (�y) such that bxz E Sii, t ::1θ (�x�.",
+        "Thus, Elt such that Vx� E [zz„, t :] θ (x� .",
+        "While Proposition 1 could possibly be used by grammar developers to simplify TFSGs themselves at the source-code level, here we only exploit it for internally identifying index keys for more efficient chart parsing with the existing grammar.",
+        "There may be better static analyses, and better uses of this static analysis.",
+        "In particular, future work will focus on using static analysis to determine smaller representations (by cutting nodes in Static Cuts) of the chart edges themselves."
+      ]
+    },
+    {
+      "heading": "4.2.2 Building the Path Index",
+      "text": [
+        "The indexing schemes used in path indexing are built on the same principles as those in positional indexing.",
+        "The main difference is the content of the indexing keys, which now includes a third element.",
+        "Each mother M has its indexing scheme defined as: L(M) = { (Ri, Dj, Vij) }.",
+        "The pair (Ri, Dj) is the positional index key (as in positional indexing), while Vij is the path index vector containing type values extracted from M. A different set of types is extracted for each mother-daughter pair.",
+        "So, path indexing uses a two-layer indexing method: the positional key for daughters, and types extracted from the typed feature structure.",
+        "Each daughter’s index key is now given by L(Dj) = { (Ri, Vij) }, where Ri is the rule number of a potentially matching mother, and Vij is the path index vector containing types extracted from Dj.",
+        "The types extracted for the indexing vectors are those of nodes found at the end of indexing paths.",
+        "A path π is an indexing path for a mother-daughter pair (M, D) iff: (1) π is defined for both M and D, (2) ]x E StaticCut(M,D), Elf s.t.",
+        "δ(f,x) _ δ (π, qM) (qM is M’s root), and (3) δ (π, qM) V StaticCut(M,D).",
+        "Indexing paths are the “frontiers” of the non-statically-cut nodes of M. A similar key extraction could be performed during Stage 2 of indexing (as outlined in Section 3), using M rather than M. We have found that this on-line path discovery is generally too expensive to be performed during parsing, however.",
+        "As stated in Proposition 1, the nodes in StaticCut(M,D) do not affect the success/failure of M u D. Therefore, the types of first nodes not included in StaticCut(M� D) along each path π that stems from the root of M and D are included in the indexing key, since these nodes might contribute to the success/failure of the unification.",
+        "It should be mentioned that the vectors Vij are filled with values extracted from M after M’s rule is completed, and from D after all daughters to the left of D are unified with edges in the chart.",
+        "As an example, assuming that the indexing paths are THROWER:PERSON, THROWN, and THROWN:GENDER, the path index vector for the TFS shown in Figure 2 is (third, index, neuter) ."
+      ]
+    },
+    {
+      "heading": "4.2.3 Using the Path Index",
+      "text": [
+        "Inserting and retrieving edges from the chart using path indexing is similar to the general method presented at the beginning of this section.",
+        "The first layer of the index is used to insert a mother as an edge into appropriate chart entries, according to the positional keys for the daughters it can match.",
+        "Along with the mother, its path index vector is inserted into the chart.",
+        "When searching for a matching edge for a daughter, the search is restricted by the first indexing layer to a single entry in the chart (labeled with the positional index key for the daughter).",
+        "The second layer restricts searches to the edges that have a compatible path index vector.",
+        "The compatibility is defined as type unification: the type pointed to by the element Vi j (n) of an edge’s vector Vi j should unify with the type pointed to by the element Vi j (n) of the path index vector Vi j of the daughter on position Dj in a rule Ri."
+      ]
+    },
+    {
+      "heading": "5 Experimental Evaluation",
+      "text": [
+        "Two TFSGs were used to evaluate the performance of indexing: a pre-release version of the MERGE grammar, and the ALE port of the ERG (in its final form).",
+        "MERGE is an adaptation of the ERG which uses types more conservatively in favour of relations, macros and complex-antecedent constraints.",
+        "This pre-release version has 17 rules, 136 lexical items, 1157 types, and 144 introduced features.",
+        "The ERG port has 45 rules, 1314 lexical entries, 4305 types and 155 features.",
+        "MERGE was tested on 550 sentences of lengths between 6 and 16 words, extracted from the Wall Street Journal annotated parse trees (where phrases not covered by MERGE’s vocabulary were replaced by lexical entries having the same parts of speech), and from MERGE’s own test corpus.",
+        "ERG was tested on 1030 sentences of lengths between 6 and 22 words, extracted from the Brown Corpus and from the Wall Street Journal annotated parse trees.",
+        "Rather than use the current version of ALE, TFSs were encoded as Prolog terms as prescribed in (Penn, 1999a), where the number of argument positions is the number of colours needed to colour the feature graph.",
+        "This was extended to allow for the enforcement of type constraints during TFS unification.",
+        "Types were encoded as attributed variables in SICStus Prolog (Swedish Institute of Computer Science, 2004)."
+      ]
+    },
+    {
+      "heading": "5.1 Positional and path indexing evaluation",
+      "text": [
+        "The average and best improvements in parsing times of positional and path indexing over the same EFD-based parser without indexing are presented in Table 1.",
+        "The parsers were implemented in SICStus 3.",
+        "10.1 for Solaris 8, running on a Sun Server with 16 GB of memory and 4 UltraSparc v.9 processors at 1281 MHz.",
+        "For MERGE, parsing times range from 10 milliseconds to 1.3 seconds.",
+        "For ERG, parsing times vary between 60 milliseconds and 29.2 seconds."
+      ]
+    },
+    {
+      "heading": "5.2 Comparison with statistical optimizations",
+      "text": [
+        "Non-statistical optimizations can be seen as a first step toward a highly efficient parser, while statistical optimization can be applied as a second step.",
+        "However, one of the purposes of non-statistical indexing is to eliminate the burden of training while offering comparable improvements in parsing times.",
+        "A quick-check parser was also built and evaluated and the set-up times for the indexed parsers and the quick-check parser were compared (Table 2).",
+        "Quick-check was trained on a 300-sentence training corpus, as prescribed in (Malouf et al., 2000).",
+        "The training corpus included 150 sentences also used in testing.",
+        "The number of paths in path indexing is different for each mother-daughter pair, ranging from 1 to 43 over the two grammars.",
+        "As seen in Table 3, quick-check alone surpasses positional and path indexing for the ERG.",
+        "However, it is outperformed by them on the MERGE, recording slower times than even the baseline.",
+        "But the combination of quick-check and path indexing is faster than quick-check alone on both grammars.",
+        "Path indexing at best provided no decrease in performance over positional indexing alone in these experiments, attesting to the difficulty of maintaining efficient index keys in an implementation.",
+        "The quick-check evaluation presented in (Malouf et al., 2000) uses only sentences with a length of at most 10 words, and the authors do not report the set-up times.",
+        "Quick-check has an additional advantage in the present comparison, because half of the training sentences were included in the test corpus.",
+        "While quick-check improvements on the ERG confirm other reports on this method, it must be",
+        "noted that quick-check appears to be parochially very well-suited to the ERG (indeed quick-check was developed alongside testing on the ERG).",
+        "Although the recommended first 30 most probable failure-causing paths account for a large part of the failures recorded in training on both grammars (94% for ERG and 97% for MERGE), only 51 paths caused failures at all for MERGE during training, compared to 216 for the ERG.",
+        "Further training with quick-check for determining a better vector length for MERGE did not improve its performance.",
+        "This discrepancy in the number of failure-causing paths could be resulting in an overfitted quick-check vector, or, perhaps the 30 paths chosen for MERGE really are not the best 30 (quick-check uses a greedy approximation).",
+        "In addition, as shown in Table 4, the improvements made by quick-check on the ERG are explained by the drastic reduction of (chart lookup) unification failures during parsing relative to the other methods.",
+        "It appears that nothing short of a drastic reduction is necessary to justify the overhead of maintaining the index, which is the largest for quick-check because some of its paths must be traversed at runtime – path indexing only uses paths available at compile-time in the grammar source.",
+        "Note that path indexing outperforms quick-check on MERGE in spite of its lower failure reduction rate, because of its smaller overhead."
+      ]
+    },
+    {
+      "heading": "6 Conclusions and Future Work",
+      "text": [
+        "The indexing method proposed here is suitable for several classes of unification-based grammars.",
+        "The index keys are determined statically and are based on an a priori analysis of grammar rules.",
+        "A major advantage of such indexing methods is the elimination of the lengthy training processes needed by statistical methods.",
+        "Our experimental evaluation demonstrates that indexing by static analysis is a promising alternative to optimizing parsing with TFSGs, although the time consumed by on-line maintenance of the index is a significant concern – echoes of an observation that has been made in applications of term indexing to databases and programming languages (Graf, 1996).",
+        "Further work on efficient implementations and data structures is therefore required.",
+        "Indexing by static analysis of grammar rules combined with statistical methods also can provide a higher aggregate benefit.",
+        "The current static analysis of grammar rules used as a basis for indexing does not consider the effect of the universally quantified constraints that typically augment the signature and grammar rules.",
+        "Future work will investigate this extension as well."
+      ]
+    }
+  ]
+}

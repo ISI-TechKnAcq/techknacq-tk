@@ -1,0 +1,272 @@
+{
+  "info": {
+    "authors": [
+      "Christina Lioma",
+      "Iadh Ounis"
+    ],
+    "book": "International Conference on Computational Linguistics and Annual Meeting of the Association for Computational Linguistics – Poster Sessions",
+    "id": "acl-P06-2069",
+    "title": "Examining the Content Load of Part of Speech Blocks for Information Retrieval",
+    "url": "https://aclweb.org/anthology/P06-2069",
+    "year": 2006
+  },
+  "references": [
+    "acl-C02-1161",
+    "acl-J90-1003",
+    "acl-J92-4003",
+    "acl-J93-2004"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "We investigate the connection between part of speech (POS) distribution and content in language.",
+        "We define POS blocks to be groups of parts of speech.",
+        "We hypothesise that there exists a directly proportional relation between the frequency of POS blocks and their content salience.",
+        "We also hypothesise that the class membership of the parts of speech within such blocks reflects the content load of the blocks, on the basis that open class parts of speech are more content-bearing than closed class parts of speech.",
+        "We test these hypotheses in the context of Information Retrieval, by syntactically representing queries, and removing from them content-poor blocks, in line with the aforementioned hypotheses.",
+        "For our first hypothesis, we induce POS distribution information from a corpus, and approximate the probability of occurrence of POS blocks as per two statistical estimators separately.",
+        "For our second hypothesis, we use simple heuristics to estimate the content load within POS blocks.",
+        "We use the Text REtrieval Conference (TREC) queries of 1999 and 2000 to retrieve documents from the WT2G and WT10G test collections, with five different retrieval strategies.",
+        "Experimental outcomes confirm that our hypotheses hold in the context of Information Retrieval."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "The task of an Information Retrieval (IR) system is to retrieve documents from a collection, in response to a user need, which is expressed in the form of a query.",
+        "Very often, this task is realised by indexing the documents in the collection with keyword descriptors.",
+        "Retrieval consists in matching the query against the descriptors of the documents, and returning the ones that appear closest, in ranked lists of relevance (van Rij sbergen, 1979).",
+        "Usually, the keywords that constitute the document descriptors are associated with individual weights, which capture the importance of the keywords to the content of the document.",
+        "Such weights, commonly referred to as term weights, can be computed using various term weighting schemes.",
+        "Not all words can be used as keyword descriptors.",
+        "In fact, a relatively small number of words accounts for most of a document’s content (van Rijsbergen, 1979).",
+        "Function words make ‘noisy’ index terms, and are usually ignored during the retrieval process.",
+        "This is practically realised with the use of stopword lists, which are lists of words to be exempted when indexing the collection and the queries.",
+        "The use of stopword lists in IR is a manifestation of a well-known bifurcation in linguistics between open and closed classes of words (Lyons, 1977).",
+        "In brief, open class words are more content-bearing than closed class words.",
+        "Generally, the open class contains parts of speech that are morphologically and semantically flexible, while the closed class contains words that primarily perform linguistic well-formedness functions.",
+        "The membership of the closed class is mostly fixed and largely restricted to function words, which are not prone to semantic or morphological alterations.",
+        "We define a block of parts of speech (POS block) as a block of fixed length , where is set empirically.",
+        "We define POS block tokens as individual instances of POS blocks, and POS block",
+        "types as distinct POS blocks in a corpus.",
+        "The purpose of this paper is to test two hypotheses.",
+        "The intuition behind both of these hypotheses is that, just as individual words can be content-rich or content-poor, the same can hold for blocks of parts of speech.",
+        "According to our first hypothesis, POS blocks can be categorized as content-rich or content-poor, on the basis of their distribution within a corpus.",
+        "Specifically, we hypothesise that the more frequently a POS block occurs in language, the more content it is likely to bear.",
+        "According to our second hypothesis, POS blocks can be categorized as content-rich or content-poor, on the basis of the part of speech class membership of their individual components.",
+        "Specifically, we hypothesise that the more closed class components found in a POS block, the less content the block is likely to bear.",
+        "Both aforementioned hypotheses are evaluated in the context of IR as follows.",
+        "We observe the distribution of POS blocks in a corpus.",
+        "We create a list of POS block types with their respective probabilities of occurrence.",
+        "As a first step, to test our first hypothesis, we remove the POS blocks with a low probability of occurrence from each query, on the assumption that these blocks are content-poor.",
+        "The decision regarding the threshold of low probability of occurrence is realised empirically.",
+        "As a second step, we further remove from each query POS blocks that contain less open class than closed class components, in order to test the validity of our second hypothesis, as an extension of the first hypothesis.",
+        "We retrieve documents from two standard IR English test collections, namely WT2G and WT10G.",
+        "Both of these collections are commonly used for retrieval effectiveness evaluations in the Text REtrieval Conference (TREC), and come with sets of queries and query relevance assessments'.",
+        "Query relevance assessments are lists of relevant documents, given a query.",
+        "We retrieve relevant documents using firstly the original queries, secondly the queries produced after step 1, and thirdly the queries produced after step 2.",
+        "We use five statistically different term weighting schemes to match the query terms to the document keywords, in order to assess our hypotheses across a range of retrieval techniques.",
+        "We associate improvement of retrieval performance with successful noise reduction in the queries.",
+        "We assume noise reduction to reflect the correct iden",
+        "tification of content-poor blocks, in line with our hypotheses.",
+        "Section 2 presents related studies in this field.",
+        "Section 3 introduces our methodology.",
+        "Section 4 presents the experimental settings used to test our hypotheses, and their evaluation outcomes.",
+        "Section 5 provides our conclusions and remarks."
+      ]
+    },
+    {
+      "heading": "2 Related Studies",
+      "text": [
+        "We examine the distribution of POS blocks in language.",
+        "This is but one type of language distribution analysis that can be realised.",
+        "One can also examine the distribution of character or word n-grams, e.g.",
+        "Language Modeling (Croft and Lafferty, 2003), phrases (Church and Hanks, 1990; Lewis, 1992), and so on.",
+        "In class-based n-gram modeling (Brown et al., 1992) for example, class-based n-grams are used to determine the probability of occurrence of a POS class, given its preceding classes, and the probability of a particular word, given its own POS class.",
+        "Unlike the class-based n-gram model, we do not use POS blocks to make predictions.",
+        "We estimate their probability of occurrence as blocks, not the individual probabilities of their components, motivated by the intuition that the more frequently a POS block occurs, the more content it bears.",
+        "In the context of IR, efforts have been made to use syntactic information to enhance retrieval (Smeaton, 1999; Strzalkowski, 1996; Zukerman and Raskutti, 2002), but not by using POS block-based distribution representations."
+      ]
+    },
+    {
+      "heading": "3 Methodology",
+      "text": [
+        "We present the steps realised in order to assess our hypotheses in the context of IR.",
+        "Firstly, POS blocks with their respective frequencies are extracted from a corpus.",
+        "The probability of occurrence of each POS block is statistically estimated.",
+        "In order to test our first hypothesis, we remove from the query all but POS blocks of high probability of occurrence, on the assumption that the latter are content-rich.",
+        "In order to test our second hypothesis, POS blocks that contain more closed class than open class tags are removed from the queries, on the assumption that these blocks are content-poor."
+      ]
+    },
+    {
+      "heading": "3.1 Inducing POS blocks from a corpus",
+      "text": [
+        "We extract POS blocks from a corpus and estimate their probability of occurrence, as follows.",
+        "The corpus is POS tagged.",
+        "All lexical word forms are eliminated.",
+        "Thus, sentences are constituted solely by sequences of POS tags.",
+        "The following example illustrates this point.",
+        "[Original sentence] Many of the proposals for directives and action programmes planned by the Commission have for some obscure reason never seen the light of day.",
+        "For each sentence in the corpus, all possible POS blocks are extracted.",
+        "Thus, for a given sentence ABCDEFGH, where POS tags are denoted by single letters, and where POS block length = 4, the POS blocks extracted are ABCD, BCDE, CDEF, and so on.",
+        "The extracted POS blocks overlap.",
+        "The order in which the POS blocks occur in the sentence is disregarded.",
+        "We statistically infer the probability of occurrence of each POS block, on the basis of the individual POS block frequencies counted in the corpus.",
+        "Maximum Likelihood inference is eschewed, as it assigns the maximum possible likelihood to the POS blocks observed in the corpus, and no probability to unseen POS blocks.",
+        "Instead, we employ statistical estimation that accounts for unseen POS blocks, namely Laplace and Good-Turing (Manning and Schütze, 1999)."
+      ]
+    },
+    {
+      "heading": "3.2 Removing POS blocks from the queries",
+      "text": [
+        "In order to test our first hypothesis, POS blocks of low probability of occurrence are removed from the queries.",
+        "Specifically, we POS tag the queries, and remove the POS blocks that have a probability of occurrence below an empirical threshold .",
+        "The following example illustrates this point.",
+        "[Original query] A relevant document will focus on the causes of the lack of integration in a significant way; that is, the mere mention of immigration difficulties is not relevant.",
+        "Documents that discuss immigration problems unrelated to Germany are also not relevant.",
+        "[Tags-only query] DT JJ NN MD VV IN DT NNS IN DT NN IN NN IN DT JJ NN; WDT VBZ DT JJ NN IN NN NNS VBZ RB JJ.",
+        "NNS WDT VVP NN NNS JJ TO NP VBP RB RB JJ [Query with high-probability POS blocks] DT NNS IN DT NN IN NN IN NN IN NN NNS [Resulting query] the causes of the lack of integration in mention of immigration difficulties Some of the low-probability POS blocks, which are removed from the query in the above example, are DT JJ NN MD, JJ NN MD VV, NN MD VV IN, and so on.",
+        "The resulting query contains fragments of the original query, assumed to be content-rich.",
+        "In the context of the bag-of-words approach to IR investigated here, the grammatical well-formedness of the query is thus not an issue to be considered.",
+        "In order to test the second hypothesis, we remove from the queries POS blocks that contain less open class than closed class components.",
+        "We propose a simple heuristic Content Load algorithm, to ‘count’ the presence of content within a POS block, on the premise that open class tags bear more content than closed class tags.",
+        "The order of tags within a POS block is ignored.",
+        "Figure 1 displays our Content Load algorithm.",
+        "After the POS block component has been ‘counted’, if the Content Load is zero or more, we consider the POS block content-rich.",
+        "If the",
+        "function CONTENT-LOAD(POSblock) returns ContentLoad INITIALISE-FOR-EACH-POSBLOCK(query) for pos from 1 to POSblock-size do",
+        "Content Load is strictly less than zero, we consider the POS block content-poor.",
+        "We assume an underlying equivalence of content in all open class parts of speech, which albeit being linguistically counter-intuitive, is shown to be effective when applied to IR (Section 4).",
+        "The following example illustrates this point.",
+        "In this example, POS block length = 4.",
+        "[Original query] A relevant document will focus on the causes of the lack of integration in a significant way; that is, the mere mention of immigration difficulties is not relevant.",
+        "Documents that discuss immigration problems unrelated to Germany are also not relevant.",
+        "[Tags-only query] DT JJ NN MD VV IN DT NNS IN DT NN IN NN IN DT JJ NN; WDT VBZ DT JJ NN IN NN NNS VBZ RB JJ.",
+        "NNS WDT VVP NN NNS JJ TO NP VBP RB RB JJ [Query with high-probability POS blocks] DT NNS IN DT NN IN NN IN NN IN NN NNS [Content Load of POS blocks] DT NNS IN DT (-2), NN IN NN IN (0), NN IN NN NNS (+2) [Query with high-probability POS blocks of zero or positive Content Load] NN IN NN IN NN IN NN NNS",
+        "[Resulting query] lack of integration in mention of immigration difficulties"
+      ]
+    },
+    {
+      "heading": "4 Evaluation",
+      "text": [
+        "We present the experiments realised to test the two hypotheses formulated in Section 1.",
+        "Section 4.1 presents our experimental settings, and Section 4.2 our evaluation results."
+      ]
+    },
+    {
+      "heading": "4.1 Experimental Settings",
+      "text": [
+        "We induce POS blocks from the English language component of the second release of the parallel Europarl corpus(75MB)2.",
+        "We POS tag the corpus using the TreeTagger3, which is a probabilistic POS tagger that uses the Penn TreeBank tagset",
+        "(Marcus et al., 1993).",
+        "Since we are solely interested in a POS analysis, we introduce a stage of tagset simplification, during which, any information on top of surface POS classification is lost (Table 1).",
+        "Practically, this leads to 48 original TreeBank (TB) tag classes being narrowed down to 15 Reduced TreeBank (RTB) tag classes.",
+        "Additionally, tag names are shortened into two-letter names, for reasons of computational efficiency.",
+        "We consider the TBR tags JJ, FW, NN, and VB as open-class, and the remaining tags as closed class (Lyons, 1977).",
+        "We extract 214,398,227 POS block tokens and 19,343 POS block types from the corpus.",
+        "We retrieve relevant documents from two standard TREC test collections, namely WT2G (2GB) and WT10G (10GB), from the 1999 and 2000 TREC Web tracks, respectively.",
+        "We use the queries 401-450 from the ad-hoc task of the 1999 Web track, for the WT2G test collection, and the queries 451-500 from the ad-hoc task of the 2000 Web track, for the WT10G test collection, with their respective relevance assessments.",
+        "Each query contains three fields, namely title, description, and narrative.",
+        "The title contains keywords describing the information need.",
+        "The description expands briefly on the information need.",
+        "The narrative part consists of sentences denoting key concepts to be considered or ignored.",
+        "We use all three",
+        "query fields to match query terms to document keyword descriptors, but extract POS blocks only from the narrative field of the queries.",
+        "This choice is motivated by the two following reasons.",
+        "Firstly, the narrative includes the longest sentences in the whole query.",
+        "For our experiments, longer sentences provide better grounds upon which we can test our hypotheses, since the longer a sentence, the more POS blocks we can match within it.",
+        "Secondly, the narrative field contains the most noise in the whole query.",
+        "Especially when using bag-of-words term weighting, such as in our evaluation, information on what is not relevant to the query only introduces noise.",
+        "Thus, we select the most noisy field of the query to test whether the application of our hypotheses indeed results in the reduction of noise.",
+        "During indexing, we remove stopwords, and stem the collections and the queries, using Porter’s4 stemming algorithm.",
+        "We use the Terrier5 IR platform, and apply five different weighting schemes to match query terms to document descriptors.",
+        "In IR, term weighting schemes estimate the relevance of a document for a query , as: , where is a term in ,is the query term weight, and is the weight of document for term .",
+        "For example, we use the classical TF IDF weighting scheme (Sparck-Jones, 1972; Robertson et al., 1995): , where is the normalised term frequency in a document: ;is the frequency of a term in a document; , and are parameters; and are the document length and the average document length in the collection, respectively; is the number of documents in the collection; and is the number of documents containing the term .",
+        "For all weighting schemes we use, , where is the query term frequency, and is the maximum among all query terms.",
+        "We also use the well-established probabilistic BM25 weighting scheme (Robertson et al., 1995), and three distinct weighting schemes from the more recent Divergence From Randomness (DFR) framework (Amati, 2003), namely BB2, PL2, and DLH.",
+        "Note that, even though we use three weighting schemes from the DFR framework, the said schemes are statistically different to one another.",
+        "Also, DLH is the only parameter-free",
+        "weighting scheme we use, as it computes all of the variables automatically from the collection statistics.",
+        "We use the default values of all parameters, namely, for the TF IDF and BM25 weighting schemes (Robertson et al., 1995), schemes (Amati, 2003), for the WT2G test collection, and for the WT10G test collection.",
+        "We use default values, instead of tuning the term weighting parameters, because our focus lies in testing our hypotheses, and not in optimising retrieval performance.",
+        "If the said parameters are optimised, retrieval performance may be further improved.",
+        "We measure the retrieval performance using the Mean Average Precision (MAP) measure (van Rijsbergen, 1979).",
+        "Throughout all experiments, we set POS block length at = 4.",
+        "We employ Good-Turing and Laplace smoothing, and set the threshold of high probability of occurrence empirically at = 0.01.",
+        "We present all evaluation results in tables, the format of which is as follows: GT and LA indicate Good-Turing and Laplace respectively, and denotes the % difference in MAP from the baseline.",
+        "Statistically significant scores, as per the Wilcoxon test ( ), appear in boldface, while highest percentages appear in italics."
+      ]
+    },
+    {
+      "heading": "4.2 Evaluation Results",
+      "text": [
+        "Our retrieval baseline consists in testing the performance of each term weighting scheme, with each of the two test collections, using the original queries.",
+        "We introduce two retrieval combinations on top of the baseline, which we call POS and POSC.",
+        "The POS retrieval experiments, which relate to our first hypothesis, and the POSC retrieval experiments, which relate to our second hypothesis, are described in Section 4.2.1.",
+        "Section 4.2.2 presents the assessment of our hypotheses using a performance-boosting retrieval technique, namely query expansion.",
+        "The aim of the POS and POSC experiments is to test our first and second hypotheses, respectively.",
+        "Firstly, to test the first hypothesis, namely that there is a direct connection between the removal of low-frequency POS blocks from the queries and noise reduction in the queries, we remove all low-frequency POS blocks from the narrative field of , , and for both test collections; while for the PL2 and BB2 term weighting",
+        "the queries.",
+        "Secondly, to test our second hypothesis as an extension of our first hypothesis, we refilter the queries used in the POS experiments by removing from them POS blocks that contain more closed class than open class tags.",
+        "The processes involved in both hypotheses take place prior to the removal of stop words and stemming of the queries.",
+        "Table 2 displays the relevant evaluation results.",
+        "Overall, the removal of low-probability POS blocks from the queries (Hypothesis 1 section in Table 2) is associated with an improvement in retrieval performance over the baseline in most cases, which sometimes is statistically significant.",
+        "This improvement is quite similar across the two statistical estimators.",
+        "Moreover, two interesting patterns emerge.",
+        "Firstly, the DFR weighting schemes seem to be divided, performance-wise, between the parametric BB2 and PL2, which are associated with the highest improvement in retrieval performance, and the non-parametric DLH, which is associated with the lowest improvement, or even deterioration in retrieval performance.",
+        "This may indicate that the parameter used in BB2 and PL2 is not optimal, which would explain a low baseline, and thus a very high improvement over it.",
+        "Secondly, when comparing the improvement in performance related to the WT2G and the WT10G test collections, we observe a more marked improvement in retrieval performance with WT2G than with WT10G.",
+        "The combination of our two hypotheses (Hypotheses 1+2 section in Table 2) is associated with an improvement in retrieval performance over the baseline in most cases, which sometimes is statistically significant.",
+        "This improvement is very similar across the two statistical estimators, namely Good-Turing and Laplace.",
+        "When combining hypotheses 1+2, retrieval performance improves more than it did for hypothesis 1 only, for the WT2G test collection, which indicates that our second hypothesis might further reduce the amount of noise in the queries successfully.",
+        "For the WT10G collection, we object similar results, with the exception of DLH.",
+        "Generally, the improvement in performance associated to the WT2G test collection is more marked than the improvement associated to WT10G.",
+        "To recapitulate on the evaluation outcomes of our two hypotheses, we report an improvement in retrieval performance over the baseline for most, but not all cases, which is sometimes statistically significant.",
+        "This may be indicative of successful noise reduction in the queries, as per our hypotheses.",
+        "Also, the difference in the improvement in retrieval performance across the two test collections may suggest that data sparseness affects retrieval performance."
+      ]
+    },
+    {
+      "heading": "4.2.2 POS and POSC Retrieval Experiments with Query Expansion",
+      "text": [
+        "Query expansion (QE) is a performance-boosting technique often used in IR, which consists in extracting the most relevant terms from the top retrieved documents, and in using these terms to expand the initial query.",
+        "The expanded query is then used to retrieve documents anew.",
+        "Query expansion has the distinct property of improving retrieval performance when queries do not contain noise, but harming retrieval performance when queries contain noise, furnishing us with a strong baseline, against which we can measure our hypotheses.",
+        "We repeat the experiments described in Section 4.2.1 with query expansion.",
+        "We use the Bo1 query expansion scheme from the DFR framework (Amati, 2003).",
+        "We optimise the query expansion settings, so as to maximise its performance.",
+        "This provides us with an even stronger baseline, against which we can compare our proposed technique, which we tune empirically too through the tuning of the threshold .",
+        "We optimise query expansion on the basis of the corresponding relevance assessments available for the queries and collections employed, by selecting the most relevant terms from the top retrieved documents.",
+        "For the WT2G test collection, the relevant terms / top retrieved documents ratio we use is (i) 20/5 with TF IDF, BM25, and DLH; (ii) 30/5 with PL2; and (iii) 10/5 with BB2.",
+        "For the WT10G collection, the said ratio is (i) 10/5 for TF IDF; (ii) 20/5 for BM25 and DLH; and (iii) 5/5 for PL2 and BB2.",
+        "We repeat our POS and POSC retrieval experiments with query expansion.",
+        "Table 3 displays the relevant evaluation results.",
+        "Query expansion has overall improved retrieval performance (compare Tables 2 and 3), for both test collections, with two exceptions, where query expansion has made no difference at all, namely for BB2 and PL2, with the WT10G collection.",
+        "The removal of low-probability POS blocks from the queries, as per our first hypothesis, combined with query expansion, is associated with an im",
+        "provement in retrieval performance over the new baseline at all times, which is sometimes statistically significant.",
+        "This may indicate that noise has been further reduced in the queries.",
+        "Also, the two statistical estimators lead to similar improvements in retrieval performance.",
+        "When we compare these results to the ones reported with identical settings but without query expansion (Table 2), we observe the following.",
+        "Firstly, the previously reported division in the DFR weighting schemes, where BB2 and PL2 improved the most from our hypothesised noise reduction in the queries, while DLH improved the least, is no longer valid.",
+        "The improvement in retrieval performance now associated to DLH is similar to the improvement associated with the other weighting schemes.",
+        "Secondly, the difference in the retrieval improvement previously observed between the two test collections is now smaller.",
+        "To recapitulate on the evaluation outcomes of our two hypotheses combined with query expansion, we report an improvement in retrieval performance over the baseline at all times, which is sometimes statistically significant.",
+        "It appears that the combination of our hypotheses with query expansion tones down previously reported sharp differences in retrieval improvements over the baseline (Table 2), which may be indicative of further noise reduction."
+      ]
+    },
+    {
+      "heading": "5 Conclusion",
+      "text": [
+        "We described a block-based part of speech (POS) modeling of language distribution, induced from a corpus, and statistically smoothened using two different estimators.",
+        "We hypothesised that high-frequency POS blocks bear more content than low-frequency POS blocks.",
+        "Also, we hypothesised that the more closed class components a POS block contains, the less content it bears.",
+        "We evaluated both hypotheses in the context of Information Retrieval, across two standard test collections, and five statistically different term weighting schemes.",
+        "Our hypotheses led to a general improvement in retrieval performance.",
+        "This improvement was overall higher for the smaller of the two collections, indicating that data sparseness may have an effect on retrieval.",
+        "The use of query expansion worked well with our hypotheses, by helping weaker weighting schemes to benefit more from the reduction of noise in the queries.",
+        "In the future, we wish to investigate varying the size of POS blocks, as well as testing our hypotheses on shorter queries."
+      ]
+    }
+  ]
+}

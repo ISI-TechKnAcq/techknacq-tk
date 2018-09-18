@@ -1,0 +1,325 @@
+{
+  "info": {
+    "authors": [
+      "Richard Rohwer",
+      "Dayne Freitag"
+    ],
+    "book": "Computational Lexical Semantics Workshop",
+    "id": "acl-W04-2602",
+    "title": "Towards Full Automation of Lexicon Construction",
+    "url": "https://aclweb.org/anthology/W04-2602",
+    "year": 2004
+  },
+  "references": [
+    "acl-A92-1018",
+    "acl-A94-1009",
+    "acl-E95-1020",
+    "acl-J92-4003",
+    "acl-J94-2001",
+    "acl-P93-1034",
+    "acl-W00-0717",
+    "acl-W01-0713",
+    "acl-W93-0106"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "We describe work in progress aimed at developing methods for automatically constructing a lexicon using only statistical data derived from analysis of corpora, a problem we call lexical optimization.",
+        "Specifically, we use statistical methods alone to obtain information equivalent to syntactic categories, and to discover the semantically meaningful units of text, which may be multi-word units or polysemous terms-in-context.",
+        "Our guiding principle is to employ a notion of “meaningfulness” that can be quantified information-theoretically, so that plausible variants of a lexicon can be judged relative to each other.",
+        "We describe a technique of this nature called information theoretic co-clustering and give results of a series of experiments built around it that demonstrate the main ingredients of lexical optimization.",
+        "We conclude by describing our plans for further improvements, and for applying the same mathematical principles to other problems in natural language processing."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "A lexicon is a key resource for natural language processing, providing the link between the terms of a language and the semantic and syntactic properties with which they are associated.",
+        "Like most resources of considerable value, a good lexicon can be difficult or expensive to obtain.",
+        "This is particularly true if the lexicon needs to be specialized to a technical subject, an obscure language or dialect, or a highly idiomatic writing style.",
+        "Motivated by the practical importance of these cases as well as the theoretical interest inherent to the problem, we have set out to develop methods for building a lexicon automatically, given only a corpus of text representative of the domain of interest.",
+        "We represent the semantics of a term by an associated probability distribution over what we call a grounding space, which we define in various relatively conventional ways involving terms that occur in text in the vicinity of the term in question.",
+        "It is well-known that such distributions can represent meaning reasonably well, at least for meaning-comparison purposes (Landauer and Dumais, 1997).",
+        "We add to this framework the notion that the more information such a distributional lexicon can capture, the more useful it is.",
+        "This provides us with a mathematical concept of lexical optimization.",
+        "We begin the lexicon construction process by applying a distributional clustering technique called information theoretic co-clustering to make a first pass at grouping the most frequent terms in the corpus according to their most common syntactic part of speech category, as described in Section 2 along with illustrative results.",
+        "We briefly describe the co-clustering algorithm in Section 2.1.",
+        "In Section 3.1, we show that novel terms can be sensibly assigned to previously defined clusters using the same information theoretic criterion that the co-clustering uses.",
+        "Even though term clustering crudely ignores the fact that a term’s part of speech generally varies with its context, it is clear from inspection that the clusters themselves correspond to corpus-adapted part-of-speech categories, and can be used as such.",
+        "In Section 3.2, we examine two approaches to incorporating context information.",
+        "The most direct is to partition the contexts in which a term occurs into classes according to the informatic criterion used in co-clustering, creating sense-disambiguated word-with-context-class “pseudo-terms”.",
+        "We also discuss the use of Hidden Markov Models (HMMs) to capture contextual information.",
+        "In Section 3.3 we apply the same principle “in reverse” to find multi-word units.",
+        "We conclude in Section 3.5 with a discussion of possible improvements to our approach, and possible extensions of it.",
+        "2 Co-clustering to define surrogate syntactic tags Many applications of text processing rely on or benefit from information regarding the parts of speech of individual terms.",
+        "While part of speech is a somewhat fluid notion, the computational linguistics community has converged on a handful of standard “tag sets,” and taggers are now available in a number of languages.",
+        "Since some high-quality taggers are in the public domain, any application that could benefit from part-of-speech information should have access to it.",
+        "However, using a specific tagger and its tag set entails adopting the assumptions it embodies, which may not be appropriate for the target application.",
+        "In the worst case, the domain of interest may include text in a language not covered by available taggers.",
+        "Even when a tagger is available, the domain may involve usages substantially different from those in the corpus for which the tagger was developed.",
+        "Many current taggers are tuned to relatively formal corpora, such as newswire, while many interesting domains, such as email, netnews, or physicians’ notes, are replete with elisions, jargon, and neologisms.",
+        "Fortunately, using distributional characteristics of term contexts, it is feasible to induce part-of-speech categories directly from a corpus of sufficient size, as several papers have made clear (Brown et al., 1992; Sch¨utze, 1993; Clark, 2000).",
+        "Distributional information has uses beyond part of speech induction.",
+        "For example, it is possible to augment a fixed syntactic or semantic taxonomy with such information to good effect (Hearst and Sch¨utze, 1993).",
+        "Our objective is, where possible, to work directly with the inferred syntactic categories and their underlying distributions.",
+        "There are many applications of computational linguistics, particularly those involving “shallow” processing, such as information extraction, which can benefit from such automatically derived information, especially as research into acquisition of grammar matures (e.g., (Clark, 2001))."
+      ]
+    },
+    {
+      "heading": "2.1 The Co-clustering Algorithm.",
+      "text": [
+        "Our approach to inducing syntactic clusters is closely related to that described in Brown, et al., (1992) which is one of the earliest papers on the subject.",
+        "We seek to find a partition of the vocabulary that maximizes the mutual information between term categories and their contexts.",
+        "We achieve this in the framework of information theoretic co-clustering (Dhillon et al., 2003), in which a space of entities, on the one hand, and their contexts, on the other, are alternately clustered in a way that maximizes mutual information between the two spaces.",
+        "By treating the space of terms and the space of contexts as separate, we part ways with Brown, et al.",
+        "This allows us to experiment with the notion of context, as well as to investigate whether pooling contexts is useful, as has been assumed."
+      ]
+    },
+    {
+      "heading": "2.2 Definitions",
+      "text": [
+        "Given a corpus, and some notion of term and context, we derive co-occurrence statistics.",
+        "More formally, the input to our algorithm is two finite sets of symbols, say and , together with a set of co-occurrence count data consisting of a non-negative integer for every pair of symbols , that can be drawn from and .",
+        "The output is two sets of sets: and , where each is a subset of (a “cluster”), none of the intersect each other, the union of all the is (similar remarks apply to the and ).",
+        "The co-clustering algorithm chooses the partitions and to (locally) maximize the expected mutual information between them.",
+        "The multinomial parameters of a joint distribution over and may be estimated from this co-occurrence data as , using the naive maximum likelihood method.",
+        "We follow a more fully Bayesian procedure to obtain “pseudo-counts” that are added to the counts to obtain “smoothed” estimates.",
+        "Due to space limitations, we define but do not fully discuss our procedure here.",
+        "We apply the “Evidence” method in the “Dice Factory” setting of MacKay and Peto (1994), to obtain a pseudo-count for every symbol by treating each as a sample of (not from) a random process , in a Multinomial/Dirichlet setting.",
+        "By a symmetric procedure, we also obtain pseudo-counts for each .",
+        "These are combined according to , and then the totals are rescaled by , where , , , and .",
+        "The entropy or Shannon information of a discrete distribution is: This quantifies average improvement in one’s knowledge upon learning the specific value of an event drawn from .",
+        "It is large or small depending on whether has many or few probable values.",
+        "The mutual information between random variables and can be written: This quantifies the amount that one expects to learn indirectly about upon learning the value of , or vice versa.",
+        "The following relationship holds between the information of a joint distribution and the information of the marginals and mutual information:",
+        "From this we see that the expected amount one can learn upon hearing of a joint event is bounded by what one can learn about and separately.",
+        "Combined with another elementary result, and symmetrically , we see that a joint event yields at least as much information as either event alone, and that one cannot learn more about an event from by hearing about an event from than one would know by hearing about explicitly.",
+        ".",
+        "We perform an approximate maximization of using a simulated annealing procedure in which each trial move takes a symbol or out of the cluster to which it is tentatively assigned and places it into another.",
+        "It is straightforward to obtain a formula for the change in under this operation that does not involve its complete re-computation.",
+        "We use an ad hoc adaptive cooling schedule that seeks to continuously reduce the rejection rate of trial moves from an initial level near 50%, staying at each target rejection rate long enough to visit a fixed fraction of the possible moves with high probability.",
+        "After achieving one rejection rate target for the required number of moves, the target is lowered.",
+        "The temperature is also lowered, but will be raised again to an intermediate value if the resulting rejection rate is below the next target, or lowered further if the rejection rate remains above the next target.",
+        "Candidate moves are chosen by selecting a non-empty cluster uniformly at random, randomly selecting one of its members, then randomly selecting a destination cluster other than the source cluster.",
+        "When temperature 0 is reached, all possible moves are repeatedly attempted until no move leads to an increase in the objective function."
+      ]
+    },
+    {
+      "heading": "2.4 Co-clustering for Term Categorization",
+      "text": [
+        "Applying co-clustering to the problem of part of speech induction is straightforward.",
+        "We define to be the space of terms under some tokenization of the corpus, and to be the space of contexts of those terms, which are a function of the close neighborhood of occurrences from .",
+        "Members of are also typically terms, but we have also",
+        "experimented with concatenations of terms, and more complex definitions based on relative position.",
+        "The results reported here are based on the simple context definition of one term to the left and one to the right, regarded as separate events.",
+        "Given a particular tokenization and method for defining context, we can derive input for the co-clustering algorithm.",
+        "Sparse co-occurrence tables are created for each term of interest; each entry in such a table records a context identifier and the number of times the corresponding context occurred with the reference term.",
+        "For expediency, and to avoid problems with sparse statistics, we retain only the most frequent terms and contexts.",
+        "(We chose the top 5000 of each.)",
+        "In Section 3.1, we show that we can overcome this limitation through subsequent processing."
+      ]
+    },
+    {
+      "heading": "2.5 Experimental details and results",
+      "text": [
+        "We conducted experiments with the Reuters-21578 corpus – a relatively tiny one for such experiments.",
+        "Clark (2000) reports results on a corpus containing 12 million terms, Sch¨utze (1993) on one containing 25 million terms, and Brown, et al., (1992) on one containing 365 million terms.",
+        "In contrast, we count approximately 2.8 million terms in Reuters-21578.",
+        "Only the bodies of articles in the corpus were considered.",
+        "Each such article was segmented into paragraphs, but not sentences.",
+        "Paragraphs were then converted into token arrays, with each token corresponding to one of the following: an unbroken string of alphabetic characters or hyphens, possibly terminated by an apostrophe and additional alphabetic characters; a numeric expression; or a single occurrence and unit of punctuation presumed to be syntactically significant (e.g., periods, commas, and question marks).",
+        "Alphabetic tokens were case-normalized, and all numeric expressions were replaced with the special token <num>.",
+        "For the purposes of constructing context distributions, special contexts (<bop> and <eop>) were inserted at the beginnings and endings of each such array.",
+        "We applied the co-clustering algorithm to the most frequent 5000 terms and most frequent 5000 contexts in the corpus, clustering each into 200 categories.",
+        "Co-clustering – alternately clustering terms and contexts – is faster than simple clustering against the full set of contexts.",
+        "Table 1 presents computation times for experiments with one grounding space on the same"
+      ]
+    },
+    {
+      "heading": "2.3 The Algorithm",
+      "text": [
+        "The co-clustering algorithm seeks partitions of and of with maximal mutual information , under a constraint limiting the total number of clusters in each partition.",
+        "The mutual information is computed from the distributions estimated as discussed in Section 2.2, by summing over the elements within each cluster to obtain",
+        "machine under similar loads.",
+        "While the exact time to completion is a function of particularities such as machine speed, cluster count, and annealing schedule, the relative durations (co-clustering finishes in 1/6 the time) are representative.",
+        "This may be counter-intuitive, since co-clustering involves two parallel clustering runs, instead of a single one.",
+        "However, the savings in the time it takes to compute the objective function (in this case, mutual information with 200 contexts, instead of 5000) typically more than compensates for the additional algorithmic steps.",
+        "Table 2 lists clusters that illustrate both strengths and weaknesses of our approach.",
+        "While many of the clusters correspond unambiguously to some part of speech, we can identify four phenomena that sometimes prevent the clusters from corresponding to unique part-of-speech tags:",
+        "1.",
+        "Lack of distributional evidence.",
+        "In several cases, the grounding space chosen provides no evidence for a distinction made by the tagger.",
+        "Examples of this are cluster 199, where “the” is equated with the possessive form of many nouns; cluster 145, where present tense and past tense verbs are both represented; and cluster 96, where personal pronouns are equated with surnames.1 2.",
+        "Predominant idioms and contexts.",
+        "If a term is used predominantly in a particular idiom, then the context supplied by that idiom may have the strongest influence on its cluster assignment, occa",
+        "sionally leading to counter-intuitive clusters.",
+        "An obvious example of this is cluster 71.",
+        "All of the terms in this cluster are typically followed by the context “of.”",
+        "3.",
+        "Lexical ambiguity.",
+        "If a term has two or more frequent syntactic categories, the algorithm assigns it (in the best case) to a cluster corresponding to its more frequent sense, or (in the worst case) to a “junk” or singleton cluster.",
+        "This happens with the word “may” (cluster 37, above) in all our experiments.",
+        "4.",
+        "Multi-token lexemes.",
+        "In order to tally context dis",
+        "tributions, we must commit to an initial fixed segmentation of the corpus.",
+        "While English orthography insures that this is not difficult, there exist nevertheless fixed collocations (commonly called multi-word units, MWUs), such as “New York,” which inject statistical noise under the default segmentation.",
+        "Of these four “problems,” the last two are probably more serious, since they give rise to specious distinctions.",
+        "Depending on the application, problems 1 and 2 may not be problems at all.",
+        "In this corpus, for example, the term “regarding” (cluster 180) may never be used in any but a quasi-prepositional sense.",
+        "And proper nouns in the possessive arguably do share a syntactic function with “the.”"
+      ]
+    },
+    {
+      "heading": "3 Refinements",
+      "text": [
+        "Lexical categorizations, such as those provided by a part of speech tagger or a semantic resource like Wordnet, are usually a means to an end, almost never applications in their own right.",
+        "While it is interesting to measure how faithfully an unsupervised algorithm can reconstruct prior categories, we neither expect to achieve anything like perfect performance on this task, nor believe that it is necessary to do so.",
+        "In fact, adherence to a specific tag set can be seen as an impediment, inasmuch as it introduces brittleness and susceptibility to noise in categorization.",
+        "It is nevertheless interesting to ignore the confounding factors enumerated in Section 2.5 and measure the agreement between term categories induced by co-clustering and the tags assigned by a tagger.",
+        "Using the tagger from The XTag Project (Project, 2003), we measured the agreement between our clusters and the tagger output over the terms used in clustering.",
+        "We found that the clusters captured 85% of the information in the tagged text (the tagged data had an entropy of 2.68, while mutual information between clusters and tags is 2.23).",
+        "In a theoretical optimal classifier, this yields a ninefold increase in accuracy over the default rule of always choosing the most frequent tag.",
+        "In order to make our distributional lexicon useful, however, we need to extend its reach beyond the few thousand most frequent terms, on the one hand, and adjust for phenomena that lead to suboptimal performance, on the other.",
+        "We call the process of expanding and adjusting the lexicon after its initial creation lexicon optimization."
+      ]
+    },
+    {
+      "heading": "3.1 Increasing Lexicon Coverage",
+      "text": [
+        "For tractability, the initial classes are induced using only the most frequent terms in a corpus.",
+        "(While we cluster using only the 5000 most frequent terms, the corpus contains approximately 41,000 distinct word-forms.)",
+        "This yields consistent results and broad coverage of the corpus, but leaves us unable to categorize about 5% of tokens.",
+        "Clearly, in order for our automatically constructed resource to be useful, we must introduce these uncovered terms into the lexicon, or better still, find a way to apply it to individual novel tokens."
+      ]
+    },
+    {
+      "heading": "3.1.1 HMM tagging",
+      "text": [
+        "In light of the current state of the art in part of speech tagging, the occurrence of these unknown terms does not pose a significant problem.",
+        "It has been known for some years that good performance can be realized with partial tagging and a hidden Markov model (Cutting et al., 1992).",
+        "Note that the notion of partial tagging described in Cutting, et al., is essentially different from what we consider here.",
+        "Whereas they assume a lexicon which, for every term in the vocabulary, lists its possible parts of speech, we construct a lexicon which imposes a single sense (or a few senses; see Section 3.2) on each of the few thousand most frequent terms, but provides no information about other terms.",
+        "As in Cutting, et al., however, we can use Baum-Welch re-estimation to extract information from novel terms, and apply the Viterbi algorithm to dispose of a particular occurrence.",
+        "While the literature suggests that Baum-Welch training can degrade performance on the tagging task (Elworthy, 1994; Merialdo, 1994), we have found in early experiments that agreement between a tagger trained in this way and the tagger from the XTag Project consistently increases with each iteration of Baum-Welch, eventually reaching a plateau, but not decreasing.",
+        "We attribute this discrepancy to the different structure of our problem."
+      ]
+    },
+    {
+      "heading": "3.1.2 Lexicon expansion",
+      "text": [
+        "Note that a HMM is under no constraint to handle a given term in a consistent fashion.",
+        "A single model can and often does assign a single term to multiple classes, even in a single document.",
+        "When a term is sufficiently frequent, a more robust approach may be to assign it to a category using only its summary co-occurrence statistics.",
+        "The idea is straightforward: Create an entry in the lexicon for the novel term and measure the change in mutual information associated with assigning it to each of the",
+        "tual information objective function.",
+        "Each row shows a term not present in the initial clustering, its corpus frequency, and example terms from the cluster to which it is assigned.",
+        "available categories.",
+        "Assign it to the category for which this change is maximized.",
+        "As Table 3 demonstrates, this procedure works surprisingly well, even for words with low corpus frequencies.",
+        "Of course, as frequencies are reduced, the likelihood of making a suboptimal assignment increases.",
+        "At some point, the decision is better made on an individual basis, by a classifier trained to account for the larger context in which a novel term occurs, such as an HMM.",
+        "We are currently investigating how to strike this trade-off, in a way that best exploits the two available techniques for accommodating novel tokens.",
+        "Lexical ambiguity (or polysemy) and fixed collocations (multi-word units) are two phenomena which clearly lead to suboptimal clusters.",
+        "We have achieved promising results resolving these problems while remaining within the co-clustering framework.",
+        "The basic idea is as follows: If by treating a term as two distinct lexemes (or, respectively, a pair of commonly adjacent terms as a distinct lexeme), we can realize an increase in mutual information, then the term is lexically ambiguous (respectively, a fixed collocation).",
+        "In the case of polysemy resolution, this involves factoring the context distribution into two or more clusters.",
+        "In the case of a fixed collocation, we consider the effect of treating an n-gram as a lexical unit."
+      ]
+    },
+    {
+      "heading": "3.2 Polysemy Resolution",
+      "text": [
+        "To determine whether a term is polysemous we must determine whether the lexicon’s mutual information can be increased by treating the term as two distinct lexemes.",
+        "Given a particular term, we make this determination by attempting to factor its context distribution into every possible pair of distinct clusters.2 Faced with a candidate pair, we posit two senses of the target term, one in each",
+        "cluster.",
+        "The probability mass associated with each event type in the term’s context distribution is then assigned to one or the other hypothetical sense, always to the one that improves mutual information the most (or hurts it the least).",
+        "Once the probability mass of the original term has been reapportioned in this way, the resulting change in mutual information reflects the quality of the hypothetical sense division.",
+        "The maximum change in mutual information over all such cluster pairs is then taken to be the polysemy score for the target term.",
+        "Table 4 shows how this procedure handles selected terms from the Reuters corpus.",
+        "Positive changes in mutual information clearly correspond to polysemy in the target term.",
+        "In the Reuters corpus, there are a fair number of terms that have a noun and a verb sense, such as “act” and “vote” in the table.",
+        "Note, too, the result of polysemy resolution run on unambiguous terms–either a nonsensical division, as with “france,” or division into two closely related clusters, in both cases, however, with a decrease in mutual information.",
+        "Note that the problem of lexical ambiguity has been studied elsewhere.",
+        "Sch¨utze (1993; 1995) proposes two distinct methods by which ambiguity may be resolved.",
+        "In one paper, a separate model (a neural network) is trained on the results of clustering in order to classify individual term occurrences.",
+        "In the other, the individual occurrences of a term are “tagged” according to the distributional properties of their neighbors.",
+        "Clark (2000) presents a framework which in principle should accommodate lexical ambiguity using mixtures, but includes no evidence that it does so.",
+        "Furthermore, a mixture distribution specifies the proportion of occurrences of a term that should be tagged one way or another, but does not prescribe what to do with every individual event.",
+        "In contrast to the above approaches, we derive a lexicon which succinctly lists the possible syntactic senses for a term and provides a means to disambiguate the sense of a single occurrence.",
+        "Moreover, a shortcoming of occurrence-based methods of polysemy resolution is that a given term may be assigned to an implausibly large number of categories.",
+        "By analyzing this behavior at the type level, rather than the token level, we not only can exploit the corpus-wide behavior of a term, but we can enforce the linguistically defensible constraint that it have only a few senses."
+      ]
+    },
+    {
+      "heading": "3.3 Multi-Word Units",
+      "text": [
+        "In English, orthography provides a convenient clue to textual word segmentation.",
+        "Doing little more than breaking the text on whitespace boundaries, it is possible to perform a linguistically meaningful statistical analysis of a corpus.",
+        "Multi-word units (MWUs) are the exception to this rule.",
+        "Treating terms such as “York” – terms which in a particular corpus may not be meaningful in isolation – gives rise to highly idiosyncratic context distributions, which in turn add noise to cluster statistics or lead to the production of “junk” clusters.",
+        "In order to recognize such cases, we apply a variant of our by now familiar lexicon optimization rule: We posit a lexical entry for a given candidate MWU, find the cluster to which it is best suited, and ask whether creating the lexeme improves the situation.",
+        "In principle, we can conduct this process in the same way as with novel terms and polysemy.",
+        "Here, however, we report the results of a simple surrogate technique.",
+        "After assembling the context distribution of the candidate MWU (an n-gram), we compute the Hellinger distance between this distribution and that of each cluster.",
+        "The Hellinger distance between two distributions and is defined as: (4) The candidate MWU is then tentatively assigned to the cluster for which this quantity is minimized and its distance to this cluster is noted (call this distance",
+        ").",
+        "We then compute the distance between each of the n-gram’s constituent terms and its respective cluster ( ).",
+        "The MWU score is the difference between the maximum term distance and the n-gram distance, or .",
+        "In other words, the score of a candidate MWU increases with its closeness of fit to its cluster and the lack of fit of its constituent terms.",
+        "Table 5 shows the ten bi-grams that score highest using this heuristic.",
+        "Note that they come from a number of syntactic categories.",
+        "In this list, the only error is the phrase “we don’t,” which is determined to be syntactically substitutable for pronouns.",
+        "Note, however, that this is the only collocation in this list consisting entirely of closed-class terms.",
+        "To the extent that we can recognize such terms, it is easy to rule out such cases.",
+        "Table 6 benchmarks this technique against Wordnet.",
+        "Breaking the range of MWU scores into bands, we ask what fraction of n-grams in each band can be found in Wordnet.",
+        "The result is a monotonic decrease in Wordnet representation.",
+        "Investigating further, we find that almost all of the missing n-grams that score high are absent because they are corpus-specific concepts, such as “Morgan Stanley” and “Smith Barney.” On the other end, we find that low-scoring n-grams present in Wordnet are typically included for reasons other than their ability to serve as independent lexemes.",
+        "For example, “on that” appears to have been included in Wordnet because it is a synonym for “thereon.”"
+      ]
+    },
+    {
+      "heading": "3.4 Directions",
+      "text": [
+        "We have begun research into characterizing more precisely the grammatical roles of the clusters found by our methods, with an eye to identifying the lowest-level expansions in the grammar responsible for the text.",
+        "Inasmuch as information extraction can rely on shallow methods, the ability to produce a shallow parser without supervision should enable rapid creation of information extraction systems for new subject domains and languages.",
+        "We have had some success distinguishing open-class clusters from closed-class clusters, on the one hand, and “head” clusters from modifier clusters, on the other.",
+        "among the 5000 most frequent terms, using the “-1 +1” grounding space.",
+        "In general, closed-class terms have higher entropy.",
+        "Schone and Jurafsky (2001) list several universal characteristics of language that can serve as clues in this process, some of which we exploit.",
+        "However, their use of “perfect” clusters renders some of their algorithmic suggestions problematic.",
+        "For example, they propose using the tendency of a cluster to admit new members as an indication that it contains closed-class (or function) terms.",
+        "While we do find large clusters corresponding to open classes and small clusters to closed classes, the separation is not always clean (e.g., cluster 199 in Table 2).",
+        "Small clusters often contain open-class terms with predominant corpus-specific idiomatic usages.",
+        "For example, Reuters21578 has special usages for the terms “note,” “net,” and “pay,” in additional to their usual usages.",
+        "While the size of its cluster is a useful clue to the open or closed-class status of a term, we are forced to search for other sources of evidence.",
+        "Once such indicator is the entropy of the term’s context distribution.",
+        "Table 7 lists the five most and least entropic among the 5000 most frequent terms in Reuters-21578.",
+        "Function terms have higher entropy not only because they are more frequent than non-function terms, but also because a function term must participate syntactically with a wide variety of content-carrying terms.",
+        "While entropy alone also does not yield a clean separation between “function” and “content” terms, it may be possible to use it in combination with the suggestion of Schone and Jurafsky to produce a reliable separation."
+      ]
+    },
+    {
+      "heading": "3.5 Conclusion",
+      "text": [
+        "It seems clear that practical constraints will necessitate the development of powerful corpus-driven methods for meaning representation, particularly when dealing with diverse languages, subject matter, and writing styles.",
+        "Although it remains to be fully developed and tested, the evidence assembled thus far seems sufficient to conclude that our lexical optimization approach offers this prospect.",
+        "The approach follows a simple information-theoretic principle: A lexicon can be judged by the amount of information it captures about a suitably chosen “grounding space”.",
+        "The process results in a distributional lexicon suitable for semantic comparison of sense-disambiguated terms, multi-word units, and most likely, larger units of text such as short phrases.",
+        "One can initialize the lexical optimization process by applying a distributional clustering algorithm such as co-clustering to obtain term classes that have the properties of syntactic tags, regardless of the fact that many of the terms in a typical cluster will, in many contexts, fail to exhibit the syntactic class that the cluster implicitly represents.",
+        "This starting point is sufficient to support incremental refinements including sense disambiguation, multi-word-unit detection, and the incorporation of novel terms into the lexicon.",
+        "The preliminary evidence also suggests that this approach can be extended to capture shallow parsing information.",
+        "Although we have yet to conduct such experiments, it also seems clear that given a set of refinements based on one co-clustering run, it becomes possible to re-analyze the corpus in terms of the improved lexicon and generate an improved co-clustering, etc.",
+        "It remains to be seen how far such an approach can be productively pursued."
+      ]
+    },
+    {
+      "heading": "Acknowledgements",
+      "text": [
+        "This work was supported in full by the Advanced Research and Development Activity (ARDA) under contract number 2003-H265500-000."
+      ]
+    }
+  ]
+}

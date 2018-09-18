@@ -1,0 +1,106 @@
+{
+  "info": {
+    "authors": [
+      "Yueh-Cheng Wu",
+      "Shu-Kai Hsieh"
+    ],
+    "book": "COLING – Demos",
+    "id": "acl-C10-3002",
+    "title": "PyCWN: a Python Module for Chinese Wordnet",
+    "url": "https://aclweb.org/anthology/C10-3002",
+    "year": 2010
+  },
+  "references": [],
+  "sections": [
+    {
+      "text": [
+        "Institute of Linguistics Academia Sinica, Taiwan",
+        "National Taiwan Normal University / Academia Sinica, Taiwan",
+        "This presentation introduces a Python module (PyCWN) for accessing and processing Chinese lexical resources.",
+        "In particular, our focus is put on the Chinese Wordnet (CWN) that has been developed and released by CWN group at Academia Sinica.",
+        "PyCWN provides the access to Chinese Wordnet (sense and relation data) under the Python environment.",
+        "The presenation further demonstrates how this module applies to a variety of lexical processing tasks as well as the potentials for multilingual lexical processing."
+      ]
+    },
+    {
+      "heading": "1. Introduction",
+      "text": [
+        "In the presentation, we demonstrate a useful python module for the processing of Chinese lexical semantic resources, viz Chinese Wordnet (CWN).",
+        "This tool is one of a series of computational processing modules that we have been developing, for a variety of Chinese computational lexical semantic tasks, such as Word sense disambiguation (WSD), Word sense induction (WSI), Automatic relations discovery, etc.",
+        "Based on the OOP paradigm, this module enables a programmer to handle CWN synsets and lexical relations in a more efficient way.",
+        "Written in the python language, it can be run on a broad range of platforms and with the advantages of being able to be imported into other large-scale freely available NLP modules (e.g. Natural Language Processing Toolkits (NLTK)) for advanced surveys."
+      ]
+    },
+    {
+      "heading": "2. Python Modules for WordNet Processing",
+      "text": [
+        "Inspired by psycholinguistic theories of human lexical memory, WordNet (Miller et al., 1993) has been considered to be an important lexical resource for both theoretical and computational linguistics.",
+        "It is organized as a lexical network which centers on synsets (synonymous sets), and the lexical semantic relations (hyponymy, meronymy, etc) are intertwined with the synsets.",
+        "The growing amount of studies and applications carried out on wordnets has led to the worldwide efforts in constructing wordnets of different languages, with the envisioned framework of Global Wordnet Grid.JJJ To make good use of these wordnet data, an amount of browsers have been proposed.",
+        "However, it is soon realized that WordNet browsers are not suitable for scaled computational experiments.",
+        "And ad-hoc processing scripts developed separately without any collaboration and shared architecture did not ease the tasks in the research community.",
+        "Later on, an open source python library called the Natural Language Toolkits (NLTK) (Bird et al.",
+        "2009) has been implemented and distributed.",
+        "NLTK is designed with many rationales in mind, such as extensibility, modularity, etc.",
+        "In NLTK, a WordNetCorpusReader, which contains classes and methods for retrieval of sense and relation data, and the calculation of semantic similarity, is designed for accessing Princeton wordnet or its variants",
+        "Despite the fact that these tremendous works do help much in accessing wordnet data, in applying to Chinese Wordnet, we found that an extended reimplementation of the module is necessary due to the particularity of the CWN architecture, which will be elaborated on later."
+      ]
+    },
+    {
+      "heading": "3. PyCWN: Python Modules for Chinese Lexical Ontology",
+      "text": [
+        "The construction of Chinese Wordnet developed by Academia Sinica follows two lines of thought: (i) multilingual wordnets bootstrapping approach (cf. Sinica BOW[2]), and (ii) linguistically oriented analysis from scratch (cf. CWN[3]).",
+        "Both of them can be merged organically.",
+        "In this paper, we focus only on the CWN part.",
+        "Generally speaking, NLTK WordnetCorpusReader cannot be seamlessly applied to CWN with the following reasons:",
+        "• Distinction of Sense and Meaning Facet: CWN proposed that lexical polysemy can be distinguished into two levels: senses and meaning facets (Ahrens et al.",
+        "1998).",
+        "These two levels of polysemies result in a special design for synset.",
+        "• Labeling of Paronymy: CWN defines paronymy as the relation between any two lexical items belonging to the same semantic classification.",
+        "(Huang et al., 2007), and label the relation among senses instead of synsets.",
+        "• Distinction of Synonyms and Chinese Written Variants: CWN regards synonyms and variants differently.",
+        "Variants are the corresponding words/characters that have different written forms but the same meaning and the identical pronunciation as the target word.",
+        "In PyCWN, the variants are integrated into the synset of the target word.",
+        "No new category is created.",
+        "• Homographic Variants: Homographic variants are the words with same graph but unrelated meanings.",
+        "CWN defines them as different lemmas.",
+        "For instance, ^(lian2) has three lemmas.",
+        "In PyCWN, there is no Lemma class, but the lemma information is retained in the identifier of a synset/sense/meaning facet.",
+        "'h\"yin\"I-[ system in Taiwan J",
+        "Classes in PyCWN follow the main structure of the Chinese Wordnet.",
+        "Therefore, paronyms are defined between two lexical items while other semantic relations are shared within the same synset.",
+        "Every member within a synset is a sense or a meaning facet.",
+        "The Facet class has all the properties as Sense class, and hence is not shown above.",
+        "The identifier form in CWN is word(reference id), but for the incorporation to other wordnets, the identifier form in PyCWN is adjusted to be word.pos.referenceid.",
+        "For the reusability of the information extracted, all information is extracted as a string or a list.",
+        "And because of the coding, Chinese words are not readable in lists.",
+        "In order to read the result, 'print' is needed.",
+        "The following figure is an example of the Synset and the Sense class.",
+        "The Facet class has the same properties as Sense class.",
+        ">» import cwn",
+        ">» for member in bu4 jial.hypernyms (} : print member",
+        "»> ior member in dynasty.meronyms() print member",
+        "Figure 2: The illustrations of Class methods and Sense properties.",
+        "3.4 Cross-linguistic Lexical Studies with NLTK Wordnet Modules",
+        "Since the synsets in CWN are already mapped to those in Princeton WordNet via lexical relations, it is easy to perform cross-linguistic lexical comparative studies given the fact that Princeton WordNet is also connected with other wordnets such as EuroWordnet.",
+        "For example, the following figure shows that jijÊ(da2) has a hyponym 0(dao4), and that the WordNet synset reach.01369399V is a hypemym(J^fil|5]) of jijÊ(da2).",
+        "Thus it is inferred that reach.01369399Vshould be a hypernym of 3\\ (dao4) as well.",
+        "And the information extracted has confirmed this point of view.",
+        "reach.",
+        "01369399V.±föPl.",
+        "reach.",
+        "01369399V.",
+        "±fczfs].",
+        "The demos will be available as both locally based and remotely accessible from http://lope.enq.ntnu.edu.tw/pycwn/"
+      ]
+    },
+    {
+      "heading": "4. Conclusion",
+      "text": [
+        "In this presentation, we have demonstrated a python module called PyCWN for the processing of the data in Chinese Wordnet.",
+        "Now we are also working on the incorporation of NLTK, and extension of the module to a larger Chinese NLP framework, which includes word segmentation and the access of hanzi data, the Gigaword corpus, and the bilingual ontology, etc.",
+        "We believe that the whole project will be an important infrastructure of Chinese NLP."
+      ]
+    }
+  ]
+}

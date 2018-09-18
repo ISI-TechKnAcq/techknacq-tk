@@ -1,0 +1,197 @@
+{
+  "info": {
+    "authors": [
+      "Andrew Rosenberg",
+      "Ed Binkowski"
+    ],
+    "book": "Human Language Technology Conference and Meeting of the North American Association for Computational Linguistics – Short Papers",
+    "id": "acl-N04-4020",
+    "title": "Augmenting the Kappa Statistic to Determine Interannotator Reliability for Multiply Labeled Data Points",
+    "url": "https://aclweb.org/anthology/N04-4020",
+    "year": 2004
+  },
+  "references": [],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "This paper describes a method for evaluating interannotator reliability in an email corpus annotated for type (e.g., question, answer, social chat) when annotators are allowed to assign multiple labels to a message.",
+        "An augmentation is proposed to Cohen’s kappa statistic which permits all data to be included in the reliability measure and which further permits the identification of more or less reliably annotated data points."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Reliable annotated data are necessary for a wide variety of natural language processing tasks.",
+        "Machine learning algorithms commonly employed to tackle language problems from syntactic parsing to prosodic analysis and information retrieval all require annotated data for training and testing.",
+        "The reliability of these computational solutions is intricately tied to the accuracy of the annotated data used in their development.",
+        "Human error and subjectivity make deciding the accuracy of annotations an intractable problem.",
+        "While the objective correctness of human annotations cannot be determined algorithmically, the degree to which the annotators agree in their labeling of a corpus can be quickly and simply statistically determined using Cohen’s (1960) kappa measure.",
+        "Because human artifacts are less likely to co-occur simultaneously in two annotators, the kappa statistic is used to measure interannotator reliability.",
+        "This paper will describe an email classification and summarization project which presented a problem for interlabeler reliability computation since annotators were allowed to label data with one or two labels (Rambow, et al., 2004).",
+        "The existing kappa statistic computation does not obviously extend to accommodate the presence of a secondary label.",
+        "The augmentation to the algorithm presented in this paper allows for both a more accurate assessment of interannotator reliability and a unique insight into the data and how the annotators have employed the optional second label.",
+        "Section 2 will describe the categorization project.",
+        "Section 3 will present a description of the annotated corpus.",
+        "Section 4 will describe why the kappa statistic for determining interannotator agreement in its basic form cannot effectively be applied to this corpus.",
+        "Section 5 will present a way to augment the algorithm computing kappa statistic to provide greater insight into user annotations.",
+        "Section 6 will analyze the results of applying this new algorithm to the annotated corpus."
+      ]
+    },
+    {
+      "heading": "2 Project Description",
+      "text": [
+        "This inquiry into interannotator reliability measurements was spawned by problems encountered during a project classifying and summarizing email messages.",
+        "In this project email messages are classified into one of ten classes.",
+        "This classification facilitates email thread reconstruction as well as summarization.",
+        "Distinct email categories have distinct structural and linguistic elements and thus ought to be summarized differently.",
+        "For the casual email user, the luxuries of summarization and automated classification for the dozen or so daily messages may be rather superfluous, but for those with hundreds of important emails per day, automatic summarization and categorization can provide an efficient and convenient way to both scan new messages (e.g., if the sender responds to a question, the category will be “answer”, while the summary will contain the response) and retrieve old ones (e.g., “Display all scheduling emails received last week”).",
+        "While the project intends to apply machine learning techniques to both facets, this paper will be focusing on the categorization component."
+      ]
+    },
+    {
+      "heading": "3 Corpus Description",
+      "text": [
+        "The corpus used is a collection of 380 email messages marked by two annotators with either one or two of the following labels: question, answer, broadcast, attachment transmission, planning-meeting scheduling, planning scheduling, planning, action item, technical discussion, and social chat.",
+        "If two labels are used, one is designated primary and the other secondary.",
+        "These ten categories were selected in order to direct the automatic summarization of email messages.",
+        "This corpus is a subset of a larger corpus of approximately 1000 messages exchanged between members of the Columbia University chapter of the Association for Computing Machinery (ACM) in 2001.",
+        "The annotation of the rest of corpus is in progress."
+      ]
+    },
+    {
+      "heading": "4 Standard Kappa Shortcomings",
+      "text": [
+        "Commonly, the kappa statistic is used to measure interannotator agreement.",
+        "It determines how strongly two annotators agree by comparing the probability of the two agreeing by chance with the observed agreement.",
+        "If the observed agreement is significantly greater than that expected by chance, then it is safe to say that the two annotators agree in their judgments.",
+        "Mathematically,",
+        "the probabilityofthe actual outcome and p(E) is the probabilityofthe expectedoutcome as predictedby chance.",
+        "Wheneachdatapointin acorpus is assignedasingle label, calculating p(A) is straightforward: simply count up the numberoftimes the two annotators agree and divide bythe total numberofannotations.",
+        "However, in labelingthis email corpus, labelers were allowedto se-lecteitherasingle label ortwo labels designatingone as primaryandone as secondary.",
+        "The optionofasecondarylabel increases the possible labelingcombinations betweentwo annotators fivefold.",
+        "Inthe format “{<A’s labels>, <B’slabels>}” the possibilities are as follows: {a,a}, {a,b}, {ab,a}, {ab,b}, {ab,c}, {ab,ab}, {ab,ba}, {ab,ac}, {ab,bc}, {ab,cd}.",
+        "The algorithminitiallyusedto calculate the kappastatistic simplydiscardedthe optional secondary label.",
+        "This solutionis unacceptable fortwo reasons.",
+        "1) Itmakes the reliability metric inconsistentwiththe an-notationinstructions.",
+        "Whyofferthe optionofasecondarylabel, ifitis to becategoricallyignored?",
+        "2) It discards useful information regardingpartialagreement bytreatingsituations correspondingto {ab,ba}, {ab,bc} and {ab, b} as simple disagreements.",
+        "Despite this complication, the objective in comput-ingp(A) remains the same, countthe agreements and dividebythe numberofannotations.",
+        "Buthowshould the partial agreementcases",
+        "b}, {ab,ba}, {ab,ac}, and{ab,bc}) becounted?",
+        "Forexample, when consideringamessagethatclearlycontainedbotha questionandananswer, one annotatorhadlabeledthe message as primarily questionandsecondarily answer, withanotherprimarily answer andsecondarily question.",
+        "Shouldsuchanannotation be consideredan agreement, as the two concuronthe contentofthe message?",
+        "Ordisagreement, as theydifferintheiremployof primaryandsecondary?",
+        "To whatdegree do two annotators agree ifone labels amessageprimarily aand secondarily b andthe otherlabels itsimply aorsimply b?",
+        "Whatifthere is agreementon the primarylabel and discrepancy on the secondary?",
+        "Or vice versa?",
+        "In the traditional Boolean assignment, each combination would have to be counted as either agreement or disagreement.",
+        "Instead, in order to compute a useful value of p(A), we propose to assign a degree of agreement to each.",
+        "This is similar in concept to Krippendorff’s (1980) alpha measure for multiple observers.",
+        "5 Kappa Algorithm Augmentation To augmentthe computationofthe kappastatistic, we considerannotations markedwithprimaryandsecon-darylabels notas two distinctselections, butas one divided selection.1When an annotatorselects asingle label foramessage, thatlabel-message pairis assigned ascore of1.0.",
+        "Whenan annotatorselects aprimaryand secondarylabel, aweightp is assignedto the primary label and(1-p) to the secondarylabel forthe corre-spondinglabel-messagepair.",
+        "Before computingthe kappascore forthe corpus, asingle value p where 0.5 < p <1.0 mustbeselected.",
+        "Ifp = 1.0 the secondarylabels are completely ignored, while ifp = 0.5, secondaryand primarylabels are given equal weight.",
+        "Byexamining the resultingkappascore atdifferentvalues ofp, insight into howthe annotators are employingthe optional secondarylabel canbe gained.",
+        "Moreover, single messages canbe triviallyisolatedin orderto reveal how eachdata pointhas beenannotatedwithrespectto primaryand secondarylabels.",
+        "Landis andKoch(1977) presenta methodforcalculatingaweightedkappameasure.",
+        "This methodis useful forsingleannotations where thecate-gories have an obvious relationship to each other, but does not extend to multiply labeled data points where relationships between categories are unknown."
+      ]
+    },
+    {
+      "heading": "5.1 Compute p(A)",
+      "text": [
+        "To compute p(A), the observed probability, two annotation matrices are created, one for each annotator.",
+        "These annotation matrices, Mannotator, have N rows and M columns, where n is the number of messages and m is the number of labels.",
+        "These annotation matrices are propagated as follows.",
+        "Table 1 shows a sample set of annotations on 5 messages by annotator A.",
+        "Table 2 shows the resulting MA based on the annotation data in Table 1 where p=0.6.",
+        "With the two annotation matrices, MA and MB, an agreement matrix, Ag, is constructed where Ag[x, y] = MA [x, y] * MB [x, y] .",
+        "A total, a, is set to the sum of all cells ofAg.",
+        "Finally, p (A) = N ."
+      ]
+    },
+    {
+      "heading": "5.2 Compute p(E)",
+      "text": [
+        "Instead of assuming an even distribution of labels, we compute p(E), the expected probability, using the relative frequencies of each annotator’s labeling preference.",
+        "Using the above annotation matrices, relative frequency vectors, Freqannotator, are generated.",
+        "Table 3 shows FreqA based on MA from Table 2. a b c d",
+        "Using these two frequency vectors,"
+      ]
+    },
+    {
+      "heading": "5.3 Calculate K'",
+      "text": [
+        "The equation for the augmented kappa statistic remains the same in the presence of this augmentation."
+      ]
+    },
+    {
+      "heading": "6 Results",
+      "text": [
+        "This technique is not K'>0.6.)",
+        "K'=0.28 1. dards, but in the absence of rigorous instructions,",
+        "Byexaminingthe average kappastatistic foreach message individuallyatdifferentp values, messages can be quicklycategorizedinto fourclasses: thosethatdem-onstrategreatestagreementatp = 1.0; thosewithgreatestagreementatp = 0.5; those thatyieldanearly constantlowkappavalue andthosethatyieldanearly constanthighkappavalue.",
+        "These classes suggestcertain characteristics aboutthe componentmessages, andcan beemployedto improve the ongoingannotationproc-ess.",
+        "Class 1) Those messages thatshow aconstant, high kappascore are those thatare consistentlycategorized withasingle label.",
+        "(92/380 messages.)",
+        "Class 2) Those messages withaconstant, lowkappaare thosemessages thatare leastconsistentlyannotatedregardless of whetherasecondarylabel is usedornot.",
+        "(183/380 messages.)",
+        "Class 3) Messages thatshowgreateragreement atp = 1.0 thanatp = 0.5 demonstrate greaterinconsis-tencywhenthe annotators optto use the secondarylabels butare in(greater) agreementregardingthe primarylabel.",
+        "Whetherthe primary label is more general ormore specific depends on, hopefully, annotation stan",
+        "individual annotator preference.",
+        "(58/380 messages.)",
+        "Class 4) Messages that show greater agreement at p = 0.5 than at p = 1.0 are those messages where the primary and secondary labels are switched by some annotators, the above {ab,ba} case.",
+        "From inspection, this most often occurs when the two features are not in a general/specific relationship (e.g., planning and question being selected for a message that contains a question about planning), but are rather concurrent features (e.g., question and answer being labeled on a message that obviously includes both a question and an answer).",
+        "(47/380 messages.)",
+        "Each of the four categories of messages can be utilized to a distinct end towards improvement of annotation instructions and/or annotation standards.",
+        "Class 1 messages are clear examples of the labels.",
+        "Class 2 messages are problematic.",
+        "These messages can be used to redirect the annotators, revise the annotation manual or reconsider the annotation standards.",
+        "Class 3 messages are those in which annotators use the optional secondary label, but not consistently.",
+        "These messages can be employed to reinstruct the annotators as to the expected use of the secondary label.",
+        "Class 4 messages pose a real dilemma.",
+        "When these messages in fact do contain two concurrent features, they are not going to be good examples for machine learning experiments.",
+        "While representative of both categories, they will (most likely) at feature analysis (the critical component of machine learning algorithms) be poor exemplars of each.",
+        "While the fate of Class 4 messages is uncertain2, identification of these awkward examples is an important first step in handling their automatic classification."
+      ]
+    },
+    {
+      "heading": "7 Conclusion",
+      "text": [
+        "Calculating a useful metric for interannotator reliability when each data point is marked with optionally one or two labels proved to be a complicated task.",
+        "Multiple labels raise the possibility of partial agreement between two annotators.",
+        "In order to compute the observed probability (p(A)) component of the kappa statistic a constant weight, p, between 0.5 and 1.0 is selected.",
+        "Each singleton annotation is then assigned a weight of 1, while the primary label of a doubleton annotation is assigned a weight of p, the secondary 1-p.",
+        "These weights are then used to determine the partial agreement in the calculation of p(A).",
+        "This augmentation to the algorithm for computing kappa is not meant to inflate the reliability metric, but rather to allow for a more thorough view of annotated data.",
+        "By examining how 2 One potential solution would be to create a new annotation category for each commonly occurring pair.",
+        "While each Class 4 message would remain a poor exemplar of each component category, it would be a good exemplar of this new “mixed” type.",
+        "the annotated components of a corpus demonstrate agreement at varying levels of p, insight is gained into how the annotators are viewing these data and how they employ the optional secondary label."
+      ]
+    },
+    {
+      "heading": "8 Future Work",
+      "text": [
+        "The problem that spawned this study has led to further discussions about how to get the most information out of apparently unreliably labeled data.",
+        "The above process shows how it is possible to classify messages into a few categories by their reliability at different levels of p. However, even when interlabeler reliability is relatively low, annotated data can be leveraged to improve the confidence in assigning labels to messages.",
+        "Annotators can be ranked by “how well they agree with the group” using kappa.",
+        "Messages (or other labeled data) can be ranked by “how well the group agrees on its label” using variance or –p*ln(p).",
+        "Annotator rankings can be used to weight “better” annotators greater than “worse” annotators.",
+        "Similarly, message rankings can be used to weight “better” messages greater than “worse” messages.",
+        "The weighted annotator data can be used to recompute the message weights.",
+        "These new message weights can then be used to recompute annotator weights.",
+        "Repeating this alternation until the weights show minimal change will minimize the contributions of unreliable annotators and poorly annotated messages to the assignment of labels to messages, thereby increasing confidence in the results.",
+        "An implementation of this “sharpening” algorithm is currently under development."
+      ]
+    },
+    {
+      "heading": "Acknowledgments",
+      "text": [
+        "Thanks to Becky Passonneau for her insightful comments on an intermediate draft.",
+        "This work would not have been possible without the support and advice of Julia Hirschberg, Owen Rambow and Lokesh Shrestha.",
+        "This research was supported by a grant from NSF/KDD #IIS-98-17434."
+      ]
+    }
+  ]
+}

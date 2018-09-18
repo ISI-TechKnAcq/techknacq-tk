@@ -1,0 +1,355 @@
+{
+  "info": {
+    "authors": [
+      "Seong-Bae Park",
+      "Yoon-Shik Tae",
+      "Se Young Park"
+    ],
+    "book": "International Conference on Computational Linguistics and Annual Meeting of the Association for Computational Linguistics",
+    "id": "acl-P06-1080",
+    "title": "Self-Organizing N-Gram Model for Automatic Word Spacing",
+    "url": "https://aclweb.org/anthology/P06-1080",
+    "year": 2006
+  },
+  "references": [
+    "acl-P03-1038",
+    "acl-P05-1040",
+    "acl-P94-1025",
+    "acl-P96-1041",
+    "acl-W02-1208"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "An automatic word spacing is one of the important tasks in Korean language processing and information retrieval.",
+        "Since there are a number of confusing cases in word spacing of Korean, there are some mistakes in many texts including news articles.",
+        "This paper presents a high-accurate method for automatic word spacing based on self-organizing n-gram model.",
+        "This method is basically a variant of n-gram model, but achieves high accuracy by automatically adapting context size.",
+        "In order to find the optimal context size, the proposed method automatically increases the context size when the contextual distribution after increasing it dose not agree with that of the current context.",
+        "It also decreases the context size when the distribution of reduced context is similar to that of the current context.",
+        "This approach achieves high accuracy by considering higher dimensional data in case of necessity, and the increased computational cost are compensated by the reduced context size.",
+        "The experimental results show that the self-organizing structure of n-gram model enhances the basic model."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Even though Korean widely uses Chinese characters, the ideograms, it has a word spacing model unlike Chinese and Japanese.",
+        "The word spacing of Korean, however, is not a simple task, though the basic rule for it is simple.",
+        "The basic rule asserts that all content words should be spaced.",
+        "However, there are a number of exceptions due to various postpositions and endings.",
+        "For instance, it is difficult to distinguish some postpositions from incomplete nouns.",
+        "Such exceptions induce many mistakes of word spacing even in news articles.",
+        "The problem of the inaccurate word spacing is that they are fatal in language processing and information retrieval.",
+        "The incorrect word spacing would result in the incorrect morphological analysis.",
+        "For instance, let us consider a famous Korean sentence:“.",
+        "” The true word spacing for this sentence is “4tl1 --71 4#':a 011 #!-T01 7}Vr}.” whose meaning is that my father entered the room.",
+        "If the sentence is written as “° ## 7}VL}.”, it means that my father entered the bag, which is totally different from the original meaning.",
+        "That is, since the morphological analysis is the first-step in most NLP applications, the sentences with incorrect word spacing must be corrected for their further processing.",
+        "In addition, the wrong word spacing would result in the incorrect index for terms in information retrieval.",
+        "Thus, correcting the sentences with incorrect word spacing is a critical task in Korean information processing.",
+        "One of the most simple and strong models for automatic word spacing is n-gram model.",
+        "In spite of the advantages of the n-gram model, its problem should be also considered for achieving high performance.",
+        "The main problem of the model is that it is usually modeled with fixed window size, n. The small value for n represents the narrow context in modeling, which results in poor performance in general.",
+        "However, it is also difficult to increase n for better performance due to data sparseness.",
+        "Since the corpus size is physically limited, it is highly possible that many n-grams which do not appear in the corpus exist in the real world.",
+        "The goal of this paper is to provide a new method for processing automatic word spacing with an n-gram model.",
+        "The proposed method automatically adapts the window size n. That is, this method begins with a bigram model, and it shrinks to an unigram model when data sparseness occurs.",
+        "It also grows up to a trigram, fourgram, and so on when it requires more specific information in determining word spacing.",
+        "In a word, the proposed model organizes the windows size n online, and achieves high accuracy by removing both data sparseness and information lack.",
+        "The rest of the paper is organized as follows.",
+        "Section 2 surveys the previous work on automatic word spacing and the smoothing methods for n-gram models.",
+        "Section 3 describes the general way to automatic word spacing by an n-gram model, and Section 4 proposes a self-organizing n-gram model to overcome some drawbacks of n-gram models.",
+        "Section 5 presents the experimental results.",
+        "Finally, Section 6 draws conclusions."
+      ]
+    },
+    {
+      "heading": "2 Previous Work",
+      "text": [
+        "Many previous work has explored the possibility of automatic word spacing.",
+        "While most of them reported high accuracy, they can be categorized into two parts in methodology: analytic approach and statistical approach.",
+        "The analytic approach is based on the results of morphological analysis.",
+        "Kang used the fundamental morphological analysis techniques (Kang, 2000), and Kim et al.",
+        "distinguished each word by the morphemic information of postpositions and endings (Kim et al., 1998).",
+        "The main drawbacks of this approach are that (i) the analytic step is very complex, and (ii) it is expensive to construct and maintain the analytic knowledge.",
+        "In the other hand, the statistical approach extracts from corpora the probability that a space is put between two syllables.",
+        "Since this approach can obtain the necessary information automatically, it does require neither the linguistic knowledge on syllable composition nor the costs for knowledge construction and maintenance.",
+        "In addition, the fact that it does not use a morphological analyzer produces solid results even for unknown words.",
+        "Many previous studies using corpora are based on bigram information.",
+        "According to (Kang, 2004), the number of syllables used in modern Korean is about 104, which implies that the number of bi-grams reaches 108.",
+        "In order to obtain stable statistics for all bigrams, a great large volume of corpora will be required.",
+        "If higher order n-gram is adopted for better accuracy, the volume of corpora required will be increased exponentially.",
+        "The main drawback of n-gram model is that it suffers from data sparseness however large the corpus is.",
+        "That is, there are many n-grams of which frequency is zero.",
+        "To avoid this problem, many smoothing techniques have been proposed for construction of n-gram models (Chen and Goodman, 1996).",
+        "Most of them belongs to one of two categories.",
+        "One is to pretend each n-gram occurs once more than it actually did (Mitchell, 1996).",
+        "The other is to interpolate n-grams with lower dimensional data (Jelinek and Mercer, 1980; Katz, 1987).",
+        "However, these methods artificially modify the original distribution of corpus.",
+        "Thus, the final probabilities used in learning with n-grams are the ones distorted by a smoothing technique.",
+        "A maximum entropy model can be considered as another way to avoid zero probability in n-gram models (Rosenfeld, 1996).",
+        "Instead of constructing separate models and then interpolate them, it builds a single, combined model to capture all the information provided by various knowledge sources.",
+        "Even though a maximum entropy approach is simple, general, and strong, it is computationally very expensive.",
+        "In addition, its performance is mainly dependent on the relevance of knowledge sources, since the prior knowledge on the target problem is very important (Park and Zhang, 2002).",
+        "Thus, when prior knowledge is not clear and computational cost is an important factor, n-gram models are more suitable than a maximum entropy model.",
+        "Adapting features or contexts has been an important issue in language modeling (Siu and Os-tendorf, 2000).",
+        "In order to incorporate long-distance features into a language model, (Rosenfeld, 1996) adopted triggers, and (Mochihashi and Mastumoto, 2006) used a particle filter.",
+        "However, these methods are restricted to a specific language model.",
+        "Instead of long-distance features, some other researchers tried local context extension.",
+        "For this purpose, (Sch¨utze and Singer, 1994) adopted a variable memory Markov model proposed by (Ron et al., 1996), (Kim et al., 2003) applied selective extension of features to POS tagging, and (Dickinson and Meurers, 2005) expanded context of n-gram models to find errors in syntactic anno",
+        "tation.",
+        "In these methods, only neighbor words or features of the target n-grams became candidates to be added into the context.",
+        "Since they required more information for better performance or detecting errors, only the context extension was considered."
+      ]
+    },
+    {
+      "heading": "3 Automatic Word Spacing by n-gram Model",
+      "text": [
+        "The problem of automatic word spacing can be regarded as a binary classification task.",
+        "Let a sentence be given as S = w1w2 ... wN.",
+        "If i.i.d.",
+        "sampling is assumed, the data from this sentence are given as D =< (x1, y1), ... �(xN, yN) > where X, E I' n and yi E {true, f alse}.",
+        "In this representation, x2 is a contextual representation of a syllable wi.",
+        "If a space should be put after wi, then yi, the class of xi, is true.",
+        "It is false otherwise.",
+        "Therefore, the automatic word spacing is to estimate a function f : III\" – � {true, false}.",
+        "That is, our task is to determine whether a space should be put after a syllable w2 expressed as xi with its context.",
+        "The probabilistic method is one of the strong and most widely used methods for estimating f .",
+        "That is, for each wi,",
+        "In n-gram model, xi is expressed with n neighbor syllables around wi.",
+        "Typically, n is taken to be two or three, corresponding to a bigram or trigram respectively.",
+        "xi corresponds to wi_twi when n = 2.",
+        "In the same way, it is wi _ 2 wi _ 1 wi when n = 3.",
+        "The simple and easy way to estimate P (xi I yi) is to use maximum likelihood estimate with a large corpus.",
+        "For instance, consider the case n = 2.",
+        "Then, the probability P (xl I yi) is represented as P (wi_ 1 wi yi ), and is computed by",
+        "where C is a counting function.",
+        "Determining the context size, the value of n, in n-gram models is closely related with the corpus size.",
+        "The larger is n, the larger corpus is required to avoid data sparseness.",
+        "In contrast, though low-order n-grams do not suffer from data sparseness severely, they do not reflect the language characteristics well, either.",
+        "Typically researchers have used n = 2 or n = 3, and achieved high performance in many tasks (Bengio et al., 2003).",
+        "Figure 1 supports that bigram and trigram outperform low-order (n = 1) and high-order (n > 4) n-grams in automatic word spacing.",
+        "All the experimental settings for this figure follows those in Section 5.",
+        "In this figure, bigram model shows the best accuracy and trigram achieves the second best, whereas unigram model results in the worst accuracy.",
+        "Since the bigram model is best, a self-organizing n-gram model explained below starts from bigram."
+      ]
+    },
+    {
+      "heading": "4 Self-Organizing n-gram Model",
+      "text": [
+        "To tackle the problem of fixed window size in n-gram models, we propose a self-organizing structure for them."
+      ]
+    },
+    {
+      "heading": "4.1 Expanding n-grams",
+      "text": [
+        "When n-grams are compared with (n + 1)-grams, their performance in many tasks is lower than that of (n + 1)-grams (Charniak, 1993).",
+        "Simultaneously the computational cost for (n + 1)-grams is far higher than that for n-grams.",
+        "Thus, it can be justified to use (n + 1)-grams instead of n",
+        "Since P (xi) is independent of finding the class of Xi, f (xi) is determined by multiplying P(xiIyi) and P (yi) .",
+        "That is,",
+        "1.",
+        "Retrieve (n + 1)-grams xn+1 for xn.",
+        "2.",
+        "Compute D = KL(P(YI xn) II P(YI xn+l))• 3.",
+        "If D < BEXP Then return 0.",
+        "4. return HowLargeExpand(xn+1) + 1.",
+        "1.",
+        "If n < 1 Then return 0.",
+        "2.",
+        "Retrieve (n – 1)-grams xn-1 for xn.",
+        "3.",
+        "Compute D = KL(P(YIxn)IIP(YIxn-1))• 4.",
+        "If D > BSHR Then return 0.",
+        "5. return HowSmallShrink(xn-1) - 1.",
+        "grams only when higher performance is expected.",
+        "In other words, (n + 1)-grams should be different from n-grams.",
+        "Otherwise, the performance would not be different.",
+        "Since our task is attempted with a probabilistic method, the difference can be measured with conditional distributions.",
+        "If the conditional distributions of n-grams and (n + 1)-grams are similar each other, there is no reason to adopt (n + 1)-grams.",
+        "Let P (y2 l xn2) be a class-conditional probability by n-grams and P(Yz lx(n+1)z) that by (n + 1)- grams.",
+        "Then, the difference D (n, n + 1) between them is measured by Kullback-Leibler divergence.",
+        "That is,",
+        "D(n, n + 1) that is larger than a predefined threshold BEXP implies that P (Yz l x(n+1)z) is different from P(Yz I xnz).",
+        "In this case, (n + 1)-grams is used instead of n-grams.",
+        "Figure 2 depicts an algorithm that determines how large n-grams should be used.",
+        "It recursively finds the optimal expanding window size.",
+        "For instance, let bigrams (n = 2) be used at first.",
+        "When the difference between bigrams and trigrams (n = 3) is larger than BEXP, that between trigrams and fourgrams (n = 4) is checked again.",
+        "If it is less than BEXP, then this function returns 1 and trigrams are used instead of bigrams.",
+        "Otherwise, it considers higher n-grams again."
+      ]
+    },
+    {
+      "heading": "4.2 Shrinking n-grams",
+      "text": [
+        "Shrinking n-grams is accomplished in the direction opposite to expanding n-grams.",
+        "After comparing n-grams with (n – 1)-grams, (n – 1)-grams are used instead of n-grams only when they are similar enough.",
+        "The difference D (n, n – 1) between n-grams and (n – 1)-grams is, once again, measured by Kullback-Leibler divergence.",
+        "That is,",
+        "If D(n, n – 1) is smaller than another predefined threshold BSHR, then (n – 1)-grams are used instead of n-grams.",
+        "Figure 3 shows an algorithm which determines how deeply the shrinking is occurred.",
+        "The main stream of this algorithm is equivalent to that in Figure 2.",
+        "It also recursively finds the optimal shrinking window size, but can not be further reduced when the current model is an unigram.",
+        "The merit of shrinking n-grams is that it can construct a model with a lower dimensionality.",
+        "Since the maximum likelihood estimate is used in calculating probabilities, this helps obtaining stable probabilities.",
+        "According to the well-known curse of dimensionality, the data density required is reduced exponentially by reducing dimensions.",
+        "Thus, if the lower dimensional model is not different so much from the higher dimensional one, it is highly possible that the probabilities from lower dimensional space are more stable than those from higher dimensional space.",
+        "1.",
+        "Set exp := HowLargeExpand(xn).",
+        "2.",
+        "If exp > 0 Then return exp.",
+        "3.",
+        "Set shr := HowSmallShrink(xn).",
+        "4.",
+        "If shr < 0 Then return shr.",
+        "5. return 0."
+      ]
+    },
+    {
+      "heading": "4.3 Overall Self-Organizing Structure",
+      "text": [
+        "For a given i.i.d.",
+        "sample xi, there are three possibilities on changing n-grams.",
+        "First one is not to change n-grams.",
+        "It is obvious when n-grams are not changed.",
+        "This occurs when both D (n, n + 1) > BEXP and D (n, n – 1) < BSHR are met.",
+        "This is when the expanding results in too similar distribution to that of the current n-grams and the distribution after shrinking is too different from that of the current n-grams.",
+        "The remaining possibilities are then expanding and shrinking.",
+        "The application order between them can affect the performance of the proposed method.",
+        "In this paper, an expanding is checked prior to a shrinking as shown in Figure 4.",
+        "The function ChangingWindowSize first calls HowLargeExpand.",
+        "The non-zero return value of HowLargeExpand implies that the window size of the current n-grams should be enlarged.",
+        "Otherwise, ChangingWindowSize checks if the window size should be shrinked by calling HowSmallShrink.",
+        "If HowSmallShrink returns a negative integer, the window size should be shrinked to (n + shr).",
+        "If both functions return zero, the window size should not be changed.",
+        "The reason why HowLargeExpand is called prior to HowSmallShrink is that the expanded n-grams handle more specific data.",
+        "(n + 1)-grams, in general, help obtaining higher accuracy than n-grams, since (n + 1)-gram data are more specific than n-gram ones.",
+        "However, it is time-consuming to consider higher-order data, since the number of kinds of data increases.",
+        "The time increased due to expanding is compensated by shrinking.",
+        "After shrinking, only lower-oder data are considered, and then processing time for them decreases."
+      ]
+    },
+    {
+      "heading": "4.4 Sequence Tagging",
+      "text": [
+        "Since natural language sentences are sequential as their nature, the word spacing can be considered as a special POS tagging task (Lee et al., 2002) for which a hidden Markov model is usually adopted.",
+        "The best sequence of word spacing for the sentence is defined as",
+        "by where N is a sentence length.",
+        "If we assume that the syllables are independent of each other, P (x1,N I Y1,N) is given by",
+        "which can be computed using Equation (1).",
+        "In addition, by Markov assumption, the probability of a current tag yi conditionally depends on only the previous k tags.",
+        "That is,",
+        "Since this equation follows Markov assumption, the best sequence is found by applying the Viterbi algorithm."
+      ]
+    },
+    {
+      "heading": "5 Experiments",
+      "text": []
+    },
+    {
+      "heading": "5.1 Data Set",
+      "text": [
+        "The data set used in this paper is the HANTEC corpora version 2.0 distributed by KISTI1.",
+        "From this corpus, we extracted only the HKIB94 part which consists of 22,000 news articles in 1994 from Han-kook Ilbo.",
+        "The reason why HKIB94 is chosen is that the word spacing of news articles is relatively more accurate than other texts.",
+        "Even though this data set is composed of totally 12,523,688 Korean syllables, the number of unique syllables is just",
+        "The data set is divided into three parts: training (70%), held-out (20%), and test (10%).",
+        "The held-out set is used only to estimate 9EXP and BSHR.",
+        "The number of instances in the training set is 8,766,578, that in the held-out set is 2,504,739, and that in test set is 1,252,371.",
+        "Among the 1,252,371 test cases, the number of positive instances is 348,278, and that of negative instances is 904,093.",
+        "Since about 72% of test cases are negative, this is the baseline of the automatic word spacing."
+      ]
+    },
+    {
+      "heading": "5.2 Experimental Results",
+      "text": [
+        "To evaluate the performance of the proposed method, two well-known machine learning algorithms are compared together.",
+        "The tested machine learning algorithms are (i) decision tree and (ii) support vector machines.",
+        "We use C4.5 release 8 (Quinlan, 1993) for decision tree induction and SVMtight (Joachims, 1998) for support vector machines.",
+        "For all experiments with decision trees and support vector machines, the context size is set to two since the bigram shows the best performance in Figure 1.",
+        "Table 1 gives the experimental results of various methods including machine learning algorithms and self-organizing n-gram model.",
+        "The ‘self-organizing bigram’ in this table is the one proposed in this paper.",
+        "The normal n-grams achieve an accuracy of around 88%, while decision tree and support vector machine produce that of around 89%.",
+        "The self-organizing n-gram model achieves 91.31%.",
+        "The accuracy improvement by the self-organizing n-gram model is about 19% over the baseline, about 3 % over the normal n-gram model, and 2% over decision trees and support vector machines.",
+        "In order to organize the context size for n-grams Order No.",
+        "of Errors Expanding then Shrinking 108,831 Shrinking then Expanding 114,343",
+        "online, two operations of expanding and shrinking were proposed.",
+        "Table 2 shows how much the number of errors is affected by their application order.",
+        "The number of errors made by expanding first is 108,831 while that by shrinking first is 114,343.",
+        "That is, if shrinking is applied ahead of expanding, 5,512 additional errors are made.",
+        "Thus, it is clear that expanding should be considered first.",
+        "The errors by expanding can be explained with two reasons: (i) the expression power of the model and (ii) data sparseness.",
+        "Since Korean is a partially-free word order language and the omission of words are very frequent, n-gram model that captures local information could not express the target task sufficiently.",
+        "In addition, the class-conditional distribution after expanding could be very different from that before expanding due to data sparseness.",
+        "In such cases, the expanding should not be applied since the distribution after expanding is not trustworthy.",
+        "However, only the difference between two distributions is considered in the proposed method, and the errors could be made by data sparseness.",
+        "Figure 5 shows that the number of training instances does not matter in computing probabilities of n-grams.",
+        "Even though the accuracy increases slightly, the accuracy difference after 900,000 instances is not significant.",
+        "It implies that the errors made by the proposed method is not from the lack of training instance but from the lack of its expression power for the target task.",
+        "This result also complies with Figure 1."
+      ]
+    },
+    {
+      "heading": "5.3 Effect of Right Context",
+      "text": [
+        "All the experiments above considered left context only.",
+        "However, Kang reported that the probabilistic model using both left and right context outperforms the one that uses left context only (Kang, 2004).",
+        "In his work, the word spacing probability P(wi, wi+1) between two adjacent syllables wi and wi+1 is given as",
+        "where PR, PM, PL are computed respectively based on the syllable frequency.",
+        "In order to reflect the idea of bidirectional context in the proposed model, the model is enhanced by modifying P (wi – 1 wi I yi) in Equation (1).",
+        "That is, the likelihood of P (wi – 1wiI yi) is expanded to be"
+      ]
+    },
+    {
+      "heading": "5.4 Effect of Considering Tag Sequence",
+      "text": [
+        "The state-of-the-art performance on Korean word spacing is to use the hidden Markov model.",
+        "According to the previous work (Lee et al., 2002), the hidden Markov model shows the best performance when it sees two previous tags and two previous syllables.",
+        "For the simplicity in the experiments, the value for k in Equation (3) is set to be one.",
+        "The performance comparison between normal HMM and the proposed method is given in Table 4.",
+        "The proposed method considers the various number of previous syllables, whereas the normal HMM has the fixed context.",
+        "Thus, the proposed method in Table 4 is specified as ‘self-organizing HMM.’ The accuracy of the self-organizing HMM is 94.71%, while that of the normal HMM is just 92.37%.",
+        "Even though the normal HMM considers more previous tags (k = 2), the accuracy of the self-organizing model is 2.34% higher than that of the normal HMM.",
+        "Therefore, the proposed method that considers the sequence of word spacing tags achieves higher accuracy than any other methods reported ever.",
+        "Since the coefficients of Equation (4) were determined arbitrarily (Kang, 2004), they are replaced with parameters ai of which values are determined using a held-out data.",
+        "The change of accuracy by the context is shown in Table 3.",
+        "When only the right context is used, the accuracy gets 88.26% which is worse than the left context only.",
+        "That is, the original n-gram is a relatively good model.",
+        "However, when both left and right context are used, the accuracy becomes 92.54%.",
+        "The accuracy improvement by using additional right context is 1.23%.",
+        "This results coincide with the previous report (Lee et al., 2002).",
+        "The ai’s to achieve this accuracy are al =0.5,a2 =0.3, and a3 =0.2."
+      ]
+    },
+    {
+      "heading": "6 Conclusions",
+      "text": [
+        "In this paper we have proposed a new method to learn word spacing in Korean by adaptively organizing context size.",
+        "Our method is based on the simple n-gram model, but the context size n is changed as needed.",
+        "When the increased context is much different from the current one, the context size is increased.",
+        "In the same way, the context is decreased, if the decreased context is not so much different from the current one.",
+        "The benefits of this method are that it can consider wider context by increasing context size as required, and save the computational cost due to the reduced context.",
+        "The experiments on HANTEC corpora showed that the proposed method improves the accuracy of the trigram model by 3.72%.",
+        "Even compared with some well-known machine learning algorithms, it achieved the improvement of 2.63% over decision trees and 2.21% over support vector machines.",
+        "In addition, we showed two ways for improving the",
+        "proposed method: considering right context and word spacing sequence.",
+        "By considering left and right context at the same time, the accuracy is improved by 1.23%, and the consideration of word spacing sequence gives the accuracy improvement of 2.34%.",
+        "The n-gram model is one of the most widely used methods in natural language processing and information retrieval.",
+        "Especially, it is one of the successful language models, which is a key technique in language and speech processing.",
+        "Therefore, the proposed method can be applied to not only word spacing but also many other tasks.",
+        "Even though word spacing is one of the important tasks in Korean information processing, it is just a simple task in many other languages such as English, German, and French.",
+        "However, due to its generality, the importance of the proposed method yet does hold in such languages."
+      ]
+    },
+    {
+      "heading": "Acknowledgements",
+      "text": [
+        "This work was supported by the Korea Research Foundation Grant funded by the Korean Government (KRF-2005-202-D00465)."
+      ]
+    }
+  ]
+}

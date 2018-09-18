@@ -1,0 +1,287 @@
+{
+  "info": {
+    "authors": [
+      "Shankar Kumar",
+      "William Byrne"
+    ],
+    "book": "Human Language Technology Conference and Meeting of the North American Association for Computational Linguistics",
+    "id": "acl-N04-1022",
+    "title": "Minimum Bayes-Risk Decoding for Statistical Machine Translation",
+    "url": "https://aclweb.org/anthology/N04-1022",
+    "year": 2004
+  },
+  "references": [
+    "acl-C02-1134",
+    "acl-J90-2002",
+    "acl-N03-1019",
+    "acl-N03-2021",
+    "acl-P02-1016",
+    "acl-P02-1034",
+    "acl-P03-1021",
+    "acl-P96-1024",
+    "acl-W00-1201",
+    "acl-W02-1019",
+    "acl-W02-1020",
+    "acl-W02-1021"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "We present Minimum Bayes-Risk (MBR) decoding for statistical machine translation.",
+        "This statistical approach aims to minimize expected loss of translation errors under loss functions that measure translation performance.",
+        "We describe a hierarchy of loss functions that incorporate different levels of linguistic information from word strings, word-to-word alignments from an MT system, and syntactic structure from parse-trees of source and target language sentences.",
+        "We report the performance of the MBR decoders on a Chinese-to-English translation task.",
+        "Our results show that MBR decoding can be used to tune statistical MT performance for specific loss functions."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Statistical Machine Translation systems have achieved considerable progress in recent years as seen from their performance on international competitions in standard evaluation tasks (NIST, 2003).",
+        "This rapid progress has been greatly facilitated by the development of automatic translation evaluation metrics such as BLEU score (Pa-pineni et al., 2001), NIST score (Doddington, 2002) and Position Independent Word Error Rate (PER) (Och, 2002).",
+        "However, given the many factors that influence translation quality, it is unlikely that we will find a single translation metric that will be able to judge all these factors.",
+        "For example, the BLEU, NIST and the PER metrics,",
+        "though effective, do not take into account explicit syntactic information when measuring translation quality.",
+        "Given that different Machine Translation (MT) evaluation metrics are useful for capturing different aspects of translation quality, it becomes desirable to create MT systems tuned with respect to each individual criterion.",
+        "In contrast, the maximum likelihood techniques that underlie the decision processes of most current MT systems do not take into account these application specific goals.",
+        "We apply the Minimum Bayes-Risk (MBR) techniques developed for automatic speech recognition (Goel and Byrne, 2000) and bitext word alignment for statistical MT (Kumar and Byrne, 2002), to the problem of building automatic MT systems tuned for specific metrics.",
+        "This is a framework that can be used with statistical models of speech and language to develop decision processes optimized for specific loss functions.",
+        "We will show that MBR decoding can be applied to machine translation in two scenarios.",
+        "Given an automatic MT metric, we design a loss function based on the metric and use MBR decoding to tune MT performance under the metric.",
+        "We also show how MBR decoding can be used to incorporate syntactic structure into a statistical MT system by building specialized loss functions.",
+        "These loss functions can use information from word strings, word-to-word alignments and parse-trees of the source sentence and its translation.",
+        "In particular we describe the design of a Bilingual Tree Loss Function that can explicitly use syntactic structure for measuring translation quality.",
+        "MBR decoding under this loss function allows us to integrate syntactic knowledge into a statistical MT system without building detailed models of linguistic features, and retraining the system from scratch.",
+        "We first present a hierarchy of loss functions for translation based on different levels of lexical and syntactic information from source and target language sentences.",
+        "This hierarchy includes the loss functions useful in both situations where we intend to apply MBR decoding.",
+        "We then present the MBR framework for statistical machine translation under the various translation loss functions.",
+        "We finally report the performance of MBR decoders optimized for each loss function."
+      ]
+    },
+    {
+      "heading": "2 Translation Loss Functions",
+      "text": [
+        "We now introduce translation loss functions to measure the quality of automatically generated translations.",
+        "Suppose we have a sentence in a source language for which we have generated an automatic translation with word-to-word alignment relative to .",
+        "The word-to-word alignment specifies the words in the source sentence that are aligned to each word in the translation .",
+        "We wish to compare this automatic translation with a reference translation with word-to-word alignment relative to .",
+        "We will now present a three-tier hierarchy of translation loss functions of the form that measure against .",
+        "These loss functions will make use of different levels of information from word strings, MT alignments and syntactic structure from parse-trees of both the source and target strings as illustrated in the following table.",
+        "We start with an example of two competing English translations for a Chinese sentence (in Pinyin without tones), with their word-to-word alignments in Figure 1.",
+        "The reference translation for the Chinese sentence with its word-to-word alignment is shown in Figure 2.",
+        "In this section, we will show the computation of different loss functions for this example."
+      ]
+    },
+    {
+      "heading": "2.1 Lexical Loss Functions",
+      "text": [
+        "The first class of loss functions uses no information about word alignments or parse-trees, so that can be reduced to .",
+        "We consider three loss functions in this category: The BLEU score (Papineni et al., 2001), word-error rate, and the position-independent word-error rate (Och, 2002).",
+        "Another example of a loss function in this class is the MT-eval metric introduced in Melamed et al.",
+        "(2003).",
+        "A loss function of this type depends only on information from word strings.",
+        "BLEU score (Papineni et al., 2001) computes the geometric mean of the precision of grams of various lengths ( ) between a hypothesis and a reference translation, and includes a brevity penalty ( ) if the hypothesis is shorter than the reference.",
+        "We use .",
+        "where is the precision of grams in the hypothesis .",
+        "The BLEU score is zero if any of the n-gram precisions is zero for that sentence pair.",
+        "We note that .",
+        "We derive a loss function from BLEU score as ."
+      ]
+    },
+    {
+      "heading": "BLEU",
+      "text": [
+        "Word Error Rate (WER) is the ratio of the string-edit distance between the reference and the hypothesis word strings to the number of words in the reference.",
+        "String-edit distance is measured as the minimum number of edit operations needed to transform a word string to the other word string."
+      ]
+    },
+    {
+      "heading": "Position-independent Word Error Rate (PER) mea",
+      "text": [
+        "sures the minimum number of edit operations needed to transform a word string to any permutation of the other word string.",
+        "The PER score (Och, 2002) is then computed as a ratio of this distance to the number of words in the reference word string."
+      ]
+    },
+    {
+      "heading": "2.2 Target Language Parse-Tree Loss Functions",
+      "text": [
+        "The second class of translation loss functions uses information only from the parse-trees of the two translations, so that .",
+        "This loss function has no access to any information from the source sentence or the word alignments.",
+        "Examples of such loss functions are tree-edit distances between parse-trees, string-edit distances between event representation of parse-trees (Tang et al., 2002), and tree-kernels (Collins and Duffy, 2002).",
+        "The computation of tree-edit distance involves an unconstrained alignment of the two English parse-trees.",
+        "We can simplify this problem once we have a third parse tree (for the Chinese sentence) with node-to-node alignment relative to the two English trees.",
+        "We will introduce such a loss function in the next section.",
+        "We did not perform experiments involving this class of loss functions, but mention them for completeness in the hierarchy of loss functions."
+      ]
+    },
+    {
+      "heading": "2.3 Bilingual Parse-Tree Loss Functions",
+      "text": [
+        "The third class of loss functions uses information from word strings, alignments and parse-trees in both languages, and can be described by .",
+        "We will now describe one such loss function using the example in Figures 1 and 2.",
+        "Figure 3 shows a tree-to-tree mapping between the source (Chinese) parse-tree and parse-trees of its reference translation and two competing hypothesis (English) translations.",
+        "the first two months of this year guangdong ’s high−tech products 3.76 billion US dollars jin−nian qian liangyue guangdong gao xinjishu chanpin chukou sanqidianliuyi meiyuan the first two months of this year guangdong exported high−tech products 3.76 billion US dollars",
+        "We first assume that a node in the source tree can be mapped to a node in (and a node in ) using word alignment (and respectively).",
+        "We denote the subtree of rooted at node by and the subtree of rooted at node by .",
+        "We will now describe a simple procedure that makes use of the word alignment to construct node-to-node alignment between nodes in the source tree and the target tree ."
+      ]
+    },
+    {
+      "heading": "2.3.1 Alignment of Parse-Trees",
+      "text": [
+        "For each node in the source tree we consider the subtree rooted at .",
+        "We first read off the source word sequence corresponding to the leaves of .",
+        "We next consider the subset of words in the target sentence that are aligned to any word in this source word sequence, and select the leftmost and rightmost words from this subset.",
+        "We locate the leaf nodes corresponding to these two words in the target parse tree , and obtain their closest common ancestor node .",
+        "This procedure gives us a mapping from a node to a node and this mapping associates one subtree to one subtree ."
+      ]
+    },
+    {
+      "heading": "2.3.2 Loss Computation between Aligned Parse-Trees",
+      "text": [
+        "Given the subtree alignment between and , and and , we first identify the subset of nodes in for which we can identify a corresponding node in both and .",
+        "The Bilingual Parse-Tree (BiTree) Loss Function can then be computed as",
+        "where is a distance measure between sub-trees and .",
+        "Specific Bi-tree loss functions are determined through particular choices of .",
+        "In our experiments, we used a 0/1 loss function between sub-trees and .",
+        "We note that other tree-to-tree distance measures can also be used to compute , e.g. the distance function could compare if the subtrees and have the same headword/non-terminal tag.",
+        "The Bitree loss function measures the distance between two trees in terms of distances between their corresponding subtrees.",
+        "In this way, we replace the string-to-string (Levenshtein) alignments (for WER) or gram matches (for BLEU/PER) with subtree-to-subtree alignments.",
+        "The Bitree Error Rate (in %) is computed as a ratio of the Bi-tree Loss function to the number of nodes in the set .",
+        "The complete node-to-node alignment between the parse-tree of the source (Chinese) sentence and the parse trees of its reference translation and the two hypothesis translations (English) is given in Table 1.",
+        "Each row in this table shows the alignment between a node in the Chinese parse-tree and nodes in the reference and the two hypothesis parse-trees.",
+        "The computation of the Bitree Loss function and the Bitree Error Rate is presented in the last two rows of the table."
+      ]
+    },
+    {
+      "heading": "2.4 Comparison of Loss Functions",
+      "text": [
+        "In Table 2 we compare various translation loss functions for the example from Figure 1.",
+        "The two hypothesis translations are very similar at the word level and therefore the BLEU score, PER and the WER are identical.",
+        "However we observe that the sentences differ substantially in their syntactic structure (as seen from Parse-Trees in Figure 3), and to a lesser extent in their word-to-word alignments (Figure 1) to the source sentence.",
+        "The first hypothesis translation is parsed as a sentence while the second translation is parsed as a noun phrase.",
+        "The Bitree loss function which depends both on the parse-trees and the word-to-word alignments, is therefore very different for the two translations (Table 2).",
+        "While string based metrics such as BLEU, WER and PER are insensitive to the syntactic structure of the translations, BiTree Loss is able to measure this aspect of translation quality, and assigns different scores to the two translations.",
+        "We provide this example to show how a loss function which makes use of syntactic structure from source and target parse trees, can capture properties of translations that string based loss functions are unable to measure."
+      ]
+    },
+    {
+      "heading": "3 Minimum Bayes-Risk Decoding",
+      "text": [
+        "Statistical Machine Translation (Brown et al., 1990) can be formulated as a mapping of a word sequence in a source language to word sequence in the target language that has a word-to-word alignment relative to .",
+        "Given the source sentence , the MT decoder produces a target word string with word-to-word alignment .",
+        "Relative to a reference translation with word alignment , the decoder performance is measured as .",
+        "Our goal is to find the decoder that has the best performance over all translations.",
+        "This is measured through Bayes-Risk : The expectation is taken under the true distribution that describes translations of human quality.",
+        "Given a loss function and a distribution, it is well known that the decision rule that minimizes the Bayes-Risk is given by (Bickel and Doksum, 1977; Goel and Byrne, 2000): We shall refer to the decoder given by this equation as the Minimum Bayes-Risk (MBR) decoder.",
+        "The MBR decoder can be thought of as selecting a consensus translation: For each sentence , Equation 3 selects the translation that is closest on an average to all the likely translations and alignments.",
+        "The closeness is measured under the loss function of interest.",
+        "This optimal decoder has the difficulties of search (minimization) and computing the expectation under the true distribution.",
+        "In practice, we will consider the space of translations to be an best list of translation alternatives generated under a baseline translation model.",
+        "Of course, we do not have access to the true distribution over translations.",
+        "We therefore use statistical translation models (Och, 2002) to approximate the distribution .",
+        "Decoder Implementation: The MBR decoder (Equation 3) on the best List is implemented as and .",
+        "This is a rescoring procedure that searches for consensus under a given loss function.",
+        "The posterior probability of each hypothesis in the best list is derived from the joint probability assigned by the baseline translation model.",
+        "The conventional Maximum A Posteriori (MAP) decoder can be derived as a special case of the MBR decoder by considering a loss function that assigns a equal cost (say 1) to all misclassifications.",
+        "Under the 0/1 loss function, (5) the decoder of Equation 3 reduces to the MAP decoder MAP (6) This illustrates why we are interested in MBR decoders based on other loss functions: the MAP decoder is optimal with respect to a loss function that is very harsh.",
+        "It does not distinguish between different types of translation errors and good translations receive the same penalty as poor translations."
+      ]
+    },
+    {
+      "heading": "4 Performance of MBR Decoders",
+      "text": [
+        "We performed our experiments on the Large-Data Track of the NIST Chinese-to-English MT task (NIST, 2003).",
+        "The goal of this task is the translation of news stories from Chinese to English.",
+        "The test set has a total of 1791 sentences, consisting of 993 sentences from the NIST 2001 MT-eval set and 878 sentences from the NIST 2002 MT-eval set.",
+        "Each Chinese sentence in this set has four reference translations."
+      ]
+    },
+    {
+      "heading": "4.1 Evaluation Metrics",
+      "text": [
+        "The performance of the baseline and the MBR decoders under the different loss functions was measured with respect to the four reference translations provided for the test set.",
+        "Four evaluation metrics were used.",
+        "These were multi-reference Word Error Rate (mWER) (Och, 2002), multi-reference Position-independent word Error Rate (mPER) (Och, 2002) , BLEU and multi-reference BiTree Error Rate.",
+        "Among these evaluation metrics, the BLEU score directly takes into account multiple reference translations (Papineni et al., 2001).",
+        "In case of the other metrics, we consider multiple references in the following way.",
+        "For each sentence, we compute the error rate of the hypothesis translation with respect to the most similar reference translation under the corresponding loss function."
+      ]
+    },
+    {
+      "heading": "4.2 Decoder Performance",
+      "text": [
+        "In our experiments, a baseline translation model (JHU, 2003), trained on a Chinese-English parallel corpus (NIST, 2003) ( English words and Chinese words), was used to generate 1000-best translation hypotheses for each Chinese sentence in the test set.",
+        "The 1000-best lists were then rescored using the different translation loss functions described in Section 2.",
+        "The English sentences in the best lists were parsed using the Collins parser (Collins, 1999), and the Chinese sentences were parsed using a Chinese parser provided to us by D. Bikel (Bikel and Chiang, 2000).",
+        "The English parser was trained on the Penn Treebank and the Chinese parser on the Penn Chinese treebank.",
+        "Under each loss function, the MBR decoding was performed using Equation 3.",
+        "We say we have a matched condition when the same loss function is used in both the error rate and the decoder design.",
+        "The performance of the MBR decoders on the NIST 2001+2002 test set is reported in Table 3.",
+        "For all performance metrics, we show the 70% confidence interval with respect to the MAP baseline computed using bootstrap resampling (Press et al., 2002; Och, 2003).",
+        "We note that this significance level if otherwise, does meet the customary criteria for minimum significance intervals of 68.3% (Press et al., 2002).",
+        "We observe in most cases that the MBR decoder under a loss function performs the best under the corresponding error metric i.e. matched conditions perform the best.",
+        "The gains from MBR decoding under matched conditions are statistically significant in most cases.",
+        "We note that the MAP decoder is not optimal in any of the cases.",
+        "In particular, the translation performance under the BLEU metric can be improved by using MBR relative to MAP decoding.",
+        "This shows the value of finding decoding procedure matched to the performance criterion of interest.",
+        "We also notice some affinity among the loss functions.",
+        "The MBR decoding under the Bitree Loss function performs better under the WER relative to the MAP decoder, but perform poorly under the BLEU metric.",
+        "The MBR decoder under WER and PER perform better than the MAP decoder under all error metrics.",
+        "The MBR decoder under BLEU loss function obtains a similar (or worse) performance relative to MAP decoder on all metrics other than BLEU."
+      ]
+    },
+    {
+      "heading": "5 Discussion",
+      "text": [
+        "We have described the formulation of Minimum Bayes-Risk decoders for machine translation.",
+        "This is a general framework that allows us to build special purpose decoders from general purpose models.",
+        "The procedure aims at direct minimization of the expected risk of translation errors under a given loss function.",
+        "In this paper we have focused on two situations where this framework could be applied.",
+        "Given an MT evaluation metric of interest such as BLEU, PER or WER, we can use this metric as a loss function within the MBR framework to design decoders optimized for the evaluation criterion.",
+        "In particular, the MBR decoding under the BLEU loss function can yield further improvements on top of MAP decoding.",
+        "Suppose we are interested in improving syntactic structure of automatic translations and would like to use an existing statistical MT system that is trained without any linguistic features.",
+        "We have shown in such a situation how MBR decoding can be applied to the MT system.",
+        "This can be done by the design of translation loss functions from varied linguistic analyzes.",
+        "We have shown the construction of a Bitree loss function to compare parse-trees of any two translations using alignments with respect to a parse-tree for the source sentence.",
+        "The loss function therefore avoids the problem of unconstrained tree-to-tree alignment.",
+        "Using an example, we have shown that this loss function can measure qualities of translation that string (and ngram) based metrics cannot capture.",
+        "The MBR decoder under this loss function gives improvements under an evaluation metric based on the loss function.",
+        "We present results under the Bitree loss function as an example of incorporating linguistic information into a loss function; we have not yet measured its correlation with human assessments of translation quality.",
+        "This loss function allows us to integrate syntactic structure into the statistical MT framework without building detailed models of syntactic features and retraining models from scratch.",
+        "However, we emphasize that the MBR techniques do not preclude the construction of complex models of syntactic structure.",
+        "Translation models that have been trained with linguistic features could still benefit by the application of MBR decoding procedures.",
+        "That machine translation evaluation continues to be an active area of research is evident from recent workshops (AMTA, 2003).",
+        "We expect new automatic MT evaluation metrics to emerge frequently in the future.",
+        "Given any translation metric, the MBR decoding framework will allow us to optimize existing MT systems for the new criterion.",
+        "This is intended to compensate for any mismatch between decoding strategy of MT systems and their evaluation criteria.",
+        "While we have focused on developing MBR procedures for loss functions that measure various aspects of translation quality, this framework can also be used with loss functions which measure application-specific error criteria.",
+        "We now describe related training and search procedures for NLP that explicitly take into consideration task-specific performance metrics.",
+        "Och (2003) developed a training procedure that incorporates various MT evaluation criteria in the training procedure of log-linear MT models.",
+        "Foster et al.",
+        "(2002) developed a text-prediction system for translators that maximizes expected benefit to the translator under a statistical user model.",
+        "In parsing, Goodman (1996) developed parsing algorithms that are appropriate for specific parsing metrics.",
+        "There has also been recent work that combines 1-best hypotheses from multiple translation systems (Bangalore et al., 2002); this approach uses string-edit distance to align the hypotheses and rescores the resulting lattice with a language model.",
+        "In future work we plan to extend the search space of MBR decoders to translation lattices produced by the baseline system.",
+        "Translation lattices (Ueffing et al., 2002; Kumar and Byrne, 2003) are a compact representation of a large set of most likely translations generated by an MT system.",
+        "While an best list contains only a limited reordering of hypotheses, a translation lattice will contain hypotheses with a vastly greater number of re-orderings.",
+        "We are developing efficient lattice search procedures for MBR decoders.",
+        "By extending the search space of the decoder to a much larger space than the best list, we expect further performance improvements.",
+        "MBR is a promising modeling framework for statistical machine translation.",
+        "It is a simple model rescoring framework that improves well-trained statistical models",
+        "For each metric, the performance under a matched condition is shown in bold.",
+        "Note that better results correspond to higher BLEU scores and to lower error rates.",
+        "by tuning them for particular criteria.",
+        "These criteria could come from evaluation metrics or from other desiderata (such as syntactic well-formedness) that we wish to see in automatic translations."
+      ]
+    },
+    {
+      "heading": "Acknowledgments",
+      "text": [
+        "This work was performed as part of the 2003 Johns Hopkins Summer Workshop research group on Syntax for Statistical Machine Translation.",
+        "We would like to thank all the group members for providing various resources and tools and contributing to useful discussions during the course of the workshop."
+      ]
+    }
+  ]
+}

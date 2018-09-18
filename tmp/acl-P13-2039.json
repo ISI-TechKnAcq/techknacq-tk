@@ -1,0 +1,236 @@
+{
+  "info": {
+    "authors": [
+      "Jiwei Li",
+      "Claire Cardie",
+      "Sujian Li"
+    ],
+    "book": "ACL",
+    "id": "acl-P13-2039",
+    "title": "TopicSpam: a Topic-Model based approach for spam detection",
+    "url": "https://aclweb.org/anthology/P13-2039",
+    "year": 2013
+  },
+  "references": [
+    "acl-D09-1026",
+    "acl-P10-1066",
+    "acl-P11-1032",
+    "acl-P12-1056"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "Product reviews are now widely used by individuals and organizations for decision making (Litvin et al., 2008; Jansen, 2010).",
+        "And because of the profits at stake, people have been known to try to game the system by writing fake reviews to promote target products.",
+        "As a result, the task of deceptive review detection has been gaining increasing attention.",
+        "In this paper, we propose a generative LDA-based topic mod-eling approach for fake review detection.",
+        "Our model can aptly detect the subtle differences between deceptive reviews and truthful ones and achieves about 95% accuracy on review spam datasets, outperforming existing baselines by a large margin."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Consumers rely increasingly on user-generated online reviews to make purchase decisions.",
+        "Positive opinions can result in significant financial gains.",
+        "This gives rise to deceptive opinion spam (Ott et al., 2011; Jindal et al., 2008), fake reviews written to sound authentic and deliberately mislead readers.",
+        "Previous research has shown that humans have difficulty distinguishing fake from truthful reviews, operating for the most part at chance (Ott et al., 2011).",
+        "Consider, for example, the following two hotel reviews.",
+        "One is truthful and the other is deceptive1: 1.",
+        "My husband and I stayed for two nights at the Hilton Chicago.",
+        "We were very pleased with the accommodations and enjoyed the service every minute of it!",
+        "The bedrooms are immaculate, and the linens are very soft.",
+        "We also appreciated the free wifi, as we could stay in touch with friends while staying in Chicago.",
+        "The bathroom was quite spacious, and I loved the smell of the shampoo they provided.",
+        "Their service was amazing,",
+        "and we absolutely loved the beautiful indoor pool.",
+        "I would recommend staying here to anyone.",
+        "2.",
+        "We stayed at the Sheraton by Navy Pier the first weekend of November.",
+        "The view from both rooms was spectacular (as you can tell from the picture attached).",
+        "They also left a plate of cookies and treats in the kids room upon check-in made us all feel very special.",
+        "The hotel is central to both Navy Pier and Michigan Ave. so we walked, trolleyed, and cabbed all around the area.",
+        "We ate the breakfast buffet on both mornings and thought it was pretty good.",
+        "The eggs were a little runny.",
+        "Our six year old ate free and our two eleven year old were $14 (instead of the adult $20).",
+        "The rooms were clean, the concierge and reception staff were both friendly and helpful...we will definitely visit this Sheraton again when we stay in Chicago next time.",
+        "Because of the difficulty of recognizing deceptive opinions, there has been a widespread and growing interest in developing automatic, usually learning-based methods to help users identify deceptive reviews (Ott et al., 2011; Jindal et al., 2008; Jindal et al., 2010; Li et al., 2011; Lim et al., 2011; Wang et al., 2011).",
+        "The state-of-the-art approach treats the task of spam detection as a text categorization problem and was first introduced by Jindal and Liu (2009) who trained a supervised classifier to distinguish duplicated reviews (assumed deceptive) from original ones (assumed truthful).",
+        "Since then, many supervised approaches have been proposed for spam detection.",
+        "Ott et al. (2011) employed standard word and part-of-speech (POS) n-gram features for supervised learning and built a gold?",
+        "standard opinion dataset of 800 reviews.",
+        "Lim et al.",
+        "(2010) proposed the inclusion of user behavior-based features and found that behavior abnormalities of reviewers could predict spammers, without using any textual features.",
+        "Li et al. (2011) carefully explored review-related features based on content and sentiment, training a semi-supervised classifier for opinion spam detection.",
+        "However, the disadvantages of standard supervised learning methods are obvious.",
+        "First, they do not generally provide readers with a clear probabilistic pre",
+        "diction of how likely a review is to be deceptive vs. truthful.",
+        "Furthermore, identifying features that provide direct evidence against deceptive reviews is always a hard problem.",
+        "LDA topic models (Blei et al., 2003) have widely been used for their ability to model latent topics in document collection.",
+        "In LDA, each document is presented as a mixture distribution of topics and each topic is presented as a mixture distribution of words.",
+        "Researchers also integrated different levels of information into LDA topic models to model the specific knowledge that they are interested in, such as user-specific information (Rosen-zvi et al., 2006), document-specific information (Li et al., 2010) and time-specific information (Diao et al., 2012).",
+        "Ramage et al. (2009) developed a Labeled LDA model to define a one-to-one correspondence between LDA latent topics and tags.",
+        "Chemudugunta et al. (2008) illustrated that by considering background information and document-specific information, we can largely improve the performance of topic modeling.",
+        "In this paper, we propose a Bayesian approach called TopicSpam for deceptive review detection.",
+        "Our approach, which is a variation of Latent Dirichlet Allocation (LDA) (Blei et al., 2003), aims to detect the subtle differences between the topic-word distributions of deceptive reviews vs. truthful ones.",
+        "In addition, our model can give a clear probabilistic prediction on how likely a review should be treated as deceptive or truthful.",
+        "Performance is tested on dataset from Ott et al.",
+        "(2011) that contains 800 reviews of 20 Chicago hotels.",
+        "Our model achieves more than 94% accuracy on that dataset."
+      ]
+    },
+    {
+      "heading": "2 TopicSpam",
+      "text": [
+        "We are presented with four subsets of hotel reviews, M = {Mi}i=4i=1, representing deceptive train, truthful train, deceptive test and truthful test data, respectively.",
+        "Each review r is comprised of a number of words r = {wt}t=nrt=1 .",
+        "Input for the TopicSpam algorithm is the datasets M ; output is the label (deceptive, truthful) for each review inM3 andM4.",
+        "V denotes vocabulary size."
+      ]
+    },
+    {
+      "heading": "2.1 Details of TopicSpam",
+      "text": [
+        "In TopicSpam, each document is modeled as a bag of words, which are assumed to be generated from a mixture of latent topics.",
+        "Each word is associated with a latent variable that specifies Figure 1: Graphical Model for TopicSpam the topic from which it is generated.",
+        "Words in a document are assumed to be conditionally independent given the hidden topics.",
+        "A general background distribution ?B and hotel-specific distributions ?Hj (j = 1, ..., 20) are first introduced to capture the background information and hotel-specific information.",
+        "To capture the difference between deceptive reviews and truthful reviews, TopicSpam also learns a deceptive topic distribution ?D and truthful topic distribution ?T .",
+        "The generative model of TopicSpam is shown as follows: ?",
+        "For a training review in r1j ?",
+        "M1, words are originated from one of the three different topics: ?B , ?Hj and ?D.",
+        "?",
+        "For a training review in r2j ?",
+        "M2, words are originated from one of the three different topics: ?B , ?Hj and ?T .",
+        "?",
+        "For a test review in rmj ?",
+        "Mm,m = 3, 4, words are originated from one of the four different topics: ?B , ?Hj ?D and ?T .",
+        "The generation process of TopicSpam is shown in Figure 1 and the corresponding graphical model is illustrated in Figure 2.",
+        "We use ?",
+        "= (?G, ?Hi , ?D, ?T ) to represent the asymmetric priors for topic-word distribution generation.",
+        "In our experiments, we set ?G = 0.1, and ?Hi = ?D = ?T = 0.01.",
+        "The intuition for the asymmetric priors is that there should be more words assigned to the background topic.",
+        "?",
+        "= [?B, ?Hi , ?D, ?T ] denotes the priors for the document-level topic distribution in the LDA model.",
+        "We set ?B = 2 and ?T = ?D = ?Hi = 1, reflecting the intuition that more words in each document should cover the background topic."
+      ]
+    },
+    {
+      "heading": "2.2 Inference",
+      "text": [
+        "We adopt the collapsed Gibbs sampling strategy to infer the latent parameters in TopicSpam.",
+        "In Gibbs",
+        "1. sample ?G ?",
+        "Dir(?G) 2. sample ?D ?",
+        "Dir(?D) 3. sample ?T ?",
+        "Dir(?T ) 4. for each hotel j ?",
+        "[1, N ]: sample ?Hj ?",
+        "?H 5. for each review r",
+        "if i=1: sample ?r ?",
+        "Dir(?B, ?Hj , ?D) if i=2: sample ?r ?",
+        "Dir(?B, ?Hj , ?T ) if i=3: sample ?r ?",
+        "Dir(?B, ?Hj , ?D, ?T ) if i=4: sample ?r ?",
+        "Dir(?B, ?Hj , ?D, ?T ) for each word w in R sample z ?",
+        "?r sample w ?",
+        "?z",
+        "sampling, for each word w in review r, we need to calculate P (zw|w, z?w, ?, ?)",
+        "in each iteration, where z?w denotes the topic assignments for all words except that of the current word zw.",
+        "where Nmr denotes the number of times that topic m appears in current review r and Ewm denotes the number of times that word w is assigned to topic m. After each sampling iteration, the latent parameters can be estimated using the following formulas:"
+      ]
+    },
+    {
+      "heading": "2.3 Labeling the Test Data",
+      "text": [
+        "For each review r in the test data, let NDr denote the number of words generated from the deceptive topic and NTr , the number of words generated from the truthful topic.",
+        "The decision for whether a review is deceptive or truthful is made as follows: ?",
+        "if NDr > NTr , r is deceptive.",
+        "?",
+        "if NDr < NTr , r is truthful.",
+        "?",
+        "if NDr = NTr , it is hard to decide.",
+        "Let P(D) denote the probability that r is deceptive and P(T) denote the probability that r is truthful."
+      ]
+    },
+    {
+      "heading": "3 Experiments",
+      "text": []
+    },
+    {
+      "heading": "3.1 System Description",
+      "text": [
+        "Our experiments are conducted on the dataset from Ott et al(2011), which contains reviews of the 20 most popular hotels on TripAdvisor in the Chicago areas.",
+        "There are 20 truthful and 20 deceptive reviews for each of the chosen hotels (800 reviews total).",
+        "Deceptive reviews are gathered using Amazon Mechanical Turk2.",
+        "In our experiments, we adopt the same 5-fold cross-validation strategy as in Ott et al., using the same data partitions.",
+        "Words are stemmed using PorterStemmer3."
+      ]
+    },
+    {
+      "heading": "3.2 Baselines",
+      "text": [
+        "We employ a number of techniques as baselines: TopicTD: A topic-modeling approach that only considers two topics: deceptive and truthful.",
+        "Words in deceptive train are all generated from the deceptive topic and words in truthful train are generated from the truthful topic.",
+        "Test documents are presented with a mixture of the deceptive and truthful topics.",
+        "TopicTDB: A topic-modeling approach that only considers background, deceptive and truthful information.",
+        "SVM-Unigram: Using SVMlight(Joachims, 1999) to train linear SVM models on unigram features.",
+        "SVM-Bigram: Using SVMlight(Joachims, 1999) to train linear SVM models on bigram features.",
+        "SVM-Unigram-Removal1: In SVM-UnigramRemoval, we first train TopicSpam.",
+        "Then words generated from hotel-specific topics are removed.",
+        "We use the remaining words as features in SVMlight.",
+        "SVM-Unigram-Removal2: Same as SVM-Unigram-removal-1 but removing all background words and hotel-specific words.",
+        "Experimental results are shown in Table 14.",
+        "As we can see, the accuracy of TopicSpam is 0.948, outperforming TopicTD by 6.4%.",
+        "This illustrates the effectiveness of modeling background and hotel-specific information for the opinion spam detection problem.",
+        "We also see that TopicSpam slightly outperforms TopicTDB, which",
+        "neglects hotel-specific information.",
+        "By checking the results of Gibbs sampling, we find that this is because only a small number of words are generated by the hotel-specific topics.",
+        "TopicTD and SVM-Unigram get comparative accuracy rates.",
+        "This can be explained by the fact that both models use unigram frequency as features for the classifier or topic distribution training.",
+        "SVM-Unigram-Removal1 is also slightly better than SVM-Unigram.",
+        "In SVM-Unigramremoval1, hotel-specific words are removed for classifier training.",
+        "So the first-step LDA model can be viewed as a feature selection process for the SVM, giving rise to better results.",
+        "We can also see that the performance of SVM-Unigram-removal2 is worse than other baselines.",
+        "This can be explained as follows: for example, word ?my?",
+        "has large probability to be generated from the background topic.",
+        "However it can also be generated by deceptive topic occasionaly but can hardly be generated from the truthful topic.",
+        "So the removal of these words results in the loss of useful information, and leads to low accuracy rate.",
+        "Our topic-modeling approach uses word frequency as features and does not involve any feature selection process.",
+        "Here we present the results of the sample reviews from Section 1.",
+        "Stop words are labeled in black, background topics (B) in blue, hotel specific topics (H) in orange, deceptive topics (D) in red and truthful topic (T) in",
+        "green.",
+        "1.",
+        "My husband and I stayed for two nights at the Hilton",
+        "Chicago.",
+        "We were very pleased with the accommodations and enjoyed the service every minute of it!",
+        "The bedrooms are immaculate,and the linens are very soft.",
+        "We also appreciated the free wifi, as we could stay in touch with friends while staying in Chicago.",
+        "The bathroom was quite spacious, and I loved the smell of the shampoo they provided not like most hotel shampoos.",
+        "Their service was amazing,and we absolutely loved the beautiful indoor pool.",
+        "I would recommend staying here to anyone.",
+        "[B,H,D,T]=[41,6,10,1] p(D)=0.909 P(T)=0.091 2.",
+        "We stayed at the Sheraton by Navy Pier the first weekend of November.",
+        "The view from both rooms was spectacular (as you can tell from the picture attached).",
+        "They also left a plate of cookies and treats in the kids room upon check-in made us all feel very special.",
+        "The hotel is central to both Navy Pier and Michigan Ave. so we walked, trolleyed, and cabbed all around the area.",
+        "We ate the breakfast buffet both mornings and thought it was pretty good.",
+        "The eggs were a little runny.",
+        "Our six year old ate free and our two eleven year old were $14 ( instead of the adult $20) The rooms were clean, the concierge and reception staff were both friendly and helpful...we will definitely visit this Sheraton again when we?re in Chicago next time.",
+        "plasma view pool spa sundeck floor river bar chocolate bathroom lake upgrade indoor cocktail navy primehouse request morning indoor design pillow wine shower overlook suitable great kid romantic area room theater home"
+      ]
+    },
+    {
+      "heading": "Spam 4 Conclusion",
+      "text": [
+        "In this paper, we propose a novel topic model for deceptive opinion spam detection.",
+        "Our model achieves an accuracy of 94.8%, demonstrating its effectiveness on the task."
+      ]
+    },
+    {
+      "heading": "5 Acknowledgements",
+      "text": [
+        "We thank Myle Ott for his insightful comments and suggestions.",
+        "This work was supported in part by NSF Grant BCS0904822, a DARPA Deft grant, and by a gift from Google."
+      ]
+    }
+  ]
+}

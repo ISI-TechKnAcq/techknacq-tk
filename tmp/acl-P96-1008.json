@@ -1,0 +1,305 @@
+{
+  "info": {
+    "authors": [
+      "Scott Miller",
+      "David G. Stallard",
+      "Robert J. Bobrow",
+      "Richard M. Schwartz"
+    ],
+    "book": "Annual Meeting of the Association for Computational Linguistics",
+    "id": "acl-P96-1008",
+    "title": "A Fully Statistical Approach to Natural Language Interfaces",
+    "url": "https://aclweb.org/anthology/P96-1008",
+    "year": 1996
+  },
+  "references": [
+    "acl-A88-1019",
+    "acl-H90-1020",
+    "acl-H90-1022",
+    "acl-H94-1011",
+    "acl-J92-1004",
+    "acl-J95-2002",
+    "acl-M93-1010",
+    "acl-P94-1004",
+    "acl-P95-1037"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "We present a natural language interface system which is based entirely on trained statistical models.",
+        "The system consists of three stages of processing: parsing, semantic interpretation, and discourse.",
+        "Each of these stages is modeled as a statistical process.",
+        "The models are fully integrated, resulting in an end-to-end system that maps input utterances into meaning representation frames."
+      ]
+    },
+    {
+      "heading": "1. Introduction",
+      "text": [
+        "A recent trend in natural language processing has been toward a greater emphasis on statistical approaches, beginning with the success of statistical part-of-speech tagging programs (Church 1988), and continuing with other work using statistical part-of-speech tagging programs, such as BBN PLUM (Weischedel et al.",
+        "1993) and NYU Proteus (Grishman and Sterling 1993).",
+        "More recently, statistical methods have been applied to domain-specific semantic parsing (Miller et al.",
+        "1994), and to the more difficult problem of wide-coverage syntactic parsing (Magerman 1995).",
+        "Nevertheless, most natural language systems remain primarily rule based, and even systems that do use statistical techniques, such as AT&T Chronus (Levin and Pieraccini 1995), continue to require a significant rule based component.",
+        "Development of a complete end-to-end statistical understanding system has been the focus of several ongoing research efforts, including (Miller et al.",
+        "1995) and (Koppelman et al.",
+        "1995).",
+        "In this paper, we present such a system.",
+        "The overall structure of our approach is conventional, consisting of a parser, a semantic interpreter, and a discourse module.",
+        "The implementation and integration of these elements is far less conventional.",
+        "Within each module, every processing step is assigned a probability value, and very large numbers of alternative theories are pursued in parallel.",
+        "The individual modules are integrated through an n-best paradigm, in which many theories are passed from one stage to the next, together with their associated probability scores.",
+        "The meaning of a sentence is determined by taking the highest scoring theory from among the n-best possibilities produced by the final stage in the model.",
+        "Some key advantages to statistical modeling techniques are:",
+        "• All knowledge required by the system is acquired through training examples, thereby eliminating the need for handwritten rules.",
+        "In parsing for example, it is",
+        "sufficient to provide the system with examples specifying the correct parses for a set of training examples.",
+        "There is no need to specify an exact set of rules or a detailed procedure for producing such parses.",
+        "• All decisions made by the system are graded, and there",
+        "are principled techniques for estimating the gradations.",
+        "The system is thus free to pursue unusual theories, while remaining aware of the fact that they are unlikely.",
+        "In the event that a more likely theory exists, then the more likely theory is selected, but if no more likely interpretation can be found, the unlikely interpretation is accepted.",
+        "The focus of this work is primarily to extract sufficient information from each utterance to give an appropriate response to a user's request.",
+        "A variety of problems regarded as standard in computational linguistics, such as quantification, reference and the like, are thus ignored.",
+        "To evaluate our approach, we trained an experimental system using data from the Air Travel Information (ATIS) domain (Bates et al.",
+        "1990; Price 1990).",
+        "The selection of ATIS was motivated by three concerns.",
+        "First, a large corpus of ATIS sentences already exists and is readily available.",
+        "Second, ATIS provides an existing evaluation methodology, complete with independent training and test corpora, and scoring programs.",
+        "Finally, evaluating on a common corpus makes it easy to compare the performance of the system with those based on different approaches.",
+        "We have evaluated our system on the same blind test sets used in the ARPA evaluations (Pallett et al.",
+        "1995), and present a preliminary result at the conclusion of this paper.",
+        "The remainder of the paper is divided into four sections, one describing the overall structure of our models, and one for each of the three major components of parsing, semantic interpretation and discourse."
+      ]
+    },
+    {
+      "heading": "2. Model Structure",
+      "text": [
+        "Given a string of input words W and a discourse history H, the task of a statistical language understanding system is to search among the many possible discourse-dependent meanings MD for the most likely meaning Mo: Mo = arg max P(MD I W, H).",
+        "Directly modeling P(MD I W, H) is difficult because the gap that the model must span is large.",
+        "A common approach in non-statistical natural language systems is to bridge this gap by introducing intermediate representations such as parse structure and pre-discourse sentence meaning.",
+        "Introducing these intermediate levels into the statistical framework gives:",
+        "where T denotes a semantic parse tree, and Ms denotes pre-discourse sentence meaning.",
+        "This expression can be simplified by introducing two independence assumptions:",
+        "1.",
+        "Neither the parse tree T, nor the pre-discourse meaning Ms, depends on the discourse history H. 2.",
+        "The post-discourse meaning MD does not depend on the words W or the parse structure T, once the pre-discourse meaning Ms is determined.",
+        "Now, since P(W) is constant for any given word string, the problem of finding meaning MD that maximizes",
+        "We now introduce a third independence assumption: 3.",
+        "The probability of words W does not depend on meaning Ms, given that parse T is known.",
+        "This assumption is justified because the word tags in our parse representation specify both semantic and syntactic class information.",
+        "Under this assumption:",
+        "Finally, we assume that most of the probability mass for each discourse-dependent meaning is focused on a single parse tree and on a single pre-discourse meaning.",
+        "Under this (Viterbi) assumption, the summation operator can be replaced by the maximization operator, yielding:",
+        "This expression corresponds to the computation actually performed by our system which is shown in Figure 1.",
+        "Processing proceeds in three stages:",
+        "1.",
+        "Word string W arrives at the parsing model.",
+        "The full space of possible parses T is searched for n-best candidates according to the measure P(T) P(W IT) .",
+        "These parses, together with their probability scores, are passed to the semantic interpretation model.",
+        "2.",
+        "The constrained space of candidate parses T (received from the parsing model), combined with the full space of possible pre-discourse meanings Ms, is searched for n-best candidates according to the measure P(Ms,T) P(W IT).",
+        "These pre-discourse meanings,",
+        "together with their associated probability scores, are passed to the discourse model.",
+        "3.",
+        "The constrained space of candidate pre-discourse meanings Ms (received from the semantic interpretation model), combined with the full space of possible post-discourse meanings MD, is searched for the single candidate that maximizes P( MD I H,M s) P(Ms,T) P(WIT) , conditioned on the current history H. The discourse history is then updated and the post-discourse meaning is returned.",
+        "We now proceed to a detailed discussion of each of these three stages, beginning with parsing."
+      ]
+    },
+    {
+      "heading": "3. Parsing",
+      "text": [
+        "Our parse representation is essentially syntactic in form, patterned on a simplified head-centered theory of phrase structure.",
+        "In content, however, the parse trees are as much semantic as syntactic.",
+        "Specifically, each parse node indicates both a semantic and a syntactic class (excepting a few types that serve purely syntactic functions).",
+        "Figure 2 shows a sample parse of a typical ATIS sentence.",
+        "The semantic,/syntactic character of this representation offers several advantages:",
+        "I. Annotation: Well-founded syntactic principles provide a framework for designing an organized and consistent annotation schema.",
+        "2.",
+        "Decoding: Semantic and syntactic constraints are",
+        "simultaneously available during the decoding process; the decoder searches for parses that are both syntactically and semantically coherent.",
+        "3.",
+        "Semantic Interpretation: Semantic/syntactic parse trees are immediately useful to the semantic interpretation",
+        "/top° /wh-question process: semantic labels identify the basic units of meaning, while syntactic structures help identify relationships between those units."
+      ]
+    },
+    {
+      "heading": "3.1 Statistical Parsing Model",
+      "text": [
+        "The parsing model is a probabilistic recursive transition network similar to those described in (Miller et al.",
+        "1994) and (Seneff 1992).",
+        "The probability of a parse tree T given a word string W is rewritten using Bayes rule as:",
+        "Since P(W) is constant for any given word string, candidate parses can be ranked by considering only the product P(T) P(W I 7).",
+        "The probability P(7) is modeled by state transition probabilities in the recursive transition network, and P(W I 7) is modeled by word transition probabilities.",
+        "• State transition probabilities have the form",
+        "probability along the path corresponding to T."
+      ]
+    },
+    {
+      "heading": "3.2 Training the Parsing Model",
+      "text": [
+        "Transition probabilities are estimated directly by observing occurrence and transition frequencies in a training corpus of annotated parse trees.",
+        "These estimates are then smoothed to overcome sparse data limitations.",
+        "The semantic/syntactic parse labels, described above, provide a further advantage in terms of smoothing: for cases of undertrained probability estimates, the model backs off to independent syntactic and semantic probabilities as follows:",
+        "where A. is estimated as in (Placeway et al.",
+        "1993).",
+        "Backing off to independent semantic and syntactic probabilities potentially provides more precise estimates than the usual strategy of backing off directly form bigram to unigram models."
+      ]
+    },
+    {
+      "heading": "3.3 Searching the Parsing Model",
+      "text": [
+        "In order to explore the space of possible parses efficiently, the parsing model is searched using a decoder based on an adaptation of the Earley parsing algorithm (Earley 1970).",
+        "This adaptation, related to that of (Stolcke 1995), involves reformulating the Earley algorithm to work with probabilistic recursive transition networks rather than with deterministic production rules.",
+        "For details of the decoder, see (Miller 1996)."
+      ]
+    },
+    {
+      "heading": "4. Semantic Interpretation",
+      "text": [
+        "Both pre-discourse and post-discourse meanings in our current system are represented using a simple frame representation.",
+        "Figure 3 shows a sample semantic frame corresponding to the parse in Figure 2.",
+        "Recall that the semantic interpreter is required to compute P(M s ,T) P(W IT) .",
+        "The conditional word probability P(W IT) has already been computed during the parsing phase and need not be recomputed.",
+        "The current problem, then, is to compute the prior probability of meaning Ms and parse T occurring together.",
+        "Our strategy is to embed the instructions for constructing Ms directly into parse T resulting in an augmented tree structure.",
+        "For example, the instructions needed to create the frame shown in Figure 3 are:",
+        "1.",
+        "Create an Air-Transportation frame.",
+        "2.",
+        "Fill the Show slot with Arrival-Time.",
+        "3.",
+        "Fill the Origin slot with (City \"Boston\") 4.",
+        "Fill the Destination slot with (City \"Atlanta\")",
+        "These instructions are attached to the parse tree at the points indicated by the circled numbers (see"
+      ]
+    },
+    {
+      "heading": "4.1 Statistical Interpretation Model",
+      "text": [
+        "Meanings Ms are decomposed into two parts: the frame type FT, and the slot fillers S. The frame type is always attached to the topmost node in the augmented parse tree, while the slot filling instructions are attached to nodes lower down in the tree.",
+        "Except for the topmost node, all parse nodes are required to have some slot filling operation.",
+        "For nodes that do not directly trigger any slot fill operation, the special operation null is attached.",
+        "The probability P(Ms, 7) is then:",
+        "Obviously, the prior probabilities P(FT) can be obtained directly from the training data.",
+        "To compute P(T I FT), each of the state transitions from the previous parsing model are simply rescored conditioned on the frame type.",
+        "The new state transition probabilities are:",
+        "To compute P(S I FT, 7) , we make the independence assumption that slot filling operations depend only on the frame type, the slot operations already performed, and on the local parse structure around the operation.",
+        "This local neighborhood consists of the parse node itself, its two left siblings, its two right siblings, and its four immediate ancestors.",
+        "Further, the syntactic and semantic components of these nodes are considered independently.",
+        "Under these assumptions, the probability of a slot fill operation is:",
+        "and the probability P(S I FT, 7) is simply the product of all such slot fill operations in the augmented tree."
+      ]
+    },
+    {
+      "heading": "4.2 Training the Semantic Interpretation Model",
+      "text": [
+        "Transition probabilities are estimated from a training corpus of augmented trees.",
+        "Unlike probabilities in the parsing model, there obviously is not sufficient training data to estimate slot fill probabilities directly.",
+        "Instead, these probabilities are estimated by statistical decision trees similar",
+        "to those used in the Spatter parser (Magerman 1995).",
+        "Unlike more common decision tree classifiers, which simply classify sets of conditions, statistical decision trees give a probability distribution over all possible outcomes.",
+        "Statistical decision trees are constructed in a two phase process.",
+        "In the first phase, a decision tree is constructed in the standard fashion using entropy reduction to guide the construction process.",
+        "This phase is the same as for classifier models, and the distributions at the leaves are often extremely sharp, sometimes consisting of one outcome with probability 1, and all others with probability 0.",
+        "In the second phase, these distributions are smoothed by mixing together distributions of various nodes in the decision tree.",
+        "As in (Magerman 1995), mixture weights are determined by deleted interpolation on a separate block of training data."
+      ]
+    },
+    {
+      "heading": "4.3 Searching the Semantic Interpretation Model",
+      "text": [
+        "Searching the interpretation model proceeds in two phases.",
+        "In the first phase, every parse T received from the parsing model is rescored for every possible frame type, computing P(T I F7) (our current model includes only a half dozen different types, so this computation is tractable).",
+        "Each of these theories is combined with the corresponding prior probability P(FT) yielding P(FT) P(T I PT).",
+        "The n-best of these theories are then passed to the second phase of the interpretation process.",
+        "This phase searches the space of slot filling operations using a simple beam search procedure.",
+        "For each combination of FT and T, the beam search procedure considers all possible combinations of fill operations, while pruning partial theories that fall beneath the threshold imposed by the beam limit.",
+        "The surviving theories are then combined with the conditional word probabilities P(W I 7), computed during the parsing model.",
+        "The final result of these steps is the n-best set of candidate pre-discourse meanings, scored according to the measure P(Ms,T) P(W IT) ."
+      ]
+    },
+    {
+      "heading": "5. Discourse Processing",
+      "text": [
+        "The discourse module computes the most probable post-discourse meaning of an utterance from its pre-discourse meaning and the discourse history, according to the measure:",
+        "Because pronouns can usually be ignored in the ATIS domain, our work does not treat the problem of pronominal reference.",
+        "Our probability model is instead shaped by the key discourse problem of the ATIS domain, which is the inheritance of constraints from context.",
+        "This inheritance phenomenon, similar in spirit to one-anaphora, is illustrated by the following dialog::",
+        "USER 1: I want to fly from Boston to Denver.",
+        "SYSTEM 1: <displays Boston to Denver flights> USER2: Which flights are available on Tuesday?",
+        "SYSTEM2: <displays Boston to Denver flights for Tuesday> In USER2, it is obvious from context that the user is asking about flights whose ORIGIN is BOSTON and whose DESTINATION is DENVER, and not all flights between any two cities.",
+        "Constraints are not always inherited, however.",
+        "For example, in the following continuation of this dialogue: USER3: Show me return flights from Denver to Boston, it is intuitively much less likely that the user means the \"on Tuesday\" constraint to continue to apply.",
+        "The discourse history H simply consists of the list of all post-discourse frame representations for all previous utterances in the current session with the system.",
+        "These frames are the source of candidate constraints to be inherited.",
+        "For most utterances, we make the simplifying assumption that we need only look at the last (i.e. most recent) frame in this list, which we call M."
+      ]
+    },
+    {
+      "heading": "5.1 Statistical Discourse Model",
+      "text": [
+        "The statistical discourse model maps a 23 element input vector X onto a 23 element output vector Y.",
+        "These vectors have the following interpretations:",
+        "• X represents the combination of previous meaning Mp and the pre-discourse meaning Ms. • Y represents the post-discourse meaning MD.",
+        "Thus,",
+        "The 23 elements in vectors X and Y correspond to the 23 possible slots in the frame schema.",
+        "Each element in X can have one of five values, specifying the relationship between the filler of the corresponding slot in Mp and Ms: INITIAL - slot filled in Ms but not in Mp TACIT - slot filled in Mp but not in Ms REITERATE - slot filled in both MA and Ms; value the same CHANGE - slot filled in both Mp and Ms; value different IRRELEVANT - slot not filled in either Mp or Ms Output vector Y is constructed by directly copying all fields from input vector X except those labeled TACIT.",
+        "These direct copying operations are assigned probability 1.",
+        "For fields labeled TACIT, the corresponding field in Y is filled with either INHERITED or NOT-INHERITED.",
+        "The probability of each of these operations is determined by a statistical decision tree model.",
+        "The discourse model contains 23 such statistical decision trees, one for each slot position.",
+        "An ordering is imposed on the set of frame slots, such that inheritance decisions for slots higher in the order are conditioned on the decisions for slots lower in the order."
+      ]
+    },
+    {
+      "heading": "5.2 Training the Discourse Model",
+      "text": [
+        "The discourse model is trained from a corpus annotated with both pre-discourse and post-discourse semantic frames.",
+        "Corresponding pairs of input and output (X, Y) vectors are computed from these annotations, which are then used to train the 23 statistical decision trees.",
+        "The training procedure for estimating these decision tree models is similar to that used for training the semantic interpretation model."
+      ]
+    },
+    {
+      "heading": "5.3 Searching The Discourse Model",
+      "text": [
+        "Searching the discourse model begins by selecting a meaning frame Mp from the history stack H, and combining it with each pre-discourse meaning Ms received from the semantic interpretation model.",
+        "This process yields a set of candidate input vectors X.",
+        "Then, for each vector X, a search process exhaustively constructs and scores all possible output vectors Y according to the measure P(Y I X) (this computation is feasible because the number of TACIT fields is normally small).",
+        "These scores are combined with the pre-discourse scores P(Ms,T) P(W IT) , already computed by the semantic interpretation process.",
+        "This computation yields:",
+        "The highest scoring theory is then selected, and a straightforward computation derives the final meaning frame MD from output vector Y."
+      ]
+    },
+    {
+      "heading": "6. Experimental Results",
+      "text": [
+        "We have trained and evaluated the system on a common corpus of utterances collected from naive users in the ATIS domain.",
+        "In this test, the system was trained on approximately 4000 ATIS 2 and ATIS 3 sentences, and then evaluated on the December 1994 test material (which was held aside as a blind test set).",
+        "The combined system produced an error rate of 21.6%.",
+        "Work on the system is ongoing, however, and interested parties are encouraged to contact the authors for more recent results."
+      ]
+    },
+    {
+      "heading": "7. Conclusion",
+      "text": [
+        "We have presented a fully trained statistical natural language interface system, with separate models corresponding to the classical processing steps of parsing, semantic interpretation and discourse.",
+        "Much work remains to be done in order to refine the statistical modeling techniques, and to extend the"
+      ]
+    },
+    {
+      "heading": "8. Acknowledgments",
+      "text": [
+        "We wish to thank Robert Ingria for his effort in supervising the annotation of the training corpus, and for his helpful technical suggestions.",
+        "This work was supported by the Advanced Research Projects Agency and monitored by the Office of Naval Research under Contract No.",
+        "N00014-91-C-0115, and by Ft. Huachuca under Contract Nos.",
+        "DABT63-94-C-0061 and DABT63-94C-0063 .",
+        "The content of the information does not necessarily reflect the position or the policy of the Government and no official endorsement should be inferred."
+      ]
+    },
+    {
+      "heading": "9. References",
+      "text": []
+    }
+  ]
+}

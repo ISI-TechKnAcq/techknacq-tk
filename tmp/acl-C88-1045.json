@@ -1,0 +1,149 @@
+{
+  "info": {
+    "authors": [
+      "Jan Hajič"
+    ],
+    "book": "International Conference on Computational Linguistics",
+    "id": "acl-C88-1045",
+    "title": "Formal Morphology",
+    "url": "https://aclweb.org/anthology/C88-1045",
+    "year": 1988
+  },
+  "references": [
+    "acl-E87-1002"
+  ],
+  "sections": [
+    {
+      "heading": "abstract",
+      "text": [
+        "A formalism for the description of a system of formal morphology for flexive and agglutinative languages (such as Czech) is presented, borrowing some notions and the style from the theory of formal languages.",
+        "Some examples (for Czech adjectives) are presented at the end of the paper.",
+        "In these examples, the formalism's rules are used for the phonology-based changes as well, but nothing prevents the use of a separate phonology level (e.g. of the Koskenniemi's two-level model) as a front (and back-) end for the analysis (and synthesis)."
+      ]
+    },
+    {
+      "heading": "1. The Motivation",
+      "text": [
+        "Using a computer, the morphological level is a basis for building the syntactico-semantic part of any NL analysis.",
+        "The CL world pays more attention to morphology only after the work /Koskenniemi 1983/ was published.",
+        "However, as Kay remarked (e.g. in /Kay 1987/), phonology was actually what was done in /Koskenniemi 1983/.",
+        "Moreover, the strategy used there is best suited for agglutinative languages with almost one-to-one mapping between morpheme and grammatical meaning, but slavonic languages are different in this respect.",
+        "One of the practical reasons for formalizing morphology is that although there are some computer implementations using a Czech morphology subsystem (/Hajia,Oliva 1986/, /Kirschner 1983/, /Kirschner 1987/), based on the same sources (/EBSAT VI 1981/, /EBSAT VII 1982/), no unifying formalism for a complete description of formal morphology exists."
+      ]
+    },
+    {
+      "heading": "2. The Formalism",
+      "text": [
+        "The terms alphabet, string, concatenation, symbol N (positive integers), indexes and 4 are used here in the same way as in the formal grammar theory; the symbol exp(A) denotes the set of all subsets of A, e denotes an empty string.",
+        "Uppercase letters .are used mainly for denoting sets and newly defined structures, lowercase letters are used for mappings, for elements of an alphabet and for strings.",
+        "Definition 1.",
+        "A finite set K of symbols is called a set of grammatical meanings (or simply meanings for short); values from K represent values of morphological categories (e.g. sg may represent singular number, p3 may represent dative (\"3rd case\") for nouns, etc.).",
+        "Definition 2.",
+        "A finite set D C(w,i) e A* x (N v CO))), where A is an alphabet, is called a dictionary.",
+        "A pair (w,i) e D is called a dictionary entry, w is a lexical unit and i is called pattern number.",
+        "In the linguistic interpretation, a lexical unit represents the notion \"systemic word\", but it need not be represented by a traditional dictionary form.",
+        "Definition 3.",
+        "Let A be a finite alphabet, K a finite set of meanings, V a finite alphabet of variables such that A A V .",
+        "C).",
+        "The quintuple (A,V,K,t,R), where t is a mapping t: V -> exp(A*) assigning types to variables, R is a finite set of rules (I,H,u,v,C), where I n N is is a finite set (of labels), C n (N v CO)) is a finite set (of continuations), H n K is a set of meanings belonging to a particular rule from R, u,v e (A v V) is called a controlled rewriting system (CRS); all variables from the left-hand side (u) must be present on the right-hand side (v) and vice versa (rule symmetry according to variables).",
+        "Definition 4.",
+        "Let T (A,V,K,t,R) be a CRS.",
+        "A (simple) substitution on T will be any mapping q: V -> A*; q(v) a t(v)• Definition 5.",
+        "Let T (A,V,K,t,R) be a CRS and q a simple substitution on T. Mapping d: (A tO V)* -> A* such that d(e) = e; d(a) = a for a e A; d(v) = q(v) for v e V; d(bu) d(b)d(u) for b a (A w V), u E (A v V)* will be called (generalized) substitution derived from q.",
+        "Comment.",
+        "The (generalized) substitution substitutes (in a given string) all variables by some string.",
+        "The same string is substituted for all occurences of this variable (follows from the definition).",
+        "Definition 6.",
+        "Let T (A,V,K,t,R) be a CRS and F n K. Let then G, G' n K, w,z a (A 0 1.1)a, i e N, a (N v CO)).",
+        "We say that w can be directly rewritten in the state (i,G) to z with a continuation (1',0') according to meanings F (written as w(i,G) .>CT,F) z(i',G')), if there exist such rule (I,H,u,v,C) a R and such simple substitution q on T, that i e I, i' a C, H A F, G G' H, d(u) w and d(v) z, where d is the substitution derived from q.",
+        "Relation .>*IT,123 is defined as the reflexive and transitive closure of .>ET,F3• Comment.",
+        "The CRS is controlled through continuations and labels.",
+        "After a direct rewriting operation, the only rules that could be applied next must have in their' label at least one number from the rewriting operation continuation.",
+        "Please notice that: - this operation always rewrites whole words; - the restriction on the left-hand and right-hand side of a rule that it should be only string (of letters and/or variables) is not so strong as it may seem, because no restrictions are imposed on the substitution q.",
+        "However, to be able to implement the rules in a particular implementation as finite state machines, we shall require q to be defined using regular expressions only.",
+        "Definition 7.",
+        "Let T (A,V,K,t,R) be a CRS and let n be the maximal number from all",
+        "labels from all rules from H; n-tuple P (p1, pn) will be called a list of patterns on T <the elements of P are called patterns) if for every i a mapping pi: exp(K) x A* -> exp(A*) is defined as z e pi(F,w) <=> w(i,F) ..>*CT,F] z(0,C)).",
+        "Comment.",
+        "The \"strange\" sets G and G' from the definition 6 acquire a real meaning only in connection with the definition of patterns; they have a controlling task during pi construction, namely, they check whether all meanings from F are used during the derivation.",
+        "\"To use a meaning k\" means here that there is some rule (I,H,u,v,C) applied in the course of derivation from w(i,F) to z(0,C)) such that k E H. Such meaning can then be removed from G when constructing G' (see Def.",
+        "7); meanings not from H cannot.",
+        "Thus, to get the empty set in z(0,C)) when starting from w(i,F), all meanings from F must be \"used\" in this sense.",
+        "A pattern describes how to construct to a given word w all possible forms according to meanings F. In this sense, the notion of pattern does not differ substantially from the traditional notion of pattern in formal morphology, although traditionally, not the constructive description, but just some representative of such a description is called a pattern.",
+        "Definition 8.",
+        "Let D be a dictionary over an alphabet A, T = (A,V,K,t,R) a CRS and P a list of patterns on T. A quadruple M (A,D,K,P) is called a morphology description on T (MET]-description).",
+        "Definition 9.",
+        "Let T (A,V,K,t,R) be a CRS and M (A,D,K,P) an MET]-dTscription.",
+        "Set L = Czel0; there ex.",
+        "weA,ieN,HAK; z e pi(H,w)) will be called a language generated by Mtn-description M. The elements of L will be called word forms.",
+        "Comment, The term morphology description introduced above is a counterpart to a description of a system of formal morphology, as used in traditional literature on morphology.",
+        "Definition 9 is introduced here just for the purpose of formalization of the notion of word form, i.e. any form derived from any word from the dictionary using all possible meanings according to MET].",
+        "Definition 10.",
+        "Let T (A,V,K,t,R) be a CRS and 11 .",
+        "(A,D,K,P) be MCT]-description.",
+        "The term synthesis on M is used for a mapping s: exp(K) x A' -> exp(A'); s(H,w) = Cz; ex.",
+        "i e N, i ‹_= n; z e pi(H,w) & (w,i) E D).",
+        "The term analysis is used then for a mapping a: A* -> exp(exp(K) x A*); a(z) = C(H,w); z e s(H,w)).",
+        "Comment.",
+        "According to definition 10, synthesis means to use patterns for words from the dictionary only.",
+        "The definition of analysis is based on the syhthesis definition, so it clearly and surely follows the intuition what an analysis is.",
+        "In this sense, these definitions don't differ substantially from the traditional view on formal morphology, as opposed to Koskenniemi; however, the so:-called complex word forms (\"have been called\") are not covered, and their analysis is shifted to syntax.",
+        "The definition of analysis is quite clear, but there is no procedure contained, capable of actually carrying out this process.",
+        "However, thanks to rule symmetry it is possible to reverse the rewriting process: Definition 11.",
+        "Let T (A,V,K,t,R) be a CRS.",
+        "Further, let G G' A K, i e N, e (N CO)), z,w e A.",
+        "We say that under the condition (i',G') it is possible to directly analyse a string z to w with a continuation (1,G) (we write z(i',G') =<CT] w(i,G)), if there exists a rule (I,H,u,v,C) e R and a simple substitution q on T such that i E I, E C, G = G' v H, d(u) w a d(v) = z, where d is the generalized substitution derived from q.",
+        "A relation \"it is possible to analyze\" (=err]) is defined as a reflexive and transitive closure of =<CT].",
+        "Definition 12.",
+        "Let T = (A,V,K,t,R) be a CRS and z e A*.",
+        "Every string w e A*, i E N and F n K such that z(0,C)) ET] w(i,F) is called a predecessor of z with a continuation (i,F).",
+        "A* a predecessor of string z a A with a continuation (i,F).",
+        "Then z E pi(F,w), where pi is a pattern by T (see Def.",
+        "7).",
+        "Proof (idea).",
+        "The only \"asymmetry\" in the definition of => as opposed to =<, i.e. the condition H A F, can be solved putting (see",
+        "analysis steps).",
+        "Then surely Hi n F for every i. Theorem.",
+        "Let T = (A,V,K,t,R) be a CRS, M (A,D,K,P) an Mi7]-description, a an analysisbyMandweA a predecessor of z e A with a continuation (i,P).",
+        "Moreover, let (w,i) D. Then (F,w) a a(z).",
+        "Proof follows from the preceding lemma and from the definition of analysis.",
+        "Comment.",
+        "This theorem helps us to manage an analysis of a word form: we begin with the form being analysed (z) and a \"continuation\" (0,C)), using then \"reversed\" rules for back rewriting.",
+        "In any state w(i,F) during this process, a correct analysis is obtained whenever (w,i) is found in the dictionary.",
+        "At the same time we have in P the appropriate meanings.",
+        "Passing along all possible paths of back rewriting, we obtain the whole set a(z)."
+      ]
+    },
+    {
+      "heading": "3. An Example",
+      "text": [
+        "To illustrate the most important features of the formalism described above, we have chosen a simplified example of Czech adjectives (regular declination according to two traditional \"patterns\" - mlaq (young) and jarni (spring), with negation, full comparative and superlative, sg and pl, but only masc.",
+        "anim.",
+        "nominative and genitive).",
+        "The dictionary:",
+        "(podl*,2)) vile (it has no neg.",
+        "forms) The CRS:",
+        "not in D (2 alter.)",
+        ".",
+        "not in D not in D ...not in D (2 alter.)",
+        "not in D ...not in D not in D not in D D; SOLUTION .. same as 1st alter., but nom instead of acc",
+        "no4(1,(sup,masc,sg,noml).",
+        "..... D; SOLUTION ... same as 1st alter., but sg,nom instead of pl,acc nejnoviii403,tmasc,p1,nom/) =< not in D nejnovei402,{masc,p1,nomI) =< not in D (2 alter.)",
+        "nejnove_1401,imasc,p1,nom>).",
+        "not in D jnovejajr(1,{neg,masc,p1,nom}).",
+        "not in D Fig. 3 An example of synthesis: we want to obtain s({sup,masc,p1,acc)ipodli) -> (podli,2) E D; see fig. 2 An example of analysis: we want to obtain a(neinovej4f#); see fig. 3.",
+        "Comment.",
+        "Better written rules in CRS would not allow for the 4th alternative in the first step (\"nejnov4jgi\"), because \"g\" could not be followed by \"i\" in any Czech word form; however, constructing the other unsuccessful alternatives could not be a priori cancelled - only the dictionary can decide, whether e.g. \"jnoq,\" is or is not a Czech adjective.",
+        "Comment on comment.",
+        "No change in the rules would be necessary if a separate phonology and/or orthography level is used; then, the \"gi\" possibility, being orthographically impossible, is excluded there, of course."
+      ]
+    },
+    {
+      "heading": "4. Conclusion",
+      "text": [
+        "This formalism will be probably sufficient for Czech (no counterexample to this thesis has been discovered so far).",
+        "For inflected words one or two \"levels\" (i.e., successive rule applications) will suffice, agglutinative elements adjective comparison) will probably need three to five rules."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,304 @@
+{
+  "info": {
+    "authors": [
+      "Christoph Tillmann",
+      "Hermann Ney"
+    ],
+    "book": "International Conference on Computational Linguistics",
+    "id": "acl-C00-2123",
+    "title": "Word Re-Ordering and DP-Based Search in Statistical Machine Translation",
+    "url": "https://aclweb.org/anthology/C00-2123",
+    "year": 2000
+  },
+  "references": [
+    "acl-C00-2163",
+    "acl-J93-2003",
+    "acl-P97-1037",
+    "acl-W99-0604"
+  ],
+  "sections": [
+    {
+      "text": [
+        "ft illmann,neyl@inf ormat ik.rwth-aachen.de"
+      ]
+    },
+    {
+      "heading": "Abstract",
+      "text": [
+        "In tins paper, we describe a search procedure for statistical machine translation (MT) based on dynamic programming (DP).",
+        "Starting from a DP-based solution to the traveling salesman problem, we present a novel technique to restrict the possible word reordering between source and target language in order to achieve an efficient search algorithm.",
+        "A search restriction especially useful for the translation direction from German to English is presented.",
+        "The experimental tests are carried out on the Verbmo-bil task (German-English, 8000-word vocabulary), which is a limited-domain spoken-language task."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "The goal of machine translation is the translation of a text given in some source language into a target language.",
+        "We are given a source string = – b.",
+        "of length J, which is to be translated into a target string ef of length I.",
+        "Among all possible target strings, we will choose the string with the highest probability:",
+        "The argmax operation denotes the search problem, i.e. the generation of the output sentence in the target language.",
+        "Pr(ef) is the language model of the target language, whereas Pr(fillef) is the translation model.",
+        "Our approach uses word-to-word dependencies between source and target words.",
+        "The model is often further restricted so that each source word is assigned to exactly one target word (Brown et al., 1993; Ney et al., 2000).",
+        "These alignment models are similar to the concept of hidden Markov models (IIMM) in speech recognition.",
+        "The alignment mapping is j – + i = ai from source position j to target position i = (Li.",
+        "The use of this alignment model raises major problems if a source word has to be aligned to several target words, e.g. when translating German compound nouns.",
+        "A simple extension will be used to handle this problem.",
+        "In Section 2, we briefly review our approach to statistical machine translation.",
+        "In Section 3, we introduce our novel concept to word reordering and a DP-based search, which is especially suitable for the translation direction from German to English.",
+        "Tins approach is compared to another reordering scheme presented in (Berger et al., 1996).",
+        "In Section 4, we present the performance measures used and give translation results on the Verbmobil task."
+      ]
+    },
+    {
+      "heading": "2 Basic Approach",
+      "text": [
+        "in this section, we briefly review our translation approach.",
+        "In Eq.",
+        "(1), Pr(ef) is the language model, which is a trigram language model in tins case.",
+        "For the translation model Pr(glef), we go on the assumption that each source word is aligned to exactly one target word.",
+        "The alignment model uses two kinds of parameters: alignment probabilities i, J), where the probability of alignment ai for position j depends on the previous alignment position aj_i (Ney et at, 2000) and lexicon probabilities p(ljleaj).",
+        "When aligning the words in parallel texts (for language pairs like Spanish-English, French-English, Italian-German,...), we typically observe a strong localization effect.",
+        "In many cases, there is an even stronger restriction: over large portions of the source string, the alignment is monotone."
+      ]
+    },
+    {
+      "heading": "2.1 Inverted Alignments",
+      "text": [
+        "To explicitly handle the word reordering between words in source and target language, we use the concept of the so-called inverted alignments as given in (Ney et al., 2000).",
+        "An inverted alignment is defined as follows:",
+        "Target positions i are mapped to source positions What is important and is not expressed by the notation is the so-called coverage constraint: each source position j should be exactly once by the path of the inverted alignment bf = Using the inverted alignments in the maximum approximation,",
+        "where the two products over i have been merged into a single product over i. p(ciler_21) is the trigram language model probability.",
+        "The inverted alignment probability p(bilbi_l, ./) and the lexicon probability P(fbi Icy) are obtained by relative frequency estimates from the Viterbi alignment path after the final training iteration.",
+        "The details are given in (Och and Ney, 2000).",
+        "The sentence length probability p(JII) is omitted without any loss in performance.",
+        "For the inverted alignment probability we drop the dependence on the target sentence length I."
+      ]
+    },
+    {
+      "heading": "2.2 Word Joining",
+      "text": [
+        "The baseline alignment model does not permit that a source word is aligned to two or more target words, e.g. for the translation direction from German to English, the German compound noun 'Zahnarzttermin' causes problems, because it must be translated by the two target words dentist's appointment.",
+        "We use a solution to this problem similar to the one presented in (Och et al., 1999), where target words are joined during training.",
+        "The word joining is done on the basis of a likelihood criterion.",
+        "An extended lexicon model is defined, and its likelihood is compared to a baseline lexicon model, which takes only single-word dependencies into account.",
+        "E.g. when 'Zaltnarzttermin' is aligned to dentist's, the extended lexicon model might learn that 'Zahnarzttennin' actually has to be aligned to both dentist's and appointment.",
+        "In the following, we assume that this word joining has been carried out."
+      ]
+    },
+    {
+      "heading": "3 DP Algorithm for Statistical Machine Translation",
+      "text": [
+        "in order to handle the necessary word reordering as an optimization problem within our dynamic programming approach, we describe a solution to the traveling salesman problem (Tsp) which is based on dynamic programming (Held, Karp, 1962).",
+        "The traveling salesman problem is an optimization problem which is defined as follows: given are a set of",
+        "cities S = s1 , • • , sn and for each pair of cities , the cost dij > 0 for traveling from city Si to city We are looking for the shortest tour visiting all cities exactly once while starting and ending in city Sy.",
+        "A straightforward way to find the shortest tour is by trying all possible permutations of the n cities.",
+        "The resulting algorithm has a complexity of 0(n!).",
+        "However, dynamic programming can be used to find the shortest tour in exponential time, namely in 0(712.21, using the algorithm by Held and Karp.",
+        "The approach recursively evaluates a quantity Q(C,j), where C is the set of already visited cities and si is the last visited city.",
+        "Subsets C of increasing cardinality c are processed.",
+        "The algorithm works due to the fact that not all permutations of cities have to be considered explicitly.",
+        "For a given partial hypothesis (C, j), the order in which the cities in C have been visited can be ignored (except j), only the score for the best path reaching j has to be stored.",
+        "This algorithm can be applied to statistical machine translation.",
+        "Using the concept of inverted alignments, we explicitly take care of the coverage constraint by introducing a coverage set C of source sentence positions that have been already processed.",
+        "The advantage is that we can recombine search hypotheses by dynamic programming.",
+        "The cities of the traveling salesman problem correspond to source",
+        "input: source string fi, ... fj ... LI initialization for each cardinality c = 1, 2, • • • , J do for each pair (C, j), where j E C and ICI = c do for each target word e E E (2 ei (e, C, j) = p(fi 1 e) max IP(jLii , J) • p(8) • Po (eWe', e\") • Q e\" (e', C \\ {j}, ji) } j'EC\\IjI words fj in the input string of length J.",
+        "For the final translation each source position is considered exactly once.",
+        "Subsets of partial hypotheses with coverage sets C of increasing cardinality c are processed.",
+        "For a trigram language model, the partial hypotheses are of the form (e', c,C, j).",
+        "c', e are the last two target words, C is a coverage set for the already covered source positions and j is the last position visited.",
+        "Each distance in the traveling salesman problem now corresponds to the negative logarithm of the product of the translation, alignment and language model probabilities.",
+        "The following auxiliary quantity is defined: Qe, (e, C, j) := probability of the best partial hypothesis (cii , ), where C {bkik = 1,-- • , , , = e and = e'.",
+        "The type of alignment we have considered so far requires the same length for source and target sentence, i.e.",
+        "I = J. Evidently, this is an unrealistic assumption, therefore we extend the concept of inverted alignments as follows: When adding a new position to the coverage set C, we might generate either 6 = 0 or 6 = 1 new target words.",
+        "For 6 = 1, a new target language word is generated using the trigram language model p(elci, c\").",
+        "For 6 = 0, no new target word is generated, while an additional source sentence position is covered.",
+        "A modified language model probability 1)6 (c I el , e\") is defined as follows:",
+        "p(ele' , e\") if 6 = 1 • We associate a distribution p(6) with the two cases = 0 and (5 = 1 and set p(6 = 1) = 0.7.",
+        "The above auxiliary quantity satisfies the following recursive DP equation:",
+        "• pc5(elc' , e\") Qe, (c', C \\ {j}, )1",
+        "The DP equation is evaluated recursively for each hypothesis (e' , e, C, j).",
+        "The resulting algorithm is depicted in Table 1.",
+        "The complexity of the algorithm is 0(E3 • J2 • 2•), where E is the size of the target language vocabulary."
+      ]
+    },
+    {
+      "heading": "3.1 Word Re-Ordering with Verbgroup Restrictions: Quasi-monotone Search",
+      "text": [
+        "The above search space is still too large to allow the translation of a medium length input sentence.",
+        "On the other hand, only very restricted re-orderings are necessary, e.g. for the translation direction from",
+        "German to English the monotonicity constraint is violated mainly with respect to the German verb-group.",
+        "In German, the verbgroup usually consists of a left and a right verbal brace, whereas in English the words of the verbgroup usually form a sequence of consecutive words.",
+        "Our new approach, which is called quasi-monotone search, processes the source sentence monotonically, while explicitly taking into account the positions of the German verbgroup.",
+        "A typical situation is shown in Figure 1.",
+        "When translating the sentence monotonically from left to right, the translation of the German finite verb 'kann', which is the left; verbal brace in tins case, is postponed until the German noun phrase 'mein Kollege' is translated, which is the subject of the sentence.",
+        "Then, the German infinitive 'besuchen' and the negation particle 'nicht' are translated.",
+        "The translation of one position in the source sentence may be postponed for up to L = 3 source positions, and the translation of up to two source positions may be anticipated for at most R = 10 source positions.",
+        "To formalize the approach, we introduce four verbgroup states S:",
+        "• Initial (I): A contiguous, initial block of source positions is covered.",
+        "• Skipped (k): The translation of up to one word may be postponed .",
+        "• Verb (V): The translation of up to two words may be anticipated.",
+        "o Final (.77): The rest of the sentence is processed monotonically taking account; of the already covered positions.",
+        "While processing the source sentence monotonically, the initial state I is entered whenever there are no uncovered positions to the left of the rightmost covered position.",
+        "The sequence of states needed to carry out the word reordering example in Fig. 1 is given in Fig. 2.",
+        "The 13 positions of the source sentence are processed in the order shown.",
+        "A position is presented by the word at that position.",
+        "Using these states, we define partial hypothesis extensions, which are of the following type:",
+        "Not only the coverage set C and the positions j, j', but also the verbgroup states S, 8' are taken into account.",
+        "To be short, we omit the target words e, e' in the formulation of the search hypotheses.",
+        "There are 13 types of extensions needed to describe the verbgroup reordering.",
+        "The details are given in (Tillmann, 2000).",
+        "For each extension a new position is added to the coverage set.",
+        "Covering the first uncovered position in the source sentence, we use the",
+        "language model probability , $).",
+        "here, $ is the sentence boundary symbol, which is thought to be at position 0 in the target sentence.",
+        "The search starts in the hypothesis (I, 01, 0).",
+        "-NI denotes the empty set, where no source sentence position is covered.",
+        "The following recursive equation is evaluated:",
+        "The search ends in the hypotheses (I, {1, • • • , J}, j).",
+        "{1, • • • , .1} denotes a coverage set including all positions from the starting position 1 to position J and j E – L,- • • , The final score is obtained from:",
+        "where v($1 c, c') denotes the trigram language model, which predicts the sentence boundary $ at the end of the target sentence.",
+        "The complexity of the quasi-monotone search is 0 (E3 - .J - (R2 L -1)).",
+        "The proof is given in (Tillmann, 2000)."
+      ]
+    },
+    {
+      "heading": "3.2 Reordering with IBM Style Restrictions",
+      "text": [
+        "We compare our new approach with the word reordering used in the IBM translation approach (Berger et al., 1996).",
+        "A detailed description of the search procedure used is given in tins patent.",
+        "Source sentence words are aligned with hypothesized target sentence words, where the choice of a new source word, winch has not been aligned with a target word yet, is restricted].",
+        "A procedural definition to restrict",
+        "the number of permutations carried out for the word reordering is given.",
+        "During the search process, a partial hypothesis is extended by choosing a source sentence position, which has not been aligned with a target sentence position yet.",
+        "Only one of the first positions which are not already aligned in a partial hypothesis may be chosen, where a is set to 4.",
+        "The restriction can be expressed in terms of the number of uncovered source sentence positions to the left of the rightmost position in in the coverage set.",
+        "This number must be less than or equal to a – 1.",
+        "Otherwise for the predecessor search hypothesis, we would have chosen a position that would not have been among the first a uncovered positions.",
+        "Ignoring the identity of the target language words c and c', the possible partial hypothesis extensions due to the IBM restrictions are shown in Table 2.",
+        "In general, in,1,1' {/1,12,13} and in line umber 3 and 4, l' must be chosen not to violate the above reordering restriction.",
+        "Note that in line 4 the last visited position for the successor hypothesis must be in.",
+        "Otherwise , there will be four uncovered positions for the predecessor hypothesis violating the restriction.",
+        "A dynamic programming recursion similar to the one in Eq.",
+        "2 is evaluated.",
+        "In this case, we have no finite-state restrictions for the search space.",
+        "The search starts in hypothesis ({O}, 0) and ends in the hypotheses ({1, • • • , j), with j E {1, • • • , J}.",
+        "This approach leads to a search procedure with complexity 0(E3 P).",
+        "The proof is given in (Tillman'', 2000)."
+      ]
+    },
+    {
+      "heading": "4 Experimental Results",
+      "text": []
+    },
+    {
+      "heading": "4.1 The Task and the Corpus",
+      "text": [
+        "We have tested the translation system on the Verbmobil task (Wahlster 1993).",
+        "The Verbmobil task is an appointment scheduling task.",
+        "Two subjects are each given a calendar and they are asked to schedule a meeting.",
+        "The translation direction is from German to English.",
+        "A summary of the corpus used in the experiments is given in Table 3.",
+        "The perplexity for the trigram language model used is 26.5.",
+        "Although the ultimate goal of the Verbmobil project; is the translation of spoken language, the input used for the translation experiments reported on in tins paper is the (more or less) correct orthographic transcription of the spoken sentences.",
+        "Thus, the effects of spontaneous speech are present in the corpus, e.g. the syntactic structure of the sentence is rather less restricted, however the effect of speech recognition errors is not covered.",
+        "For the experiments, we use a simple preprocessing step.",
+        "German city names are replaced by category markers.",
+        "The translation search is carried out with the category markers and the city names are resub-stituted into the target sentence as a postprocessing step."
+      ]
+    },
+    {
+      "heading": "4.2 Performance Measures",
+      "text": [
+        "The following two error criteria are used in our experiments:",
+        "• inWER: multi-reference WER:",
+        "We use the Levenshtein distance between the automatic translation and several reference translations as a measure of the translation errors.",
+        "On average, 6 reference translations per automatic translation are available.",
+        "The Levenshtein distance between the automatic translation and each of the reference translations is computed, and the minimum Levenshtein distance is taken.",
+        "This measure has the advantage of being completely automatic.",
+        "• SSER: subjective sentence error rate:",
+        "For a more detailed analysis, the translations are judged by a human test person.",
+        "For the error counts, a range from 0.0 to 1.0 is used.",
+        "An error count of 0.0 is assigned to a perfect translation, and an error count of 1.0 is assigned to a semantically and syntactically wrong translation."
+      ]
+    },
+    {
+      "heading": "4.3 Translation Experiments",
+      "text": [
+        "For the translation experiments, Eq.",
+        "2 is recursively evaluated.",
+        "We apply a beam search concept as in speech recognition.",
+        "However there is no global priming.",
+        "Search hypotheses are processed separately according to their coverage set C. The best scored",
+        "hypothesis for each coverage set is computed: Qi3e„m(C) = max Qe, (c,S,C, j) The hypothesis (c', c, S, C, j) is pruned if: Qe, (c, < to Qii,„7„(C), where to is a threshold to control the number of surviving hypotheses.",
+        "Additionally, for a given coverage set, at most 250 different hypotheses are kept (luring the search process, and the number of different words to be hypothesized by a source word is limited.",
+        "For each source word f , the list of its possible translations c is sorted according to v(fle) • 7),,,,,i(c), where p„„2(e) is the unigram probability of the English word e. It is sufficient to consider only the best 50 words.",
+        "We show translation results for three approaches: the monotone search (MonS), where no word reordering is allowed (Tillmann, 1997), the quasi-monotone search (QmS) as presented in this paper and the 1131\\4 style (IbmS) search as described in Section 3.2.",
+        "Table 4 shows translation results for the three approaches.",
+        "The computing time is given in terms of CPU time per sentence (on a 450-MHz Pentium-III-PC).",
+        "Here, the pruning threshold to = 10.0 is used.",
+        "Translation errors are reported in terms of multi-reference word error rate (mWER) and subjective sentence error rate (SSER).",
+        "The monotone search performs worst in terms of both error rates inWER and SSER.",
+        "The computing tune is low, since no reordering is carried out.",
+        "The quasi-monotone search performs best in terms of both error rates inwErt and SSER.",
+        "Additionally, it; works about 3 times as fast as the IBM style search.",
+        "For our demonstration system, we typically use the pruning threshold to = 5.0 to speed up the search by a factor 5 while allowing for a small degradation in translation accuracy.",
+        "The effect of the pruning threshold to is shown in Table 5.",
+        "The computing time, the number of search errors, and the multi-reference WEE, (mWER) are shown as a function of to.",
+        "The negative logarithm of to is reported.",
+        "The translation scores for the hypotheses generated with different threshold values to are compared to the translation scores obtained with a conservatively large threshold to = 10.0 .",
+        "For each test series, we count the number of sentences whose score is worse than the corresponding score of the test series with the conservatively large threshold to = 1.0.0, and this number is reported as the number of search errors.",
+        "Depending on the threshold to, the search algorithm may miss the globally optimal path which typically results in additional translation errors.",
+        "Decreasing the threshold results ill higher mWER due to additional search errors.",
+        "Table 6 shows example translations obtained by the three different approaches.",
+        "Again, the monotone search performs worst.",
+        "In the second and third translation examples, the IhmS word reordering performs worse than the QmS word re-ordering, since it can not take properly into account the word reordering due to the German verbgroup.",
+        "The German finite verbs 'bin' (second example) and 'k6nnten' (third example) are too far away from the personal pronouns 'ich' and 'Sie' (6 respectively 5 source sentence positions).",
+        "In the last example, the less restrictive IbmS word reordering leads to a better translation, although die QmS translation is still acceptable."
+      ]
+    },
+    {
+      "heading": "5 Conclusion",
+      "text": [
+        "In this paper, we have presented a new, efficient; DP-based search procedure for statistical machine translation.",
+        "The approach assumes that the word reordering is restricted to a few positions in the source sentence.",
+        "The approach has been successfully tested on the 8 000-word Verbmobil task.",
+        "Future extensions of the system might include: 1) An extended translation model, where we use more context to predict a source word.",
+        "2) An improved language model, which takes into account syntactic structure, e.g. to ensure that a proper English verbgroup is generated.",
+        "3) A tight coupling with the speech recognizer output."
+      ]
+    },
+    {
+      "heading": "Acknowledgements",
+      "text": [
+        "This work has been supported as part of the Verbmobil project (contract number 01 IV 601 A) by the German Federal Ministry of Education, Science, Research and Technology and as part of the Entrails project (ESPRIT project number 30268) by the European Community.",
+        "Input: Das ist zu knapp , weil ich ab dem dritten in Kaiserslautern bin .",
+        "Genaugenommen nur am dritten .",
+        "Wie ware es denn am Him Samstag , dem zehnten Februar ?",
+        "MonS: That is too tight , because I from the third in Kaiserslautern .",
+        "In fact only on the third .",
+        "How about ahm Saturday , the tenth of February ?",
+        "QmS: That is too tight , because I am from the third in Kaiserslautern .",
+        "In fact only on the third .",
+        "Alm how about Saturday , February the tenth ?",
+        "IbmS: That is too tight , from the third because I will be in Kaiserslautern .",
+        "In fact only on the third .",
+        "Alum how about Saturday , February the tenth ?",
+        "Input: Wenn Sie dann noch den siebzehnten konnten , ware das toll , .ja .",
+        "MonS: If you then also the seventeenth could , would be the great , yes .",
+        "QmS: If you could then also the seventeenth , that would be great , yes .",
+        "IbmS: Then if you could even take seventeenth , that would be great , yes .",
+        "Input: Ja , das kommt mir sehr gelegen Machen wires dann am hostel' so .",
+        "MonS: Yes , that suits me perfectly .",
+        "Do we should best like that .",
+        "QmS: Yes , that suits me fine .",
+        "We do it like that then best .",
+        "IbmS: Yes , that suits me fine .",
+        "We should best do it like that ."
+      ]
+    }
+  ]
+}

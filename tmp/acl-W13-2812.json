@@ -1,0 +1,238 @@
+{
+  "info": {
+    "authors": [
+      "Shuo Li",
+      "Derek F. Wong",
+      "Lidia S. Chao"
+    ],
+    "book": "HyTra",
+    "id": "acl-W13-2812",
+    "title": "Experiments with POS-based restructuring and alignment-based reordering for statistical machine translation",
+    "url": "https://aclweb.org/anthology/W13-2812",
+    "year": 2013
+  },
+  "references": [
+    "acl-C04-1073",
+    "acl-C10-2071",
+    "acl-D11-1033",
+    "acl-D11-1045",
+    "acl-J03-1002",
+    "acl-P02-1040",
+    "acl-P07-1039",
+    "acl-P07-2045",
+    "acl-W06-1609",
+    "acl-W07-0733",
+    "acl-W08-0317",
+    "acl-W09-0421",
+    "acl-W09-0433"
+  ],
+  "sections": [
+    {
+      "text": [
+        "Proceedings of the Second Workshop on Hybrid Approaches to Translation, pages 82?87, Sofia, Bulgaria, August 8, 2013. c?2013 Association for Computational Linguistics Experiments with POS-based restructuring and alignment-based reordering for statistical machine translation"
+      ]
+    },
+    {
+      "heading": "Abstract",
+      "text": [
+        "This paper presents the methods which are based on the part-of-speech (POS) and auto alignment information to improve the quality of machine translation result and the word alignment.",
+        "We utilize different types of POS tag to restructure source sentences and use an alignment-based reordering method to improve the alignment.",
+        "After applying the reordering method, we use two phrase tables in the decoding part to keep the translation performance.",
+        "Our experiments on Korean-Chinese show that our methods can improve the alignment and translation results.",
+        "Since the proposed approach reduces the size of the phrase table, multi-tables are considered.",
+        "The combination of all these methods together would get the best translation result."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Translating between two morphological different languages is more difficult in the descriptions by Koehn (2005).",
+        "In Statistical Machine Translation (SMT) system, the surface word in a morphologically poor language is difficult to be generated from a morphologically richer language.",
+        "Take the example of Korean and Chinese, their morphologies are different from European languages.",
+        "Korean is a kind of subject-object-verb (SOV) language while Chinese is subject-verb-object (SVO) language which is a little similar to English.",
+        "This leads to a problem of word order: despite the automatic word alignment tool GIZA++ (Och and Ney, 2003) is widely applied, there are still many generated misaligned language pairs among these two languages.",
+        "In Korean, a functional word may have different morphologies under different conditions.",
+        "The verb and adjective usually end with suffixes in a sentence to represent different meanings (Li et al., 2012).",
+        "On the other hand, alignment mistakes are often generated when many Korean words with different morphologies are aligned with the same Chinese tokens in Korean-Chinese translation.",
+        "We applied a simple but efficient approach by utilizing different part-of-speech (POS) information to restructure Korean, after restructuring, many Korean words share the same Chinese meaning with different morphologies can be restored to their original forms.",
+        "In particular, we expect to reduce the problem of misalignment due to the verb and adjective variations.",
+        "Besides word restructuring, an alignment?based word reordering method which would improve the alignment result indirectly was applied in our experiment.",
+        "This method is simple but effective and language-independent by modifying some alignment files.",
+        "The lack of the off-the-shelf Korean-Chinese corpus is also an important problem.",
+        "Most of these corpora are not open source for users, so it is hard for people applying Korean-Chinese corpus in the experiments like Euro-parl (Koehn, 2005), we built a small size corpus by ourselves in a short time to do the experiments based on the proposed methods.",
+        "A script is developed for crawling parallel corpus of some specific websites.",
+        "In this paper, section 2 will review previous related works.",
+        "In section 3, the POS-based restructuring method and alignment-based reordering approaches to improve the quality of alignment will be introduced.",
+        "Experimental results and the analysis will be given in the following section 4.",
+        "Finally, section 5 is the conclusion."
+      ]
+    },
+    {
+      "heading": "2 Related work",
+      "text": [
+        "Several studies have been proposed to use POS tags and morphological information to enrich",
+        "languages to tackle some problems in SMT: Li et al.",
+        "(2009) proposed an approach focused on using preprocessing and post-processing methods, such as reordering the source sentences in a Chinese-Korean phrase-based SMT using syntactic information.",
+        "Lee et al. (2010) transformed the syntactic relations of Chinese SVO patterns and inserted the corresponding transferred relations as pseudo words to solve the problem of word order.",
+        "In order to reduce the morpheme-level translation ambiguity in an English-Chinese SMT system, Wu et al. (2008) grouped the morphemes into morpheme phrase and used the domain information for translation candidate selection.",
+        "A contraction separation for Spanish in a Spanish-English SMT system was proposed in (Gispert and Mari?o, 2008).",
+        "Habash et al. (2009) proposed methods to tackle the Arabic enclitics.",
+        "The experiment in Stymne et al. (2008) described that using POS information to split the compounds in a morphologically rich language (German nouns and adjectives) gave an effect for translation output.",
+        "Holmqvist et al. (2009) also reported that using POS-based and morphology-based sequence model would give an improvement to the translation quality between English and German in WMT09 shared task.",
+        "In accordance with adding richer information to the training model, reordering the source language text to make it more similar to the target side is confirmed to be another kind of method to improve the word alignment.",
+        "Collins et al. (2005) employed the forms of syntactic analysis and hand?written rules on the corpus, Xia and McCord (2004) extracted the rules from a parallel text automatically.",
+        "A statistical machine pre-reordering method which addressed the reordering problems as a translation from the source sentence to a monotonized source sentence was proposed by Costa-juss?",
+        "and Fonollosa (2006).",
+        "Visweswariah et al. (2011) proposed a method which learns a model that can directly reorder source side text from a small parallel corpus with high quality word alignment, but this is hard for people to get such a high-quality aligned parallel corpus.",
+        "Ma et al. (2007) packed some words together with the help of the existing statistical word aligner, which simplify the task of automatic word alignment by packing consecutive words together.",
+        "These approaches are integrated with morphological information in the translation and decoding model.",
+        "Our approach is inspired by the approach proposed by Lee et al(2006) which added POS information; reordered the word sequence in the source corpus; deleted case particle and final ending words in Korean; appended the external dictionary in the training step between Korean and English.",
+        "In the experiment reported by Li et al. (2012), these preprocessing methods on the Korean to Chinese translation system took advantage of POS in their additional factored translation model.",
+        "In these studies, POS information was reported that it would improve the translation quality, but their taxonomy of POS tag is sole and less.",
+        "On the word alignment side, we try to implement the idea proposed by Holmqvist et al. (2012), which was reported as a simple, language-independent reordering method to improve the quality of word alignment.",
+        "But their method did not consider the problem that the probability and the amount would be changed when updated with an improved word alignment.",
+        "The accuracy of alignment would be improved but the size of phrase-table would be less than the original one because there are more sure alignments generated.",
+        "The probabilities of word and phrase also have the same problem.",
+        "Our works are based on the integration of these two methods.",
+        "We utilized POS information and applied a richer taxonomy of POS tags in the restructuring of Korean, applied reordering method on Korean-Chinese, and combined the POS-based restructuring and alignment-based reordering together in the experiment.",
+        "3 POS-based restructuring and alignment-based reordering The POS information is helpful when dealing with morphologically rich languages.",
+        "In the morphological analysis, the Korean POS tagger involves the analytical task to identify the stem and suffixes of Korean, followed by assigning corresponding POS tags to both the morphemes and extracted stems.",
+        "As described in Li et al. (2012), Korean is considered as a highly agglutinative language: the verbs, adjectives and adverbs are able to attach with affixes and particles.",
+        "We considered that different category of POS tag would lead to different results of the translation.",
+        "The more complex of tag would get a better result of alignment and the quality of translation.",
+        "The method of processing Chinese POS is similar to Korean, which applies a more complex POS tag category from a Chinese POS tagger.",
+        "Another simple but effective and language-independent reordering method which",
+        "is implemented by modifying the alignment file in Moses (Koehn et al., 2007), which needs two runs of GIZA++.",
+        "After this step, an improved word alignment is generated potentially.",
+        "Then, we combine the restructuring and reordering together to compare the superposed quality of these two methods."
+      ]
+    },
+    {
+      "heading": "3.1 POS-based restructuring",
+      "text": [
+        "Because Korean is a kind of morphologically rich language, most of Korean verbs, adjectives and adverbs can be taken as the compound words like Germany.",
+        "For example, the negative verb ???",
+        "??",
+        "(do not go)?",
+        "should be restored to its original form ???",
+        "(go)?",
+        "and the negative verb suffix ??",
+        "??",
+        "(do not)?.",
+        "Another example is the future tense verb ????",
+        "(will go)?",
+        "is the combination of original stem ??",
+        "(go)?",
+        "and suffix with future tense ???",
+        "(will)?.",
+        "With the help of POS tagger, we can restructure the Korean with the 22 tags category instead of 9 tags in (Li et al., 2012).",
+        "Here is an example of Korean restructuring in Figure 1, POS tagger can be detected the compound word and analyze its combination (tagged with ?+?).",
+        "The taxonomy with 22 tags is more specific than 9 tags, when tagging a noun, 22 tags will use NC (normal noun) instead of N (noun, pronoun, numeral) in 9 tags.",
+        "When dealing with the compound verb ????",
+        "(in order to avoid)?, ???",
+        "(avoid) +???",
+        "is more reasonable than ???+?",
+        "?, because ????",
+        "represents ?in order to?",
+        "in corresponding Chinese grammar.",
+        "Then the tags were removed and restructured to a new sentence.",
+        "After restructuring, the length of original sentence increased from 5 to 9 (9 tags) and 10 (22 tags).",
+        "Based on previous relative simple tags, more complex taxonomy gives a deeper analysis of the sentence which would influence the alignment and the lexical possibility between the source and target language."
+      ]
+    },
+    {
+      "heading": "3.2 Alignment-based reordering",
+      "text": [
+        "The aim of utilizing the alignment information is to make the order in source text same as the target text.",
+        "It is believed that statistical word alignment methods perform better on translation with similar word orders.",
+        "The method needs two runs of word alignment, in the first run of GIZA++: the alignment information is acquired based on the original order.",
+        "Then the source text is reordered by the order of the target text based on the information in the first alignment.",
+        "Next, the reordered source text and the original target text are applied on the second run of GIZA++, which means this new parallel corpus includes the word with more similar order than before.",
+        "After this step, a new alignment file would be generated, which covers potential improved word alignment with the reordered source language.",
+        "Finally, the order of source text in the new alignment file is restored in its original order but kept with its new align",
+        "The algorithm processes the corpus and the alignment results in a single direction: source side (Holmqvist et al., 2012).",
+        "As an example, in the Korean-Chinese single direction in Figure 2, each Korean word aligns with the corresponding Chinese word, but Chinese is different.",
+        "There are",
+        "????.",
+        "Moreover, the alignment of these words is not totally correct.",
+        "Before the second run of GIZA++, the original Korean is reordered to the alignment of the Chinese side, so a new Korean sentence is generated by the Chinese order.",
+        "After the second alignment, in Figure 2, there are no cross points and the additional correct alignment between ????",
+        "?, ????",
+        "and ????",
+        "is generated, the misalign",
+        "In Figure 3, the new alignment information (new) is kept in the restored file.",
+        "The crossing alignment still exists but it is more correct than the previous one (old).",
+        "Based on this alignment, the establishment of word alignment, the estimation of lexical translation table and the extraction of phrase table are changed.",
+        "We assume that after applying our method, the size of the extracted words would increase because more alignments are generated at the end of the second run of GIZA++.",
+        "Another assumption is that the size of the phrase table would decrease if two languages share such a different word order, because additional alignments would result in some cross alignments but the phrase extraction algorithm could not extract them.",
+        "Based on two assumptions, we utilize multiple models in the decoding stage.",
+        "This approach was proposed in (Koehn and Schroeder, 2007; Axel-rod et al., 2011) which passes phrase and reordering tables in parallel.",
+        "We used our modified tables (small size) as the main tables, and the baseline tables (big size) as the additional table when decoding.",
+        "This can guarantee that if a phrase in testing sentence does not occur in the modified tables, the decoder would find the phrase in the original table.",
+        "This method is effective in avoiding translation mistakes if our method harms the result."
+      ]
+    },
+    {
+      "heading": "4 Experimental results",
+      "text": [
+        "We apply our methods on Korean-Chinese phrase-based statistical machine translation systems.",
+        "The system is built based on Moses, and our reordering method is applied at the second step among the nine steps during the training in Moses.",
+        "An additional combination of the POS-based restructuring and alignment-based reordering is considered in our experiment."
+      ]
+    },
+    {
+      "heading": "4.1 Corpus and system information",
+      "text": [
+        "The Korean-Chinese (KOR-CHN) corpus is crawled from the Internet by our script1 and we limited the length of sentence to be under 25 words.",
+        "We use 990 sentences as the testing corpus.",
+        "On the other hand, we use a monolingual corpus of 600k Chinese sentences to build a Chinese 3-gram language model.",
+        "ICTCLAS 2 is an open source Chinese segmenter applied to delimiter the word boundaries and label with proper POS tags, while the Korean text is processed by the Korean POS tagger, HanNanum 3.",
+        "Table 1 shows the average information of each corpus.",
+        "All the experiment was trained without tuning."
+      ]
+    },
+    {
+      "heading": "4.2 Korean-Chinese machine translation",
+      "text": [
+        "The Korean-Chinese translation system contains a reordering model in the translation model.",
+        "The reordering model is trained as the default setting from the training corpus itself.",
+        "The ?grow-diagfinal-and?",
+        "symmetrization heuristic is applied in two directions word alignment.",
+        "As described in the previous section, we restructured the Korean by POS tagger and applied our reordering approach to the translation system.",
+        "Since the restructured Korean can be considered as a new corpus, it could be applied to our reordering method.",
+        "According to the study of Holmqvist et al. (2012), when dealing with the morphologically different language pair, reordering the morphologically richer side performs better.",
+        "In the experiments, Korean was reordered and the experimental result is shown in Table 2.",
+        "From the results, applying more POS tags on the morphological analysis of Korean got a better performance and our reordering method im",
+        "proved the translation result from 14.98 to 15.50 in BLEU (Papineni et al., 2002).",
+        "The combination of POS and reordering methods based on the multiple phrase tables and reordering tables got the best performance with BLEU score 17.35."
+      ]
+    },
+    {
+      "heading": "4.3 Analysis and discussion",
+      "text": [
+        "After the modification of the alignment file, the changes of size of the lexical file and the tables (phrase and reordering) file are shown in Table 3.",
+        "phrase tables From the table we found that the lexical extraction is bigger than the original system, but the size of phrase tables and the reordering tables decreased slightly.",
+        "The result of these changes shows that our assumption is reasonable: our method can improve the quality of automatic alignment, but the phrase extracted from the corpus would decrease.",
+        "The more word alignment points were generated by using our method, the more words would be extracted.",
+        "But this will bring some cross alignments when dealing with two morphological different languages."
+      ]
+    },
+    {
+      "heading": "5 Conclusion",
+      "text": [
+        "In this paper, we presented some preprocessing methods to deal with Korean, which is a morphological rich language.",
+        "POS-based restructuring restores most of the Korean verbs, adjectives and adverbs to their original format.",
+        "It is shown that the POS tag set with a richer taxonomy gives a higher translation result.",
+        "Moreover, two runs of automatic alignment information got better results on the morphologically richer side.",
+        "All of these methods can be combined together and improve the final translation.",
+        "Finally, using two tables instead of one modified table in the decoding part will guarantee the translation quality if the reordering model harms the translation result."
+      ]
+    },
+    {
+      "heading": "Acknowledgments",
+      "text": [
+        "This work is partially supported by the Research Committee of University of Macau, and Science and Technology Development Fund of Macau under the grants RG060/09-10S/CS/FST, and 057/2009/A2."
+      ]
+    }
+  ]
+}

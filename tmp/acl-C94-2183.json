@@ -1,0 +1,250 @@
+{
+  "info": {
+    "authors": [
+      "Sadao Kurohashi",
+      "Makoto Nagao"
+    ],
+    "book": "International Conference on Computational Linguistics",
+    "id": "acl-C94-2183",
+    "title": "Automatic Detection of Discourse Structure by Checking Surface Information in Sentences",
+    "url": "https://aclweb.org/anthology/C94-2183",
+    "year": 1994
+  },
+  "references": [
+    "acl-C92-1029",
+    "acl-J86-3001",
+    "acl-J91-2003",
+    "acl-P84-1055",
+    "acl-P84-1076",
+    "acl-P84-1085"
+  ],
+  "sections": [
+    {
+      "text": [
+        "Sadao knrohashi and 1V1a.koto Nagao Dept.",
+        "of P:lectrical higineering, Kyoto University Yoshida-lion it-it:11i, Kyoto, G06, Japan"
+      ]
+    },
+    {
+      "heading": "Abstract",
+      "text": [
+        "In this paper, we propose :in automatic rnethod for detecting discourse structure using a variety of clues existing in the surface information of sentences.",
+        "\\Are have considered three types of clue information: clue expressions, occurrence of identical/synonymous words/phrases, and similarity hetween two sentences.",
+        "Hxperintental results have shown that, in I he case or scientific and technical texts, considerable part of the discourse structure can he estimated by incorporating, the three types of chic information, without performing sentence understanding processes which requiros giving knowledge to computers."
+      ]
+    },
+    {
+      "heading": "Introduction",
+      "text": [
+        "To understand a text or dialogue, one Hurst track the discourse structure (1)9), specifying how sentences :ire combined iind what kind of relations (coherence relations) they have.",
+        "Work on 1)1:71 has mainly Focused on such questions as What kind of knowledge should be employed, and how inference may he performed based on such knowledge (e.g., Grosz arid Sidner 1986; Hobbs 1985; Zadrozny and Jensen 1991).",
+        "however, by eNt1111ining the current status of work hall on automatic extraction and on manual coding of knowledge, lelniled knowledge with broad coverage availability to computers is unlikely to Ire constructed for the present.. On the other hand, recent rapid increase iii (he amount of on-line texts has forced HS to analyze not 001y isolated sentences nit also discourses using present available knowledge.",
+        "We propose here air automatic method For estimating 1)8 in scientific and technical texts by a variety or keys existing in the surface information or sentences.",
+        "One important key for 1)9 is clue words (e.g., Cohen 1984; Grosz and Shiner 198(1; Iteichman 1989).",
+        "Furthermore, we have considered two more important clues.",
+        "One is the occurrence of identical/synoaymous words/phrases for detecting topic chaining or topic-dominant.",
+        "elmi.ning relation (Polanyi and 171cha 1981); the other is a certain similarity between two sentences for detecting their coordinate relation.",
+        "The judgment based <)11 such clue information is not absolute lilt just.",
+        "probable.",
+        "Therefore, we have incorporated the above mentioned three factors into one evaluation measure to estimate the most.",
+        "plausible 1)9."
+      ]
+    },
+    {
+      "heading": "2 Discourse Structure Model and Coherence Relations",
+      "text": [
+        "Studies of 1)8 have been reported by a large number of researchers (e.g., Cohen 1984; Dalgren 1988; Grosz and Shiner 1986; 1101)s 1989; Mann 1984; Polanyi and Scha 1981; 11eichman 1989; Zadrozny and Jensen 1 1/91).",
+        "What has been commonly suggested is that the 1)9 resulting from the recursive embedding and se-(mowing of discourse units has the form of a tree (disconrse history parse tree), flowever, them has been a variety of definition for discourse units, constituents or the tree, and coherence relations.",
+        "fn this research we have adopted the simplest, model in the interest of focusing on how to detect.",
+        "1)8 automatically.",
+        "In our model, each sentence is considered a discourse unit, and each node or the discourse history parse tree is a sentence and each link a coherence relation.1 Coherence relations existing in a text, as Reichman ( 1985) pointed oust, greatly depend on the grime of the text, narrative, argument, news article, conversation, 11111 scientific report.",
+        "Among a number of the coher-enee relations suggested so far, we selected the following set of the relations which accounted for intuitions concerning our target texts, namely scientific and technical texts (Si denotes the former sentence and Sj the latter).",
+        "List : Si and Sj involve the same or similar events or states, or the same or similar important, constituents, like sd-3 and s.1-6 in Appendix.",
+        "Contrast : Si and Sj involve contrasting events or states, or contrasting important constituents.",
+        "Topic chaining : Si and Sj have distinct predications :Mott the same topic, like s 1 '3 and sl-19.",
+        ".Topic-dominant chaining : A dominant, constituent apart from a given topic in Si becomes a topic Sj, like s4-1 and st-ii.",
+        "Elaboration : Sj gives details about, :1 constituent introduced ill Si, like sl- 16 and s1-17.",
+        "Change : Tire event or state in Si changes in Sj (usually as time passes).",
+        "Exemplification-present : An example of the event, state or constituent in Si is introduced Sj, like s1-13 and s1-16.",
+        "Exemplification-explain : A n example of the event, state or constituent in Si is explained in Sj.",
+        "Question-answer : Sj is [he answer to the quest ion in Si, like st1-1 and stI-2.",
+        "The DSs for the sample text in Appendix is shown in Figure 1.",
+        "As in many previous approaches, we also ruake the following assumption in the DS model: a new sentence coming in can be connected to the node on the right most edge in the 1)5 tree (hereafter, we call a new sentence an NS, and a. possible connected sentence on the right edge in the DS tree a CS: Figure 2).",
+        "This means that., alter detailed explanations for one topic terminate, and a new topic is introduced, details of the old topic are hidden in inner nodes and are no longer referred to."
+      ]
+    },
+    {
+      "heading": "3 Automatic Detection of Discourse Structure",
+      "text": []
+    },
+    {
+      "heading": "3.1 Outline",
+      "text": [
+        "Considering our DS :node!, what, the DS analysis should do is clear; for each NS, it, tries t.o find the correct CS and the correct.",
+        "relation between them.",
+        "In order to estimate them, we have directed our attention to three types of clue information: I) clue expressions indicating some relations, 2) outiirrence of identical/synonymous words/phrases in topic chaining or topic-dominant chaining relation, 3) similarity between two sentences in list or contrast.",
+        "relation.",
+        "By the method described later we can transform such information into reliable scores for some relations.",
+        "As NS comes in, for each CS we calculate reliable scores for all relations by examining the above three types of clues.",
+        "As a final result, we choose the CS and the relation having the maximum reliable score (Figure 2).",
+        "As an initial state a DS has one node, starting node.",
+        "\\V° always give a certain score for the special relation, start, between a II NS and the starting node.",
+        "When any other relation to any CS does not.",
+        "have larger score for rn NS, it, is connected to the starting node by start relation.",
+        "This means that the NS is the starting sentence of a new large segment., like paragraph or section, in the DS."
+      ]
+    },
+    {
+      "heading": "3.2 Detection of Clue Expressions",
+      "text": [
+        "We prepared heuristic rules for finding clue expressions by pattern matching and relating them to proper relations with reliable scores.",
+        "A rule consists of the following parts:",
+        "• condition for rule application :",
+        "rule applicable range (how far in the sequence of CSs the rule can be applied to) relation of CS to its previous DS - dependency structure pattern for CS dependency structure pattern for NS",
+        "• corresponding relation and reliable score.",
+        "Patterns for CS and NS are matched not for word sequences but for dependency structures of both sen-tences.'",
+        "We use a powerful pattern matching facility for dependency structures, where a wild card matching any partial dependency structure, regular expressions, AND-, Oil-, NOT-operators, etc.",
+        "are available (Mu-rata and Nagao 1903).",
+        "We apply each rule for the pair of a CS and an NS.",
+        "II the condition of the rule is satisfied, the specified reliable score is given to 2 Input.",
+        "to our system is a sequence of parsed sentences, dependency structures, by our developed parser (1<urohashi and Nagao 1992a1.",
+        "In Japanese the dependency structure of a sentence consists of head/modifier relations between Imnsetsus, each of which is composed of a content word and suffix words.",
+        "the corresponding relation between the CS and the NS.",
+        "For example, Rule-1 in Table 1 gives a score to the reason relation between two adjoining sentences (note the rule applicable range is '1') if the NS starts with the expression \"NAZI;-NAHA (because)\".",
+        "Rule2 in 'Table 1 is applied not only for the neighboring CS but also for farther CSs, by specifying the occurrence of identical words (\"X\") in the condition.",
+        "We also can specify the relation of CS to its previous DS ;is a condition, like Rule-3 in 'Fable 1.",
+        "This rule considers the fact that when some examples arc introduced by exemplification-present relation, detailed explanations for them often follow,"
+      ]
+    },
+    {
+      "heading": "3.3 Detection of Word/Phrase Chain",
+      "text": [
+        "In general a sentence can be divided Into two parts, a topic part and a non-topic part.",
+        "When two Sentences are in a topic chaining relation, the same topic is maintained through them.",
+        "Therefore, the occurrence of identical/synonymous words/phrases (the word/phrase chain) in topic parts of two sentences supports this relation.",
+        "In the case of topic-dominant chaining relation, a dominant constituent introduced in a non-topic part of a prior sentence heroines a topic in a. succeeding sentence.",
+        "So, the word/phrase chain from a non-topic part, of' a prior sentence to a topic part.",
+        "of a succeeding sentence supports this relation.",
+        "However, since there are many clues for an NS supporting other relations to sane we must not only find such word/phrase chains but, also give some reliable score to topic chaining, or topic-dominant chaining relation.",
+        "In order to do this, we give scores to words/phrases ill topic and non-topic parts according to the degree of their importance in sentences; we also give scores to the matching of identical/synonymous words/phrases according to the degree of their agreement.",
+        "Then we give these relations the sum of ale scores of two chained words/phrases and the score of their matching (Figure 3).",
+        "All of these are done by applying rules consisting of a pattern for a partial dependency structure ;Ind a score.",
+        "For example, by hale-a ;Ind b iu Table 2, words in a phrase whose head word is followed by a topic marking postposition \"WA\" are given some scores ;is topic",
+        "parts.",
+        "A word in a non-topic part in the sentential style, \".. CA A Ittl(there is ...)\" is given a large score byRule-c in Table 2 because this word is an important new 111101.111■11,1011 in this sentence and topic-dominant chaining relation involving it often occur.",
+        "Matching of phrases like \"A of It\" is given a larger score than that of word like \"A\" ;done by Ruled and e in Table 2.",
+        "3"
+      ]
+    },
+    {
+      "heading": "3.4 Calculation of Similarity between Sentences",
+      "text": [
+        "WI Len WO Sell le I ICeS have list, or contrast relation, they have a certain similarity.",
+        "I lowever, their similarity cannot.",
+        "be detected by rules like the above which see relatively stied!",
+        "blocks in sentences, because it is not the simple similarity but the similarity in the sequence of words and their grammatical structures as a whole.",
+        "In order to measure such a similarity, we extended our dynamic programming method for detecting the scope of a coordination in a sentence (Kurohashi and Nagao 1092b).",
+        "This method can calculate the overall similarity value between A. WO word-strings of arbitrary lengths.",
+        "First, the similarity value between two words are calculated according to exact matching, matching of their parts of speech, and their closeness in a the-Sal I IIS dictionary.",
+        "Then, the similarity value between two word-strings are calculated roughly by combining the similarity values between words in the two word-3(liie difficult, in.oblein is that authors often use subtly different expressions, inn, identical words/phrases, for such chains.",
+        "\\\\line some of them can be (Aught.",
+        "by using a thesaurus and by titles like Rule-f in 'fable 2, there is a wide range of variety I heir differences, '('heir complete trettlinent will be a target of OW' future W(11.1:.",
+        "As for rules for topic/non-topic parts, the score is given to the bunsetsu marked by a square.",
+        "As for rules for matching, \"X\" and \"x\" denote identical words or synonymous words from this Japanese thesaurus, \"Buttrui Coi yon\".",
+        "So do \"Y\" and \"y\".",
+        "strings.",
+        "While originally we calculated the similarity value between possible conjuncts in a sentence, here we calculate the similarity value between two sentences, a CS and an NS, by this method.",
+        "This can he done simply by connecting two sentences and calculating the similarity value between two imitative conjuncts consisting of the two sentences, We give the normalized similarity score between a. CS and an NS (divided by their average length) to their list and contrast, relations as a reliable score."
+      ]
+    },
+    {
+      "heading": "4 Experiments and Discussion",
+      "text": [
+        "Experiments of detecting OS were done for nine sections of an article of the popular science journal, \"Science\", translated into Japanese (Vol.17,No,12 \"Advanced Computing for Science\", the original is \"Scientific American\" Vol.257,No.4).",
+        "For the first three sections, we wrote rules for clue expressions and word/phrase chains, and adjusted their parameters through experimentation.",
+        "Then we analyzed the remaining six sections by adding rules only for the clue expressions.",
+        "The analysis results are shown in Table 3. here the NSs in the text were classified according to their correct, relations in connecting to proper CSs.",
+        "\"Success\" means that the correct relation and CS were detected for an NS (correct relations and CSs were judged by authors).",
+        "Table 3 shows that many clues exist, in a text so that much of the OS can be guessed without, detailed knowledge.",
+        "In order to construct rules for clue expressions with broad coverage, we need to consult mid analyze a. large volume of texts.",
+        "However, in most cases rules",
+        "for clue expressions can be written exclusively so that they scarcely interfere with each other.",
+        "In our experiments, added rules for the remaining six sections had no influence on the analysis of the first three sections.",
+        "The text from s1-13 to s1-19 in Appendix was transformed to the structure in Figure 1-a as follows.",
+        "s1-14: the clue expression, \"-DAKARA-DEARU\" which means \"this is because\".",
+        "si-15: the clue expression, \"-WA K E-DEA RE\" .",
+        "s1-16: the clue expression \"example of X\".",
+        "s1-17: the heuristic rule supporting elaboration relation after exemplification-present, relation, s1-18: the clue expression \"(SONO)KEIKKA(-WA), (the result is)\" which corresponds to \"lead\" in semantics.",
+        "s1.-19: the chain of \"synthetic approach\".",
+        "The text front s4-1 to s/I-7 in Appendix was also transformed to the structure in Figure 1-b as follows.",
+        "s4-2: the clue expressions: \"-1■A\" (a suffix indicating an interrogative sentence) in s4-1 and \"(the) answer s4-2.",
+        "s4-3: the chain of \"double star\".",
+        "s4-4: the chain from \"shrink\" in s4-3 to \"this pro-cess\" in s1-1 (sonic expressions like \"this process\" are regarded as matching any verb in a previous sentence), s4-5: the chain of \"nuclear fusion\".",
+        "s4-G: the large similarity value between s4-3 and s4-6 and the clue expression \"similarly\".",
+        "s4-7: this NS could not, he analyzed correctly.",
+        "List relation with s-1-(3 was detected incorrectly because of their similarity value, In sil-6 and s4-7, while the same word \"heat\" is used in English, the prior \"heat,\" was translated into \"ON1)0(temperature)-CA JO LISII(R1SU RU(rise)\" in Japanese.",
+        "In order to detect, the chain for their topic-dominant.",
+        "chaining relation, we must infer that the rising of temperature produce a. heat, Such a problem is ignored in this research."
+      ]
+    },
+    {
+      "heading": "5 Conclusion",
+      "text": [
+        "We have proposed a method of detecting DS automatically using surface information in sentences: clue expressions, word/ph•ase chains, and similarity between sentences.",
+        "In the case of scientific and technical texts, considerable 1,out of the DS can be estimated by incorporating the three types of clue information, without performing sentence understanding processes which requires giving knowledge to computers.",
+        "This approach can he smoothly integrated with the current N1.1) systems dealing with large amounts of texts."
+      ]
+    },
+    {
+      "heading": "References",
+      "text": [
+        "Murata, M. and Nagao, (1993).",
+        "\"1)c:terminal ion of referential property and number of nouns in Japanese sentences for machine translation into Unglish.\"",
+        "In Proceedings of TM/ '9:1.",
+        "Polanyi, L. and Scha, R. (198.1).",
+        "\"A syntaclic Approach to Discourse Semantics.\"",
+        "In Proceedings of /0\"/ COLINC.",
+        "Iteichman, R.. (1985).",
+        "Gelling Computers to Talk Like You and Me.",
+        "Cambridge, MA, The MIT Press.",
+        "Zadrouly, NV.",
+        "and Jensen, 1K.",
+        "(1991).",
+        "\"Semantics of Paragraphs.\"",
+        "Computational Linguistics, 17-2."
+      ]
+    },
+    {
+      "heading": "Appendix: Sample Text",
+      "text": [
+        "Title: Advanced Computing for Science (`i\" and \"Si\" in si-j denote the section number and the sentence number respectively)",
+        "Afi*APO.fJ 6 '/ A ts fKA ft t) 4;0,1,1 L o )1:11,-f-1'.1-:_111.1),-.01,4, (The synthetic approach is called for when the Fundamental processes of the teractions among the parts of a system are known, but the detailed configuration of the system is not.)",
+        "s1-14: 41, tr: ,11 AV.",
+        ")11101ik1a L t9, of fir A L'ellA hs L'-„,-Ck/,) (One can attempt, to determine the unknown con figuration by synthesis: one can survey the possible configurations and work out, the consequences of each.)",
+        "s1-15: 61(111-/P7:c ) <113/191T 7=d3Nta \"dr L1.1-9 6 7a 4)E-f--C4.",
+        ")1 (By carefully matching the observable details of the experimental situation with these consequences, one can choose the configuration that best accounts for the observations.)",
+        "s1-1G: 19 111A1,11,*(/)*1,0-Ji.",
+        ");(i-/:pfc11L ,) 3kly) JR LAl( -11f, PRAY 1.",
+        "L /1: 4.• .i611` 6 /)c-9 6 (A famous example of the synthetic approach from the 19th century is the attempt that, was madetomiderAmidtheaservedbutimexplainedper, turbations iii the orbit of Uranus.)",
+        "(Investigators molded a hypothetical planet to the solar system and varied the parameters of its orbit until a satisfactory reconstruction of the perturbation was found.)",
+        "s1-18: 11/::1,alt.",
+        "(/)l( < 9(/)all.1rl.W11;11L ' (.",
+        ")'-'_)t,11::0-F-C3,73, (The work led directly to the discovery of Neptune, found near the predicted position.)",
+        "s1- 19 :/,',A111--C 6 6 0)11\" , 1.09:6st9 , ILMl.11114.41 011t;,t-lsl':151',4-0,,-/:.",
+        ": (In the past the synthetic approach was limited to comparatively simple situations. )",
+        "0,,fiff, -IV/A., 4:1-s-t1'94111: 6 -9-8' (Why are astronomers interested in this kind of collision?)",
+        "s4-2: , \" k:\" -t1.-4 (/) w_111Cti1iA14, Z> (The answer lies in the role of double stars in generating \"heal.\"",
+        ") s1-3: < t), 'o4-:r ,)50/1,1,11111 0) 410).14%11 ll/tY) 6 L 1)' (In a collision between a double star and a single star, the double star can shrink, transferring energy to the single star and thereby heating the pool of stars around them.)",
+        "s1.- :\"10.",
+        ")59 fY.",
+        ", fc,1,11-1%,641Iff.",
+        "');; , 3 h :11i11,1M- ids.A I 7.",
+        "'f • < 0 ('This process is analogous to nuclear fusion, wherein atomic nuclei collide and fuse into heavier nuclei, releasing en-org.Y.)",
+        "s4-5: 1:A& , 4: (Nuclear fusion is the same phenomenon that makes the stars, including the sun, shine.)",
+        "s1-G: , j'N Ar_ L (Simi-lady, orbital shrinkage of double stars induced by encounters can heat.",
+        "the core of dense star clusters.)",
+        "s4-7: %-11.-/./WIT111111.k1,,, -41,16 TOD] 0.41J(it 1:131)- MVO: .11, 0.Y.Ck Z) (This heat can balance the losses at the surface of star clusters, where stars boil off continuously.)"
+      ]
+    }
+  ]
+}

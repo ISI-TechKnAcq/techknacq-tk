@@ -1,0 +1,41 @@
+{
+  "info": {
+    "authors": [
+      "David Cohen",
+      "Ian Lane"
+    ],
+    "book": "NAACL-HLT Workshop on Future directions and needs in the Spoken Dialog Community: Tools and Data (SDCTD 2012)",
+    "id": "acl-W12-1815",
+    "title": "A Simulation-based Framework for Spoken Language Understanding and Action Selection in Situated Interaction",
+    "url": "https://aclweb.org/anthology/W12-1815",
+    "year": 2012
+  },
+  "references": [],
+  "sections": [
+    {
+      "text": [
+        "NAACL-HLT 2012 Workshop on Future directions and needs in the Spoken Dialog Community: Tools and Data, pages 33?36, Montre?al, Canada, June 7, 2012. c?2012 Association for Computational Linguistics A Simulation-based Framework for Spoken Language Understanding and Action Selection in Situated Interaction David Cohen Ian Lane Carnegie Mellon University Carnegie Mellon University Nasa Research Park Nasa Research Park Moffett Field, CA Moffett Field, CA david.cohen@sv.cmu.edu lane@cs.cmu.edu Abstract This paper introduces a simulation-based framework for performing action selection and understanding for interactive agents.",
+        "By simulating the objects and actions relevant to an interaction, an agent can semantically ground natural language and interact considerately and on its own initiative in situated environments.",
+        "The framework proposed in this paper leverages models of the environ-ment, user and system to predict possible future world states via simulation.",
+        "It leverages understanding of spoken language and multi-modal input to estimate the state of the ongoing interaction and select actions based on the utility of future outcomes in the simulated world.",
+        "In this paper we introduce this framework and demonstrate its effectiveness for in-car navigation.",
+        "1 Introduction Speech and multimodal interactive systems have many challenges to overcome before they can effectively interact with users in the real world.",
+        "The-se challenges include semantically grounding vague and ambiguous natural language utterances, understanding the user's knowledge and capabili-ties, and acting on their own initiative to plan and take appropriate actions in complex environments.",
+        "To overcome these challenges, interactive agents require more than just models of the environment, user goals, and attention, they need the ability to infer the consequences of both their and the users?",
+        "actions ?",
+        "a capability which simulation provides.",
+        "For each given task, an agent must plan the best way to carry it out.",
+        "In many cases, a simple set of context-dependent behavior templates will not be sufficient.",
+        "For example, if an in-car navigation assistant is trying to direct a driver to his destination, it should probably not give directions within the driver's own neighborhood, with which he is already familiar.",
+        "However, it should inform the driver if there is road construction in the area of which he/she is unaware.",
+        "Alternatively, if the driver is having an important conversation and the cost of the detour is outweighed by the cost of interrupting the conversation, perhaps the system should remain quiet.",
+        "Understanding all the contexts that affect interaction is difficult and defining a set of heuristics to choose the appropriate behavior will quickly become unmanageable.",
+        "An agent in the real world will be faced with complicated situations that will require planning and an understanding of the effects its actions will have.",
+        "To capture the full context necessary to perform understanding and planning in situated interaction, this paper argues for a unified model of the envi-ronment, the user's knowledge, attention and goals, and the simulated consequences of different courses of action.",
+        "2 Related Work Early work in deep natural language understanding (Schank and Abelson, 1977; Wilensky, 1983) formed cognitive theories and developed software to reinforce the idea that understanding an agent's words requires an understanding of that agent's plans, goals, and planning mechanisms.",
+        "Other work (Allen and Perrault, 1980) focused on identifying these plans and goals from the partial information available; interpreting speech acts as primitive actions in a STRIPS planner (Fikes and Nilsson, 1971), and using heuristics to determine an agent's plan based on their speech acts.",
+        "Traum (1994) adopted a similar definition of speech acts, and developed a computational theory of grounding whereby multiple agents come to understand each other's plans and meaning."
+      ]
+    }
+  ]
+}

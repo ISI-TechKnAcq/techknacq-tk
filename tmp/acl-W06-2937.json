@@ -1,0 +1,232 @@
+{
+  "info": {
+    "authors": [
+      "Yu-Chieh Wu",
+      "Yue-Shi Lee",
+      "Jie-Chi Yang"
+    ],
+    "book": "Conference on Computational Natural Language Learning CoNLL",
+    "id": "acl-W06-2937",
+    "title": "The Exploration of Deterministic and Efficient Dependency Parsing",
+    "url": "https://aclweb.org/anthology/W06-2937",
+    "year": 2006
+  },
+  "references": [
+    "acl-A00-2018",
+    "acl-C96-1058",
+    "acl-P05-1012",
+    "acl-W06-2920"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "In this paper, we propose a three-step multilingual dependency parser, which generalizes an efficient parsing algorithm at first phase, a root parser and post-processor at the second and third stages.",
+        "The main focus of our work is to provide an efficient parser that is practical to use with combining only lexical and part-of-speech features toward language independent parsing.",
+        "The experimental results show that our method outperforms Malt-parser in 13 languages.",
+        "We expect that such an efficient model is applicable for most languages."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "The target of dependency parsing is to automatically recognize the head-modifier relationships between words in natural language sentences.",
+        "Usually, a dependency parser can construct a similar grammar tree with the dependency graph.",
+        "In this year, CoNLL-X shared task (Buchholz et al., 2006) focuses on multilingual dependency parsing without taking the language-specific knowledge into account.",
+        "The ultimate goal of this task is to design an ideal multilingual portable dependency parsing system.",
+        "To accomplish the shared task, we present a very lightweight and efficient parsing model to the 13 distinct treebanks (Hajic et al., 2004; Simov et al., 2005; Simov and Osenova, 2003; Chen et al., 2003; Böhmová et al., 2003; Kromann 2003; van der Beek et al., 2002; Brants et al., 2002; Kawata and Bartels, 2000; Afonso et al., 2002; Džeroski et al., 2006; Civit and Martí 2002; Nivre et al., 2005; Oflazer et al., 2003; Atalay et al., 2003) with a three-step process, Nivre’s algorithm (Nivre, 2003), root parser, and post-processing.",
+        "Our method is quite different from the conventional three-pass processing, which usually exhaustively processes the whole dataset three times, while our method favors examining the “un-parsed” tokens, which incrementally shrink.",
+        "At the beginning, we slightly modify the original parsing algorithm (proposed by (Nivre, 2003)) to construct the initial dependency graph.",
+        "A root parser is then used to recognize root words, which were not parsed during the previous step.",
+        "At the third phase, the post-processor (which is another learner) recognizes the still unparsed words.",
+        "However, in this paper, we aim to build a multilingual portable parsing model without employing deep language-specific knowledge, such as lemmatization, morphologic analyzer etc.",
+        "Instead, we only make use of surface lexical and part-of-speech (POS) information.",
+        "Combining these shallow features, our parser achieves a satisfactory result for most languages, especially Japanese.",
+        "In the remainder of this paper, Section 2 describes the proposed parsing model, and Section 3 lists the experimental settings and results.",
+        "Section 4 presents the discussion and analysis of our parser with three selected languages.",
+        "In Section 5, we draw the future direction and conclusion."
+      ]
+    },
+    {
+      "heading": "2 System Description",
+      "text": [
+        "Proceedings of the 10th Conference on Computational Natural Language Learning (CoNLL -X), pages 241–245, New York City, June 2006. c�2006 Association for Computational Linguistics Over the past decades, many state-of-the-art parsing algorithm were proposed, such as headword lexicalized PCFG (Collins, 1998), Maximum Entropy (Charniak, 2000), Maximum/Minimum spanning tree (MST) (McDonald et al., 2005), Bottom-up deterministic parsing (Yamada and Matsumoto, 2003), and Constant-time deterministic parsing (Nivre, 2003).",
+        "Among them, the Nivre’s algorithm (Nivre, 2003) was shown to be most efficient method, which only costs at most 2n transition actions to parse a sentence (O(n3) for the bottom-up or MST approaches).",
+        "Nivre’s method is mainly consists of four transition actions, Left/Right/Reduce/Shift.",
+        "We further extend these four actions by dividing the “reduce” into “reduce” and “sleep (reduce-but-shift)” two actions.",
+        "Because the too early reduce action makes the following words difficult to find the parents.",
+        "Thus, during training, if a word which is the child of the top of the stack, it is then assigned to the “sleep” category and pushed into stack, otherwise, the conventional reduce action is applied.",
+        "Besides, we do not arrange these transition actions with priority order, instead, the decision is made by the classifier.",
+        "The overall parsing model can be found in Figure 1.",
+        "Table 1 lists the detail system spec of our model."
+      ]
+    },
+    {
+      "heading": "2.1 Constant-time Parser and Analysis",
+      "text": [
+        "The Nivre’s algorithm makes use of a stack and an input list to model the word dependency relations via identifying the transition action of the top token on the stack (Top) and the next token of the input list (Next).",
+        "Typically a learning algorithm can be used to recognize these actions via encoding features of the two terms (Top and Next).",
+        "The “Left” and “Reduce” pops the Top from stack whereas the “Right”, “Reduce-But-Shift”, and “Shift” push token Next into the top of stack.",
+        "Nivre (Nivre, 2003) had proved that this algorithm can accomplish dependency parsing at most 2n transition actions.",
+        "Although, the Nivre’s algorithm is much more efficient than the others, it produces three problems.",
+        "1.",
+        "It does not explicitly indicate which words are the roots.",
+        "2.",
+        "Some of the terms in the stack do not belong to the root but still should be parsed.",
+        "3.",
+        "It always only compares the Top and Next words.",
+        "The problem (2) and (3) are complement with each other.",
+        "A straightforward way resolution is to adopt the exhaustive parsing strategy (Covington, 2001).",
+        "Unfortunately, such a brute-force way may cause exponential training and testing spaces, which is impractical to apply to the large-scale corpus, for example, the Czech Treebank (1.3 million words).",
+        "To overcome this and keep the efficiency, we design a post-processor that recycles the residuum in the stack and re-identify the heads of them.",
+        "Since most of the terms (90-95%) of the terms had be processed in previous stages, the post-processor just exhaustively parses a small part.",
+        "In addition, for problem (1), we propose a root parser based on the parsed result of the Nivre’s algorithm.",
+        "We discuss the root-parser and post-processor in the next two subsections."
+      ]
+    },
+    {
+      "heading": "2.2 Root Parser",
+      "text": [
+        "After the first stage, the stack may contain root and unparsed words.",
+        "The root parser identifies the root word in the stack.",
+        "The main advantage of this strategy could avoid sequential classification process, which only focuses on terms in the stack.",
+        "We build a classifier, which learns to find root word based on encoding context and children features.",
+        "However, most of the dependency relations were constructed at the first stage.",
+        "Thus, we have more sufficient head-modifier information rather",
+        "than only taking the contexts into account.",
+        "The used features are listed as follows.",
+        "Neighbor terms,bigrams,POS,BiCPOS (+/-2 window) Left most child term, POS, Bigram, BiCPOS Right most child term, POS, Bigram, BiCPOS"
+      ]
+    },
+    {
+      "heading": "2.3 Post-Processing",
+      "text": [
+        "Before post-processing, we remove the root words from stack, which were identified by root-parser.",
+        "The remaining unparsed words in stack were used to construct the actual dependency graph via exhaustive comparing with parsed-words.",
+        "It is necessary to build a post-processor since there are about 10% unparsed words in each training set.",
+        "We provide the unparsed rate of each language in Table 2 (the r.h.s.",
+        "part).",
+        "By applying previous two steps (constant-time parser and root parser) to the training data, the remaining unparsed tokens were recorded.",
+        "Not only using the forward parsing direction, the backward direction is also taken into account in this statistics.",
+        "Averagely, the unparsed rates of the forward and backward directions are 13% and 4% respectively.",
+        "The back ward parsing often achieves lower unparsed rate among all languages (except for Japanese and Turkish).",
+        "To find the heads of the unparsed words, we copy the whole sentence into the word list again, and re-compare the unparsed tokens (in stack) and all of the words in the input list.",
+        "Comparing with the same words is disallowed.",
+        "The comparing process is going on until the actual head is found.",
+        "Acquiescently, we use the nearest root words as its head.",
+        "Although such a brute force way is time-consuming.",
+        "However, it only parses a small part of unparsed tokens (usually, 2 or 3 words per sentence)."
+      ]
+    },
+    {
+      "heading": "2.4 Features and Learners",
+      "text": [
+        "For the constant-time parser of the first stage, we employ the features as follows.",
+        "In this paper, we use the support vector machines (SVM) (Joachims, 1998) as the learner.",
+        "SVM is widely used in many natural language processing (NLP) areas, for example, POS tagging (Wu et al., 2006).",
+        "However, the SVM is a binary classifier which only recognizes true or false.",
+        "For multiclass problem, we use the so-called one-versus-one (OVO) method with linear kernel to combine the results of each pairwise subclassifier.",
+        "The final class in testing phase is mainly determined by majority voting.",
+        "For all languages, our parser uses the same settings and features.",
+        "For all the languages (except Japanese and Turkish), we use backward parsing direction to keep the unparsed token rate low."
+      ]
+    },
+    {
+      "heading": "3 Experimental Result",
+      "text": []
+    },
+    {
+      "heading": "3.1 Dataset and Evaluation Metrics",
+      "text": [
+        "The testing data is provided by the (Buchholz et al., 2006) which consists of 13 language treebanks.",
+        "The experimental results are mainly evaluated by the unlabeled and labeled attachment scores.",
+        "The CoNLL also provided a perl-scripter to automatic compute these rates."
+      ]
+    },
+    {
+      "heading": "3.2 System Results",
+      "text": [
+        "Table 2 presents the overall parsing performance of the 13 languages.",
+        "As shown in Table 2, we list two parsing results at the second and third columns (new and old).",
+        "It is worth to note that the result B is produced by removing the enhanced features and the post-processing step from our parser, while the result A is the complete use of the enhanced features and the overall three-step parsing.",
+        "In this year, we submit result B to the CoNLL shared task due to the time limitation.",
+        "In addition, we also apply the Maltparser, which is implemented with the Nivre’s algorithm (Nivre, 2003) to be compared.",
+        "The Maltpaser also includes the SVM and memory-based learner (MBL).",
+        "Nevertheless, it does not optimize the SVM where the training and testing times are too long to be compared even the linear kernel is used.",
+        "Therefore we use the default MBL and feature model 3 (M3) in this experiment.",
+        "We also perform the significant test to evaluate the statistical difference among the three results.",
+        "If the answer is “Yes”, it means the two systems are significant difference under at least 95% confidence score (p < 0.05)."
+      ]
+    },
+    {
+      "heading": "4 Discussion",
+      "text": []
+    },
+    {
+      "heading": "4.1 Analysis of Overview Aspect",
+      "text": [
+        "Although our method is efficient for parsing that achieves satisfactory result, it is still away from the state-of-the-art performance.",
+        "Many problems give rise to not only the language-specific characteristics, but also the parsing strategy.",
+        "We found that our method is weak to the large-scale training size and large dependency class datasets, for example, German (Brants et al., 2002) and Czech.",
+        "For Dutch, we observe that the large non-projective tokens and relations in this set.",
+        "Overall, we conclude the four main limitations of our parsing model.",
+        "1.Unbalanced and large dependency relation classes 2.",
+        "Too fine or coarse POS tag 3.",
+        "Long sentences and non-projective token rates 4.",
+        "Feature engineering and root accuracy",
+        "The main reason of the first problem is still caused by the unbalanced distribution of the training data.",
+        "Usually, the right-action categories obtain much fewer training examples.",
+        "For example, in the Turkish data, 50 % of the categories receive less than 0.1% of the training examples, 2/3 are the right dependency group.",
+        "For the Czech, 74.6% of the categories receive less than 0.1% of the training examples.",
+        "Second, the too fine grained size of POS tag set often cause the features too specific that is difficult to be generalized by the learner.",
+        "Although we found the grained size is not the critical factor of our parser, it is closely related to the fourth problem, feature engineering.",
+        "For example, in Chinese (Chen et al., 2003), there are 303 fine grained POS types which achieves better result on the labeled attachment score is higher than the coarse grained (81.25 vs. 81.17).",
+        "Intuitively, the feature combinations deeply affect the system performance (see A vs. C where we extend more features than the original Nivre’s algorithm).",
+        "Problem 3 exposes the disadvantage of our method, which is weak to identify the long distance dependency.",
+        "The main reason is resulted from the Nivre’s algorithm in step 1.",
+        "This method is quite sensitive and non error-recovered since it is a deterministic parsing strategy.",
+        "Abnormal or wrong push or pop actions usually cause the error propagation to the remaining words in the list.",
+        "For example, there are large parts of errors are caused by too early reduce or missed left arc makes some words could not find the actual heads.",
+        "On the contrary, one can use an N-best selection to choose the optimal dependency graph or applying MST or exhaustive parsing schema.",
+        "Usually, these approaches are quite inefficient which requires at least O(n3).",
+        "Finally, in this paper, we only take the surface lexical word and POS tag into account without employing the language-specific features, such as Lemma, Morph ... etc.",
+        "Actually, it is an open question to compile and investigate the feature engineering.",
+        "On the other hand, we also find the performance of the root parser in some languages is poor.",
+        "For example, for Dutch the root precision rate is only 38.52, while the recall rate is 76.07.",
+        "It indicates most of the words in stack were wrongly recognized as root.",
+        "This is because there are substantially unparsed rate that left many unparsed words remain in stack.",
+        "One way to remedy the problem can adjust the root parser to independently identify root word by sequential word classification at first step and then apply the Nivre’s algorithm.",
+        "We left the comparison of the issue as future work."
+      ]
+    },
+    {
+      "heading": "4.2 Analysis of Specific View",
+      "text": [
+        "We select three languages, Arabic, Japanese, and Turkish to be more detail analysis.",
+        "Figure 2 illustrates the learning curve of the three languages and Table 3 summarizes the comparisons of “fine vs. coarse” POS types and “forward vs. backward” parsing directions.",
+        "For the three languages, we found that most of the errors frequently appear to the noun POS tags which often denominate half of the training set.",
+        "In Turkish, the lower performance on the noun POS attachment rate deeply influents the overall parsing.",
+        "For example, the error rate of Noun in Turkish is 39% which is the highest error rate.",
+        "On the contrary, the head error rates fall in the middle rank for the other two languages.",
+        "In Turkish, we also find an interesting result where the recall rate of the distance=2 parsing (56.87) is lower than distance=3-6, and >7 (62.65, 57.83).",
+        "In other words, for Turkish, our parser failed to recognize the distance=2 dependency relations.",
+        "For the other languages, usually the identification rate of the longer distance parsing should be lower than the smaller distance.",
+        "Thus, a future work to parsing Turkish, should put more emphasis on improving not only the noun POS type, but also the distance=2 parsing.",
+        "Besides, the root parsing accuracy is also an important factor to most languages.",
+        "In Japanese, although our parser achieves more than 97% left/right arc rates.",
+        "However, for the root word precision rate is quite lower (85.97).",
+        "Among all dependency relation classification rates, the root class usually locates in the lowest rank for the three languages."
+      ]
+    },
+    {
+      "heading": "5 Conclusion and Future Remarks",
+      "text": [
+        "Dependency parsing is one of the most important issues in NLP community.",
+        "This paper presents and analyzes the impact of the efficient parsing model that only combines with lexical and part-of-speech information.",
+        "To go language-independent, we did not tune any parameter settings in our model and exclude most of the language-dependent feature set, which provided by the CoNLL (Buchholz et al., 2006).",
+        "The main focus of our work coincides with the target goal of the CoNLL shared task, i.e., go multilingual dependency parsing without taking the language-specific knowledge into account.",
+        "A future work on the deterministic parsing strategy is to convert the existing model toward N-best parsing."
+      ]
+    }
+  ]
+}

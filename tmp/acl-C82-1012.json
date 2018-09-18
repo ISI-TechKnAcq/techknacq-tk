@@ -1,0 +1,104 @@
+{
+  "info": {
+    "authors": [
+      "Werner Dilger"
+    ],
+    "book": "International Conference on Computational Linguistics",
+    "id": "acl-C82-1012",
+    "title": "Tree Directed Grammars",
+    "url": "https://aclweb.org/anthology/C82-1012",
+    "year": 1982
+  },
+  "references": [],
+  "sections": [
+    {
+      "text": [
+        "Tree directed grammars as a special kind of translation grammars are defined.",
+        "It is shown that a loop-free tree directed grammar can be transformed into an equivalent top-down tree transducer, and from this fact it follows that given an arbitrary context-free language as input, a tree directed grammar produces an output language which is at most context-sensitive."
+      ]
+    },
+    {
+      "heading": "INTRODUCTION",
+      "text": [
+        "Within the natural language information system PLIDIS [6] a semantic processor was implemented for the translation of syntactically analyzed sentences into expressions of a predicate calculus-oriented internal representation language.",
+        "This semantic processor was designed according to a translation grammar defined by Wulz [8], which is similar to the transformation grammar introduced by Chomsky [33.",
+        "The operations on trees which are defined in the transformation grammar, i.e. deletion, insertion, and transposition of subtrees, are also available in the Wulz grammar.",
+        "Therefore it can be assumed that it is equivalent to the transformation grammar with regard to the input/output-relation.",
+        "But when the Wulz grammar was realized within PLIDIS for a section of German, only of a few of its possibilities was made use.",
+        "No real transformation was prescribed by the PLIDIS translation rules, they only checked the parse tree and produced an output separated from this tree.",
+        "Thus, what was realized in the PLIDIS translation rules can be better described by another kind of translation grammar, namely the tree directed grammar (TDG).",
+        "When we investigate the TDGs and their relation to tree transducers it turns out that they are less powerful than transformation grammars.",
+        "TREE DIRECTED GRAMMARS We define trees in the manner of [2] and [7] as mappings from tree domains (special subsets of N*, where N is the set of natural numbers) into an alphabet F. and call them therefore trees \"over\" E. We assume for the rest of the paper that E is ranked.",
+        "Because trees are finite mappings it is convenient to identify a tree with its graph.",
+        "So e.g. the set",
+        "where A is the alphabet of terminals of Gm, II is the set of productions of GT' andaEEUA.",
+        "It follows from this definition that the elements of E play the role of nonterminals in GT.",
+        "When they are used for this purpose in the productions, they are enclosed in brackets, so we get from E the set [E] = {[a]la E E} The elements of E are further used in the structural condition parts of the productions.",
+        "There we should be able to distinguish between different occurrences of the same symbol in a tree.",
+        "In order to represent such distinctions, the symbols are provided with indices, so we get from E the set",
+        "for some index set IND (in general a subset of N).",
+        "Now a Wroduetion p E H is a triple ([a1],sc,u) with a E E, E (A Uand sc is a structural condition EIND3)*1 which contains the symbol al.",
+        "In order to explain the application of a production we have to define the structural conditions.",
+        "Assume, x E E and X = {xl,x2,...}.",
+        "Then the set of Atkuetuirat individuatz is",
+        "There are four two-place predicates defined on SI, namely DOM (\"dominates immediately\"), DOM* (\"dominates\"), LFT (\"is immediately left from\"), and LFT* (\"is left from\").",
+        "Atomic structural conditions are TRUE, FALSE, P(000 where P is one of the four predicates above and 0,0 E SI.",
+        "A 4txuctutat condition is then an atomic structural condition or a Boolean expression over the set of atomic structural conditions.",
+        "For example, if E = {a,b,c,d,e}, IND = {1,2}, then the following expressions are structural conditions:",
+        "1.",
+        "DOM(al,bi) 2.",
+        "DOM(bi,xl) A LFT(e1,x1) 3.",
+        "DOM(x1,c1) A LFT*(x1,x2) A DOM*(x2,e1) 4.",
+        "DOM(a1,b1) A (~DOM*(b1,e1) v LFT(b1,d1))",
+        "The semantics of a structural condition is defined in the usual way by an interpreting function from the condition into a semantic domain.",
+        "Here, the trees of T are semantic domains.",
+        "The four predicates DOM, ..,LFT* are always interpreted in the same way, and this interpretation should be obvious.",
+        "The main part of the interpretation is the assignment of the structural individuals to the nodes of a tree, which is called the node a444.gnment.",
+        "A mapping of the individuals of a structural condition into the set of nodes of a tree is a node assignment, if it obeys the following restrictions: If a E E, then an individual a (i E IND) should be assigned to a node with label a, whereas the individuals a and a.",
+        "(i * j) should be assigned to different nodes with the same J label a.",
+        "An individual x E X can be assigned to an arbitrary node.",
+        "A tree t datiAliie4 a structural condition sc if there exists a node assignment such that sc holds for the assigned nodes of t under the assumed interpretation of the four predicates and the usual interpretation of the Boolean operators.",
+        "The reader is invited to check, how the tree of the example above satisfies the structural conditions 1.",
+        "- 4.",
+        "The structural conditions are similar to the local constraints of Joshi and Levy [5], and it can be shown that both are equivalent with regard to their ability to describe relations on the set of nodes of a tree.",
+        "Assume, p = aail,sc,o) is a production of GT.",
+        "Then the structural individual a1 mist occur in sc.",
+        "Assume further that = Y1[ai]Y2 where 171,1,2 E (A U [E,m,3)*, i E IND, and there is a node assignment which mdps a4 on a noe6\"<u,a> in tree t and t satisfies sc in such a way that a1 is mapped on <u,a> as well, then p can be applied to y: Y1[cli]Y2 Y1°Y2 GT,t Some of the individuals of X occurring in o may be replaced by the node assignment for sc by individuals of [E].",
+        "In this way derivations in GT with regard to a tree t are defiHgd.",
+        "If a derivation stops with a word y E A*, y can be regarded as a translation of t.",
+        "By means of these productions we can perform the derivation [a1] [b1][b1] Ric1)fb1] H[e1 ]E[b1] 1---HAREIb 1 Is HAREHARE with regard to the tree of the example above."
+      ]
+    },
+    {
+      "heading": "TOP-DOWN TREE TRANSDUCERS",
+      "text": [
+        "A top-down tnee ttaiuducet (TDTT) (cf. [4]) is a transducing automaton which proceeds top-down from the root to the leaves in a tree and in each step yields an output.",
+        "It is defined as a quintuple",
+        "where E and A are defined as before, Q is a finite set of states, q E Q is the initial state and R is a finite set of rules of the ,",
+        "o er T. When such a rule is applied to a tree t at a node with label a, the variables T4 are replaced by those subtrees of t whose roots are immediately dolinated by the node with label a.",
+        "Assume e.g. we are given the TDTT",
+        "TDGs AND TDTTs There are some obvious similarities between TDGs and TDTTs.",
+        "It is easy to see that not every TDTT can be transformed into an equivalent TDG, because the TDTTs have the states as an additional means to direct derivations.",
+        "In some cases the derivation can be directed by appropriate structural conditions in the same way as it is done by states, but it is easy to construct examples where this is impossible.",
+        "On the other hand, each TDG can be transformed into an equivalent TDTT.",
+        "The main step of this transformation is to put together some of the productions so that the resulting productions satisfy the condition that all symbols of the structural condition part except a, are situated below the symbola in each tree, where a1 corresponds to the first component of the production.",
+        "Take e.g. the productions",
+        "The first and the second production satisfy the condition, the third one does not, because the nodes assigned to x and x are above that one assigned to c, in each tree which satisfies the structural condition.",
+        "But we can put together the second and the third production and get a new one:",
+        "Now this production is \"better\" than the third above, but it does not yet satisfy our condition.",
+        "Therefore we put it together with the first one and get aa1],DOM(a1,b1) A DOM(b1,c1) A LFT(e1'c1) A LFT(b1,x2) A DOM*(x2,e1),H[e1]EH[e1]E) This production is acceptable and together with the production ([elLTRUE,AR) it performs the same derivation as the four productions above.",
+        "The productions resulting from this transformation process are all proceeding downward in a tree.",
+        "Each of them can be transformed into a TDTT of its own and finally these single TDTTs are composed to one TDTT which is equivalent to the TDG.",
+        "The transformation process sketched above can be made only if the TDG is loop-free.",
+        "That means that each node of a tree is passed during a derivation in TDG at most once.",
+        "Now we can adopt the result of Baker [1] about top-down tree trans-ductions.",
+        "It states that the family of the images of recognizable sets of trees (e.g. the set of derivation trees of a context-free grammar) under a top-down transduction is properly contained in the family of deterPlinistic context-sensitive languages.",
+        "In other words, the result of tilie translation of the set of derivation trees of a context-free grammar by a TDG is at most a deterministic context-sensitive language."
+      ]
+    },
+    {
+      "heading": "82 W. DILGER REFERENCES",
+      "text": []
+    }
+  ]
+}

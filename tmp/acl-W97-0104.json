@@ -1,0 +1,250 @@
+{
+  "info": {
+    "authors": [
+      "Qiang Zhou"
+    ],
+    "book": "Workshop on Very Large Corpora",
+    "id": "acl-W97-0104",
+    "title": "A Statistics-Based Chinese Parser",
+    "url": "https://aclweb.org/anthology/W97-0104",
+    "year": 1997
+  },
+  "references": [
+    "acl-A92-1021",
+    "acl-H91-1060",
+    "acl-H93-1047",
+    "acl-J93-1005",
+    "acl-J93-2004",
+    "acl-P92-1017",
+    "acl-P95-1037",
+    "acl-P96-1025",
+    "acl-W95-0107"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "This paper describes a statistics-based Chinese parser, which parses the Chinese sentences with correct segmentation and POS tagging information through the following processing stages: 1) to predict constituent boundaries, 2) to match open and close brackets and produce syntactic trees, 3) to disambiguate and choose the best parse tree.",
+        "Evaluating the parser against a smaller Chinese treebank with 5573 sentences, it shows the following encouraging results: 86% precision, 86% recall, 1.1 crossing brackets per sentence and 95% labeled precision."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Since the large-scale annotated corpora, such as Penn Treebank[MSM93], have been built in English, statistical knowledge extracted from them has been shown to be more and more crucial for natural language parsing and disambiguation.",
+        "Hindle and Rooth(1993) tried to use word association information to disambiguate the prepositional phrase attachment problem in English.",
+        "Brill(1993a) proposed a transformation-based error-driven automatic learning method, which has been used in part-of-speech(POS) tagging[8ri92], text chunking[RM95] and sentence bracketing[Br193b].",
+        "Bod's data oriented parsing technique directly used an annotated corpus as a stochastic grammar for parsing[RB931.",
+        "Based on the statistical decision-tree models automatically learned from treebank, Magerman's SPATTER parser showed good performance in parsing Wall Street Journal texts[DM95].",
+        "Collins(1996) described a statistical parser based on probabilities of dependencies between headwords in treebank, which can perform at least as well as SPATTER.",
+        "As a distinctive language, Chinese has Many characteristics different from English.",
+        "Although Chinese information processing techniques have made great progress since 1980, how to use statistical information efficiently in Chinese parser is still a virgin land waiting to explore.",
+        "This paper describes our preliminary work to build a Chinese parser based on different kinds of statistics extracted from treebank.",
+        "It tries to parse the Chinese sentences with correct segmentation and POS tagging information through the following processing stages: 1) to predict constituent boundaries using local context statistics, 2) to match the open and close brackets and produce syntactic trees using boundary tag distribution data and syntactic tag reduction rules.",
+        "3) to disambiguate parse trees using stochastic",
+        "context-free grammar(SCFG) rules.",
+        "Evaluating the parser against a smaller Chinese treebank with 5573 sentences, it shows the following encouraging results: 86% precision, 86% recall, IA crossing brackets per sentence and 95% labeled precision.",
+        "This work illustrates that some simple treebank statistics may play an important role in Chinese sentence parsing and disambiguation.",
+        "The rest of the paper is organized as follows.",
+        "Section 2 briefly introduces the statistical data set used in our parser.",
+        "Section 3 describes the detailed parsing algorithm, including the boundary prediction model, bracket matching model, matching restriction schemes and the statistical disambiguation model.",
+        "Section 4 gives current experimental results.",
+        "At last, summary and future work are discussed in section 5."
+      ]
+    },
+    {
+      "heading": "2 Statistics from treebank",
+      "text": [
+        "The difficulty to parse natural language sentences is their high ambiguities.",
+        "Traditionally, disambiguation problems in parsing have been addressed by enumerating possibilities and explicitly declaring knowledge which might aid most interesting natural language processing problems.",
+        "As the large-scale annotated corpora become available nowadays, automatic knowledge acquisition from them becomes a new efficient approach and has been widely used in many natural language processing systems.",
+        "Treebanks are the collections of sentences marked with syntactic constituent structure trees.",
+        "The statistics extracted from a large scale treebank will show useful syntactic distribution principles and be very helpful for disambiguation in a parser.",
+        "Some statistical data and rules used in our parser are briefly described as follows:",
+        "(1) boundary distribution data(Sl)",
+        "This group of data shows the different influence of context information on the constituent boundaries in a sentence, counted by the co-occurrence frequencies of different constituent boundary labels(k) with the word(w) and part-of-speech(POS) tags(ti), which include: (a) the co-occurrence frequencies with functional words:.",
+        "(b) the co-occurrence frequencies with a single POS tag: Ati,b)); (c) the co-occurrence frequencies with local POS tags:Rbi, to 4,1) orf(t,.,j, 4, N. They play an important role in the prediction of constituent boundary locations.",
+        "(2) Syntactic tag reduction data(S2)"
+      ]
+    },
+    {
+      "heading": "This group of data records the possibilities for the constituent structures to be reduced as different syntactic tags, represented by a set of statistical rules:",
+      "text": [
+        "constituent structure --> {syntactic tag, reduction probability}.",
+        "For example, the rule v+n – > vp 0.93, np 0.07 indicates that a syntactic constituent composed by a verb(v) and a noun(n) can be reduced as a verb phrase(vP) with the probability 0.93, and as a noun phrase(rip) only 0.07'.",
+        "Based on them, it is easy to determinate the suitable syntactic tag for a parsed constituent according to its internal structure components.",
+        "In Chinese, there are a group of verbs with especial syntactic functions.",
+        "They can directly modify a noun, such as the verb \"runtian(train)\" in the phrase \"sunlian ihouche(training handbook)\".",
+        "Therefore, we have the noun phrases with constituent structure \"v-i-n\" in Chinese treebank.",
+        "(3) syntactic tag distribution on a boundary(S3)"
+      ]
+    },
+    {
+      "heading": "This group of data expresses the possibilities for an open or a close bracket to be the boundary of a constituent with certain kind of syntactic tags under different POS context. For example,",
+      "text": [
+        "n vp 0331, pp 0.462, np 0.007, indicates that the probability for an open bracket under the context of noun(n) and preposition(p) to be the left boundary of a verb phrase(vp) is 0.531;a prepositional phrase(pp) 0.462, and a noun phrase(np) 0.007.",
+        "This kind of data provides the basis for matching brackets and labeling the matched constituents.",
+        "(4) constituent preference data(S4) This group of data records the preference for a constituent to be combined with its left adjacent constituent or the right adjacent one under local context, counted by the frequencies of different constituent combination cases in treebank(see Figure 1), which are represented as: [<constituent combination case>, <left combination frequency>, <right combination frequency>) For example, {pl-n_p+vp, 190, 0} indicates that the combination frequency of the noun phrase(np) with preposition(p) under the local context \"p+np+vp\" is 190, and with verb phrase(vp) is 0.",
+        "They will be helpful in preference matching model.",
+        "The group of data associates a probability to each constituent structure rule of the grammar, also called as stochastic context-free grammar(SCFG) rules.",
+        "The probability of a constituent structure rule A --> afly can be calculated as follows:",
+        "where fo-- afly) is the frequency of the constituent [A cc jy J in treebank.",
+        "It provides useful information for syntactic disambiguation."
+      ]
+    },
+    {
+      "heading": "3 The parsing algorithm",
+      "text": [
+        "The aim of the parser is to take a correctly segmented and POS tagged Chinese sentence as input(for example Figure 2(a)) and produce a phrase structure tree as output(Figure 2(b)).",
+        "A parsing algorithm to this problem must deal with two important issues: ( I) how to produce the suitable syntactic trees from a",
+        "tagged word sequence, (2) how to select the best tree from all of the possible parse trees.",
+        "The key of our approach is to simplify the parsing problem as two processing stages.",
+        "First, the statistical prediction model assigns a suitable constituent boundary tag to every word in the sentence and produce a partially bracketed sentence(Figure 2(c)).",
+        "Second, the preference matching model constructs the syntactic trees through bracket matching operations and select a preference matched tree using probability score scheme as output(Figure 2(d))."
+      ]
+    },
+    {
+      "heading": "3.1 The boundary prediction model",
+      "text": [
+        "A constituent boundary parse of a sentence can be represented by a sequence of boundary tags.",
+        "Each tag corresponds to one word in the sentence, and can value L, M or B, respectively meaning the beginning, continuation or termination of a constituent in the syntactic tree.",
+        "A constituent boundary parse B is therefore given by B = (bLbz...,bn), where bi is the boundary tag of the ith word and n is the number of 2 The POS and syntactic tags used in this sentence are briefly describes as follows.",
+        "Some detailed information about our POS and syntactic tagsets can be found in (ZQd06f.",
+        "(POS tags]: r – pronoun, n – noun, v – verb.",
+        "m – numeral, q – classifier.",
+        "w – punctuation.",
+        "[Syn tags]: np – noun phrase, mp – numeral-classifier phrase, vp – verb phrase, dj – simple sentence pattern, zj – complete sentence.",
+        "words in the sentence.",
+        "Let S=< 1i T> be the input sentence for syntactic analyzing, where W=w1,w2,...,wn is the word sequence in the sentence, and T=ti,t2,...an is the corresponding POS tag sequence, i.e., ti is the POS tag of w. Just like the statistical approaches in many automatic POS tagging programs, our job is to select a constituent boundary sequence B' with the highest score, P(B1S), from all possible sequences.",
+        "AB' = arg max P(131,S) = arg max P(SIB)P(B) (1) Assume the effects of word information and POS information are independent, we get",
+        "Furthermore, replace FMB) and P(71B) by the approximation that each constituent boundary is determined only by a functional word(w1) or local POS context(C1).",
+        "In addition, for P(B), it is possible to use simple bigram approximation:",
+        "where, P(bnlbo) = P(bi).",
+        "Therefore, a statistical model for the automatic prediction of constituent boundary is set up.",
+        "The probability estimates of the model are based on the boundary distribution data(S1) described in section 2, and can be calculated through maximum likelihood estimation(MLE) method.",
+        "For example, P(Cilb,)= max[P(h,t, P(ti= maxif (bi,ti,te + I f (bi), f (ti - I f (bi.)]",
+        "(6) There are two directions to improve the prediction model.",
+        "First, many post-editing rules that are manually developed or automatically learned by an error-driven learning method can be used to refine the automatic prediction .otttputsfZQ961.",
+        "Second, a new statistical model based on forward-backward algorithm will produce multiple boluidary predictions for a word in the sentencegZ961."
+      ]
+    },
+    {
+      "heading": "32 Basic matching model",
+      "text": [
+        "In order to build a complete syntactic tree based on the boundary prediction information, two basic problems must be resolved.",
+        "The first one is how to find the reasonable constituents among the partially bracketed sentence.",
+        "The second one is how to label the found constituents with suitable syntactic tags.",
+        "This section will propose some basic concepts and operations of the matching model to deal with the first problem, and section 3.3.1 will give methods to resolve the second one.",
+        "The formal description of the bracket matching model can be found in [ZQd96].",
+        "(1) Simple matching operation",
+        "The simple matching SM(ij) is the matching of the open bracket (b L) and the close bracket (bi R) under the condition: V bk=214 ke(i,j).",
+        "Therefore, a basic matching algorithm can be built as follows: Starting from the preprocessed sentence S=<W,T,B>, we first use the simple matching operation, then the expanded matching operation, so as to find every possible matched constituent in the sentence.",
+        "The complete matching principle will guarantee that this algorithm will produce all matched constituents in the sentence.",
+        "See [ZQd96] for more detailed information of this principle and its formal proof"
+      ]
+    },
+    {
+      "heading": "3.3 Matching restriction schemes",
+      "text": [
+        "The basic matching algorithm based on the complete matching principle is inefficient, because many ungrammatical or unnecessary constituents can be produced by two matching operations.",
+        "In order to improve the efficiency of thealgorikn,.some matching restriction schemes are needed, which include, (1) to label the matched constituents with reasonable syntactic tags, (2) to set the matching restriction regions, (3) to discard unnecessary matching operations according to local preference information."
+      ]
+    },
+    {
+      "heading": "3.3.1 Constituent labeling",
+      "text": [
+        "The aim of labeling approach is to eliminate the ungrammatical matched constituents and label the suitable syntactic tags for the reasonable constituents, according to their internal structure and external context information.",
+        "First, some common erroneous constituent structures can be enumerated under current POS tagset and syntactic tagset.",
+        "Moreover, many heuristic rules to find ungrammatical constituents can also be summarized according to constituent combination principles.",
+        "Based on them, most ungrammatical constituents can be eliminated.",
+        "Then, we can assign esuitable_syntactic tag to each matched constituent through the following sequential processing steps:",
+        "(a) Set the syntactic tags according to the statistical reduction rule, if it can be searched in syntactic tag reduction data(S2) using the constituent structure string as a keyword.",
+        "(b) Determine the syntactic tags according to the intersection of the tag distribution sets of the open and close bracket on the constituent boundary, if they can be found in statistical data(S3).",
+        "(c) Assign an especial tag that is not in the current syntactic set to every unlabeled constituent",
+        "after above two processing steps."
+      ]
+    },
+    {
+      "heading": "3.3.2 Restriction regions for matching",
+      "text": [
+        "There are many regional restricted constituents in natural language, such as reference constituents in the pair of quotation marks: \" \", and the regular collocation phrase: \"zai ... de shihou(when ...)\" in Chinese.",
+        "The constituents inside them can not have syntactic relationship with the outside ones.",
+        "In bracket matching model, these cases can be generalized as a matching restriction region (MR.R), which is informally represented as the region <RL,,RR> in Figure 3.",
+        "Therefore, the basic matching algorithm can be improved by adding the following restrictions:",
+        "(a) To restrict the matching operations inside MRR and guarantee them can't cross the boundary of the MRF-(b) To reduce the IVIRR as a constituent 1V1C(RL,RR) after all matching operations inside MRR have been finished, so as to make it as a whole during the following matching operations.",
+        "The key to use MRR efficiently is to correctly identify the possible restriction regions in the sentences.",
+        "Reference gQi196.1-describes the automatic identification methods for some Chinese MRRs."
+      ]
+    },
+    {
+      "heading": "3.3.3 Local preference matching",
+      "text": [
+        "Consider such a parsing state after the simple matching operation 5M(i,j): [t1-1 MC(is.i) Starting from it, there are two possible expanded matching operations: EM(i-1,j) or EM(i,j+1).",
+        "All of them must be processed according to basic matching algorithm, and two candidate matched constituents: MC(i-1j) and MC(iji-1), will be produced.",
+        "But in many cases, one of these operations is unnecessary because only one candidate constituent may be included in the best parse tree.",
+        "These superfluous matching operations reduces the parsing efficiency of the basic matching algorithm.",
+        "Let \"A B C\" to be the local matching context (For the above example, we have: A=[ti.. 1, B= MC(ij), and ti+1]).",
+        "P(B,C) is the right combination probability for constituent 13' and P(AB) is its left combination probability, which can be easily computed using the constituent preference data (54) described in section 2.",
+        "Set a'=-0:5-as-thedigerence threshold.",
+        "Then, a simple preference-based approach can be added into the basic matching algorithm to improve the parsing efficiency: if P(B,C)-P(A,B)>a, then the matching operation [A,B] will be discarded.",
+        "if P(A,B)-P(B,C)>a, then the matching operation [13,C] will be discarded,"
+      ]
+    },
+    {
+      "heading": "3.4 Statistical disambiguation model",
+      "text": [
+        "This section describes the way the best syntactiC tree is selected.",
+        "A statistical approach to this problem is to use SCFG rules extracted from treebank and set a probability score scheme for disambiguation.",
+        "Assume a constituent labeled with syntactic tag PH is composed by the syntactic components RP/, RP,.",
+        "Its parsing probability F(PR) can be calculated through the following formula:",
+        "where the probability P(PH RP1 RP, RP) comes from statistical data(S5) defined in section 2.",
+        "In addition, if RP; is a word component, then set P(RP) 1.",
+        "By computing logarithm on both sides of equation (7), we will get the probability score Score (PH):"
+      ]
+    },
+    {
+      "heading": "Formally, a labeled constituent MC(I ,n) may be looked as a syntactic tree. Therefore, the most",
+      "text": [
+        "likely parse tree under this score model is then this kind of matched constituent with the maximum probability score, i.e. Tbest argmax Score(MC(l,n))."
+      ]
+    },
+    {
+      "heading": "4 Experimental results",
+      "text": [
+        "In the absence of an available annotated Chinese corpus, we had to build a small Chinese treebank for training and evaluating the parser, which consists of the sentences extracted from two parts of Chinese texts: (I) test set for Chinese-English machine translation systems (Text A), (2) Singapore primary school textbooks on Chinese language (Text B).",
+        "Table 1 shows the basic statistics of these two parts in the treebank.",
+        "sentence, all sentences in the treebank can be further classified as two sets.",
+        "One is simple sentence set, in which every sentence has no more than 20 words.",
+        "The other is complex sentence set, in which every sentence has more than 20 words.",
+        "Therefore, we will obtain complete knowledge about the performance of the parser by the comparison of it on these two types of sentences.",
+        "Table 2 shows the distribution data of simple and complex sentences in the training and test sets.",
+        "2) Matched recall(MR) =- number of correct matched constituents in proposed parse number of constituents in treebank parse 3) Crossing Brackets(CBs) = number of constituents which violate constituent boundaries with a constituent in the treebank parse.",
+        "The above measures are similar with the PARSEVAL measures defined in (131a91].",
+        "Here, for a matched constituent to be 'correct' it must have the same boundary location with a constituent in the treebank parse.",
+        "4) Boundary prediction precision(BPP) =- number of words with correct constituent boundary prediction number of words in the sentence 5) Labeled precision(LP)= number of correcrtabeled-constituents in proposed parse number of correct matched constituent in proposed parse 6) Sentence parsing ratio(SPR) number of sentences having a proposed parse by parser number of input sentences Table 3 shows the experiment results.",
+        "On a 80Mhz 486 personal computer with 16 megabytes RAM, the parser can parse about 138 sentences per second."
+      ]
+    },
+    {
+      "heading": "5 Conclusion",
+      "text": [
+        "In this paper, we propose a statistics-based Chinese parsing algorithm.",
+        "It has the following characteristics:",
+        "(1) The idea to separate constituent boundary prediction as a preprocessing stage from parser, just as the widely accepted ?OS tagging, is based on the following premises: (a) Most constituent boundaries in a Chinese sentence can be predicted according to their local word and POS information, (b) The parsing complexity-carLbe reduced based on constituent boundary prediction.",
+        "(2) The proof of complete metal-fig-principle and the application of matching restriction schemes guarantee the soundness and efficiency of the matching algorithm.",
+        "(3) To use SCFG rules as a main disambiguation knowledge will cut down the hard work to manually develop a complex and detailed disambiguation rule base.",
+        "Although the experimental results are encouraging, there are many possibilities for improvement of the algorithm.",
+        "Some unsupervised training methods for SCFG rules, such as inside-outside algOrithm[LY90] and its improved approachesaPS92],[SYW95]), should be tried in the absence of large-scale Chinese treebanks.",
+        "The disambiguation model could be extended to capture context-sensitive statisticsICC94} and word statisticsaEC95],[Co1961)."
+      ]
+    },
+    {
+      "heading": "Acknowledgments",
+      "text": [
+        "The author would like to thank Prof. Yao Tianshun.",
+        "Prof. Yu Shiwen and Prof. Huang Changning for their kind advice and support, and many colleagues and students in Institute of Computational Linguistics, Peking UniVersitiorLfor proofreading the treebank.",
+        "The research was supported by national natural science foundation Grant 69483063:"
+      ]
+    }
+  ]
+}

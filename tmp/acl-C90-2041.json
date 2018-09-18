@@ -1,0 +1,176 @@
+{
+  "info": {
+    "authors": [
+      "Esther Konig"
+    ],
+    "book": "International Conference on Computational Linguistics",
+    "id": "acl-C90-2041",
+    "title": "The Complexity of Parsing With Extended Categorial Grammars",
+    "url": "https://aclweb.org/anthology/C90-2041",
+    "year": 1990
+  },
+  "references": [
+    "acl-C86-1045",
+    "acl-C90-2030",
+    "acl-E89-1002",
+    "acl-P88-1033",
+    "acl-P88-1034",
+    "acl-P89-1033"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "Instead of incorporating a gap-percolation mechanism for handling certain \"movement\" phenomena, the extended categorial grammars contain special inference rules for treating these problems.",
+        "The Lam-bek categorial grammar is one representative of the grammar family under consideration.",
+        "It allows for a restricted use of hypothetical reasoning.",
+        "We define a modification of the Cocke-Younger-Kasami (CKY) parsing algorithm which covers this additional deductive power and analyze its time complexity."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Categorial grammars have become attractive in the last decade.",
+        "One reason might be the rediscovery of their conceptual elegance: the combinatory potential of a lexeme is stated in direct association with the lexeme itself - in the lexicon.",
+        "A basic (bidirectional) categorial grammar B is defined by a set of categories C := Co U {zIz = x/y or z x\\y; x, y E C} (Co a finite set of basic categories, the category y is referred to as the argument category, the category x is called value category, complex categories are named functor categories), a goal category g (the start symbol) which is a basic category, a lexicon L which is a function from a finite set of lexemes onto a set of finite sets of categories, and the two combination rules \"leftward application\" (app\\) and \"rightward appli-cation\" (app,) which state how argument positions are filled:",
+        "An object U x where U is a sequence of categories is called a sequent.",
+        "This basic concept of categorial grammar may be extended by adding more combinatory rules.",
+        "E.g. the rule of functional composition is the incarnation of the idea how to handle certain phenomena of unbounded dependencies: If a functor category x/y finds only an incomplete argument category y/z, i.e. which, itself, still lacks an argument z, then these two partial categories can be, nevertheless, combined into the category x/z, which expresses the fact that z is still missing.",
+        "(f c\\) y\\z , x\\y x\\z (f c/) xly,y/z xlz In general, functional composition cannot do its job by itself.",
+        "One needs rules which allow for changing the order in which a functor category takes its left arguments with regard to its right arguments.",
+        "The use of the type raising rules is one way to obtain this goal:",
+        "The first extensive use of the concept of functional composition in syntax appears in the paper [Ades, Steedman 1982].",
+        "The rules of functional composition and type raising have already been mentioned in [Lambek 1958] as being theorems of the Lambek calculus.",
+        "To obtain a Lambek categorial grammar L from a basic categorial grammar, one has to add the two rules of functional abstraction (T is a non-empty sequence of categories):",
+        "The rule (abstr\\) reads: If x can be derived from the category sequence T under the assumption that y has been put in front of T then it holds that x\\y is derivable from T alone.",
+        "An example of an L-derivation in a somewhat abbreviated notations is given in figure 22.",
+        "This analysis is an adaptation of ideas due to [Hepple 1990a].",
+        "In the remainder of the paper, we first give a brief overview on other approaches to parsing with extended categorial grammars.",
+        "Then the modified CKY-algorithm is presented."
+      ]
+    },
+    {
+      "heading": "2 General Processing Issues",
+      "text": [
+        "In connection with parsers for extended categorial grammars, the problem of \"spurious ambiguities\" or derivational equivalence has appeared in a massive way: One syntactic (or semantic) reading of a sentence can be derived in many, many ways.",
+        "There have been several proposals in the literature how to tackle this problem.",
+        "The first group of approaches uses repeated equivalence tests such that the spurious ambiguities stay local and do not carry over",
+        "globally to the final parse results ([Karttunen 1989], [Hepple, Morrill 1989]).",
+        "But the presence of local spurious ambiguities means that still some superfluous work has to be done by the parser.",
+        "The second group of methods uses top-down information to avoid equivalent derivations completely.",
+        "This has been illustrated for the method of predictive combination in [Wall, Wittenburg 1989] where, instead of functional composition, rules like the following one are used: (pfcv) xl/(x2/x3),x2/x4 xi/(x4/x3) This method has the shortcoming of changing the set of derivable sequents with regard to the original rule set.",
+        "Check e.g. the sequent xi/(x2/x3), x2/(x4/x5), x4/x6, (x6/x5)/x3 4 xi.",
+        "Since those extended categorial grammars which are based on the explicit use of functional composition and type raising seem to be reluctant to leave behind the problem of spurious ambiguity, we have chosen the Lambek calculus as a different setup for an extended categorial grammar where those rules are theorems but not axioms.",
+        "In the Lambek calculus, the problem of spurious ambiguities disappears since one can define a normal form for derivations which can be carried out on the fly (cf. [Hepple 1990b], [KOnig 1989]).",
+        "One essential characteristic of this normal form is the following: If there is a choice between using an application rule and an abstraction rule, the abstraction rule is preferred.",
+        "Another requirement is that no spontaneous uses of the abstraction rules do occur (cf. Prawitz normal form, [Prawitz 1965]).",
+        "This means that an abstraction rule can only be triggered by lexical material."
+      ]
+    },
+    {
+      "heading": "3 A chart parser for extended categorial grammar",
+      "text": [
+        "The CKY-algorithm ([Aho, Ullman 1972]) works bottom-up.",
+        "It uses a chart of well-formed substrings in order to avoid redundant work.",
+        "By defining a parser for the basic categorial grammars, we introduce our particular representation of chart parsing."
+      ]
+    },
+    {
+      "heading": "3.1 Chart parsing with a basic categorial grammar",
+      "text": [
+        "A chart is a set of items.",
+        "An item is a triple [x, j] which states the fact that the category x has been derived from the continuous part of the input string between the positions i and j.",
+        "We use a slightly alienated sequent notation where the lefthand side of a sequent is the current chart, and the righthand side is the goal category g of the grammar.",
+        "The •-sign marks the current scanning position.",
+        "Figure 1 shows the processing steps which can be performed with a chart.",
+        "The rule (axiom) describes the conditions for successful termination of the parsing process: The chart has been processed until its end and there exists an item which covers the whole input string of length n. The rule (scan) replaces a lexeme in the input string by one of the categories it is assigned to in the lexicon.",
+        "The rule (complete\\) implements leftward functional application: a leftward looking functor which follows immediately its argument causes the addition of a new item with the value category.",
+        "For rightward functional application, this works symmetrically.",
+        "The inference rule-style representation of our algorithm abstracts away from details dealing with the appropriate control mechanism which guarantees that e.g. all possible (complete\\)-steps are performed with one item.",
+        "The completer step is the part of the CKY-algorithm which determines its cubic time complexity.",
+        "The applications of the rules (complete\\) and (complete) stay within the same time bound because the search for a pair of reducible items works as in the original algorithm.",
+        "In particular, the number of items which span the same section of the input string has a constant bound which is the number of subcategories of the categories occuring in the lexicon.",
+        "This number is proportional to the size of the finite lexicon."
+      ]
+    },
+    {
+      "heading": "3.2 Extending the basic chart parser",
+      "text": [
+        "In the traditional concept of a chart every item is visible to every other item in the chart.",
+        "For the Lambek calculus, general accessability is inadequate because of its use of hypothetical reasoning: The ab",
+        ";;traction rules assert hypothetical constituents which fnust only be used in the subproof for the premise sequent.",
+        "Thus, the interaction of items must be regulated in a more fine-grained way.",
+        "Fig.",
+        "3 shows a section of an L-derivation where a use of an abstraction rule occurs3.",
+        "The complex :irgument of the emitter category x/[...(y/x2q)\\xip)...\\xii)/x211 triggers the act of asserting its own arguments as hypothetical categories (in a fixed order) in addition to a given non-empty category sequence xi ...xi.",
+        "We call the sequence of hypothetical categories which are asserted on the lefthand side the left mini-chart, its symmetric counterpart is a right mini-chart.",
+        "A subproof is carried out on the basis of these additional premise categories.",
+        "If this subproof yields a category g, then x spans the whole sequence of premises under consideration.",
+        "To perform an abstraction rule, obviously an in-terinirigling of top-down and bottom-up directed actions is needed.",
+        "The sequence xi ...xi, i.e. the po-citions where the mini-charts are attached, has to be chosen non-deterministically.",
+        "Instead of asserting copies of the mini-charts at all positions in the current chart, it is more convenient to put the mini-charts apart and to keep them accessible from all chart positions.",
+        "An adapted completer rule will built additional items on the basis of the extended chart.",
+        "Since there might be several emitter categories in the original sequent, it is important to provide the asserted mini-charts with enough information in order to control their use.",
+        "In particular, attachment chains can arise because mini-charts can be attached to other mini-charts.",
+        "We assume that each value category of a complex argument of an emitter is marked with a unique number Tn.",
+        "'Items also have unique numbers a.",
+        "A (left) index of an item is now a quadruple , m, i, p) where t stands for the type of mini-chart the item belongs to: 1 (left), r (right), or n (none); in is the number of the subcategory which caused the assertion of this item; i is a position number relative to Ole (mini-)chart with type t and number nf; p is the 11 umber of an item in another part of the chart where the mini-chart is attached to.",
+        "For items which have been derived on the basis of the items given by the input string, t= n, rn = 0, and p 0.",
+        "In figure 4, the extended algorithm is presented.",
+        "From the following discussion, various details and, in particular, a proof of correctness, are omitted due to the lack of space.",
+        "The rule (compl\\s) is roughly equivalent to (complete\\) in the basic algorithm: two items which are adjacent in the same piece of the chart are combined.",
+        "The rule (comply) allows an item at the beginning of a right mini-chart to combine with some other item with number al on its left.",
+        "The function newlast adds the information about this new attachment point at the end of the"
+      ]
+    },
+    {
+      "heading": "3 In the following, symmetric cases are mostly omitted.",
+      "text": [
+        "right attachment chain of item a2 (see item 6 in figure 2 where the item id 0 is replaced by the id 5 because of a (comply r)-step which combines items 5 and 9).",
+        "In order to avoid cycles, the intersection of the mini-chart numbers which are found by traversing all the four attachment chain's has to be empty.",
+        "The work of the abstraction rule (abstr\\) is split into the two sub-tasks: The rule (emit\\) performs the assertion of the mini-charts.",
+        "The rule (disc\\) (\"discharge\") is a specialization of the completer rule for functor categories which are emitters.",
+        "The conditions in the rule guarantee the following: Both mini-charts which are due to the current emitter must have been used completely in deriving y.",
+        "The right index of the attachment point p4 of y (determined by a function ri) must be equal to the left index of the emitter.",
+        "The value category x must not bear any information about the involvement of the current mini-charts in its derivation.",
+        "This is achieved by going back to the attachment point of the left mini-chart.",
+        "Since each of the 0(n) mini-charts for an input string of length n can only be used once in a derivation, and since we currently do not know any reasonable restrictions, we assume that, any one of the 0(n!)",
+        "permutations of the mini-charts possibly can be used in a specific derivation.",
+        "For every item in the initial chart, 0(n!)",
+        "completer-steps can be possible.",
+        "This means that the whole parser has a time complexity of 0(n2 x n!).",
+        "In order to evaluate the result for the given algorithm, one has to be aware of the fact that this parsing procedure can handle n-fold extraction from phrases - to speak linguistically.",
+        "If we restrict ourselves to single extraction (this can be implemented by checking the length of the attachment chain before performing (comply r)) then the time complexity reduces drastically: The formula n!/(n k)!",
+        "for the variations of length k of a set of length n equals n for k = 1.",
+        "Thus, the time complexity of the algorithm is 0(n3).",
+        "If we want to describe twofold extraction like in figure 2, i.e. use a \"2-restricted version of Lc\", the algorithm needs 0(n4) steps for deriving an input string of length n. Conjecture: 1-restricted Lc covers the rules of functional composition and type raising, whereas 2 restricted Lc suffices to derive the rules of predictive combination."
+      ]
+    },
+    {
+      "heading": "4 Conclusion",
+      "text": [
+        "We have presented an extension of the CKY-algorithrn for an instance of the family of extended categorial grammars which uses hypothetical reasoning, i.e. for the bidirectional Larnhek categorial grammars.",
+        "Although the current algorithm has an undesirable time complexity in its general case, one can define restricted versions which cover the kind of structures found in linguistic examples with time complexity 0(n3) or 0(n4) depending on the fact",
+        "whether one wishes to describe single or double extraction from phrases.",
+        "It is an interesting question whether better algorithms for the general case can be found.",
+        "There are many ways to improve this new algorithm concerning its \"average complexity\" in practical applications.",
+        "For example, the search for a partner item in a completer-step could be reduced by using appropriate heuristics.",
+        "Further increases in efficiency can be expected, if one allows for arbitrary embedding of disjunctions and slashes in categories (cf. [Benthem 1989], [Morrill 1989]) instead of using the flat set notation which amounts to a disjunctive normal form of categories in the lexicon.",
+        "Theoretical complexity results for a group of categorial grammars reaching beyond context-free languages are known, as well, From the fact that certain extended versions of categorial grammars (CCG) are equivalent with the Tree Adjoining Grammars (TAG) ([Weir, Joshi 1988]), the 0(n4 log n)-time complexity of TAG-parsers ([llarbusch 1989]), in principle, carries over to CCG.",
+        "The connection of the propositional grammar calculi as discussed above with a unification device for first order terms is done by taking care of the variable bindings in the hypothetical categories which are asserted by the abstraction rules.",
+        "The recognition problem is still decidable (cf. [Pareschi 1988]) although surely not well-behaved as this is the case for all non-propositional grammars.",
+        "For example, the recognition problem for a basic categorial grammar with feature unification is NP-complete ([Merrill 1988]).",
+        "Higher order versions of categorial grammars like the ones being produced in the CUG/UCG-frameworks ([Uszkoreit 1986],[Zeevat et al.",
+        "1986]) where variables can range over categories are in general undecidable because higher order unification itself is undecidable."
+      ]
+    },
+    {
+      "heading": "5 Acknowledgements",
+      "text": [
+        "The research reported in this paper is supported by the LILOG project, and a doctoral fellowship, both from IBM Deutschland GmbH, and by the Esprit Basic Research Action Project 3175 (DYANA).",
+        "I thank Andreas Eisele for discussion.",
+        "The responsibility for errors resides with me."
+      ]
+    }
+  ]
+}

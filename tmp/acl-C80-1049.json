@@ -1,0 +1,164 @@
+{
+  "info": {
+    "authors": [
+      "Shigeharu Sugita"
+    ],
+    "book": "International Conference on Computational Linguistics",
+    "id": "acl-C80-1049",
+    "title": "Text Processing of Thai Language \"The Three Seals Law\"",
+    "url": "https://aclweb.org/anthology/C80-1049",
+    "year": 1980
+  },
+  "references": [],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "Computer softwares for processing Thai language are developed at National Museum of Ethnology,Osaka,Japan.",
+        "We use a popular intelligent terminal TEKTRONIX 4051 for inputting and editing,IBM 370 model 138 for KWIC making and sorting, and CANON's laser beam printer for final output.",
+        "Using these systems,\"Kotmai Tra Sam Duang\"(the Three Seals Law)which contains many kind of laws and ordinances proclaimed in Thai between 1350-1805 A.D. is computerized.",
+        "This text has 1700 pages and about 1400000 letters.",
+        "KWIC index becomes 200000 lines.",
+        "Some statistical data for this text are obtained.",
+        "They are occurrence frequency data of single letter,group vowel, and letter combination(digram),etc.",
+        "Aknowledgements This report is a result of joint project at National Museum of Ethnology.",
+        "The member are Y.Ishii, I.Akagi, S.Tanabe Y.Sakamoto, S.Uemura, A.Ishizawa, M.Sawamura, K.Sasaki, Y.Kurita, and S.Sugita.",
+        "Their research field are eth-nology,linguistics,computer science,and sociology etc.",
+        "We thanks Mr..Sophon Chitthasatcha, Miss Sumaleé Maungpaisaln and Miss Hiroe Matsumoto for their help in segmentiltion, inputting and correction.",
+        "We also thanks Prof. K.Nakayama and A.Oikawa of Tsukuba University for their support on making Thai letter patterns and output software for laser beam printer."
+      ]
+    },
+    {
+      "heading": "Introduction",
+      "text": [
+        "In the field of ethnology or cultural anthlopology,ethnographies are very important information sources for comparative study of many different societies.",
+        "Not only bibliographic data but also contents of text are necessary.",
+        "HRAF(Human Relations Area Files), which was developed by Dr. Murdock and now managed by HRAF Inc. at Yale Univer-sity,is a unique retrieval system.",
+        "They use about 800 category codes by which analysts classify the contents of each pages of books.",
+        "Though HRAF system is an elaborate work,it is not easy to search necessary data by user terms,that is,natural words.",
+        "If whole text are fed into computer,it is very easy to retrieve any part of text by the same natural words used in the text.",
+        "On-line retrieval system is smart and effective.",
+        "But sometimes researcher wants printted index like as KWIC which is usable at any time and place.",
+        "Combining KWIC index and thesaurus diction-ary,it gives us a very powerful tools for searching special expression hidden in the text.",
+        "Till quite recentry,at least in Japan,most cases of computer processing of natural language are distored to indo-europian language or Japanese.",
+        "In the ethnological studies,we must treat many areas in the world.",
+        "We need computer softwares which process unfamiliar languages for us,such as Arabic,Korean, Sumerian,Mongolian,Devanagari,Thai,etc.",
+        "National Museum of Ethnology at Osaka has introduced several computer systems to encourage humanity study,and now is developing many application softwares which are usable by an,, researchers who do not know computer programming or how to use computer.",
+        "This report describes one of such application softwares which treats Thai letters.",
+        "The points of our work are as follows; 1) A popular computer terminal is used for Thai letter inputting and editing.",
+        "It is easy to use because dead key operation is not necessary.",
+        "2) KWIC making and sorting software are implemented using FORTRAN language which can be transfered to any other computer system.",
+        "The algorithm is not so complex but it was not implemented only because they are not popular language.",
+        "3) Statistical data of the text are obtained.",
+        "They are occurrence frequency of single letter,group vowel,and letter combination.",
+        "These data will help us as a contexial data in case of OCR.",
+        "Segmentation There is no segmentation problems in case of indo-europian languages,because they have clear separator for word unit such as space or comma.",
+        "There are, however, many languages in Asia which have no clear separator.",
+        "They are Korean (Hangul),Chinese,Japanese,and Thai,etc.",
+        "Examples shown below mean that there exist several different segmentation.",
+        "Segmentation affects to the meaning of sentence and retrieval efficiency."
+      ]
+    },
+    {
+      "heading": "Fig.1 Examples of different segmentations",
+      "text": [
+        "To cut into long unit is effort saving, but it is difficult to search the string included in that unit.",
+        "To cut into short unit is effective for searching, but too many keywords appear.",
+        "The text, the Three Seals Law, has no word separator, as shown in fig.3.",
+        "So it is necessary to segment into appropriate units before making KWIC index But it is difficult problem because segmentation needs well understanding of meaning, which conversely needs KWIC index.",
+        "We adopted a practical method which at first cut into long unit and then cut again after looking KWIC index.",
+        "Inputting Terminal We use a popular intelligent graphic terminal TEKTRONIX 4051 which has usual alphabet keyboard.",
+        "We sticked Thai letter labels on the side of each key as if it looks like Thai typewriter.",
+        "A code table of Thai letters and coresponding english alphabets is shown in Table 1.",
+        "The characteristics of this terminal are;",
+        "1) It generates Thai letter pattern by BASIC program in graphic mode.",
+        "User can affirm the letter he typed.",
+        "2) It has local cassett memory, so that user can input and edit data anytime, even when host computer is not working.",
+        "3) By way of communication line, stored data can be transmitted to host computer for time consuming work.",
+        "4) It is easy to implement a flexible Thai language editor, which accept alphabet commands and display Thai letters.",
+        "5) Copy of screen can be taken by the hard copy unit attached to it.",
+        "Rules for text inputting The text has many irregular expressions.",
+        "So following expediencies are adopted.",
+        "1) Quotated words or phrases from Pali language are skipped by inserting special symbol to indicate there are skipped words.",
+        "-331",
+        "2)Tables are skipped.",
+        "3)Special expressions for money,dating, and fractional number are transformed into sentence form.",
+        "4)Vertical expression shown in Fig.3 are attached special symbol after and before the word.",
+        "5)Parallel expression in the middle of line,and tree like expression are transformed into linear form from which original form can be reconstructable as much as possible.",
+        "Order of input The order of input of Thai letters to the computer is same with the order in which one would strike keys of typewriter.",
+        "A line editor for Thai text is implemented on TEKTRONIX 4051 terminal.",
+        "Commands are english like term and Thai text are displayed by Thai letter.",
+        "This editor suporse that there are volume number,page number,and line number."
+      ]
+    },
+    {
+      "heading": "ENTER THE VOLUME NUMBER= v",
+      "text": [
+        ";specify volume number *PAGE,N ;specify page number.",
+        "Until next page command,this page is held in memory.",
+        "*LADD XX ;XX is added to this page as a last line *LINS,M XX;XX is inserted as a new line after line number m *LDEL,M ;line number m is deleted from this page *SHOW,M ;string of line number m is displayed in Thai letter *LGET,M ;line number m is object to be edited by following subcommands *ADB XX ;XX is added to the beginning of line m *ADE XX ;XX is added to the end part of line m *DEL XX ;string XX is deleted from line m. If there are several XX's in line m, the position number are displayed.",
+        "Enter corresponding number after prompt \"which?\""
+      ]
+    },
+    {
+      "heading": "*INS XX BEFORE YY",
+      "text": [
+        ";string XX is inserted before string YY.",
+        "If several YY's are there,type corresponding number after prompt \"which?\""
+      ]
+    },
+    {
+      "heading": "*REP XX BY YY",
+      "text": [
+        ";string XX is replaced by YY.",
+        "If several YY's are there, type corresponding number after prompt \"which?\"",
+        "*SEE ;three letters after and before changed part are displayed *PART,0 ;five letters of beginning part of line m are displayed *PART,100;last five letters of line m are displayed *PART,K ;five letters from kth position are displayed",
+        "The most obvious complication is the fact that in Thai writing as many a-3 three separate characters can appear at the same holizontal position in four different vertical positions.",
+        "Therefore number of letters to take as before or after context must be carefuly counted.",
+        "As a index of every unit,volume number,page number and line number are attached to the left side."
+      ]
+    },
+    {
+      "heading": "Computer algorithm",
+      "text": [
+        "1) Every occurrence of prepositioned vowel (L urn, ) is moved to a position immediately following consonant it preceeds.",
+        "2) Diacritic symbols are moved to the end of word with the indication of position counted from the end of word.",
+        "3) Each letter is replaced by the code given in Table 1.",
+        "4) Then two words are compared as if they are numerals."
+      ]
+    },
+    {
+      "heading": "Statistical data",
+      "text": [
+        "Total number of letters in the machine readable text is 1362602 which include special symbols such as separa-tor,skip symbol,comma,etc.",
+        "Total line number is 29582.",
+        "In Table 2 is shown letter occurrence frequency for each letter.",
+        "Table 3 shows occurrence frequency of compound vowels.",
+        "Combination frequency of two letters are listed in Table 4.",
+        "They are taken in order from the highest frequency.",
+        "The combination is taken as shown below.",
+        "Fig.5 show a distribution of the ratio of upper and lower letters to the total number of letters in a line.",
+        "Average ratio is 19%.",
+        "A simple culculation give a ratio of 23% which is number of upper and lower letters among the horizontal positions.",
+        "This means that in a line of Thai letter upper and lower letters is about 23% of normal horizontal positions.",
+        "T=total number of letters in one line S=total number of upper and lower letters in the line M=T-S=number of horizontal positions in the line",
+        "Printing Laser beam printer CANON LBP-3500 is a laser beam printer which can print out any kind of figure and characters.",
+        "In a character mode,character must be defined as a dot matrix of 8X8,16X16,24X24,32X32,etc.",
+        "We use 16X16 matrix as a minimum module of Thai letter pattern.",
+        "Thai characters are classified into fifteen types from the size of dot matrix.",
+        "The largest pattern has 48X32 matrix which uses 6 modules.",
+        "One text line is printed by five horizontal zone.",
+        "Each zone has 16 dot vertical width.",
+        "The horizontal width of each letter can be changed character by character.",
+        "But in a same zone,vertical size can not be changed.",
+        "Control of different letter width The complex part of output program is to control the width so that heading part of KWIC index come in a line vertically.",
+        "An example of KWIC index is shown in Fig.6.",
+        "We have printed about 200000 lines."
+      ]
+    },
+    {
+      "heading": "Reference",
+      "text": []
+    }
+  ]
+}

@@ -1,0 +1,191 @@
+{
+  "info": {
+    "authors": [
+      "Jugal K. Kalita",
+      "M. J. Colbourn",
+      "Gordon I. McCalla"
+    ],
+    "book": "International Conference on Computational Linguistics and Annual Meeting of the Association for Computational Linguistics",
+    "id": "acl-P84-1088",
+    "title": "A Response to the Need for Summary Responses",
+    "url": "https://aclweb.org/anthology/P84-1088",
+    "year": 1984
+  },
+  "references": [
+    "acl-P82-1028",
+    "acl-P82-1029"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "In this paper we argue that natural language interfaces to databases should be able to produce summary responses as well as listing actual data.",
+        "We describe a system (incorporating a number of heuristics and a knowledge base built on top of the database) that has been developed to generate such summary responses.",
+        "It is largely domain-independent, has been tested on many examples, and handles a wide variety of situations where summary responses would be useful."
+      ]
+    },
+    {
+      "heading": "1. Introduction",
+      "text": [
+        "For over a decade research has been ongoing into the diverse and complex issues involved in developing smart natural language interfaces to database systems.",
+        "Pioneering front-end systems such as PLANES [15], REQUEST [12], TORUS [11] and RENDEZVOUS 111 experimented with, among other things, various parsing formalisms (e.g. semantic grammars, transformational grammars and augmented transition networks); the need for knowledge representation (e.g. using production systems or semantic networks); and the usefulness of clarification dialogue in disambiguating a user's query.",
+        "Recent research has addressed various dialogue issues in order to enhance the elegance of the database interactions.",
+        "Such research includes attempts to resolve anaphoric references in queries [2,4,14,16], to track the user's focus of attention [2,4,14,16], and to generate cooperative responses.",
+        "In particular, the COOP system [7] is able to analyze presumptions of the user in order to generate appropriate explanations for answers that may mislead the user.",
+        "Janas [51 takes a similar approach to generate indirect answers instead of providing direct inappropriate ones.",
+        "Mays [8] has developed techniques to monitor changes in the database and provide relevant information on these changes to the user.",
+        "McCoy [01 and McKeown [101 attempt to provide answers to questions about the structure of the database rather than extensional information as to its contents.",
+        "We investigate herein, one particular approach to generating \"non-extensional\" responses - in particular the generation of \"summary\" responses.",
+        "Generating abstract \"summary\" responses to users' queries is often preferable to providing enumerative replies.",
+        "This follows from an important convention of human dialogue that no participant should monopolize the discourse (i.e. \"be brier' [3]).",
+        "Furthermore, extensional responses can occasionally mislead the user where summary responses would not.",
+        "Consider the following example [131: QI: Which department managers earn over $40k per year?",
+        "Si-I: Abel, Baker, Charles, Doug.",
+        "SI-2: All of them.",
+        "By enumerating managers who earn over $40k, the first response implies that there are managers who do not earn that much.",
+        "In linguistic pragmatics, this is called a sealer implicature [3].",
+        "In circumstances where the user is liable to infer an invalid scalar implicature, the system should be able to produce an appropriate response to block the generation of such an inference as is done by the response S1-2."
+      ]
+    },
+    {
+      "heading": "2. Overview of the System",
+      "text": [
+        "We describe herein a system which has been developed for the generation of summary responses to user's queries (fully detailed in [6]).",
+        "The system arrives at concise responses by employing a search of the relevant data for the existence of \"interesting\" patterns.",
+        "It uses heuristics to guide this search and a knowledge base to enhance efficiency and help determine \"interestingness\".",
+        "The database used to test the system is a simple + Now, at the Department of Computer Science, University of Waterloo, Waterloo, Ontario, N2L 3G1, CANADA",
+        "relational database of student records, although the methods developed are largely domain-independent.",
+        "In order to concentrate on the response generation issues, the input/output for the system is in an internal form - an actual parser and surface language generation capabilities will be incorporated in future versions of the system.",
+        "The flow of control in the system is simple.",
+        "The formal representation of the query is used to access the database and obtain the tuples which satisfy the user's query (which we will call T „,a; the other tuples will be called T„).",
+        "After the data is accessed, the system, in consultation with its knowledge base, calls upon its heuristics to find interesting non-enumerative patterns.",
+        "The heuristics are tried in order, until one succeeds or all fail.",
+        "When a heuristic detects an appropriate pattern, the system terminates the search and produces the response as dictated by the successful heuristic.",
+        "If all heuristics fail, the system reports its inability to produce a descriptive response.",
+        "In any event, the user may ask the system to produce an extensional answer by listing the data if he/she so desires."
+      ]
+    },
+    {
+      "heading": "3. The Heuristics",
+      "text": [
+        "The heuristics employed in the system are procedural in nature.",
+        "They guide the system to search for various patterns that may exist in the data.",
+        "The heuristics are linearly ordered; they range from simple to complex.",
+        "The ordering of the heuristics assumes that if more than one descriptive answer can be obtained for a query, it is sensible to produce the \"simplest\" one.",
+        "The equality heuristic determines if all data values appearing for a particular attribute A in Tgyd are the same (say, a).",
+        "If so, and if no tuple in T„„u, has the same value for the attribute A, the general formulation of the response is: \"All tuples having the value a for attribute A.\" The particular value under consideration must be one of the designated \"distinguishing values\" for the attribute.",
+        "Response S1-2 (above) is an example of what this heuristic would do.",
+        "The dual of the equality heuristic is the inequality heuristic where instead of looking for equalities, the system searches for inequalities.",
+        "The inequality heuristic enables the system to produce responses such as: Q2: Which students are taking makeup courses?",
+        "52: All students with non-Computer Science undergraduate background.",
+        "Here, the value \"Computer Science\" for the attribute UNIVERSITY-DEPARTMENT in the database under consideration may be considered a distinguishing value.",
+        "If the equality or inequality heuristics are not applicable in their pure form and there are a \"few\" (\"few\" depends on the relative number of tuples in T and 2\"„„,, and some other factors) tuples in T„„,„I which do not satisfy the requirement of the heuristic, a modification of the response produced by the heuristic may be presented to the user.",
+        "An example of such a modification is seen in the following: Q3: Which students are receiving University scholarships?",
+        "S3: All but one foreign students.",
+        "In addition, two Canadian students are also receiving University scholarships.",
+        "Another set of heuristics, the range heuristics, determine if the data values for an attribute in the tuples in 7',„„, are within a particular well-defined range.",
+        "There are two main types of range heuristics - one is concerned with maximum values and the other with minimum values.",
+        "We will discuss only the maximum range heuristic here.",
+        "The maximum heuristic determines if the values of an attribute for all tuples in Tv„, are below a particular limit while the values of the attribute in all tuples in are not.",
+        "An example response produced by the maximum heuristic is: Q4: Which students have been advised to discontinue studies at the University?",
+        "S4: All students with a cumulative CPA of 2.0 or less.",
+        "In some cases, the maximum and minimum heuristics may be used together to define the endpoints of a range of values (for some attribute) which the tuples in T , satisfy.",
+        "This results in a range specification.",
+        "If a is the minimum value and # is the maximum value of the attribute A in T1, then the corresponding response is: \"All tuples with the value of attribute A ranging from a to r An example of an answer with range specification is: Q5: Which students are in section 1 of CMPT110.3?",
+        "S5: All students with surnames starting with 'A' through 'F'.",
+        "There are several heuristic rules which the system follows in producing answers with range specification.",
+        "For example, one of these rules limits the actual range specified in an answer to 75% or less of the potential range of the attribute values.",
+        "This limitation of 75% is not sacrosanct; it is an arbitrary decision by the implementor of the knowledge base.",
+        "In the current implementation it is believed that if the actual range is more than 75% of the potential range, no special meaning",
+        "can be attributed to the occurrence of this range in TrJaj.",
+        "Another rule requires that the actual range specified in an answer must not be so small as to identify the actual tuples which constitute the answer.",
+        "For example, we should not produce a response such as: \"All students with student-id-no between 821661 and 821663\" In fact, such answers are not brief when compared to the size of the set of tuples which they qualify.",
+        "If none of the above heuristics can be applied successfully, the disjunction heuristic attempts to divide the tuples in T\" into a number of subsets and determine whether the above heuristics are appropriate for all of these subsets.",
+        "The number of such subsets should be \"small\"; if too many subsets are identified, it is no more elegant than listing the data, which we are trying to avoid.",
+        "The number of allowable subsets partially depends upon the number of tuples in T\".",
+        "An example showing three partitions based on the values of three different attributes is: Q7: Which graduate students are not receiving University scholarships?",
+        "S7: Students who are receiving NSERC scholarships or have cumulative GPA less than 6.0 or have completed at least two years at the University.",
+        "If none of the above heuristics produces a satisfactory response, the foreign-key heuristic searches other",
+        "and the attributes via which such a relation can be joined with the original target relation can be obtained from the knowledge base to be discussed later.",
+        "An example of such a dialogue is:",
+        "While attempting to answer Q8, the system finds that the question pertains to the relation COURSE-REGISTRATIONS.",
+        "However, it fails to obtain any interesting descriptive pattern about the tuples in T\" by considering this relation alone.",
+        "Hence, the system consults the knowledge base and finds that the relation COURSE-REGISTRATIONS can be joined with the relation STUDENTS.",
+        "It takes the join of all the tuples constituting T, with the relation STUDENTS and projects the resulting relation on the attributes of the relation STUDENTS.",
+        "Let us call these tuples T„,\".",
+        "Next, it attempts to discover the existence of some pattern in the tuples in T„,„,.",
+        "It succeeds in producing the response given in S8 by employing modified equality heuristic."
+      ]
+    },
+    {
+      "heading": "4. The Knowledge Base",
+      "text": [
+        "The knowledge base incorporates subjective perceptions of the user as to the nature and contents of the database.",
+        "It consists of two types of frames - the relation and the attribute frames.",
+        "These frames may be considered to be an exten'sion of the database schema.",
+        "The frames are created by the interface builder, and different sets of frames must be provided for different types of users and/or different databases.",
+        "Each relation frame corresponds to an actual relation in the database; it provides the possible links with all other relations in the database.",
+        "In other words, these frames define all permissible joins of two relations.",
+        "If a direct join is not possible between two specific relations, the frame contains the name of a third relation which must be included in the join.",
+        "The information in the relation frames is useful in the application of the foreign-key heuristic.",
+        "The attribute frames play a role in our system similar to that played by McCoy's axioms [0].",
+        "Each attribute frame corresponds to an attribute in the relations in the database.",
+        "In addition to a description of the attributes, these frames indicate the nature and range of the attribute's potential values.",
+        "The expected range of values that an attribute may assume is helpful to the range heuristics.",
+        "Information regarding the relative preferability of the various attributes is also included.",
+        "Each attribute frame also contains a slot for \"distinguishing values\" which the attribute might take.",
+        "This slot provides information for distinguishing a subclass of an entity from other subclasses.",
+        "The contents of this field are useful in producing descriptive responses to users' queries.",
+        "This slot contains one or more clauses, each of the following format (1 means optionality; `...' means arbitrary number of repetitions of the immediately preceding clause):",
+        "If all the values of the attribute in T„ satisfy \"applicable-operator-1-1\" with respect to the contents of the list \"list-of-distinguishing-values-1\", the actual values may be termed as \"denomination-1-1\" for producing responses.",
+        "If the value of \"denomination-1-1\" is null, no names can be attached to the actual values of the attribute.",
+        "The Distinguishing Values slot enables the implementor to specify classifications that he would a priori like to appear meaningfully in descriptive responses.",
+        "This information enables the system to faithfully reflect the implementor perceived notions regarding how a database entity class may be appropriately partitioned into subclasses for generating summary responses.",
+        "It is often useful to provide descriptive answers on the basis of certain preferred attributes.",
+        "For example, for the STUDENTS relation, it is more \"meaningful\" to provide answers on the basis of the attribute NATIONALITY or UG-MAJOR, rather than STUDENT-ID-NO or AMOUNT-OF-FINANCIAL-AID.",
+        "However, it is impossible to give a concrete weight regarding each attribute's preferability.",
+        "Therefore, we have classified the attributes into several groups; all attributes in a group are considered equally useful in producing meaningful qualitative answers to queries.",
+        "This classification means that it is preferable and more useful to produce descriptive responses using the attributes in preference category 1 than the attributes in category 2, 3 or 4.",
+        "This categorization is based on one's familiarity with the data.",
+        "The decision is subjective, and hence it is bound to vary according to the judgement of the person building the interface.",
+        "In the Preference Category slot, we have an entry corresponding to each relation the attribute occurs in.",
+        "The information in this slot ensures that the system chooses a description based on the most salient attribute(s) for producing a response.",
+        "A simple example of an attribute frame is given below:",
+        "The example shows the frame for the attribute NATIONALITY belonging to the STUDENTS relation.",
+        "It assumes character values.",
+        "To be valid, the values must be members of a previously compiled list of countries.",
+        "It belongs to the preference category I discussed above.",
+        "Let us consider the clause ((Canadian)(=)(0 foreign)) in the Distinguishing Value slot.",
+        "The value \"Canadian\" is a distinguishing value in the domain of values which the attribute may take.",
+        "The term \"(=)\" indicates that it is possible to identify a class of students using the descriptive expression \"NATIONALITY = Canadian\".",
+        "If NATIONALITY 0 \"Canadian\", the student may be referred to as a \"FOREIGN\" student.",
+        "Similarly, if the value for a student under the attribute NATIONALITY is a member of the set (U.K. U.S.A. Australia ...), he may be designated as coming from an English-speaking country.",
+        "This information may be helpful in answering a query such as: Q9: Which students are taking the \"Intensive English\" course in the Fall term?",
+        "SO: Most entering foreign students from non-English speaking countries."
+      ]
+    },
+    {
+      "heading": "5. Concluding Remarks",
+      "text": [
+        "A system incorporating the details explained above has been implemented and extensive experiments have been performed using a simple student database.",
+        "Every heuristic has demonstrated its usefulness in pro-clueing summary responses by being successful in this environment.",
+        "The heuristics are domain-independent, and the knowledge base is easily modifiable to adapt to the requirements of a new user or database domain.",
+        "For performance enhancement, the knowledge base may be augmented with an additional component for storing away the results of the preceding database interactions to obviate the need to search the database for every query.",
+        "The extended knowledge base may be utilized for improved modelling of the user's beliefs and perceptions about the data by providing a mechanism",
+        "to introduce the user's own definitions and descriptive terminologies.",
+        "Further research is necessary in order to obtain an acceptable structure for this additional component of the knowledge base.",
+        "In addition, the factors - linguistic or otherwise, that influence the appropriateness of the generation of a summary response for a give question at a particular point in the interaction are also to be investigated.",
+        "Generation of summary responses has important implications if the interactions with a database management system are to have the properties and constraints normally associated with human dialogue.",
+        "Interactions with traditional database management systems lack the \"intelligence\" and elegance which we ascribe to human behaviour.",
+        "We feel that providing summary responses will be an important tool to be used in achieving database interfaces that behave intelligently and cooperatively."
+      ]
+    },
+    {
+      "heading": "Acknowledgements",
+      "text": [
+        "We would like to thank the National Science and Engineering Research Council of Canada (NSERC) and the University of Saskatchewan for supporting this research both financially and through the provision of computing facilities.",
+        "We would also like to express our gratitude to Paul Sorensen and Robin Cohen for their many helpful comments during the course of the research."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,602 @@
+{
+  "info": {
+    "authors": [
+      "Kenneth Mark Colby",
+      "Roger C. Parkison",
+      "Bill Fought"
+    ],
+    "book": "ACL Microfiche Series 1-83, Including Computational Linguistics",
+    "id": "acl-J79-1005",
+    "title": "Pattern-Matching Rules for the Recognition of Natural Language Dialogue Expressions",
+    "url": "https://aclweb.org/anthology/J79-1005",
+    "year": 1979
+  },
+  "references": [],
+  "sections": [
+    {
+      "heading": "ABSTRACT",
+      "text": [
+        "Man-machine dialogues using everday conversational English present difficult protblems for computer processing of natural languagu.",
+        "Grammar-based parsers which perform a word-by-word, parts-of-speeLli analysis are too fragile to operate satisfactorily in real time inlerviewu allowing unrestricted English.",
+        "In constructing a simulation of paranoid thought processes, we designed an algorithm capable of handling the linguistic expressions used by intet.viewers in teletyped diagnostic psychiatric interviews.",
+        "The algorithm uses pattern-matching rules which attempt to characterize the input expressions by progressively transforming them into patterns which match, completely or fuzzily, abstract stored patterns.",
+        "The power of this approach lies in its ability to ignore recognized and Unrecognized words and still grasp the meaning of the message.",
+        "The methods utilized are general and could serve any \"host\" system which takes natural language input."
+      ]
+    },
+    {
+      "heading": "INTRODUCTION",
+      "text": [
+        "The probiem pilJ recognizing natural language dialogue expressions in real time.",
+        "Previous approaches.",
+        "The problem of simulating paranoid linguistic behavior in a psychiatric interview.",
+        "Summary of a method for transforming natural Iiinggage input expressions until a pdttern is obtained which completely or fuzzily matches a more abstract stored pattern."
+      ]
+    },
+    {
+      "heading": "OVERVIEW",
+      "text": [
+        "The paranoid model (PARRY2) consists of a RECOGNIZE module which performs the task of recognizing the input and a RESPOND module which decides how to respond.",
+        "The RECOGNIZE module functions independently of the RESPOND module except in the casp of anaphoric refarences which it provides on request from the language recognizer."
+      ]
+    },
+    {
+      "heading": "PREPROCESSING",
+      "text": [
+        "Dictionary lookup and translations.",
+        "How misspellings and typing errors are handled."
+      ]
+    },
+    {
+      "heading": "SEGMENTING 13",
+      "text": [
+        "Bracketing the pattern into shorter segments.",
+        "A \"simple\" pattern contains no delimiters; a \"complex\" pattern is made up of two or more simple patterns."
+      ]
+    },
+    {
+      "heading": "MATCHING INDIVIDUAL SEGMENTS 14",
+      "text": [
+        "Negations and anaphora.",
+        "Matching the pattern with stored patterns having pointers to response functions in memory.",
+        "If a complete match is not found, a fuzzy match is attempted by deleting elements from the pattern one at time.",
+        "If no match is found, the RESPOND module must decide what to do."
+      ]
+    },
+    {
+      "heading": "COMPLEX-PATTERN MATCH 19",
+      "text": [
+        "Complete and fuzzy matching when the pattern contains two or more segments."
+      ]
+    },
+    {
+      "heading": "ADVANTAGES AND LIMITATIONS 19",
+      "text": [
+        "A diagnostic psychiatric interview which illustrates some of the model's linguistic capabilities.",
+        "APPENDIX 2 28 A listing of the dictionary illustrating the algorithm's recognizable input words and the word class names they are translated into."
+      ]
+    },
+    {
+      "heading": "INTRODUCTION",
+      "text": [
+        "To recognize something is to identify it as an instance of the \"same again\".",
+        "This familiarity is possible because of recurrent characteristics of the world which repeat themselves.",
+        "We shall describe an algorithm which recognizes recurrent characteristics of natural language dialogue expressions.",
+        "It utilizes a multi-stage sequence of pattern-matching-rules for progressively transforming an input expression until it eventually matcbes an abstract stored pattern.",
+        "The stored pattern has a pointer to a regpanse function in memory which decides what tt2 do once the input has been recognized.",
+        "Here we discuss only the recognizing functions, except for one response function (anaphoric substitution) which interactively aids the recognition process.",
+        "Details of how the response functions operate will be described in a future communication.",
+        "We are constructing and testing a simulation of paranoid though processes; our problem is to reproduce paranoid linguistic behavior in a teletyped diagnostic psychiatric interview.",
+        "The diagnosis of paranoid states, reactions or modes is made by clinicians who judge the degree of correspondence between what they observe in an interview and their conceptual model of paranoid behavior.",
+        "There exists a high degree of agreement among psychiatrists about this conceptual model which relies mainly on what an interviewee says and how he says it."
+      ]
+    },
+    {
+      "heading": "S",
+      "text": [
+        "Natural language is a life-expressing code which people use for communication with themselves and others.",
+        "In a real-life dialogue such 8s a psychiatric interview, the participants have interests, intentiobs, and expectations which are revealed tin their linguistic expressions.",
+        "An interactive simulation ot a paranoid patient must be able to demonstrate typical paranoid linguistic behavior.",
+        "To achieve this effect, our paranoid model must have the ability to deal with the teletyped messages of an interviewer.",
+        "A number of approaches have been taken for dealing with natue-al language dialogue expressions.",
+        "(Winograd,1372; Woeds,1370).",
+        "These approaches rely on parsers which conduct a detailed syntactic and semantic analysis.",
+        "They perform well for the purposes for which thay wern designed.",
+        "Their weakness, for aur purposes, lies in their lack of neglecting and ignoring mechanisms.",
+        "Such mechanisms are necessary in a program which accepts and responds to unrestricted conversational English characterized by expressions novel to the program.",
+        "How humans process natural language is largely unknown.",
+        "They possess some knowledge of grammatical rules, but this fact does not entair that they use a grammar in interpreting and producing language.",
+        "It seems implausible to us that people possess full transformational grammars for processing language.",
+        "Language iS what is recognized but the processed involved may not be linguistic or grammatical.",
+        "Originally transformational grammars were not designed to \"understand\" a large subset of English; they constituted a formal method for deciding whether a string is grammatical.",
+        "An analysis of what one's problem actually is should guide the selection or invention of methods appropriate to its solution.",
+        "Our problvm is not to develop a consistent and general theory of language nor to 7 assert empirically testable hypotheses about how people process language.",
+        "Our problem is to design an algorithm which recognizes what is being said in a dialogue and what is being said about it in order to make a response such that a sample of I-0 pairs from the paranoid model is judged similar to a sample of I-0 pairs from paranoid patients.",
+        "Thc design task belongs to artificial intelligence in which the criterion io how adequately the computer program performs Mind-like functions.",
+        "Nell methoft had to be devised for an algorithm to participate in a human dialogue in a paranoid-patient-like way.",
+        "We sought effective methods which could operate efficiently in real time.",
+        "Since our method provides a gefferal way of many-to-one mapping from surface expressions to a single stored pattern, it is mot limited to the simulation of paranoia, but can be used by any type of \"host\" system which takes natural language as Our method is to transform the input until a pattern is obtained which matches completely or partially a more abstract stored pattO-n.",
+        "This strategy has proved adequate for oir purposes a satisfactory percentaae of the time.",
+        "The power of this mtithod for natural language dialogues lies in its ability to ignore as irreleyant some of what it recognizes and everything it does not recognize at all.",
+        "A linguistic parser doing word-by-word, parts-of-speech analysis fails when it cannot find pne or more of the input words in its dictionary.",
+        "A systefte4h044AN43 know every Word is too fragile for unrestricted dialogues.",
+        "In earlu VArsions of the paranoid model, such as PARRY1, some of the pattern recogniTion mechanisms allowed the elements of the pattern to be order independent (Colby, Weber, and Hilf, 1971).",
+        "For examble, consider the following expressions:",
+        "(1) WHERE DO YOU WORK?",
+        "(2) WHAT SORT OF WORK DO YOU DO?",
+        "(3) WHAT IS YOUR OCCUPATIM 8 (4) WRA1 DO YOU DO Fon:A LIVING?",
+        "(b) WHERE.",
+        "ARE YUU CMPLOYED?",
+        "In PARRY1 a protedure scans these expressions looking tior information-beaging contentive such as \"work\", \"for a living\", etc.",
+        "When it finds such a contentive along with \"you\" er \"your\" in the expression, regardless of word order, it responds to title expression as if it were a question about the nature of one's work.",
+        "This method correctly claspifico the five sentences above.",
+        "Unfortunately, it includes the two examples below in the same category: (G) DOES YOUR FATHER'S CAR WORK?",
+        "(7) HOW DID THINGS WORK OUT FOR YOU?",
+        "An insensitivity to word order has the advantage that lexical itomo representing different parts of speech can represen't the saw: concept,v.g, the word \"work\" represents the same concept whether it is used as a noun or a verb.",
+        "But a price is paid for this resilience ant elasticity.",
+        "We find from experience thal, since English relies heavq-IN1 nn word order to convey the meaning of ils messages, the average penalty 01 misunderstanding (to be distinguished from ununderdstandingl, is too great.",
+        "Hence in PARRY2, as Aill be described shortly, all the patterns require a specified word order.",
+        "For high-complexity problems it is helpful to have constraints.",
+        "Diagnostic psychiatric interviews (and especially thof,0 conducted over teletypes) have several natural constraints.",
+        "First, clinicians are trained to ask certain questions in certain ways.",
+        "This limit u the number of patterns required to recognize utterances about each topic.. Second, only a tew hundred standard topics are brought up hu interviewers who are, furthermore, trained to use everyday expressions and especiallg arose used by the patiemt himself.",
+        "When the interview is conducted by teletypes, expressions tend to be shortened since the Interviewer tries to increase the information transkission rate ovflr the slow channel of a teletype.",
+        "Finallu, tele:timed interviews repnesent written utterances and utterances are known to be highly redundaat such that unrecognized words can be ignored without losing the meaning of the message.",
+        "Aleo utterances are loaded with idioms, cliches, pat phrases, etc.",
+        "- all being easy prey for a pattern-matching approach.",
+        "Li is time-wasting and usually futile to try to decode an idiom by analyzing the meanings of its individual words.",
+        "We now describe the pattern-matching functions of the algorithm in some detail.",
+        "(See Fig. 1 for a diagram of the overall flow of control)."
+      ]
+    },
+    {
+      "heading": "nVERYIEW",
+      "text": [
+        "PARRY2 has two primary modules.",
+        "The first attempts to RECOGNIZE the input and the second RESPONDS.",
+        "This paper is primarily about the RECOGNIZE module.",
+        "It functions independently of the RESPOND module except in the case of pronoun references, which tift RESPOND module provides.to the RECOGNIZER on request.",
+        "The recognition module has 4 main steps: it Identify the words in the question and convert them to internal synonyms."
+      ]
+    },
+    {
+      "heading": "2) Break the input into segments at certain bracketing words. 3) Match each segment (independently) to la stored pattern. 4) Match the resulting list of recognized segments to a stored",
+      "text": []
+    },
+    {
+      "heading": "complex pattern.",
+      "text": [
+        "Each of these stops, except the segmenting, throws away what it cannot identify.",
+        "Occasionalry a reference to an unknown topic is mis-recoginized as some familiar topic.",
+        "is maintained in core during runtime.",
+        "(The dictionaN is given in Appendix.2.)",
+        "The dictionary, which was built empirically from thousand:, of teletyped interviews with previous versions of the model, consists of words, groups of words, and hames of word-classes they can be translated into.",
+        "Entries in the dictionary reflect PARRY2's main interests.",
+        "If a ward in the nput is not in the dictionary, it is checked to see if it ends with one of the common suffixes given in Fig. 2.",
+        "If it does, the suffix is removed and the remaining word is looked up again.",
+        "If it is still not in the dictronary, it is dropped from the pattern being formed.",
+        "Thus if the inpat is:"
+      ]
+    },
+    {
+      "heading": "WHAT IS YOUR CURRENT OCCUPATION?",
+      "text": [
+        "and the word \"current\" is not in the dictionary, the pattern at this stage becomes:"
+      ]
+    },
+    {
+      "heading": "( WHAT IS YOUR OCCUPATION )",
+      "text": [
+        "The question-mark is thrown away as redundant since questions arc recognized by word order.",
+        "(A statement followed by a question mark (YOU GAMBLE?)",
+        "is responded to in the same way as that statement followed by a period.",
+        "Synonymic translations of words are made so that the nattern becomes, for example: ( WHAT BE YOU JOB ) Some groups of words (i.e. idioms) are translated as a group so that, for example, \"for a living\" becomes \"for job\".",
+        "tertai.",
+        "other iuxtaposed words are contracted Lnto a single Hord, e.g. \"place of birth\" becomes \"birthplace\".",
+        "This is done to deal with groups of words which are represented as a single element in the stored pattern, thereby przeventing segmentation from occurring at the wrong places, such as at a prepositions inside an idiom or pnrase.",
+        "Besides these contractions, certain expansions are made so that for example, \"DON'T\" becomes \"DO NOT\" and \"I'D° becomes \"I WOULD\"."
+      ]
+    },
+    {
+      "heading": "Misspellings can be the bane of teletyped interviews for an",
+      "text": [
+        "algorithm.",
+        "Here they are handled in two ways.",
+        "First, common misspellings of impertamt words are simply put in the dictionaru.",
+        "Thus \"yuu\" is known to mean \"you\".",
+        "The apostrophe is often olillIxeci from contractions so most contractions are recognized with or without it.",
+        "Thee common misspellings were gathered from over 4086 interviews with earlier versions of the paranoid model.",
+        "(The moddl (PARRY) is available for interviewing on the ARPA network).",
+        "gecond, five common forms of typing error arc checkcd.",
+        "The first three errors can be corrected by deleting the offendinu cHbracter from the word.",
+        "This is accodplished by deletirtg (thfh character in tan until the word is recognized.",
+        "lhe fourth type oi error is only checked for eight of the more pommon near misses.",
+        "These were ako empirically determined and involve the letter pairs (T Y), (Q W), (Y U) (I 0), (G. H), (0 P), (A S), and (N M).",
+        "Ihese methods are all.",
+        "based on typ4ng errors, but they also correct some legitimate English spelling error!,.",
+        "Two-letter transposition.corrects, for example, \"beleive\" to \"believe\"."
+      ]
+    },
+    {
+      "heading": "SEGMENTING",
+      "text": [
+        "Another weakness in the crude pattern matching of PARRY1 is that it takes the entire input expression as its basic processing unit.",
+        "If only two words are recognized in an eight ward utterance, the risk uf misunderstanding is great.",
+        "We eed a way of dealing with units shorter the gntire input expression."
+      ]
+    },
+    {
+      "heading": "3). These points tend Lo separate prepositional phrases and",
+      "text": [
+        "embedded clauses from the main clause.",
+        "The new pattern formed is termed either \"simple\", having Ao delImiters withih it, or \"complex\", 1,e., being made u4 Of two or more simple patterns.",
+        "A simple pattern might be:"
+      ]
+    },
+    {
+      "heading": "( WHAT BE YOU JOB.)",
+      "text": [
+        "whereas a cOplex pattern would be: ((' WHY BE YOU ) ( IN HOSPITAL )).",
+        "Our experience tri-ttf this method of segmentation snows met complex patterns from teletyped psgchiatric dialogues rat-elm consist of more than three or four 'segments'.",
+        "After certain verbs (See .Fig... 4)' a braqeting occurs to replace the comnionly omitted \"THAT\", such that:"
+      ]
+    },
+    {
+      "heading": "I THINK YOU BE AFRAID )",
+      "text": []
+    },
+    {
+      "heading": "CI I THINK ) ( YOU BE AFRAID 1) MATCHING INDIVIDUAL SEGMENTS.",
+      "text": []
+    },
+    {
+      "heading": "Conjunctions serve only as markers for the segmenter and they ore drnppod out after segmentation.",
+      "text": [
+        "Negations are handled by exlimacting the \"NOT\" from the segmcnt and assigning a value to a gtobal variable which indicate that thee expre.ssion.",
+        "i. negative in form.",
+        "When a pbttern is finally matched, thit, variable is consulted.",
+        "Some patterns have a pointer= to a pattern of opposite meaning if a 'NM\" cbuld reverse their Weaninos..",
+        "If this"
+      ]
+    },
+    {
+      "heading": "ALONG OPPOSITE ALTHOUGH OR AMID OUT AMIDST OUTSIDE AND OVER-AROUND PAST AS SINCE AE SO AWAY THAN BEAUSE THAT BECAUSE THEN BEHIND THEREFORE BELOW THROUGH BESIDE TO ES ICES TOWARD BUT UNDER BY UNDERNEATH COMMA UP CdNCERNING UPON OWN WHAT DURING WHATEVER. EITHER 'WHEN EXCEPT WHENEVER FOR WHERE FROM WHETHER FURTHERMORE WHICH HOW WHO HOWEVER WHOM IF WHOSE IN WHY INDEED WIJH INS/06. WITHIN INTO WITHOUT MOREOVER YET",
+      "text": []
+    },
+    {
+      "heading": "NEAR",
+      "text": []
+    },
+    {
+      "heading": "ASSUME BELIEVE CONSIDER FEEL FELT GATHER GUESS HOPE IMAGINE MEAN MEANT SAW SAY SEEMS SOUNDS SUPPOSE THINK NOUGHT UNDERSTAND WONDER",
+      "text": [
+        "pointer is present and a \"NOT\" was found, then the pattern matched is replaced by its opposite, e.g. ( I not trust you ) is replaced by the pattern ( I mistrust you ).",
+        "We have not yet observed the froublesome case of \"he gave me., not one but tip messages\".",
+        "(Mere is no need to scratch wnere it doesn't itch).",
+        "Substitutions arm also made in certain cases.",
+        "Some segments contain pronouns which could stand for a number of ciLfferent things of importance to PARRY2.",
+        "As we mentioned in the introductiofi, the response functions of memory keep track of the context in order to give pronouns and other anaphoras a correct interpretation.",
+        "For example, the segment:"
+      ]
+    },
+    {
+      "heading": "( DO YOU AVOID THEM )",
+      "text": [
+        "could refer to the Mafia, or racetracks, or other patients, depending on the context.",
+        "When such a segment is encountereil, the pronoun is replaced by its current anaphoric value as determined by the response functions, and a more specific segment gUth as:"
+      ]
+    },
+    {
+      "heading": "( DO YOU AVOID MAFIA )",
+      "text": [
+        "is looked up.",
+        "Other utterances.",
+        "sucn as \"Why did you do that?\"",
+        "or just \"Why?\"",
+        "(which might be regarded as a massive ellipsis), clearly refer back to previous utterances.",
+        "These utterances match very general patterns which identify the type of question Othout indicating the exact topic.",
+        "The response function which responds to \"Why?\"",
+        "consults the context to produce an appropriate answer.",
+        "The algorithm next attempts tq match the segments with stored simple patterns which currently number abaut 1780.",
+        "(The simple patterns appear in Appendix 3).",
+        "First a complete and perfect match is sought.",
+        "When a match is found, the stored pattern name has a pointer to the name of a response function in memory which decides what to do further.",
+        "If a match",
+        "is not found, further transformations of the segment are carried out and \"fuzzy\" matfch is tried.",
+        "For fuzzy matching at this stage, we adopted the heuristic rule of dropping elements in the Segment one at a time and attempting a match each time.",
+        "This heuristic allows ignoring familiar words in unfamiliar contexts.",
+        "For example, \"well\" is important in \"Are you well?\"",
+        "but meaningless in \"Well are yod?\".",
+        "Qeleting one element at a time results in, for example, the",
+        "Dropping an element at a time provides a probability threshold for fuzzy matching which is a function of the length of the segment.",
+        "if a segment consists of five elements, four of the five must be present in a particular order (with the fifth element missing in any position) for a match to occur.",
+        "If a segment contains four elements, three must match - and so forth."
+      ]
+    },
+    {
+      "heading": "COMPLEX-PATTERN MATCH",
+      "text": [
+        "When more than one simple pattern is detected in the input, a second matching is attempted against about SOO complex patterns.",
+        "Certain patterns, such as ( HELLO ) and ( I THINK ), are dropped because they are considered meaningless.",
+        "If a complete match is not found, then simple patterns are dropped, one at a time, from the complex pattern.",
+        "This allows the input,",
+        "If no match can be found at this point, the algorithm has arrived at a default condition and the appropriate response functions decide what to do.",
+        "For example, in a default condition, the model may assume control of the interview, asking the interviewer a question, continuing with.",
+        "the topic under discussion or introducing a new topic.",
+        "An annotated example of a diagnostic psychiatric interview is presented in Appendix 1."
+      ]
+    },
+    {
+      "heading": "ADVANTAGES AND LIMITATIONS",
+      "text": [
+        "As mentioned, one of the main advantages of a pattern-matching strategy is that it can ignore as irrelevant both some of what it recognizes and what it does not recognize at all.",
+        "There are several million words in English, each possessing from one to oiter a hundred senses.",
+        "To construct a machine-usable word dictionary of this.",
+        "magnitude is out of the question at this time.",
+        "Recognition of natural language input in the manner described above allows real-time interaction in a dialogue since it avoids becoming ensnaried° in combinatorial"
+      ]
+    },
+    {
+      "heading": "Another advantage of this method is it speed. The algorithm",
+      "text": [
+        "cgnsists of about 28K of programs written in MLISP, 16K of data in LISP, and 36K of data in machine language with several overlays.",
+        "The complcto language recognition process requires less than one second of real time on a fime-shared DEC POP-10.",
+        "A drawback to PARRY1 is that it reacts to the first pattern it finds in the input rather than characterizing the input as fully as possible and then deciding what to do based on a number of tests.",
+        "Another practical difficulty with PARRY1 from a programmer's viewpoint, is that, since it is a procedural model, elements of the patterns are strung out in various procedures throughout the algorithm.",
+        "It is often a considerable chore for the programmer to determine whether a given pattern is present and precisely where it is.",
+        "In PARRY2 the patterns are all collected in one part of the database where they can easily he examined.",
+        "Concentrating all the patterns in the data base givus PARRY2 a limited \"learning\" ability.",
+        "When an input fails to match any stored pattern or matches an incorrect one, as judged by a human operator, a pattern which matches the input can be put into the database automatically.",
+        "If the nem pattern has the same meaning as a previously stored pattern, the human operator must 'provide the name of the appropriate response function.",
+        "If he doesn't remember the name, he may try to rephrase the input in a form recognizable to PARRY2 and it will name the response function associated with the rephrasing.",
+        "These mechanisma are 21 not \"learnina\" in the commonly-used sense hut they do allow a porson to transfer his knowledge into PARRY2's database with very little effort.",
+        "Informal observation thus far shows PARRY2's linguistic recognition abilities to be quite superior to PARRY1's.",
+        "A more systematic and quantitative evaluation of performance is now being carried out.",
+        "PARRY1 was extensively tested by having judges Make ratings or its performance along bUVeral dimensions, one ot which was linguistic noncomprchendion (Colby and Hilf, 1974).",
+        "These judges also made rating d of teletyped interviews with psychiatric patients and with a random version of PARRY1.",
+        "The mean ratings of PAARY1 along the dimension of linguistic noncomprehension were better than those received by RANDOM-PARRY but were three times-worse than the mewl ratings received by patients.",
+        "Once the ratings of PARRY2 along this dimension are completed, we will be able to compare them with those of PARHY1 and the patients and obtain a more objective measure of improvement.",
+        "22"
+      ]
+    },
+    {
+      "heading": "REFERENCES",
+      "text": []
+    },
+    {
+      "heading": "APPENDIX 1.",
+      "text": [
+        "A diagnostic psychiatric ihterview illustrating some of the model's linguistic capabilities.",
+        "I. interviewer , P PARRY2.",
+        "Annotations appear in parentheses."
+      ]
+    },
+    {
+      "heading": "I - Goon AFTERNOON A MY NAME IS OR JONES% P - HELLO.",
+      "text": [
+        "(PARRY2 recognizes most of the common idiomatic greetings.",
+        "Both ideas in the doctor's statement are recognized and one is chosen by theiresponse functions to be answered.)",
+        "(This is another easy, and stereotyped, question.",
+        "The answer includes a probe for information about .the doctor to allow PARRY2 to build up a model of the doctor.)",
+        "(In this case, two ideas are expressed in tw9 separate sentences.",
+        "As before, both are recognized and one is answered.)",
+        "I - WHERE HO YOU COAE FROM 7"
+      ]
+    },
+    {
+      "heading": "P SAN; JOSE.",
+      "text": [
+        "(This is an idiomatic construction containing no explicit reffirence to \"home town\".)",
+        "(The'interimiewer tests for the patient's erientation as to place.",
+        "This is not the same question as \"Where are you?\".)",
+        "IPARNY2 knows that ,\"Op you have ...\" 14 frequently omitted from the front of a question.)",
+        "4(\"Ilow about ...\" and \"What about ...\" are short, idiomatic.",
+        "forms of \"What do you think.about"
+      ]
+    },
+    {
+      "heading": "I - ARE YOU HAVNG ANY DIFFICULTY WITH YOUR MEMORY ? P -NO.",
+      "text": [
+        "(This is a clear example of the advantages of segmenting the question and Aatching the parts sep4rately.",
+        "The first segment, \"Are you having any difficulty ...\", could be followed by any number of topics.)",
+        "(Introductory phrases like \"Then perhaps gou can tell me ... are recognized and then deleted.)",
+        "*The interviewer is testing for.the patient's orientation as to time and PARRY2 responds correctly.",
+        "All of the usual time orientation questions, (i.e.-time, day, month, and year) match the same pattern.",
+        "A response function consults the computer's internal clock and provides an answer appropriate to the question.)",
+        "(Dropping the word \"today\" aliens this question to match \"How is your mood?\".)",
+        "(Doctors utilize a number of expressions in trying to be tactful about topics such as-suicide.",
+        "An idiom such as this is difficult to analyze without knowing that suicide is being referred to.)",
+        "(\"Hew much\" and \"How often\" are understood\" as requests for A quantitative estimate of something, in this case, alcohol.)",
+        "(Only the first part of the question was recognized.",
+        "Everything following the \"that\" was ignored.",
+        "This worked nicely in this case1 and it usually does.)",
+        "(PARRY2 doesn't understand the conditional nature of the question but he does realize that \"If you aren't ...\" isicontent free and is therefore not the main question.",
+        "The kiss)lling of \"hospital\" was unintentional but it illustrates the viatue of spelling correction so it was left in.)"
+      ]
+    },
+    {
+      "heading": "I BY WHAT? - DO YOU KNOW ANYTHING ABOUT BOOKIES?",
+      "text": []
+    },
+    {
+      "heading": "(The recognition routine makes no attempt to understand what is being discussed here. The response functions provide the",
+      "text": [
+        "meaning of this cryptic question pith their anaphora rdutines.1",
+        "- NO, HOW HAVE BOOKIES UPSET YOU.?",
+        "P - A BOOKIE DIDN'T PAY ME OEF ONCE.",
+        "(There was no pattern to recognize this whole sentence but the topic, \"bookies\" was recognized and the response functions went on with the story.)"
+      ]
+    },
+    {
+      "heading": "1 - AND THEN WHAT HAPPENED 7 P - I HAD AN ARGUMENT WrTH THE BOOKIE WHO DID NOT PAY OFF. LATER ON I REMEMBERED HE HAD FRIENDS IN THE UNDERWORLD AND I THOUGHT HE WOULD USE THEM TO GET EVEN",
+      "text": []
+    },
+    {
+      "heading": "(The recognizer correctly identifies \"What happened?\" and",
+      "text": [
+        "the response function decides what it means.)"
+      ]
+    },
+    {
+      "heading": "I - DID HE GET EVEN WITH YOU ? P I THINK HE IS BENIND-THE GANGSTERS WHO ARE OUT TO GET ME.",
+      "text": [
+        "(The response functions provide the information that The\" refers to the \"bookie and \"get even with\" is a known idiom.)",
+        "(The doctor picked up PARRY2's oun idiom, \"opt ta get\", from the previous output expression.)",
+        "(PAHRY2 it especially good at recognizing questions which lead into the stories he wants to toll.)",
+        "(PARRY2 respon6 to mild disbelief.",
+        "He also recognizes more intense disbelief, as.",
+        "in, \"I DON'T BELIEVE YOU\", and responds mare strongly.)"
+      ]
+    },
+    {
+      "heading": "I - I AM WILLING TO BELIEVE YOU IF YOU GIVE ME SOME EVIDENCE. P I SEE.",
+      "text": [
+        "(This is recognized as reassurance but not as a request for details.)"
+      ]
+    },
+    {
+      "heading": "I WHAT EVIDENCE DO YOU HAVE THAT THE MAFIA HAS IT IN FOR YOU? P - THE MAFIA CONTROLS THE BOOKIES.",
+      "text": [
+        "(The doctor repeats his request for details edit is recognized this time.)",
+        "(\"They\".",
+        "still refers to \"the mafia\" although nobody has said so recently.)",
+        "(The question was correctly recognized but PARRY2 woUld rather change the subject.. = VERY INTERESTING.",
+        "WHAT DO YOU THINK OF ME?",
+        "P - WHAT DO YOU THINK ABOUT ALL THIS?",
+        "(Again, the question is understood but ignored.)"
+      ]
+    },
+    {
+      "heading": "ACTS ACTS ACTS ACTS ACTS ADD ADD ADD ADD ADD ADD ADORE ADORE ADORE ADORE ADORE",
+      "text": []
+    },
+    {
+      "heading": "SALARY ANYBODY ANYONE EVERYBODY EVERYONE MEMBER NOBODY ONE PARTIES PEOPLE SOCIETY SOMEBODY SOMEONE LI ORM PICK MEDICATION MEDICINE PILLS SEDATIVE THERAPY THORAZ I NE TREATMENT ANYWHERE PLACE AMBITION PLANS",
+      "text": []
+    },
+    {
+      "heading": "-4 PLUS PLUS PLUS ATHEIST BIBLE CHURCH HEAVEN REL I GI 011a SUPERNATURAL N IRCIR PRES4 DENT WHITE HOUSE EVIDENCE PROOF CONFUqE PUZZLE BAY nhADOWS HORSERACE RACES RACETRACK RACING SWEEPSTAKES TRACK BOOK READ AVERAGE EXIST FAMILIAR NATURAL NORMAL REAL REGULAR SAME",
+      "text": []
+    },
+    {
+      "heading": "-4 RACES RACES RACES 4 RACES RACES RACES READ READ REAL REAL REAL REAL REAL REAL REAL REAL",
+      "text": []
+    },
+    {
+      "heading": "ELECTRIC RADICAL SHOCK CONSCIOUS EMBARRASSED QUIET RESERVED SHY TALKATIVE SIE VOUS-BROTHER ONLY 'CHILD SIBbING SISTER SITUATION STATUS ASLEEP BED GET UP INSOMNIA SLEEP SLEPT WAKE BRIGHT - BRILLIANT CLEVER EDUCATED INTELLEGENT INTELLIGENT LOGICAL SENSIBLE SHARP SHOCK SHOCK SHOCK 4 SHY 4 SHY 4 SHY 4 SHY 4 SHY 4 SHY 4 SIE 4 SIE SISTE 4 SISTE 4 SISTE 4 SISTE",
+      "text": [
+        "SITUA"
+      ]
+    },
+    {
+      "heading": "4 SITUA SLEEP SLEEP 4 SLEEP SLEEP SLEEP SLEEP 4 SLEEP SMART 4 SMhRT SMART SMART 4 SMART 4 SMART SMART 4 SMART SMART SMART WISE SMOKE SOLUTION WAY OUT APOLAGIZE APOLOGIZE SORRY SYMPATHIZE CLARIFY ELABORATE ESPECIALLY EXACTLY EXAMPLE IN .PARTICULAR PARTICULAR PRECISE SPECIAL SPECIFIC SPELL PARLEZ SPRECHEN CONSPIRACY CROSS DOUBLECROSS EAVESDROP ENEPY FINK KEEP TAB KIDNAP MICROPHONE PERSECUTE PLOT PURSUE SECRETLY SPY SQUEAL STOOL1E STOOLPIGEON TAP VLCTIM WATCHER WIRETAP BEGIN 4 SMART",
+      "text": [
+        "smAnT"
+      ]
+    },
+    {
+      "heading": "4 SMOKE 4 SOLUT 4 SOLUT SORRY 4 SORRY 4 SORRY SORRY 4",
+      "text": [
+        "SPEC!"
+      ]
+    },
+    {
+      "heading": "4 SPECI 4 SPEC! 4 SPECI 4 SPEC!",
+      "text": [
+        "SPEC!"
+      ]
+    },
+    {
+      "heading": "4 SPEC! 4",
+      "text": [
+        "SPEC!"
+      ]
+    },
+    {
+      "heading": "4 SPEC! 4 SPEC! 4 SPELL 4 SPREC 4 SPREC",
+      "text": [
+        "spy"
+      ]
+    },
+    {
+      "heading": "SPY 4 SPY",
+      "text": [
+        "SPY"
+      ]
+    },
+    {
+      "heading": "4 SPY 4 spy 4 SPY 4 SPY 4 SPY 4 SPY 4 SPY 4 SPY 4 SPY 4 SPY 4 SPY 4 SPY 4 SPY 4 SPY 4 SPY 4 SPY 4 SPY",
+      "text": []
+    },
+    {
+      "heading": "AFTERNOON EVENING MORNING TODAY TOOIGHT TONITE TOMORROW SUBJECT TOPIC AWFUL TOO BAD TOUGH DEAL TREA1 CONFIDE JOIN SHARE TRUST BROADCAST ELECTRICITY RADIO RAYS SHOW TELEVISION TRANSMITTED TV UNCLE KEEP UP WITH UNDERS1ANDBOTHER COMPLAINT DIFFICULTY DISTURB GO TO PIECE MATTER PROBLEM TROUBLE TROUBLESOME UNCONTROLLABLE UPSET AMERICA UNITED STATE 4 TODAY 4 TODAY TODAY 4 TODAY 4 TODAY TODAY TOMOR TOPIC 4 TOPIC 4 TOUGH 4 TOUGH 4 TOUGH 4 TREAT 4 TREAT 4 TRUST 4 TRUST TRUST 4 TRUST 4 TV 4 TV TV TV -■ TV",
+      "text": [
+        "rv TV TV"
+      ]
+    },
+    {
+      "heading": "UNCLE 4 UNORS 4 UNORS 4 UPSET UPSET 4 UPSET 4 UPSET 4 UPSET UPSET UPSET UPSET UPSET UPSET 4 UPSET 4 USA USA ATTEMPT DECIDE EXPECT INTEND LOOK FOR OUGHT PLAN READY SEEK SUGGEST TRY WANT WILLING WISH, WOULD LIKE AFRAID ANXIETY AN uUS Ayu DING EV ING F RFUL F I WINED",
+      "text": [
+        "HIt ING"
+      ]
+    },
+    {
+      "heading": "IN DANGER PREOCCUPIECL SCARED THREAT THREATENED UNCOMFORTABLE UNEASY 4 WANT 4 WANT 4 WANT WANT 4 WANT WANT WANT 4 WANT 4 WANT 4 WANT 4 WANT 4 WANT WANT 4 WANT WANT .WARY 4 WARY 4 WARY 4 WARY WARY WARY WARY 4 WARY 4 WARY 4 WARY 4 WARY 4 WARY WARY WARY",
+      "text": []
+    },
+    {
+      "heading": "YOU LIKE JOB YOU IIKE YOU JOB OE YOU EARN WELL HUMIH RF ynu EARN HUMCJI MONEY YOU GET HWMCH moNcY YOU MAKE HwnrH YOU FARN HWMCH YOU GET EARN HUNCH YOU MAKE WHAT RE YOU MONEY YOU-GET EARN YOU MAKE IN YOU CHIEF YOU LIKE YOU CHIEF COULD YOU LIKE JOB WHAT JOB COULD YOU LIKE wHAr JUB YOU LIKE WHY YOU LEAVE YOU JOB YOU WANT-JOB IN Amy IN DOUR IN YOU nom WHAT BE YOU-RORN WHAT DATE BE YOU nom WHAT DAY BE YOU BORN N IIE YOU BORN",
+      "text": [
+        "wu,sc nom"
+      ]
+    },
+    {
+      "heading": "WHAl RE YOU BRTHP LUIFIII ME YOU BORN IN iT TELL IN IT YOU TELL ME WU RE h0 BE I MALE I OE OR I NAME ME I NAME DE OR I GIVE YOU I NAME I STAIE I NAME",
+      "text": []
+    },
+    {
+      "heading": "BE GIRL FRIEN GIRL HATE YOU GIRL LIKE YOU GIRL hPSET YOU HOW GIRL TREAT YOU",
+      "text": []
+    },
+    {
+      "heading": "IN ROBY IN YOU HOBBY WHAT HE YOU HOBBY LBW HOBBY-YOU YOU GET HOBBY YOU iihnny IN HAPPE I-T-HAPPE IT ODD HAKE WHAT OE ODD",
+      "text": []
+    },
+    {
+      "heading": "moon",
+      "text": [
+        ".P.000 A1000 A1001 A1001 A1001 A1001A1001 A1001 A1001"
+      ]
+    },
+    {
+      "heading": "REMY I ASK WE REPLY IT",
+      "text": []
+    },
+    {
+      "heading": "3E THERE.IT*I COULD HELP YOU romp I HELP HFLP YOU HOW COULD I HELP YOU I COULD HELP I HELP YOU IN BE HELP IN COMFO YOU IN HELP",
+      "text": []
+    },
+    {
+      "heading": "BE I BEAT BE YOU WARY I MAKE YQU WARY I SCARE YOU IN BE WARY IN FEAR WARY YOU BE WARY YOU FEAR ME YOU SEEM WARY YOU WARY",
+      "text": []
+    },
+    {
+      "heading": "I DE BAD I DE ODD I RE SEX COULD YOU LIKE DATE COULD YOU LIKE SCREW IN SCRFW IN SCREW ME IN SCREW YOU WE DATE WE SCREW BE YOU BAD BE YOU OFTEN IT BAD IJM BE BAD YOU BAD YOU BAD BRAIN YOU BAD LOOKS YOU pg BAD YOU PE BAD HUMAN YOU ODO LOOKS YOU SEEM BAD BE ODD BE YOU ow I FIND YOU nno",
+      "text": [
+        "ono"
+      ]
+    },
+    {
+      "heading": "YOUBE nou YOU niAmc ME YOU INTER ME YOU ODD YOU OFTEN DE ODD YOU SEEM ODD BE° YOU GOOD BE YOU GOOD MALE",
+      "text": []
+    },
+    {
+      "heading": "VL COU D YOU BE MISUN 4 73160 PE PL COULD THINK 4 73150 TH RE YOU GO AGAIN p 73170 TUAT OFTEN 4 73190 YOU AGAIN YOU .4 73198 you He.AGAIN YOU 4 73180",
+      "text": []
+    },
+    {
+      "heading": "PEOPL THINK WELL IN ASK IN KNOW IN THINK HWMNY WHY YOU SEE YOU OFTEN YOU BELON THAT HARM YOU THAT BE HWMCH YOU FEEL HWMCH YOU GO YOU-GO OFTEN I WANT YOU IN BE THERE IN COME 11%1 HOME IN ME ME WHAT BE YOU WHAT YOU BE WHAT BE WHAT COULD MAKE YOU FEEL HWMCH YOU KNOW WHAT BE YOU IDEAS WHAT COULD YOU SAY WHAT YOU FEEL WHAT YOU KNOW WHAT YOU THINK WHEN YOU THINK HWLNG YOU WANT WHEN COULD YOU LIK WHEN YOU WANT HOW YOU GTLNG HWMCH YOU TELL IN GTLNG WHY YOU GTLNG YOU GTLNG YOU WAN* ME",
+      "text": []
+    }
+  ]
+}

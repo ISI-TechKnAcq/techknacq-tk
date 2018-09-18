@@ -1,0 +1,157 @@
+{
+  "info": {
+    "authors": [
+      "Petra Barg",
+      "James Kilbury"
+    ],
+    "book": "International Conference on Computational Linguistics",
+    "id": "acl-C00-1008",
+    "title": "Incremental Identification of Inflectional Types",
+    "url": "https://aclweb.org/anthology/C00-1008",
+    "year": 2000
+  },
+  "references": [
+    "acl-E93-1043",
+    "acl-J94-3010",
+    "acl-J97-4003",
+    "acl-P91-1027",
+    "acl-P98-1014"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "We present an approach to the incremental accrual of lexical information for unknown words that is constraint, based and compatible with standard unification-based grammars.",
+        "Although the techniques are language-independent and can be applied to all kinds of infmnation, in this paper we concentrate on the domain of German 1101111 inflection.",
+        "We show how morphological information, especially inflectional class, is successfully acquired using a type-based HPSG-like analysis.",
+        "Furthermore, we sketch an alternative strategy which makes use of finite-state transducers."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Systems for natural language processing must; deal adequately with \"unknown\" words, i.e. lexemes that either have been newly coined or else have not been included in a particular lexicon (cf. Kilbury et al.",
+        "(1994)).",
+        "Rather than simply regarding unknown words as noise, our system instead uses their context as a source for the systematic accrual of lexical information that can then be utilized.",
+        "Our approach differs in significant; respects from those of other investigators.",
+        "It is designed for unification-based grammar formalisms with typed feature stuctures as in HPSG and is not restricted to simple morphosyntactic features.",
+        "In contrast to statistical approaches like that of (Brent, 1991), which often do not work incrementally and are intended for the application to large corpora, ours instead aims at a detailed grammatical analysis of individual sentences with a maximal use of their information.",
+        "While systems like that of (Hahn et al., 1996) deal with the general acquisition of concepts, we are concerned exclusively with the acquisition of structural linguistic information.",
+        "Although we deal here with German noun inflection, in a framework close to that of (Richemann, 1998) and (Koenig, 1999), the techniques are language-independent and apply to other kinds of lexical information as well, as is shown in (Walther and Barg, 1998) with respect; to valency information.",
+        "Thus, in contrast to (Ehrlich and Rapaport, 1997), who employ tailored algorithms for the acquisition of information about nouns and verbs, we introduce an approach that; is completely general with respect to the kind of structural linguistic information acquired."
+      ]
+    },
+    {
+      "heading": "2 German noun-inflection classes",
+      "text": [
+        "There is a vast literature on German 1101111 inflection represented ill recent studies by (Cahill and Gazdar, 1999), (Clahsen, 1999), and (Neef, 1998).",
+        "Here we summarize only essential points and ignore highly irregular and archaic inflections (cf. figure 4 below).",
+        "German nouns bear gender (masculine, feminine, Neuter) and are inflected for number (singular, plural) and case (nominative, accusative, dative, genitive).",
+        "With the exception of class NWN (e.g. noise Balter 'farmer', with gen sg Bauern), all nonfeminine nouns build genitive singular with -s. The \"regular\" (cf. Clahsen (1999)) but; \"atypical\" (cf. Wunderlich (1999)) nouns of class NA (e.g. Auto 'car') build their plural forms in -s. The plural forms of all other (i.e. \"typical\" ) classes must end in a so-called schwa syllable -c, -el, - cc, or en (i.e. phonetically an unstressed [a] followed by a sonorant from [1 r 11]).",
+        "Strong nouns add c for plural in class NS (e.g.",
+        "Arm 'arm', pl Anne) and class NU (e.g. Arzt",
+        "pl AVZIO if the stem itself does not; already end in a schwa syllable (e.g. Kabel 'cable', pl Ka-ki).",
+        "Class NU furthermore umlauts the stem (i.e. replaces a, a, u, au with a, o, an, respectively), as does class NR.",
+        "(e.g. Mann 'man', pl Manner), which adds -C7'.",
+        "The remaining classes (NM, NWN, and NWS) form their plural in n (e.g. Schraube 'screw', pl Schinuben).",
+        "The nonnominative singular stein in class NWN (e.g. Huse 'hare', gen sg Hasen) and class NWS (e.g. Clank 'belief', gen sg Glaubens) is identical with the plural form, while NWN exceptionally adds Ito s in genitive singular.",
+        "All classes except NA build dative plural by adding n to the plural form if it is not already present (e.g.",
+        "Manner 'men', dat pl Männern but Hasen 'hares', chat pl Hasen)."
+      ]
+    },
+    {
+      "heading": "3 Representation of inflectional morphology",
+      "text": [
+        "Various proposals have been made for the representation of inflectional morphology within constraint-based frameworks like HPSG (cf. Pollard (1994)).",
+        "We neither adopt a word-syntax approach like that of (Krieger and Nerbonne, 1993) assuming lexical entries for inflectional affixes as well as roots, nor do we make use of lexical rules, as (Meiners and Min-nen, 1997) do.",
+        "Instead, we follow (Itiehemann, 1998) in formulating hierarchically structured schemata of the kind she has developed for derivational morphology but apply them here to inflection and thus carry out a kind of inflectional analysis without lexical rules as projected by (Erjavec, 1996).",
+        "Our schemata capture inflectional paradigms and can be regarded as relational constraints that relate stems, affixes, and inflected lexical forms.",
+        "Figure 1 shows our hierarchy of inflectional schemata, while figure 2 illustrates a concrete schema, namely that for the schwa plural of inflectional class NS.",
+        "In figure 2 the attribute ftype stands for the inflectional class.",
+        "The attributes flex, surf, and base represent strings, namely the inflectional ending, surface (i.e. inflected) form, and base form respectively.",
+        "The symbol 0 denotes the reduced vowel [a] (schwa), and - designates negated values.",
+        "Lexical entries are assumed only for basic lexical signs (i.e. uninflected but possibly derived or coin-pounded).",
+        "Inflected lexical signs result from the interaction of these lexical entries and the inflectional schemata.",
+        "Figure 3 gives the basic lexical sign (with the omission of feature specifications that are irrelevant for this discussion) for Hand 'dog', which is of class NS, followed by the inflected lexical sign for Hunde 'dogs', in which the value of the attribute moph (i.e. morphophonology) is an extension of the schema for schwa plural given in figure 2.",
+        "The inflectional classes assigned to basic lexical signs are modelled as formal types in the hierarchical structure specified in figure 4.",
+        "Note that the leaves of this tree correspond exactly to the inflectional classes of German nouns as described above in §2.",
+        "Morphophonemic and morphographemic alternations as shown in nominative plural Zeit-en 'times' but Gabei-n 'forks' are also covered in our description.",
+        "Here the realisation of the plural ending n depends on the shape of the noun stein (namely, whether or not it ends ill a schwa.",
+        "syllable).",
+        "In agreement with (Bird and Klein, 1994) and (Erjavec, 1996), we capture such alternations declaratively in a one-level model without recourse to transducers.",
+        "Our treatment of umlaut adopts part of the techniques of (Trost, 1993)."
+      ]
+    },
+    {
+      "heading": "4 Processing unknown words",
+      "text": [
+        "In our approach linguistic properties of unknown words are inferred from their sentential context as a byproduct of parsing.",
+        "After parsing, which requires only a slight modification of standard lexical lookup, lexical entries are appropriately updated.",
+        "One of our key ideas is a gradual, information-based concept of \"unknownness\", where lexical entries are not unknown as a whole, but may contain unknown, i.e. potentially revisable, pieces of information (cf. Barg and Walther (1998)).",
+        "This allows a uniform treatment for the full range of lexical entries from completely known to maximally unknown.",
+        "As discussed in (Barg and Walther, 1998), our system has been implemented in MicroCUF, a derivative of the formalism CUF of (DOrre and Dania, 1993).",
+        "synsem [71 synsem E... Revisable information is further classified as spe-cializable or generalizable, where the former can only become more special, and the latter only more general, with further contexts.",
+        "Specializable kinds of information include semantic type of nouns, gender, and inflectional class.",
+        "Among the generalizable kinds of information are the selectional restrictions of verbs and adjectives as well as the case of nouns.",
+        "Both kinds of information together with nonrevis-able (i.e. strict) information can cooccur in a single entry.",
+        "'Ile overall approach is compatible with standard constraint-based analyses and makes only a few extra demands on the grammar.",
+        "Here the revisable in-ibri nation must be explicitly marked as such.",
+        "Since our model is situated within the framework of typed feature-based formalisms (cf. Carpenter (1992)), revisable information is expressed in terms of formal types.",
+        "The initial values for revisable information are specified with two distinguished types •_s and u_g for specializable and generalizable information, respectively.",
+        "Type unification can be employed for the combination of specializable information, whereas generalizable information requires type union.",
+        "The direct combination of revisable information (luring parsing is unfeasible for various reasons discussed in (Barg and 'Walther, 1998).",
+        "It consequently is carried out in a separate step after the current sentence has been parsed.",
+        "The grammatical analysis itself thus remains completely declarative and only makes use of unification.",
+        "In order to achieve this separation of analysis and revision we introduce two attributes for generalizable information, namely gen and ctxt, where ctxt receives the information inferred from the sentential context, and gen the potentially revisable information with the initial value •_g.",
+        "Parsing thus proceeds in an entirely conventional manner, except that lexical lookup for a word with unknown orthography or phonology does not fail but instead yields all underspecified canonical lexical entry.",
+        "'Elie updating after parsing compares the feature structure of the original lexical entry with that inferred contextually.",
+        "The specializable information of the former is replaced with the corresponding values of the latter.",
+        "Moreover, using the attributes gen and ctxt introduced above, the new gen value for generalizable information is computed by the type union of the gen value, from the old lexical entry (initialy u_g) with the ctxt value resulting from the parse.",
+        "Actual revision naturally is only carried out 'lien a context in fact provides new information.",
+        "5 Incremental inference of inflectional information In order to process unknown word forms, we postulate canonical lexical entries which are returned by lexical lookup if a word is not recorded in the lexicon.",
+        "For nouns, this entry corresponds to an underspecified basic lexical sign in which the inflectional class, case, number, and gender are specified with revisable types, i.e. the information can be acquired and updated.",
+        "Figure 5 shows the basic lexical sign for German nouns (with the omission of feature specifications that are irrelevant for this discussion).",
+        "Whereas inflectional class (ftype), number (num),",
+        "and gender (gend) are specializable, case is generalizable and hence contains the features gen and ctxt.",
+        "Note that the initial values for specializable information consist of a disjunction (;) of the value u_s and the most general appropriate value for the corresponding feature.",
+        "This ensures the identification of specializable information (via u_s) on the one hand, and the correct specializations on the other.",
+        "When a sentence containing an unknown noun is parsed, information about the noun comes from different sources: while the surrounding context may supply agreement information, the word form itself together with morphophonological constraints may restrict the possible inflectional class.",
+        "As an example we can suppose that the rather infrequent noun Sund 'sound', 'strait', which like Fund `clog' belongs to class NS but is unfamiliar to many German speakers, is not recorded in a given lexicon.",
+        "The class NS contains both masculine and neuter nouns, and these differ in none of their inflected forms.",
+        "Thus, only agreement information from a context, such as der enge.",
+        "Sund `tlie narrow strait' (nominative), can establish the gender of Sand as being masculine.",
+        "moph agr case ctxt case [case_aum gen u_g num (num;u_s) gend (gcnd;u_s) pars third synsem Even in isolation, the form Sund must be singular since its final shape is not compatible with any plural inflection (i.e. it ends neither in s nor in a schwa syllable).",
+        "Moreover, the morphophonological constraints on stems allow only three possibilities: Sund is",
+        "• feminine (and then the class is NA, NU, or NM and the case is underspecified) • nonfeminine and weak (i.e. class NWN or NWS) (and then the case must be nominative) • nonfeminine and nonweak (and then the case is not genitive)",
+        "These hypotheses are captured in the three feature structures depicted in figure 6.",
+        "As we have seen, when a word is parsed in context, this provides additional information.",
+        "If we know, for example, that Sund is masculine, the first hypothesis is excluded, and the gender specification of the remaining two hypotheses can be specialized to masc.",
+        "If we additionally encounter Sund in dative singular, which is impossible for weak nouns (which must have a final -n), then only the third hypothesis remains.",
+        "Finally, if the plural form Sunde occurs the system can specialize the inflectional class exactly to the type NS.",
+        "The other morphological information cannot be further generalized or specialized, and we have the final lexical entry for Sund.",
+        "Things are not always this easy.",
+        "In particular, there may be a number of alternatives both for the segmentation of a form into a stem and an inflectional ending and for the assignment of a stem to a lexeme.",
+        "Moreover, these alternatives may depend on each other.",
+        "Thus, the form Leinen may be assigned to any of the lexemes Lein 'flax' (mase, NS), Leine `rope' (fern, NM), or Leinen 'linen' (neut, NS); even in a context, e.g. Fritz verkauft Leinen 'Fritz sells ropes/linen', it may be impossible to disambiguate the form.",
+        "While the nouns Band 'book volume' (masc, NU), Band 'strip' (neut, NR), Band 'bond' (neut, NS, archaic and rare in singular), Band 'music band' (fen, NA), and Bande 'gang' (fen, NM) may be unlikely to occur all in the same context, they illustrate the dimension of the problems of segmentation and lexical assignment, which in turn con",
+        "Alternatively, the incremental identification of inflectional types can be modelled within the framework of finite-state automata (cf. Sproat (1992)) without recourse to unification-based grammar formalisms.",
+        "A USA can be defined that has an alphabet consisting of vectors specifying the stem shape and ending (and thus the segmentation) as well as the agreement information of possible word forms.",
+        "Starting in an initial state corresponding to the constraints that apply to all unknown words, the USA is moved by successive forms of an unknown lexeme together with their agreement information into successor states that capture the incrementally accrued inflectional information.",
+        "The USA may reach a final state, in which case the inflectional class has been uniquely identified, or it may remain in a nonfinal state.",
+        "A lexicon would simply record the latest state reached for each 1101111.",
+        "Implementation of this model is greatly complicated by the problems of disambiguation just discussed in In general, the states of the USA must capture disjunctions not only of inflectional classes, but also of segmentation and gender alternatives.",
+        "The application of automatic induction techniques to corpora appears to be essential, and we are currently pursuing possibilities for this."
+      ]
+    },
+    {
+      "heading": "7 Conclusion",
+      "text": [
+        "pers third synsem stitute part of the more general problem of disambiguation in natural language processing.",
+        "We have no magic solution for the latter, but in our approach such examples must be handled with disjunctive representations until the context provides the necessary disambiguating information.",
+        "We have taken the inflection of German nouns to illustrate a general type-based approach to handling unknown words and the incremental accrual of their lexical information.",
+        "The techniques can be applied not only to other classes of inflected words and to other languages, but also to other aspects of lexical information such as the valency of verbs.",
+        "This may allow practical systems for natural language processing to be enhanced so as to utilize input information that otherwise is discarded as noise."
+      ]
+    }
+  ]
+}

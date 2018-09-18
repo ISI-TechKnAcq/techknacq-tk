@@ -1,0 +1,104 @@
+{
+  "info": {
+    "authors": [
+      "Elaine Marsh",
+      "Dennis Perzanowski"
+    ],
+    "book": "Message Understanding Conference",
+    "id": "acl-M98-1002",
+    "title": "MUC-7 Evaluation of IE Technology: Overview of Results",
+    "url": "https://aclweb.org/anthology/M98-1002",
+    "year": 1998
+  },
+  "references": [],
+  "sections": [
+    {
+      "heading": "MUC-7 EVALUATION OF IE TECHNOLOGY: Overview of Results",
+      "text": []
+    },
+    {
+      "heading": "Elaine Marsh (NRL) Dennis Perzanowski (NRL)",
+      "text": [
+        "MUC-7"
+      ]
+    },
+    {
+      "heading": "IE Evaluation Tasks",
+      "text": [
+        "• Named Entity Task [NE]: Insert SGML tags into",
+        "the text to mark each string that represents a person, organization, or location name, or a date or time stamp, or a currency or percentage figure",
+        "• Multilingual Entity Task [MET]: NE task for Chinese and Japanese • Template Element Task [TE]: Extract basic",
+        "information related to organization, person, and artifact entities, drawing evidence from anywhere in the text"
+      ]
+    },
+    {
+      "heading": "IE Evaluation Tasks",
+      "text": [
+        "• Template Relation Task [TR]: Extract relational",
+        "information on employee_of, manufacture_of, and location_of relations",
+        "• Scenario Template Task [ST]: Extract",
+        "prespecified event information and relate the event information to particular organization, person, or artifact entities involved in the event.",
+        "• Coreference Task [CO]: Capture information on",
+        "coreferring expressions: all mentions of a given entity, including those tagged in NE, TE tasks",
+        "- Training and test sets retrieved from corpus using"
+      ]
+    },
+    {
+      "heading": "Managing Gigabytes text retrieval system using domain",
+      "text": [
+        "relevant terms.",
+        "- 2 sets of 100 articles (aircraft accident domain) - preliminary training, including dryrun.",
+        "- 2 sets of 100 articles selected balanced for relevancy, type and source for formal run (launch event domain).",
+        "• 2-6 March: Formal Run Test for NE • 9 March: Training set of articles available for electronic file transfer from SAIC (ST guidelines and keys).",
+        "• 31 March: Test set of articles available for electronic file transfer from SAIC.",
+        "• 6 April: Deadline for completing TE, TR, ST, and CO tests (via electronic file transfer of system outputs to SAIC) Test Procedure (con’t) Notes on testing: • Tests run by individual participating sites at their own facilities, following a written test procedure.",
+        "• Sites could conduct official “optional” tests in addition to the basic test.",
+        "• Adaptive systems were permitted.",
+        "• Walkthrough articles for: – NE – TR/TR/ST – CO",
+        "Chinese rocket carrying a television satellite exploded seconds after launch Wednesd aling a potential blow to Rupert Murdoch's ambitions to offer satellite programming in tin America.",
+        "urdoch's News Corp. is one of four media companies in a partnership that had leased ace on the Intelsat satellite to offer the Latin American service.",
+        "The other partners are le-Communications Inc., the nation's largest cable operator; Grupo Televisa SA, the xican broadcaster and publisher, and the giant Brazilian media conglomerate Globo.",
+        "• NE mirrored Multilingual Entity Task • SGML tagging in text stream from SLUG, DATE, PREAMBLE, TEXT, TRAILER – Elements: ENAMEX, NUMEX, TIMEX – Attributes: TYPE, STATUS (keys), MIN (keys) • Markables – Names of organizations, persons, locations – Mentions of dates and times (relative and absolute) – Direct mentions of currency/percentage Named Entity (NE) (con’t) • Non-markables – Artifacts (Wall Street Journal, MTV) – Common nouns used in anaphoric reference (the plane, the company,) – Names of groups of people and laws named after people (Republicans, Gramm-Rudman amendment, the Nobel prize) – Adjectival forms of location names (American, Japanese) – Miscellaneous uses of numbers which are not specifically currency or percentages (1 1/2 points, 1.5 times) • Caveats: “newspaper” style, domain bias toward ST topic"
+      ]
+    },
+    {
+      "heading": "Annotators:",
+      "text": [
+        "97.60 3 0 2 4 96.95 2 9 2 6 MUC NE Scores by Document Section (ERR) sorted by F-Measure F-Measure Doc Date Dateline Headline Text 96.42 0 0 8 5 95.66 0 0 7 7 94.92 0 0 8 8 94 0 0 20 9 93.65 0 2 16 10 93.33 0 4 38 9 92.88 0 0 18 10 92.74 0 0 22 11 92.61 100 0 18 9 91.2 0 0 30 13 90.84 3 11 19 14 89.06 3 4 28 18 88.19 0 0 22 20 85.82 0 6 18 21 85.73 0 44 53 21 84.95 0 0 50 21"
+      ]
+    },
+    {
+      "heading": "Annotator:",
+      "text": [
+        "• TEs are independent or neutral wrt scenario: generic objects and slots.",
+        "• Separates domain-independent from domain-dependent aspects of extraction.",
+        "• Consists of object types defined for a given scenario, but unconcerned with relevance.",
+        "• Answer key contains objects for all organizations,",
+        "persons, and vehicle artifacts mentioned in the texts, whether relevant to scenario or not.",
+        "• Omissions or errors in ENT-DESCRIPTOR (span of descriptor, descriptor itself) • Omissions NAME slot: aliases missed (China Great Wall, News Corp.) • LOCALE-TYPE (PROVINCE / COUNTRY / CITY) • ENT-CATEGORY: ORG- OTHER vs. ORG-CO (Space Transportation Association) • ORG as PERSON (Intelsat); PERSON as ORG",
+        "• New task for MUC-7.",
+        "• TRs express domain-independent relationships between entities, as compared with TEs which identify entities themselves.",
+        "• TR uses LOCATION – OF, EMPLOYEE – OF, and PRODUCT – OF relations.",
+        "• Answer key contains entities for all organizations,",
+        "persons, and artifacts that enter into these relations, whether relevant to scenario or not.",
+        "• STs express domain and task-specific entities and relations.",
+        "Similar to MUC-6 template.",
+        "• ST tests portability to new extraction problem; short time frame for system preparation (1 month) • Scenario concerns vehicle launch events.",
+        "• Systems scored points lower (F-measure) on ST than on TE.",
+        "• Interannotator variability (measured on all",
+        "articles) was between 85.15 and 96.64 on the F-measures.",
+        "• Document-level relevance judgments (Text",
+        "Filtering scores), were similar to those for MUC-6, although percentage of relevant articles in text set was greater.",
+        "including those tagged in NE, TE tasks.",
+        "• Focused on the IDENTITY (IDENT) relation: symmetrical and transitive relation, equivalence classes used for scoring.",
+        "• Markables: Nouns, Noun Phrases, Pronouns"
+      ]
+    },
+    {
+      "heading": "MUC CO Results for Walkthrough",
+      "text": [
+        "• Walkthrough article non-relevant for ST • F-measures range from 23.2-62.3% • Missing: – Dates: Thursday, Sept. 10 – Money: $30 Million – Unusual Conjunctions: GM, GE PROJECTS – Miscellaneous:"
+      ]
+    }
+  ]
+}

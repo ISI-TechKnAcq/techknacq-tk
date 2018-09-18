@@ -1,0 +1,105 @@
+{
+  "info": {
+    "authors": [
+      "Chikashi Nobata",
+      "Satoshi Sekine",
+      "Roman Yangarber"
+    ],
+    "book": "Workshop on TIPSTER Text Program",
+    "id": "acl-X98-1015",
+    "title": "Japanese IE System and Customization Tool",
+    "url": "https://aclweb.org/anthology/X98-1015",
+    "year": 1998
+  },
+  "references": [],
+  "sections": [
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "This paper reports on the development of the Japanese Information Extraction system and the Japanese Information Extraction customization tool.",
+        "These systems are based on the corresponding English systems, the Proteus Information Extraction system (Grishman 97) and the Proteus Extraction Tool (Yangarber and Grishman 97), developed at NYU.",
+        "In this paper, we will, in particular, describe the differences between the Japanese systems and English systems."
+      ]
+    },
+    {
+      "heading": "2 The Japanese IE System",
+      "text": [
+        "Figure 1 shows the overall structure of the Japanese IE system.",
+        "The system consists of a cascade of modules with their attendant knowledge bases, with the input text document passed through the pipeline of modules.",
+        "Because document",
+        "Japanese sentences have no spaces between the tokens, we first have to run a morphological analyzer in order to segment each sentence into tokens.",
+        "Although an alternative is to use the input sequence of characters as it is, this may cause a serious problem when we apply patterns because of ambiguities.",
+        "The first module, morphological analysis is responsible for breaking the sentence into tokens.",
+        "We used JUMAN (Matsumoto et al.",
+        "97) for this purpose.",
+        "It also provides the part-of-speech information for each token, which will be used in the next module.",
+        "The second module is responsible for extracting named entities, like organization, person, location names, time expressions, and numeric expressions.",
+        "This is different from the English system, which uses the pattern matching mechanism for named entity detection.",
+        "In the Japanese system, this is done by an independent program which uses a decision tree technique to assign tags of named entity information to the input text (Sekine 98).",
+        "The next two modules employ regular expression pattern matching, applying patterns of successively increasing complexity to the document.",
+        "These are essentially the same as those of the English system.",
+        "The patterns – the regular expressions with their associated actions, -- are encoded in a special pattern specification language, and are compiled and stored in a separate pattern base.",
+        "Pattern matching is a form of deterministic, bottom-up partial parsing.",
+        "The numbers of patterns between the two systems are slightly different mainly due to the difference in the methods of detecting named entities.",
+        "ture Table 1: Number of patterns",
+        "The following explains the pattern matching component using some simplified examples of Japanese patterns.",
+        "There are two phases in the pattern matching component.",
+        "The first phase uses patterns to identify small syntactic units, such as noun and verb phrases.",
+        "Thus, e.g., in order to analyze the example sentence in Appendix A, this phase will employ a pattern such as: np(person) np(position) which matches an ordered pair of noun phrases (np) whose lexical heads belong to the semantic class \"person\" and \"position\", respectively.",
+        "The pattern's action will subsume the matched text into a new, larger constituent, with the side effect that the entity corresponding to the \"person\" noun phrase will acquire a slot named \"position\", linked to the position entity.",
+        "The second phase called event patterns applies domain-specific and scenario-specific patterns, to resolve higher-level syntactic constructions (apposition, prepositional phrase attachment), conjunction, and clause constructions.",
+        "The actions triggered by the patterns specify operations on the logical form representation of the sentence, which evolves as the pattern matching progresses.",
+        "The logical form contains the descriptions of the entities, relationships, and events discovered so far by the analysis.",
+        "For example, there is a pattern",
+        "(here, the Japanese characters are written in typewriter type-face) This is an event pattern and it constructs several relationships regarding the person, position and the predicate SHOUKAKU-SURU (to promote).",
+        "The subsequent phases operate on the logical form built in the pattern matching phases.",
+        "Reference resolution links anaphoric pronouns to their antecedents, and resolves other co-referring expressions.",
+        "We create some Japanese-specific rules for abbreviations and any other equivalent expressions.",
+        "The Japanese system uses the corresponding English components for unification of partial event structures and template generation."
+      ]
+    },
+    {
+      "heading": "3 Customization Tool",
+      "text": [
+        "There is not much to mention about the porting of the English Customization tool (PET) to Japanese.",
+        "There were programming level difficulties because its window system is developed using GARNET, a graphical system for LISP, which does not support the Japanese language."
+      ]
+    },
+    {
+      "heading": "4 Evaluation",
+      "text": [
+        "Table 2 shows the result of the information extraction experiment for English and Japanese.",
+        "The English results are based on the formal MUC-6 experiment.",
+        "The Japanese experiment is conducted using Nikkei newspaper articles on the same domain, \"executive succession events\" .",
+        "We spent about two months of one person's part-time labor to develop the patterns.",
+        "Actually, the developer created the patterns at the same time as he developed the Japanese system.",
+        "It achieves a slightly better score.",
+        "This may due to the fact that he spent more time than that spent for the English rule creation (one month), or due to the tendency we found that there is a typical document style for this kind of articles.",
+        "The latter is not clear as we have not investigated the English articles."
+      ]
+    },
+    {
+      "heading": "5 Future Work",
+      "text": []
+    },
+    {
+      "heading": "Structural generalization",
+      "text": [
+        "In the English system, there is a facility to generalize a pattern based on structural variation.",
+        "For example, an active mood pattern can be generalized to a passive pattern or a relative clause pattern.",
+        "A similar mechanism might be useful in Japanese.",
+        "Japanese is known as a free word-order language.",
+        "In principle, a pattern can be generalized based on this property of Japanese, but there are some exceptions and some heuristics should be considered.",
+        "Reference resolution for zero pronoun In Japanese, subject or object nouns can sometimes be omitted.",
+        "It is a difficult problem to recover the noun, but we found several cases where such technologies are needed to achieve better performance."
+      ]
+    },
+    {
+      "heading": "6 Acknowledgments",
+      "text": [
+        "The English Proteus Information Extraction system, on which this work is based, was developed by Professor Ralph Grishman.",
+        "We would like to gratefully acknowledge his assistance in the development of the Japanese system."
+      ]
+    }
+  ]
+}

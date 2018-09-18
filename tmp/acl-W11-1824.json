@@ -1,0 +1,125 @@
+{
+  "info": {
+    "authors": [
+      "Ehsan Emadzadeh",
+      "Azadeh Nikfarjam",
+      "Graciela Gonzalez"
+    ],
+    "book": "Proceedings of BioNLP Shared Task 2011 Workshop",
+    "id": "acl-W11-1824",
+    "title": "Double Layered Learning for Biological Event Extraction from Text",
+    "url": "https://aclweb.org/anthology/W11-1824",
+    "year": 2011
+  },
+  "references": [
+    "acl-W09-1402",
+    "acl-W11-1801",
+    "acl-W11-1802",
+    "acl-W11-1816"
+  ],
+  "sections": [
+    {
+      "text": [
+        "Ehsan Emadzadeh, Azadeh Nikfarjam, Graciela Gonzalez",
+        "Arizona State University / Tempe, AZ 85283, USA",
+        "This paper presents our approach (referred to as BioEvent) for protein-level complex event extraction, developed for the GENIA task (Kim et al., 2011b) of the BioNLP Shared Task 2011 (Kim et al., 2011a).",
+        "We developed a double layered machine learning approach which utilizes a state-of-the-art minimized feature set for each of the event types.",
+        "We improved the best performing system of BioNLP 2009 overall, and ranked first amongst 15 teams in finding \"Localization\" events in 2011.",
+        "BioEvent is available at http://bioevent.sourceforge.net/"
+      ]
+    },
+    {
+      "heading": "1. Introduction",
+      "text": [
+        "A biological event refers to a specific kind of interaction between biological entities.",
+        "Events consist of two parts: event triggers and event arguments.",
+        "Event extraction can be very challenging when dealing with complex events with multiple or nested arguments; for example, events themselves can be an argument for other events."
+      ]
+    },
+    {
+      "heading": "2. Methods",
+      "text": [
+        "In general, to detect an event mentioned in text, the event trigger should be identified first, then complemented with event arguments.",
+        "We divided the training and testing tasks into two phases: trigger detection and argument detection.",
+        "The trigger detection problem can be modeled as a multi-class classification of a word or combination of words (phrase).",
+        "Instead of using all possible phrases in the training text as examples for the classifier, we only included those that were known triggers in the training set.",
+        "For the official shared task submission we used SVMUght (Joachims, 1999).",
+        "Detailed explanation of the trigger detection process includes three main steps: pre-processing, training of the SVM models, and combining SVM results.",
+        "Pre-processing.",
+        "All tokenized documents provided by the shared task organizers (Stenetorp et al., 2011) were converted to database records.",
+        "Then different sets of attributes were defined and calculated for words, sentences and documents.",
+        "Training SVM models and Combining Results.",
+        "We trained 9 different binary SVM models using one-vs-many approach.",
+        "One of the challenging tasks was to compare the results of different SVM models, given that each had different feature sets and their confidence values were not directly comparable and needed to be calibrated properly before comparing.",
+        "We tried three approaches: 1) selecting the SVM result with highest positive distance to hyperplane, 2) using a trained decision tree and 3) using another SVM trained for voting.",
+        "Model J48 from the WEKA library (Hall et al., 2009) was trained based on SVM distances for the training set examples and expected outputs.",
+        "In the third approach, we tried SVM for voting, which generated better results than the decision tree.",
+        "Last two approaches consist of two layers of classifiers which first layer includes event types classifiers and second layer generates final decision",
+        "Table 1: F-Value from our BioEvent system compared to Turku09 (Bjorne et al., 2009) results, using Approximate Span/Approximate Recursive matching",
+        "based on first layer outputs.",
+        "Similar to trigger detection, argument detection can be modeled for a classification task by assigning an argument type label to each possible combination of an event trigger and a biological entity in a sentence.",
+        "We obtained entities from a1 files, as well as the supportive analysis data provided by the shared task organizers (Bjorne et al., 2009).",
+        "After generating events using SVM classification, we merged them with the output from the Turku system to generate the final result.",
+        "For common events (detected by both systems) we used the arguments detected by the Turku system."
+      ]
+    },
+    {
+      "heading": "3. Results",
+      "text": [
+        "Since we tried to improve upon the best performing system in the 2009 competition (Turku09), we compare the results of our system and Turku09's on the 2011 test set.",
+        "Table 1 shows the performance of our proposed system and that of Turku09.",
+        "We see that Binding was our worst event (negative change), Localization the most improved, no change for Protein Catabolism, and only a slight improvement in Negative Regulation."
+      ]
+    },
+    {
+      "heading": "4. Conclusion and future work",
+      "text": [
+        "In this research we focused on event trigger detection by applying a SVM-based model.",
+        "SVM is very sensitive to parameters and further tuning of parameters can improve the overall result.",
+        "Furthermore, we want to evaluate our method independently and find the contribution of each modification to the final result.",
+        "Our method is generalizable to other domains by using proper train-set and finding useful attributes for new event types."
+      ]
+    },
+    {
+      "heading": "Acknowledgments",
+      "text": [
+        "The authors would like to thank Ryan Sullivan for his helps during this research.",
+        "EE and GG acknowledge partial funding from NLM Contract",
+        "HHSN276201000031C.",
+        "Event type",
+        "Bioevent",
+        "Turku09",
+        "Gene expression",
+        "71.88",
+        "70.84",
+        "Transcription",
+        "47.62",
+        "47.14",
+        "Protein catabolism",
+        "60.87",
+        "60.87",
+        "Phosphorylation",
+        "75.14",
+        "73.39",
+        "Localization",
+        "61.49",
+        "59.68",
+        "Binding",
+        "34.42",
+        "35.97",
+        "Regulation",
+        "24.03",
+        "22.26",
+        "Positive regulation",
+        "33.41",
+        "31.84",
+        "Negative regulation",
+        "18.89",
+        "18.58",
+        "ALL-TOTAL",
+        "44.69",
+        "43.54"
+      ]
+    }
+  ]
+}

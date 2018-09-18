@@ -1,0 +1,160 @@
+{
+  "info": {
+    "authors": [
+      "Imtiaz Hussain Khan",
+      "Kees van Deemter",
+      "Graeme D. Ritchie",
+      "Albert Gatt",
+      "Alexandra A. Cleland"
+    ],
+    "book": "Proceedings of the 12th European Workshop on Natural Language Generation (ENLG 2009)",
+    "id": "acl-W09-0615",
+    "title": "A Hearer-Oriented Evaluation of Referring Expression Generation",
+    "url": "https://aclweb.org/anthology/W09-0615",
+    "year": 2009
+  },
+  "references": [
+    "acl-C08-1055",
+    "acl-E06-1040",
+    "acl-P04-1052",
+    "acl-W06-1409",
+    "acl-W06-1419",
+    "acl-W06-1420",
+    "acl-W06-1421",
+    "acl-W08-1108",
+    "acl-W98-1419"
+  ],
+  "sections": [
+    {
+      "text": [
+        "A Hearer-oriented Evaluation of Referring Expression Generation *",
+        "Imtiaz H. Khan, Kees van Deemter, Graeme Ritchie, Albert Gatt, Alexandra A. Cleland",
+        "This paper discusses the evaluation of a Generation of Referring Expressions algorithm that takes structural ambiguity into account.",
+        "We describe an ongoing study with human readers."
+      ]
+    },
+    {
+      "heading": "1. Introduction",
+      "text": [
+        "In recent years, the NLG community has seen a substantial number of studies to evaluate Generation of Referring Expressions (GRE) algorithms, but it is still far from clear what would constitute an optimal evaluation method.",
+        "Two limitations stand out in the bulk of existing work.",
+        "Firstly, most existing evaluations are essentially speaker-oriented, focussing on the degree of \"human-likeness\" of the generated descriptions, disregarding their effectiveness (e.g. Mellish and Dale (1998), Gupta and Stent (2005), van Deemter et al.",
+        "(2006), Belz and Kilgarriff (2006), Belz and Reiter (2006), Paris et al.",
+        "(2006), Viethen and Dale (2006), Gatt and Belz (2008)).",
+        "The limited number of exceptions to this rule indicate that the differences between the two approaches to evaluation can be substantial (Gatt and Belz, 2008).",
+        "Secondly, most evaluations have focussed on the semantic content of the generated descriptions, as produced by the Content Determination stage of a GRE algorithm; this means that linguistic realisation (i.e. the choice of words and linguistic constructions) is usually not addressed (exceptions are: Stone and Webber (1998), Krahmer and The-une (2002), Siddharthan and Copestake (2004)).",
+        "Our aim is to build GRE algorithms that produce referring expressions that are of optimal benefit to a hearer.",
+        "That is, we are interested in generating descriptions that are easy to read and understand.",
+        "But the readability and intelligibility of a description can crucially depend on the way in which it is",
+        "* This work is supported by a University of Aberdeen Sixth Century Studentship, and EPSRC grant EP/E011764/1.",
+        "worded.",
+        "This happens particularly when there is potential for misunderstanding, as can happen in the case of attachment and scope ambiguities.",
+        "Suppose, for example, one wants to make it clear that all radical students and all radical teachers are in agreement with a certain idea.",
+        "It might be risky to express this as 'the radical students and teachers are agreed', since the reader might be inclined to interpret this as pertaining to all teachers rather than only the radical ones.",
+        "For this reason, a GRE program might opt for the longer noun phrase 'the radical students and the radical teachers' .",
+        "But because this expression is lengthier, the choice involves a compromise between compre-hensibiliity and brevity, a special case of a difficult trade-off that is typical of generation as well as interpretation of language (van Deemter, 2004).",
+        "We previously reported the design of an algorithm (based on an earlier work on expressions referring to sets (Gatt, 2007)), which was derived from experiments in which readers were asked to express their preference between different descriptions and to respond to instructions which used a variety of phrasings (Khan et al., 2008).",
+        "Here we discuss the issues that arise when such an algorithm is evaluated in terms of its benefits for readers."
+      ]
+    },
+    {
+      "heading": "2. Summary of the algorithm",
+      "text": [
+        "In order to study specific data, we have focussed on the construction illustrated in Section 1 above: potentially ambiguous Noun Phrases of the general form the Adj Nouni and Nounj.",
+        "For such phrases, there are potentially two interpretations: wide scope (Adj modifies both Nouni and Nounj) or narrow scope (Adj modifies Nouni but not Nounj).",
+        "Our algorithm starts from an unambiguous set-theoretic formula over lexical items (i.e. words have already been chosen), and thus has to choose between a number of different realisations.",
+        "The possible phrasings for the wide scope meaning are: (1) the Adj Noun\\ and Noun2, (2) the Adj Noun2and Nouni, (3) the Adj Nouni and the Adj Noun2, and (4) the Adj Noun2 and the Adj Nouni.",
+        "For narrow scope, the possibilities are: (1) the AdjNouni and Noun2, (2) the Noun2 and Adj Nouni, (3) the Adj Nouni and the Noun2, and (4) the Noun2 and the Adj Nouni.",
+        "For our purposes, (1) and (2) are designated as 'brief', (3) and (4) as 'non-brief' (that is, 'brevity' has a specialised sense involving the presence/absence of ' the' and possibly Adj before the second Noun).",
+        "Importantly, the 'nonbrief' expressions are syntactically unambiguous, but the 'brief' NPs are potentially ambiguous, and hence are the focus of attention in this work.",
+        "Our algorithm is based on certain specific hypotheses (from the earlier experiments) which make crucial use of corpus data concerning the frequency of two types of collocations: the collocation between an adjective and a noun, and the collocation between two nouns.",
+        "At a broader level, we hypothesise: the most likely reading of an NP can be predicted using corpus data (Word Sketches (Kilgarriff, 2003)).",
+        "The more specific hypotheses derive from earlier work by Kilgarriff (2003) and Chantree et al.",
+        "(2006), and were further developed and tested in our previous experiments.",
+        "The central idea is that this statistical information can be used to predict a 'most likely' scoping (and hence interpretation) for the adjective in the 'brief' (i.e. potentially ambiguous) NPs.",
+        "We define an NP to be predictable if our model predicts a single reading for it; otherwise it is unpredictable.",
+        "Hence, all 'non-brief' NPs are predictable (being unambiguous), but only some of the 'brief' ones are predictable.",
+        "In a nutshell, the model underlying our algorithm prefers predictable expressions to unpredictable ones, but if several of the expressions are predictable then briefexpressions are preferred over non-brief."
+      ]
+    },
+    {
+      "heading": "3. Aims of the study",
+      "text": [
+        "We want to find out whether our generator makes the best possible choices (for hearers) from amongst the different ways in which a given description can be realised.",
+        "But although our algorithm uses sophisticated strategies for avoiding noun phrases that it believes to be liable to misunderstanding, misunderstandings cannot be ruled out, and if a hearer misunderstands a noun phrase then secondary aspects such as reading (and/or comprehension) speed are of little consequence.",
+        "We therefore plan first to find out the likelihood of misunderstanding.",
+        "For this reason, we will report on the degree of accuracy, as a percentage of times that a participant's understanding of an expression that we label as predictable fails to match the interpretation assigned by our model.",
+        "Additionally, we shall statistically test two hypotheses:",
+        "Comprehension Accuracy 1: Predictable expressions are more often interpreted in agreement than in disagreement with the model.",
+        "Comprehension Accuracy 2: There is more agreement among participants on the interpretation of predictable expressions than of unpredictable expressions.",
+        "We will not only test the comprehensibility of the expressions generated by our algorithm, but their readability and intelligibility as well.",
+        "This is necessary because the experiments which led to the algorithm design considered only certain aspects of the hearer's reaction to NPs (e.g. metalinguistic judgements about a participant's preferences) and we wish to check these comprehensibility/brevity facets from a different, perhaps psycholinguisti-cally more valid, perspective.",
+        "It is also necessary because avoidance of misunderstandings is not the only decisive factor: if several of the expressions are predictable then our algorithm chooses between them by preferring brevity.",
+        "But why is brief better than non-brief?",
+        "Taking readability and intelligibility together as 'processing speed', our third hypothesis is:",
+        "Processing speed: Subjects process predictable brief expressions more quickly than predictable non-brief ones.",
+        "Confirmation of this hypothesis would be a strong indication that our algorithm is on the right track, particularly if the degree of accuracy (see above) turns out to be high.",
+        "Processing speed is a complex concept, but we could decompose it as 'reading speed' and 'comprehension speed', permitting us to examine reading and comprehension separately.",
+        "We intend to see what evidence there is for the following additional propositions, which will be tested solely to aid our understanding.",
+        "Reading Speed:",
+        "RS1: Subjects read predictable brief NPs more quickly than unpredictable brief ones.",
+        "RS2: Subjects read unpredictable brief NPs more quickly than predictable non-brief ones.",
+        "RS3: Subjects read predictable brief NPs more Comprehension Speed:",
+        "CS1: Subjects comprehend predictable brief NPs more quickly than unpredictable brief ones.",
+        "CS2: Subjects comprehend predictable non-brief NPs more quickly than unpredictable brief ones.",
+        "CS3: Subjects do not comprehend predictable non-brief NPs more quickly than predictable brief ones.",
+        "(Remember that, in our restricted set of NPs, a phrase cannot be both 'unpredictable' and 'nonbrief'.)",
+        "Rejection of any of these statements will not count against our algorithm."
+      ]
+    },
+    {
+      "heading": "4. Sketch of experimental procedure",
+      "text": [
+        "Participants will be presented with a sequence of trials (on a computer screen), each of which consists of a lead-in sentence followed by a target sentence and a comprehension question that relates to the two sentences together.",
+        "The target sentence might for example say 'the radical students and teachers were waving their hands' .",
+        "The comprehension question in this case could be 'Were the moderate teachers waving their hands?'.",
+        "As both the target sentence and the comprehension question make use of definite NPs (e.g. 'the moderate teachers' ), it is necessary to ensure any presuppositions about the existence of the referent set are met, without biasing the answer.",
+        "For this reason, the target sentence is preceded by a lead-in sentence to establish the existence of the sets within the discourse (here, 'there were radical and moderate people in a rally' ).",
+        "Given this set-up we are confident that we can identify, from a participant's yes/no answer, whether the NP in the target sentence was assigned a narrow-scope or a wide-scope reading for the adjective.",
+        "The computer will record the participant's response as well as the length of time that the participant took to answer the question.",
+        "We will use Linger for presentation of stimuli.",
+        "Pilots suggest that the complexity of the trials makes it advisable to use masked sentence-based self-paced reading, in which every press of the space bar reveals the next sentence and the previous sentence is replaced by dashes.",
+        "The choice of nouns and adjectives (to construct NPs) is motivated by the fact that there is a balanced distribution of NPs in each of the following three classes.",
+        "Wide scope class is the one for which our model predicts a wide-scope reading; narrow scope class is the one for which our model predicts a narrow-scope reading; and ambiguous class is the one for which our model fails to predict a single reading (Khan et al., 2008)."
+      ]
+    },
+    {
+      "heading": "5. Issues emerging from this study",
+      "text": [
+        "The design of this experiment raised some difficult questions, some quite unexpected:",
+        "1.",
+        "The quality of the output of a generation algorithm might appear to be a simple and well-understood concept.",
+        "However, output quality is multi-faceted, because an expression may be easy to read but difficult to process semantically, or the other way round.",
+        "A thorough output evaluation should address both aspects of quality, in our view.",
+        "2.",
+        "If both reading and understanding are addressed, this raises the question of how these two dimensions should be traded off against each other.",
+        "If one algorithm's output was read more quickly than that of another, but understood more slowly than the second, which of the two should be preferred?",
+        "Perhaps there is a legitimate role here for metalinguistic judgments after all, in which participants are asked to express their preference between expressions (see Paraboni et al.",
+        "(2006) for discussion)?",
+        "An alternative point of view is that these questions are impossible to answer independent of a realistic setting in which participants utter sentences with a concrete communicative purpose in mind.",
+        "If utterances were made in order to accomplish a concrete task (e.g., to win a game) then task-based evaluation would be possible.",
+        "3.",
+        "Even though this paper has not focussed on details of experimental design and analysis, one difficulty is worth mentioning: given the grammatical options between which the generator is choosing, only three types of situations are represented: a description can be brief and predictable (e.g. using 'the old men and women' to convey wide scope, since the adjective is predicted by our algorithm to have wide scope), brief and unpredictable (e.g. 'the rowing boats and ships' for wide scope, given a prediction of narrow scope), or non-brief and predictable (e.g. 'the old men and the old women' for wide scope).",
+        "It might appear that there exists a fourth option: non-brief and unpredictable.",
+        "But this is ruled out by our technical sense of 'nonbrief': as noted earlier, 'non-brief' nps do not have the scope ambiguity.",
+        "Because of this \"missing cell\", it will not be possible to analyse our data using an anova test, which would have automatically taken care of all possible interactions between comprehensibility and brevity.",
+        "A number of different tests will be used instead, with Bon-ferroni corrections where necessary."
+      ]
+    },
+    {
+      "heading": "6. Conclusion",
+      "text": [
+        "Human-based evaluation is gaining considerable popularity in the nlg community.",
+        "Whereas evaluation of gre has mostly been speaker-oriented, the present paper has explored a plan for an experimental hearer-oriented evaluation.",
+        "The main conclusion is that hearer-based evaluation is difficult because the quality of a generated expression can be measured in different ways, whose results cannot be assumed to match.",
+        "One factor we have not examined is the notion of fluency: it is possible that our algorithm will sometimes choose a word order (e.g. 'the women and old men') that is relatively infrequent, and therefore lacking in fluency.",
+        "Such situations might lead to longer reading times."
+      ]
+    }
+  ]
+}

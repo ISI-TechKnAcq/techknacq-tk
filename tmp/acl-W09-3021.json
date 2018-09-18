@@ -1,0 +1,115 @@
+{
+  "info": {
+    "authors": [
+      "Collin F. Baker",
+      "Christiane Fellbaum"
+    ],
+    "book": "Proceedings of the Third Linguistic Annotation Workshop (LAW III)",
+    "id": "acl-W09-3021",
+    "title": "WordNet and FrameNet as Complementary Resources for Annotation",
+    "url": "https://aclweb.org/anthology/W09-3021",
+    "year": 2009
+  },
+  "references": [],
+  "sections": [
+    {
+      "text": [
+        "Collin F. Baker Christiane Fellbaum",
+        "International Computer Science Institute Princeton University",
+        "1947 Center St., Berkeley, California 94704 Princeton, NJ 08540-5233",
+        "WordNet and FrameNet are widely used lexical resources, but they are very different from each other and are often used in completely different ways in NLP.",
+        "In a case study in which a short passage is annotated in both frameworks, we show how the synsets and definitions of WordNet and the syntagmatic information from FrameNet can complement each other, forming a more complete representation of the lexical semantic of a text than either could alone.",
+        "Close comparisons between them also suggest ways in which they can be brought into alignment."
+      ]
+    },
+    {
+      "heading": "1. Background and motivation",
+      "text": [
+        "FrameNet and WordNet are two lexical databases that are widely used for NLP, often in conjunction.",
+        "Because of their complementary designs they are obvious candidates for alignment, and an exploratory research project within the larger context of the semantic annotation of the the American national Corpus is currently underway.",
+        "We give specific illustrative examples of annotations against both resources, highlighting their different contributions towards a rich semantic analysis.",
+        "WordNet (WN): (Fellbaum, 1998), is a large electronic lexical database of English.",
+        "Originally conceived as a full-scale model of human semantic organization, it was quickly embraced by the Natural Language Processing (NLP) community, a development that guided its subsequent growth and design.",
+        "WordNet has become the lexical database of choice for NLP and has been incorporated into other language tools, including VerbNet (Kipper et al., 2000) and OntoNotes (Hovy et al., 2006).",
+        "Numerous on-line dictionaries, including Google's \"define\" function, rely significantly on WordNet.",
+        "WordNet's coverage is sometimes criticized as being too fine-grained for automatic processing, though its inventory is not larger than that of a standard collegiate dictionary.",
+        "But the present limitation of automatic WSD cannot be entirely blamed on existing systems; for example, Fellbaum and Grabowski (1997) have shown that humans, too, have difficulties identifying context-appropriate dictionary senses.",
+        "One answer is clearly that meanings do not exist outside contexts.",
+        "Furthermore, although WN does contain \"sentence frames\" such as \"Somebody – s something\" for a transitive verb with a human agent, it provides little syntagmatic information, except for what can be gleaned from the example sentences.",
+        "WordNet's great strength is its extensive coverage, with more than 117,000 synonym sets (synsets), each with a definition and relations to other synsets covering almost all the general vocabulary of English.",
+        "FrameNet (FN): (Fontenelle, 2003) is a lexical resource organized not around words per se, but semantic frames (Fillmore, 1976): characterizations of events, relations, and states which are the conceptual basis for understanding groups of word senses, called lexical units (LUs).",
+        "Frames are distinguished by the set of roles involved, known as frame elements (FEs).",
+        "Much of the information in the FrameNet lexicon is derived by annotating corpus sentences; for each LU, groups of sentences are extracted from a corpus, sentences which collectively exemplify all of the lexicographically relevant syntactic patterns in which the LU occurs.",
+        "A few examples of each pattern are annotated; annotators not only mark the target word which evokes the frame in the mind of the hearer, but also mark those phrases which are syntactically related to the target word and express its frame elements.",
+        "FrameNet is much smaller than WordNet, covering roughly 11,000 LUs, but contains very rich syntagmatic information about the combinatorial possibilities of each LU.",
+        "Given these two lexical resources with different strengths, it seems clear that combining WN and FN annotation will produce a more complete semantic representation of the meaning of a text than either could alone.",
+        "What follows is intended as an example of how they can usefully be combined."
+      ]
+    },
+    {
+      "heading": "2. Case Study: Aegean History",
+      "text": [
+        "The text chosen for this study is a paragraph from the American National Corpus (Ide et al., 2002), from the Berlitz travel guide to Greece, discussing the history of",
+        "Greece, specifically the Aegean islands after the fall of Byzantium to the Crusaders.",
+        "Although brief, its three sentences provide ample material to demonstrate some of the subtlety of both WN and FN annotation:",
+        "(1) While Byzantine land was being divided, there was no one in control of the seas, so pirates raided towns on many of the islands.",
+        "(2) To counter this, the populations moved from their homes on the coast and built settlements inland, out ofsight ofthe raiding parties.",
+        "(3) This created a pattern seen today throughout the Aegean ofa small port (skala) which serves an inland settlement or chora, making it easier to protect the island from attack.",
+        "Below, we present three tables containing the annotation of both the WordNet synsets for each open class (content) word in the text and the FrameNet frames and the fillers of the frame elements in each sentence.",
+        "We also provide brief notes on some interesting features of the semantics of each sentence.",
+        "(2) Information about what the land was separated into is not given in the sentence nor clear from the context, so the Parts FE has been annotated as \"indefinite null instantiated\" (INI).",
+        "Clearly this is an intentional action, but because the verb is passive, the agent can be (and is) omitted, so the AGENT FE is marked as \"construc-tionally null instantiated\" (CNI).",
+        "(4) In addition to FEs and their phrase types and grammatical functions, FrameNet annotates a limited set of syntactic facts: here, in is annotated as at \"support preposition\", allowing control to function as an adjectival, and was as a copula, allowing no one to fill the External syntactic position of in control.",
+        "(5) Since FN is based on semantic frames, annotation of nouns is largely limited to those which express events (e.g. destruction), relations (brother), or states (height).",
+        "For the most part, nouns denoting artifacts and natural kinds evoke relatively uninteresting frames, and hence relatively few of them have been included in FN.",
+        "However, there are three such instances in this sentence, seas, islands (9), and towns (12); In all three cases, the frame-evoking noun also denotes the filler of the FE Locale.",
+        "(6) At the top level of organization, so evokes the Causation frame.",
+        "Actually, it is misleading to simply annotate control of the seas in the frames BeJnxontrol and Natural-features; here, we regard seas as metonymic for \"ship traffic on the seas\", but neither the FN annotation nor the WN definition indicates this.",
+        "(7) The noun pirates evokes the very rich frame of",
+        "Piracy, and also denotes the filler of the FE Perpetrator, but that is the only FE filled in in that frame.",
+        "Instead, pirates actually fills the Assailant FE of the Attack frame, (8); the main idea is about the raids, not the piratical acts on the seas that the same people have a habit of committing.",
+        "Note that the WN definition takes the view that raiding coastal towns is a typical part of piracy.",
+        "(10) PoliticalJocales roughly corresponds to \"Geopolitical entity\" in named entity recognition.",
+        "Despite the relatively fine level of detail of the annotations, there are still many important semantic features of the sentence not represented in FrameNet or WordNet.",
+        "For example, there is no treatment of negation cum quantification, no representation of the fact that there was no one in control should mean that Be_in_control is not happening.",
+        "The two highest level predicates in this sentence are moved (2) and built (6), in the frames Motion and Building respectively; since they are conjoined, the phrase to counter this fills the FE Purpose in both frames.",
+        "In (2) the Goal FE of the Motion is marked as definite null instantiation (DNI), because, although it is not expressed in the VP headed by moved, it is recoverable from context (i.e. the second VP).",
+        "(4) Note that FN puts this sense of home in the Buildings frame, but WN has a less specific definition.",
+        "(6) Coast is a Relational_natural_feature because it is defined in relation to another natural feature; a coast has to be the coast of some land mass, although here the land mass is DNI.",
+        "(9) Inland both evokes a Loca-tive_relation and denotes the Ground FE.",
+        "(10) FN and WN agree on a sense of sight denoting the range of vision.",
+        "(11) WN's example sentence for raid is precisely about pirates.",
+        "(2) The concept of \"pattern\" is very slippery-the arrangement of port and inland settlement is both spatial and temporal in terms of building practices over centuries.",
+        "(3) This sense of see can refer to the area in which something is seen, the time, or the conditions under which it can be seen; these are subsumed by the FE state.",
+        "(4) Today expresses a Tempo-raLcollocation and denotes the Landmark.",
+        "(Repetitions of the words settlement and island have been omitted.)",
+        "The interrelation among (7), (10), (11) and (12) is rather complex: the arrangement in which the port serves the settlement has the making easier as a result.",
+        "The arrangement is also the Cause FE of making.",
+        "Easier in the Difficulty frame requires an Ex-",
+        "periencer FE which is not specified here (thus INI) and an Activity FE, to protect.",
+        "The FE Protection (which can be a person, a thing, or an activity) is marked CNI, because it is the external argument of the infinitive."
+      ]
+    },
+    {
+      "heading": "3. Towards an alignment of WordNet and FrameNet",
+      "text": [
+        "We hope these examples have shown that finding related WN and FN senses can contribute to text understanding.",
+        "Fellbaum and Baker (2008) discuss the respective strengths and weaknesses of WN and FN as well as their complementary advantages that could be fruitfully exploited aligning the two resources.",
+        "Work of this type is actually underway; researchers are semi-automatically annotating selected lemmas in the American National Corpus with both FN frames and WN senses.",
+        "The lemmas are chosen so as to reflect the part of speech distribution in text and to represent a spectrum of frequency and polysemy.",
+        "A preliminary group of instances are manually tagged by trained annotators, and then the teams working on WN and FN annotation discuss and resolve discrepancies among the taggers before the remaining tokens are annotated.",
+        "Three cases sum up the annotation and alignment process:",
+        "(1) In the very unlikely case that a synset and a frame contain exactly the same set of lexemes, their correspondence is simply recorded.",
+        "(2) In the more common case in which all the words in a synset are a subset of those in the frame, or all the words in a frame are a subset of those in the synset, this fact is also recorded.",
+        "(3) In case two synsets are subsets of the LUs of one frame, we will record this and note that it as a possible candidate for collapsing the synsets, respectively.",
+        "FN and WN are two comprehensive but complementary lexical resources.",
+        "Both WN's paradigmatic andFN's syntagmatic approach to lexical semantics are needed for a rich representation of word meaning in context.",
+        "We have demonstrated how text can be annotated against both resources to provide the foundation for deep language understanding and, as an important by-product, help to align the word senses of these widely-used resources.",
+        "of course, these examples were manually annotated, but automatic systems for word-sense disambiguation (largely based on WordNet) and FrameNet role labeling (Johansson and Nugues, 2007; Coppola et al., 2008) are improving rapidly.",
+        "The project just described is intended to provide more gold-standard annotation (both WN and FN) to help train automatic systems for both WN and FN annotation, which are clearly related tasks e.g. (Prad-han et al., 2007; Erk, 2005).",
+        "Acknowledgment",
+        "We gratefully acknowledge support from the National Science Foundation (#IIS-0705199) for the work reported here."
+      ]
+    }
+  ]
+}

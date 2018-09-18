@@ -1,0 +1,234 @@
+{
+  "info": {
+    "authors": [
+      "Ye-Yi Wang",
+      "Alex Waibel"
+    ],
+    "book": "COLING-ACL",
+    "id": "acl-P98-2221",
+    "title": "Modeling with Structures in Statistical Machine translation",
+    "url": "https://aclweb.org/anthology/P98-2221",
+    "year": 1998
+  },
+  "references": [
+    "acl-C96-2141",
+    "acl-J92-4003",
+    "acl-J93-2003",
+    "acl-P97-1047"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "Most statistical machine translation systems employ a word-based alignment model.",
+        "In this paper we demonstrate that word-based alignment is a major cause of translation errors.",
+        "We propose a new alignment model based on shallow phrase structures, and the structures can be automatically acquired from parallel corpus.",
+        "This new model achieved over 10% error reduction for our spoken language translation task."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Most (if not all) statistical machine translation systems employ a word-based alignment model (Brown et al., 1993; Vogel, Ney, and Tillman, 1996; Wang and Waibel, 1997), which treats words in a sentence as independent entities and ignores the structural relationship among them.",
+        "While this independence assumption works well in speech recognition, it poses a major problem in our experiments with spoken language translation between a language pair with very different word orders.",
+        "In this paper we propose a translation model that employs shallow phrase structures.",
+        "It has the following advantages over word-based alignment:",
+        "• Since the translation model can directly depict phrase reordering in translation, it is more accurate for translation between languages with different word (phrase) orders.",
+        "• The decoder of the translation system can use the phrase information and extend hypothesis by phrases (multiple words), therefore it can speed up decoding.",
+        "The paper is organized as follows.",
+        "In section 2, the problems of word-based alignment models are discussed.",
+        "To alienate these problems, a new alignment model based on shallow phrase structures is introduced in section 3.",
+        "In section 4, a grammar inference algorithm is presented that can automatically acquire the phrase structures used in the new model.",
+        "Translation performance is then evaluated in section 5, and conclusions are presented in section 6."
+      ]
+    },
+    {
+      "heading": "2 Word-based Alignment Model",
+      "text": [
+        "In a word-based alignment translation model, the transformation from a sentence at the source end of a communication channel to a sentence at the target end can be described with the following random process:",
+        "1.",
+        "Pick a length for the sentence at the target end.",
+        "2.",
+        "For each word position in the target sentence, align it with a source word.",
+        "3.",
+        "Produce a word at each target word po",
+        "sition according to the source word with which the target word position has been aligned.",
+        "IBM Alignment Model 2 is a typical example of word-based alignment.",
+        "Assuming a sentence s = si, • • • , .9/ at the source of a channel, the model picks a length m of the target sentence t according to the distribution P(m I s) = f, where is a small, fixed number.",
+        "Then for each position i (0 < i < m) in t, it finds its corresponding position ai in s according to an alignment distribution P(a, m, s) = a(a, I m,1).",
+        "Finally, it generates a word ti at the position i of t from the source word sa, at the aligned position ai, according to a translation distribution P(t I ei-1, s) = t(t, I sa,).",
+        "waere denn Montag der sech und zwanzigste Juli moeglich",
+        "Therefore, P(t I s) is the sum of the probabilities of generating t from s over all possible alignments A, in which the position i in t is aligned with the position ai in s: A word-based model may have severe problems when there are deletions in translation (this may be a result of erroneous sentence alignment) or the two languages have different word orders, like English and German.",
+        "Figure 1 and Figure 2 show some problematic alignments between English/German sentences made by IBM Model 2, together with the 'ideal' alignments for the sentences.",
+        "Here the alignment parameters penalize the alignment of English words with their German translation equivalents because the translation equivalents are far away from the words.",
+        "An experiment reveals how often this kind of \"skewed\" alignment happens in our English/German scheduling conversation parallel corpus (Wang and Waibel, 1997).",
+        "The experiment was based on the following observation: IBM translation Model 1 (where the alignment distribution is uniform) and Model 2 found similar Viterbi alignments when there were no movements or deletions, and they predicted very different Viterbi alignments when the skewness was severe in a sentence pair, since the alignment parameters in Model 2 penalize the long distance alignment.",
+        "Figure 3 shows the Viterbi alignment discovered by Model 1 for the same sentences in Figure 21.",
+        "We measured the distance of a Model 1 alignment al and a Model 2 alignment a2 as El la!",
+        " – an.",
+        "To estimate the skewness of the corpus, we collected the statistics about the percentage of sentence pairs (with at 'The better alignment on a given pair of sentences does not mean Model 1 is a better model.",
+        "Non-uniform alignment distribution is desirable.",
+        "Otherwise, language model would be the only factor that determines the source sentence word order in decoding.",
+        "least five words in a sentence) with Model 1 and Model 2 alignment distance greater than 1/4,2/4,3/4, • • • , 10/4 of the target sentence length.",
+        "By checking the Viterbi alignments made by both models, it is almost certain that whenever the distance is greater that 3/4 of the target sentence length, there is either a movement or a deletion in the sentence pair.",
+        "Figure 4 plots this statistic – around 30% of the sentence pairs in our training data have some degree of skewness in alignments."
+      ]
+    },
+    {
+      "heading": "3 Structure-based Alignment Model",
+      "text": [
+        "To solve the problems with the word-based alignment models, we present a structure-based alignment model here.",
+        "The idea is to directly model the phrase movement with a rough alignment, and then model the word alignment within phrases with a detailed alignment.",
+        "Given an English sentence e = e1e2 • • • ei, its German translation g gig2 • • • gin can be generated by the following process:",
+        "1.",
+        "Parse e into a sequence of phrases, so",
+        "where E0 is a null phrase.",
+        "2.",
+        "With the probability P(q I e,E), determine q < n 1, the number of phrases in g. Let G1 • • • Gq denote these q phrases.",
+        "Each source phrase can be aligned with at most one target phrase.",
+        "Unlike English phrases, words in a German phrase do not",
+        "have to form a consecutive sequence.",
+        "So g may be expressed with something like g gligi2g2013g22 • • where gij represents the j-th word in the i-th phrase.",
+        "3.",
+        "For each German phrase Gi, 0 < i < q, with the probability P(ri E,e), align it with an English phrase Er,.",
+        "4.",
+        "For each German phrase G2,0 < i < q, determine its beginning position bi in g with the distribution P(bi e, E).",
+        "5.",
+        "Now it is time to generate the individual words in the German phrases through detailed alignment.",
+        "It works like IBM Model 4.",
+        "For each word eij in the phrase Ei, its fertility ckij has the distribution P(Oii 4/11-1, bz, rg, e, E)• 6.",
+        "For each word eij in the phrase Ei, it generates a tablet r = {rim rii2, • • • Tijo,, } by generating each of the words in in turn with the probability P(riik",
+        "word in the tablet.",
+        "7.",
+        "For each element rijk in the tablet rt3, the permutation rijk determines its position in the target sentence according to the distribution P(riik",
+        "We made the following independence assumptions:",
+        "1.",
+        "The number of target sentence phrases depends only on the number of phrases in the source sentence:",
+        "E,e) depends on i and ri.",
+        "It also depends on r,i)-1 with the factor Flo<i<i (1 - b(ri, r3)) to ensure that each English phrase is aligned with at most one German phrase.",
+        "3.",
+        "The beginning position of a target phrase depends on its distance from the beginning position of its preceding phrase, as well as the length of the source phrase aligned with the preceding phrase:",
+        "4.",
+        "The fertility and translation tablet of a source word depend on the word only:",
+        "5.",
+        "The leftmost position of the translations of a source word depends on its distance from the beginning of the target phrase aligned with the source phrase that contains that source word.",
+        "It also depends on the identity of the phrase, and the position of the source word in the source phrase.",
+        "For a target word Tij k other than the leftmost ro in the translation tablet of the source ei its position depends on its distance from the position of another tablet word ri3(k_1) closest to its left, the class of the target word ri3k, and the fertility of the source word eij."
+      ]
+    },
+    {
+      "heading": "3.1 Parameter Estimation",
+      "text": [
+        "EM algorithm was used to estimate the seven types of parameters: xi, a, a, 0, 7 ”, d1 and d2.",
+        "We used a subset of probable alignments in the EM learning, since the total number of alignments is exponential to the target sentence length.",
+        "The subset was the neighboring alignments (Brown et al., 1993) of the Viterbi alignments discovered by Model 1 and Model 2.",
+        "We chose to include the Model 1 Viterbi alignment here because the Model 1 alignment is closer to the \"ideal\" when strong skewness exists in a sentence pair."
+      ]
+    },
+    {
+      "heading": "4 Finding the Structures",
+      "text": [
+        "It is of little interest for the structure-based alignment model if we have to manually find",
+        "the language structures and write a grammar for them, since the primary merit of statistical machine translation is to reduce human labor.",
+        "In this section we introduce a grammar inference technique that finds the phrases used in the structure-based alignment model.",
+        "It is based on the work in (Ries, Bugs, and Wang, 1995), where the following two operators are used:",
+        "1.",
+        "Clustering: Clustering words/phrases with similar meanings/grammatical functions into equivalent classes.",
+        "The mutual information clustering algorithm (Brown et al., 1992) were used for this.",
+        "2.",
+        "Phrasing: The equivalent class sequence c1, c2, • • • ck forms a phrase if",
+        "where 0 is a threshold.",
+        "By changing the threshold, we obtain a different number of phrases.",
+        "The two operators are iteratively applied to the training corpus in alternative steps.",
+        "This results in hierarchical phrases in the form of sequences of equivalent classes of words/phrases.",
+        "Since the algorithm only uses a monolingual corpus, it often introduces some language-specific structures resulting from biased usages of a specific language.",
+        "In machine translation we are more interested in cross-linguistic structures, similar to the case of using interlingua to represent cross-linguistic information in knowledge-based MT.",
+        "To obtain structures that are common in both languages, a bilingual mutual information clustering algorithm (Wang, Lafferty, and Waibel, 1996) was used as the clustering operator.",
+        "It takes constraints from parallel corpus.",
+        "We also introduced an additional constraint in clustering, which requires that words in the same class must have at least one common potential part-of-speech.",
+        "Bilingual constraints are also imposed on the phrasing operator.",
+        "We used bilingual heuristics to filter out the sequences acquired by the phrasing operator that may not be common in multiple languages.",
+        "The heuristics include:",
+        "1.",
+        "Average Translation Span: Given a phrase candidate, its average translation span is the distance between the leftmost and the rightmost target positions aligned with the words inside the candidate, averaged over all Model 1 Viterbi alignments of sample sentences.",
+        "A candidate is filtered out if its average translation span is greater than the length of the candidate multiplied by a threshold.",
+        "This criterion states that the words in the translation of a phrase have to be close enough to form a phrase in another language.",
+        "2.",
+        "Ambiguity Reduction: A word occurring in a phrase should be less ambiguous than in other random context.",
+        "Therefore a phrase should reduce the ambiguity (uncertainty) of the words inside it.",
+        "For each",
+        "source language word class c, its translation entropy is defined as Eg t(g I c)log(g I c).",
+        "The average per source class entropy reduction induced by the introduction of a phrase P is therefore",
+        "A threshold was set up for minimum entropy reduction.",
+        "By applying the clustering operator followed with the phrasing operator, we obtained shallow phrase structures partly shown in Figure 5.",
+        "Given a set of phrases, we can deterministically parse a sentence into a sequence of phrases by replacing the leftmost unparsed substring with the longest matching phrase in the set."
+      ]
+    },
+    {
+      "heading": "5 Evaluation and Discussion",
+      "text": [
+        "We used the Janus English/German scheduling corpus (Suhm et al., 1995) to train our phrase-based alignment model.",
+        "Around 30,000 parallel sentences (400,000 words altogether for both languages) were used for training.",
+        "The same data were used to train Simplified Model 2 (Wang and Waibel, 1997) and IBM Model 3 for performance comparison.",
+        "A larger English monolingual corpus with around 0.5 million words was used for the training of a bigram",
+        "[January February...] [the every each...] [first second third...] [I he she itself] [have propose remember hate...] [eleventh thirteenth...] [after before around] [one two three...]",
+        "lation gets one credit, an okay translation gets 1/2 credit, an incorrect one gets 0 credit.",
+        "Since the IBM Model 3 decoder is too slow, its performance was not measured on the entire test set.",
+        "language model.",
+        "A preprocessor splited German compound nouns.",
+        "Words that occurred only once were taken as unknown words.",
+        "This resulted in a lexicon of 1372 English and 2202 German words.",
+        "The English/German lexicons were classified into 250 classes in each language and 560 English phrases were constructed upon these classes with the grammar inference algorithm described earlier.",
+        "We limited the maximum sentence length to be 20 words/15 phrases long, the maximum fertility for non-null words to be 3."
+      ]
+    },
+    {
+      "heading": "5.1 Translation Accuracy",
+      "text": [
+        "Table 1 shows the end-to-end translation performance.",
+        "The structure-based model achieved an error reduction of around 12.5% over the word-based alignment models."
+      ]
+    },
+    {
+      "heading": "5.2 Word Order and Phrase Alignment",
+      "text": [
+        "Table 2 shows the alignment distribution for the first German word/phrase in Simplified Model 2 and the structure-based model.",
+        "The probability mass is more scattered in the structure-based model, reflecting the fact that English and German have different phrase orders.",
+        "On the other hand, the word based model tends to align a target word with the source words at similar positions, which resulted in many incorrect alignments, hence made the word translation probability t distributed over many unrelated target words, as to be shown in the next subsection."
+      ]
+    },
+    {
+      "heading": "5.3 Model Complexity",
+      "text": [
+        "The structure-based model has 3,081,617 free parameters, an increase of about 2% over the 3,022,373 free parameters of Simplified Model 2.",
+        "This small increase does not cause over-fitting, as the performance on the test data suggests.",
+        "On the other hand, the structure-based model is more accurate.",
+        "This can be illustrated with an example of the translation probability distribution of the English word \"I\".",
+        "Table 3 shows the possible translations of \"I\" with probability greater than 0.01.",
+        "It is clear that the structure-based model \"focuses\" better on the correct translations.",
+        "It is interesting to note that the German translations in Simplified Model 2 often appear at the beginning of a sentence, the position where \"I\" often appears in English sentences.",
+        "It is the biased word-based alignments that pull the unrelated words together and increase the translation uncertainty.",
+        "We define the average translation entropy as",
+        "is more uncertain in the word-based alignment model because the biased alignment distribution forced the associations between unrelated English/German words.",
+        "(m, n are English and German lexicon size.)",
+        "It is a direct measurement of word translation uncertainty.",
+        "The average translation entropy is 3.01 bits per source word in Simplified Model 2, 2.68 in Model 3, and 2.50 in the structured-based model.",
+        "Therefore information-theoretically the complexity of the word-based alignment models is higher than that of the structure-based model."
+      ]
+    },
+    {
+      "heading": "6 Conclusions",
+      "text": [
+        "The structure-based alignment directly models the word order difference between English and German, makes the word translation distribution focus on the correct ones, hence improves translation performance."
+      ]
+    },
+    {
+      "heading": "7 Acknowledgements",
+      "text": [
+        "We would like to thank the anonymous COL-ING/ACL reviewers for valuable comments.",
+        "This research was partly supported by ATR and the Verbmobil Project.",
+        "The views and conclusions in this document are those of the authors."
+      ]
+    }
+  ]
+}

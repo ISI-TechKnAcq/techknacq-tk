@@ -1,0 +1,273 @@
+{
+  "info": {
+    "authors": [
+      "Martin Emms"
+    ],
+    "book": "Workshop on Linguistic Distances",
+    "id": "acl-W06-1113",
+    "title": "Variants of Tree Similarity in a Question Answering Task",
+    "url": "https://aclweb.org/anthology/W06-1113",
+    "year": 2006
+  },
+  "references": [],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "The results of experiments on the application of a variety of distance measures to a question-answering task are reported.",
+        "Variants of tree-distance are considered, including whole-vs-sub tree, node weighting, wild cards and lexical emphasis.",
+        "We derive string-distance as a special case of tree-distance and show that a particular parameterisation of tree-distance outperforms the string-distance measure."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "This paper studies the deployment in a question answering task of methods which assess the similarity of question and answer representations.",
+        "Given questions such as Q1 what does malloc return ?",
+        "Q2 What year did poet Emily Dickinson die?",
+        "and a collection of sentences (eg.",
+        "a computer manual, a corpus of newspaper articles), the task is to retrieve the sentences that answer the question, eg.",
+        "A1 the malloc function returns a null pointer A2 In 1886, poet Emily Dickinson died in Amherst, Mass One philosophy for finding answers to questions would be to convert questions and candidate answers into logical forms and to compute answer-hood by apply theorem-proving methods.",
+        "Another philosophy is to assume that the answers are similar to the questions, where similarity might be defined in many different ways.",
+        "While not all answers to all questions will be similar, there’s an intuition that most questions can be answered in a way which shares quite a bit with the question, and that accordingly with a large enough corpus, a similarity-based approach could be fruitful."
+      ]
+    },
+    {
+      "heading": "2 Distance Measures",
+      "text": [
+        "In pursuing such a similarity-based approach to question-answering, the key decisions to be made are the representations of the questions and answers, and relatedly, distance measures between them.",
+        "We will primarily be concerned with measures which refer to a linguistic structure assigned to a word sequence – variants of tree-distance, but we will also consider string-distance."
+      ]
+    },
+    {
+      "heading": "2.1 Tree Measures",
+      "text": [
+        "Following (Zhang and Shasha, 1989), one can arrive at tree-distance in the following way.",
+        "Given source and target ordered, labelled trees, S and T, consider the set H(S, T) of all 1-to-1 partial maps, σ, from S into T, which are homomorphisms preserving left-to-right order and ancestry1.",
+        "Let the alignment, σ′, be the enlargment of the map σ with pairs (Si, λ) for nodes Si ∈� dom(σ) and (λ,Tj) for nodes Tj ∈� ran(σ).",
+        "Let D define deletion costs for the (Si, λ), I insertion costs for the (λ, Tj ), and R replacement costs for the (Si, Tj) which represent nodes with nonidentical labels.",
+        "Then a total cost for the alignment, C(σ′) can be defined as the sum of these components costs, and the tree distance can then be defined as the cost of the least-cost map: A(S,T) = min ({C (σ′) |σ ∈ H(S,T)}) For any 3 trees, T1, T2, T3, the triangle inequality holds A(T1, T3) ≤ A(T1, T2) + A(T2, T3).",
+        "1IfTj1 = σ(Si1) and Tj2 = σ(Si2) then (i) Si1 is to the left of Si2 iffTj1 is to the left ofTj2 and (ii) Si1 is a descendant of Si2 iffTj1 is a descendant ofTj2, with descendency understood as the transitive closure of the daugher-mother relation.",
+        "Sydney, July 2006. c�2006 Association for Computational Linguistics Briefly the argument is as follows.",
+        "Given mappingsσ ∈ H(T1,T2),and τ ∈ H(T2,T3),σ◦τ ∈ H(T1,T3)2, so (σ ◦ τ)′ is an alignment between T1 and T3, and A(T1, T3) ≤ C((σ ◦ τ)′).",
+        "The cost of the composition is less than the sum of the costs of the composed maps: σ’s insertions and replacements contribute only if they fall in dom(τ), τ’s deletions and replacements contribute only if they act on ran (σ).",
+        "From this basic definition, one can depart in a number of directions.",
+        "First of all, there is a part-vs-whole dimension of variation.",
+        "Where A(S, T) gives the cost of aligning the whole source tree S with the target T, one can consider variants where one minimises over a set of subparts of S. This is equivalent to letting all but the nodes belonging to the chosen sub-part to delete at zero cost3.",
+        "Let δ(S,T) be the sub-tree distance.",
+        "Let �δ(S, T), be the sub-traversal distance, in which sub-traversals of the left-to-right, postorder traversal of S are considered.",
+        "As for A, the triangle inequality holds for δ and δ�– one needs to extend the notion of alignment with a set of free deletions.",
+        "Unlike A, δ and δ� are not symmetric.",
+        "All of A, δ and δ� are implicitly parametrised by the cost functions, D, I and R. In the work below 4 other parameters are explored Node weighting W: this is a function which assigns a real-number weight to each each node.",
+        "The cost function then refers to the weights.",
+        "In experiments reported below, D.((Si, w), λ) = w, I.",
+        "(λ, (Tj, w)) = w, R. ((Si , w8), (Tj , wt)) = max (w�, wt), if Si and Tj have unequal labels.",
+        "The experiments reported below use 2 weighting function STR, and LEX.",
+        "STR assign weights according to the syntactic structure, via a classification of nodes as heads vs. complements vs. adjuncts vs. the rest, with essentially adjuncts given 1/5th the weights of heads and complements, and other daughters 1/2, via essentially the following top-down algorithm:",
+        "LEX is a function which can be composed with STR, and scales up the weights of leaf nodes by a factor of 3.",
+        "Target wild cards T(∗): this is a function which classifies certain target sub-trees as wild-card.",
+        "If source Si is mapped to target Tj, and Tj is the root of a wild-card tree, all nodes within the Si sub-tree can be deleted for 0 cost, and all those within the Tj sub-tree can be inserted for 0 cost.",
+        "A wild card np tree might can be put in the position of the gap in wh-questions, allowing for example what is memory allocation, to closely match any sentences with memory allocation as their object, no matter what their subject – see Figure 3.",
+        "Source self-effacers S/λ: this is a function which classifies source sub-trees as self-effacers.",
+        "Such trees can be deleted in their entirety for zero cost.",
+        "If S/λ classifies all source sub-trees as self-effacing, then A(S/λ) will coincide with notion of ’tree-distance with Cut’ given in (Zhang and Shasha, 1989).",
+        "Target self-inserters λ/T: this is a function which classifies certain target sub-trees as self-inserters.",
+        "Such trees can be inserted in their entirety for zero cost.",
+        "A candidate might be optional adjuncts .4"
+      ]
+    },
+    {
+      "heading": "2.2 Sequence Measures",
+      "text": [
+        "The tree-distance measures work with an elaboration of the original questions and answers.",
+        "(Lev-enshtein, 1966) defined the 1 dimensional precursor of tree distance, which works directly on the 2 word sequences for the answer and question.",
+        "For two sequences, s, t, and vertical (or horizontal) tree encodings l tree(s) and l tree(t), if",
+        "structural weighting STR has been used: size of a node reflects the weight.",
+        "4 of the nodes in the source represent the use of an auxiliary verb, and receive low weight, changing the optimum match to one covering the whole source tree.",
+        "There is some price paid in matching the dissimilar subject nps.",
+        "we define H(s, t), as A(l tree(s), l tree(t)), and π(s,t), as �δ(l tree(s),l tree(t)), then H and π coincide with the standard sequence edit distance and subsequence edit distance.",
+        "As special cases of A and δ, H and π inherit the triangle inequality property.",
+        "To illustrate some of the tree-distance definitions, in the following example, a A distance of 3 between 2 trees is obtained, assuming unit costs for deletions (shown in red and double outline), insertions (shown in green and double outline), and substitutions (shown in blue and linked with an arrow): Note also in this picture that nodes that are mapped without a relabelling are shown at the same horizontal level, with no linking arrow.",
+        "Figure 1 shows a sub-tree example – δ.",
+        "The source tree nodes which do not belong to the chosen sub-tree are shown in grey.",
+        "The lowest vp subtree in the source is selected, and mapped to the vp in the target.",
+        "The remaining target nodes must be inserted, but this costs less than a match which starts higher and necessitates some deletions and substitutions.",
+        "Figure 2 shows a sub-tree example where the",
+        "Figure 3 continues the example, but this time in the subject position there is a sub-tree which is classified as a wild-card np tree, and it matches at 0 cost with the subject np in the source tree.",
+        "The basis of the algorithm used to calculate A is the ZhangShasha algorithm (Zhang and Shasha, 1989): the Appendix summarises it.",
+        "The im",
+        "plementation is based on code implementing A (Fontana et al., 2004), adapting it to allowing for the δ and δ� variants and T(∗), S/λ, and λ/T parameters, and to generate the human-readable displays of the alignments (such as seen in figures 1,2 and 3)."
+      ]
+    },
+    {
+      "heading": "2.3 Order invariant measures",
+      "text": [
+        "Assessing answer/question similarity by variants of tree distance or sequence edit-distance, means that distance will not be word-order invariant.",
+        "There are also measures which are word-order invariant, sometimes called token-based measures.",
+        "These measures are usually couched in a vector representation of questions and answers, where vector dimensions are words from (some chosen enumeration) of words (see (Salton and Lesk, 1968)).",
+        "In the simplest case the values on each dimensions are in {0, 1}, denoting presence or absence of a word.",
+        "If • is vector product and aw is the set of words in a sequence a, then a� • �b = |aw ∩ bw |, for the binary vectors representing aw, bw.",
+        "Three well known measures based on this are given below, both in terms vectors, and for binary vectors, the equivalent formulation with sets:",
+        "These measure similarity, not difference, ranging for 1 for identical aw,bw, to 0 for disjoint.",
+        "In the binary case, Dice/Jaccard similarity can be related to the alignment-based, difference counting perspective of the edit-distances.",
+        "If we define IIw (a, b) as |aw ∪ bw |− |aw ∩ bw |– the size of the symmetric difference between aw and bw – this can be seen as a set-based version of edit distance5, which (i) considers mappings on the sets of words, aw, bw, not the sequences a, b, and (ii) sets replacement cost to infinity.",
+        "A difference measure (ranging from 0 for identical aw,bw to 1 for disjoint) results if IIw (a, b) is divided by |aw |+ |bw | (resp.",
+        "|aw ∪ bw |) and this difference measures will give the reverse of a ranking by Dice (resp.",
+        "Jaccard) similarity.",
+        "The Cosine is a measure of the angle between the vectors �a, �b, and is not relatable in the 5�' (a, b) could be equivalently defined as |(�a− �b) |2 binary-case to the alignment-based, difference-counting perspective of the edit-distances: dividing IIw (a, b), the symmetric difference, by |aw |.5 |bw |.5 does not give a measure with maximum value 1 for the disjoint case, and does not give the reverse of a ranking by Cosine similarity.6 Below we shall use θ to denote the Cosine distance."
+      ]
+    },
+    {
+      "heading": "3 The Question Answering Tasks",
+      "text": [
+        "For a given representation r (parse trees, word sequences etc.",
+        "), and distance measure d, we shall generically take a Question Answering by Distance (QAD) task to be given by a set of queries, Q, and for each query q, a corpus of potential answer sentences, CORq.",
+        "For each a ∈ CORq, the system determines d(r(a), r(q)), the distance between the representations of a and q, then uses this to sort CORq into Aq.",
+        "This sorting is then evaluated in the following way.",
+        "If a, ∈ Aq is the correct answer, then the correct-answer-rank is the rank of a, in Aq:",
+        "whilst the correct-answer-cutoff is the proportion of Aq cut off by the correct answer a,: |{a ∈ A9 : d(r(a), r(q)) ≤ d(r(a.",
+        "), r(q))} |/ |A9 | Lower values for this connote better performance.",
+        "Another figure of merit is the reciprocal correct-answer-rank.",
+        "Higher values of this connote better performance.",
+        "Note the notion of answerhood is not one requiring answers to be the sub-sentential phrases associated with wh-phrases in the question.",
+        "Also not all the questions are wh-questions.",
+        "Note also that the set of candidate answers CORq is sorted by the answer-to-query distance, d(r(a), r(q)), not the query-to-answer distance, d(r(q), r(a)).",
+        "The intuition is that the queries are short and the answers longer, with sub-part that really contains the answer.",
+        "The performance of some of the above mentioned distance measures on 2 examples of QAD tasks has been measured: GNU Library Manual QAD Task: in this case Q is a set of 88 hand-created",
+        "queries, and CORQ, shared by all the queries, is the sentences of the manual of the GNU C Library7 ( |CORQ |≈ 31, 000).",
+        "The TREC 11 QAD task: In this case Q was the 500 questions of the TREC 11 QA track (Voorhees and Buck-land, 2002), whose answers are drawn from a large corpus of newspaper articles.",
+        "CORQ was taken to be the sentences of the top 50 from the top-1000 ranking of articles provided by TREC 11 for each question ( |CORQ |≈ 1000).",
+        "Answer correctness was determined using the TREC1 1 answer regular expressions.",
+        "For the tree-distance measures, 2 parsing systems have been used.",
+        "For convenience of reference, we will call the first parser, the trinity parser.",
+        "This is a home-grown parser combining a disambiguating part-of-speech tagger with a bottom-up chartparser, refering to CFG-like syntax rules and a subcategorisation system somewhat in a catego-rial grammar style.",
+        "Right-branching analyses are prefered and a final selection of edges from all available is made using a leftmost/longest selection strategy – there is always an output regardless of whether there is a single input-encompassing edge.",
+        "Preterminal node labels are a combination of a main functor with other feature terms, but the replacement cost function R is set to ignore the feature terms.",
+        "Terminal node labels are base forms of words, not inflected forms.",
+        "For the structural weighting algorithm, STR, the necessary node distinctions are furnished directly by the parser for vp, and by a small set of structure matching rules for other structures (nps, pps etc).",
+        "The structures output for wh-questions are essentially deep structures, reordering an auxiliary inversion, and placing a tree in the position of a gap.",
+        "The Collins parser (Collins, 1999) (Model 3 variant) is a probabilistic parser, using a model of trees as built top-down with a repertoire of moves, learnt from the Penn Treebank.",
+        "The preterminal node labels are a combination of a Penn Treebank label with other information pertaining to the head/complement/adjunct distinction, but the replacement cost function R is set to ignore all but the Penn Treebank part of the label.",
+        "The termi",
+        "nal node labels are inflected forms of words, not base forms.",
+        "For the structural weighting algorithm, STR, the necessary node distinctions are furnished directly by the parser.",
+        "For the question parses, a set of transformations is applied to the parses directly given by the parser, which comparable to the trinity parser, reorder auxiliary inversion, and place a tree in the position of a gap."
+      ]
+    },
+    {
+      "heading": "4 Relating Parse Quality to Retrieval Performance",
+      "text": [
+        "As a kind of sanity-check on the idea of the using syntactic structures in retrieving answers, we performed some experiments in which we varied the sophistication of the parse trees that the parsers could produce, the expectation being that the less sophisticated the parse, the less successful would be question-answering performance.",
+        "The left-hand data in Table 1 refers to various reductions of the linguistic knowledge bases of the trinity parser(thin50 = random removal of 50% subset, manual = manual removal of a subset, flat = entirely flat parses, gold = hand-correction of query parses and their correct answers).",
+        "The right-hand data in Table 1 refers to experiments in which the repertoire of moves available to the Collins parser, as defined by its grammar file, was reduced to different sized random subsets of itself.",
+        "Figure 4 shows the empirical cumulative density function (ecdf) of the correct-answer-cutoff obtained with the weighted sub-tree with wild cards measure.",
+        "For each possible value c of correct-answer-cutoff, it plots the percentage of queries with a correct-answer-cutoff ≤ c.",
+        "What these experiments show is that the ques",
+        "tion answering performance is a function of the sophistication of the parses that the parsers are able to produce."
+      ]
+    },
+    {
+      "heading": "5 Comparing Distance Measures",
+      "text": [
+        "Table 2 gives results on the Library task, using the trinity parser, for some variations of the distance measure.",
+        "Considering the results in 2, the best performing measure (mrr = 0.27) was the sub-traversal distance, �δ, assigning weights structurally using STR, with lexical emphasis LEX, and treating a gap position as an np wild card.",
+        "This slightly out performs the sub-tree measure, δ (mrr = 0.25).",
+        "An alternative approach to discounting parts of the answer tree, allowing any sub-tree of the answer the option to delete for free (� (W = Str ◦ Lex, T(∗) = np gap, S/λ = ∀)) performs considerably worse (mrr = 0.16).",
+        "Presumably this is because it is too enthusiastic to assemble the query tree from disparate parts of the answer tree.",
+        "By comparison, δ� and δ can only assembly the query tree from parts of the answer tree that are more closely connected.",
+        "The tree-distance measures (�δ, δ) using structural weights, lexical emphasis and wild cards (mrr = 0.27) outperform the subsequence measure, π (mrr = 0.197).",
+        "It also outperforms the cosine measure, θ (mrr = 0.190).",
+        "But π and θ either outperform or perform at about the same level as the tree-distance measure if the lexical emphasis is removed (see δ(W = Str, T (∗) = np gap), mrr = 0.160).",
+        "The tree-distance measure δ works better if structural weighting is used (mrr = 0.09) than if it is not (mrr = 0.04).",
+        "The tree-distance measure δ works better with wild-cards (see δ(W = Str, T (∗) = np gap), mrr = 0.160, than without (see δ(W = Str), mrr = 0.090).",
+        "Table 3 gives some results on the TREC 11 task, using the Collins parser.",
+        "Fewer comparisons have been made here.",
+        "The sub-traversal measure, using structural weighting, lexical emphasis, and wild-cards performs better (mrr = 0.150) than the subsequence measure (mrr = 0.09), which in turn performs better than the basic sub-traversal measure, with-outh structural weighting, lexical emphasis or wild-cards (mrr = 0.076).",
+        "The cosine distance, θ, performed best."
+      ]
+    },
+    {
+      "heading": "6 Discussion",
+      "text": [
+        "For the parsers used, you could easily have 2 sentences with completely different words, and very different meanings, but which would have the same pre-terminal syntactic structure: the preterminal syntactic structure is not a function of the meaning.",
+        "Given this, it is perhaps not surprising that there will be cases that the sequence distance easily spots as dissimilar, but which the tree distance measure, without any lexical emphasis, will regard as quite similar, and this perhaps explains why, without any lexical emphasis, the tree-distance measure performs at similar level to, or worse than, the subsequence distance measure.",
+        "With some kind of lexical emphasis in place, the tree-distance measures outperform the subsequence measures.",
+        "We can speculate as to the reason for this.",
+        "There are two kinds of case where the tree-distance measures could be expected to spot a similarity which the sequence-distance measures will fail to spot.",
+        "One is when the question and answer are more or less similar on their head words, but differ in determiners, auxiliaries and adjuncts.",
+        "The sequence distance measure will pay more of a price for these differences than the structurally weighted tree-distance.",
+        "Another kind of case is when the answer supplies words which match a wild-card in the middle of the query tree, as might happen for example in: Q: what do child processes inherit from their parent processes A: a child process inherits the owner and permissions from the ancestor process",
+        "distance type",
+        "The tree-distance measures will see these as similar, but the subsequence measure will pay a large price for words in the answer that match the gap position in the query.",
+        "Thus one can argue that the use of structural weighting, and wild-card trees in the query analysis will tend to equate things which the sequence distance sees as dissimilar.",
+        "Another possible reason that the tree-distance measure outperforms the subsequence measure is that it may be able to distinguish things which the sequence distance will tend to treat as equivalent.",
+        "A question might make the thematic role of some entity very clear, but use very few significant words as in: what does malloc do ?",
+        "Using tree distance will favour answer sentences with malloc as the subject, such as malloc returns a null pointer.",
+        "The basic problem for the sequence distance here is that it does not have much to work with and will only be able to partition the answer set into a small set of equivalence classes.",
+        "These are speculations as to why tree-distance would outperform sequence distance.",
+        "Whether these equating and discriminating advantages which theoretically should accrue to δ, δ� actually will do so, will depend on the accuracy of the parsing: if there is too much bad parsing, then we will be equating that which we should keep apart, and discriminating that which we should equate.",
+        "In the two tasks, the relationship between the tree-distance measures and the order-invariant cosine measure worked out differently.",
+        "The reasons for this are not clear at the moment.",
+        "One possibility is that our use of the Collins parser has not yet resulted in good enough parses, especially question parses – recall that the indication from 4 was that improved parse quality will give better retrieval performance.",
+        "Also it is possible that relative to the queries in the Library task, the amount of word-order permutation between question and answer is greater in the TREC task.",
+        "This is also indicated by the fact that on the TREC task, the subsequence measure, π, falls considerably behind the cosine measure, θ, whereas for the Library task they perform at similar levels.",
+        "Some other researchers have also looked at the use of tree-distance measures in semantically-oriented tasks.",
+        "Punyakonok(2004) report work",
+        "using tree-distance to do question-answering on the TREC 11 data.",
+        "Their work differs from that presented here in several ways.",
+        "They take the parse trees which are output by Collins parser and convert them into dependency trees between the leaves.",
+        "They compute the distance from query to the answer, rather than from answer to query, using essentially the variant of tree-distance that allows arbitrary sub-trees of the target to insert for zero-cost.",
+        "Presumably this directionality difference is not a significant one, and with distances calculated from answers to queries, this would correspond to the variant that allows arbitrary source sub-trees to delete with zero cost.",
+        "The cost functions are parameterised to refer in the case of wild-card replacements to (i) information derived from Named Entity recognisers so different kinds of wh wild-cards can be given low-cost replacment with vocabulary categorised as belong to the right kind by NE recognition and (ii) base-form information.",
+        "There is no way to make a numerical comparison because they took a different answer corpus CORQ – the articles containing the answers suggested by TREC 11 participants – and a different criterion of correctness – an answer was correct if it belonged to an article which the TREC 11 adjudicators judges to contain a correct answer.",
+        "Their adaptation of cost functions to refer to essentially semantic annotations of tree nodes is an avenue we intend to explore in future work.",
+        "What this paper has sought to do is to investigate intrinsic syntactic parameters that might influence performance.",
+        "The hope is that these parameters still play a role in an enriched system."
+      ]
+    },
+    {
+      "heading": "7 Conclusion and Future Work",
+      "text": [
+        "For two different parsers, and two different question-answering tasks, we have shown that improved parse quality leads to better performance, and that a tree-distance measure outperforms a sequence distance measure.",
+        "We have focussed on intrinsic, syntactic properties of parse-trees.",
+        "It is not realistic to expect that exclusively using tree-distance measures in this rather pure way will give state-of-the-art question-answering performance, but the contribution of this paper is the (start of an) exporation of the syntactic parameters which effect the use of tree-distance in question answering.",
+        "More work needs to be done in systematically varying the parsers, question-answering tasks, and parametrisations of tree-distance over all the possibilities.",
+        "There are many possibilities to be explored involving adapting cost functions to enriched node descriptions.",
+        "Already mentioned above, is the possibility to involve semantic information in the cost functions.",
+        "Another avenue is introducing weightings based on corpus-derived statistics, essentially making the distance comparision refer to extrinsic factors.",
+        "One open question is whether analogously to idf, cost functions for (non-lexical) nodes should depend on treebank frequencies.",
+        "Another question needing further exploration is the dependency-vs-constituency contrast.",
+        "Interestingly Punyakonok(2004) themselves speculate: each node in a tree represents only a word in the sentence; we believe that appropriately combining nodes into meaningful phrases may allow our approach to perform better.",
+        "We found working with constituency trees that it was the sub-traversal distance measure that performed best, and it needs to be seen whether this holds also for dependency trees.",
+        "Also to be explored is the role of structural weighting in a system using dependency trees.",
+        "A final speculation that it would be interesting to explore is whether one can use feedback from performance on a QATD task as a driver in the machine-learning of probabilities for a parser, in an approach analogous to the use of the language-model in parser training."
+      ]
+    },
+    {
+      "heading": "References",
+      "text": []
+    },
+    {
+      "heading": "Appendix",
+      "text": [
+        "This appendix briefly summarises the algorithm to compute the tree-distance, based on (Zhang and Shasha, 1989) (see Section 2.1 for definition of tree-distance).",
+        "The algorithm operates on the left-to-right post-order traversals of trees.",
+        "Given source and target trees S and T, the output is a table T, indexed vertically by the traversal of S and horizontally by the traversal of T, and position T[i] [j] is the tree-distance from the S subtree rooted at i, to the T subtree rooted at j.",
+        "Thus the bottom righthand corner of the table represents the tree distance between S and T. If k is the index of a node of the tree, the leftmost leaf, l(k), is the index of the leaf reached by following the left-branch down.",
+        "For a given leaf there is a highest node of which it is the leftmost leaf.",
+        "Let such a node be called a key-root.",
+        "Let KR(T) be the sequence of key-roots in T. The algorithm is a doubly nested loop ascending throught the key-roots of S and T, in which for each pair of key-roots (i, j), a routine tree dist(i, j) updates the T table.",
+        "Suppose i is any node of S. Then for any is with l (i) ≤ is ≤ i, the subsequence of S from l(i) to is can be seen as a forest of subtrees of S, denoted F(l(i),is).",
+        "tree dist(i, j) creates a table F, indexed vertically from l (i) to i and horizontally from l(j) to j, such that F[is][jt] represents the distance between the forests F(l(i), is) and F (l (j ), jt) .",
+        "Also the F table should be seen as having an extra leftmost column, representing for each is, l(i) ≤ is ≤ i, the F(l(i), is) to ∅ mapping (pure deletion), and an extra uppermost row representing for each for each jt, l(j) ≤ jt ≤ j, the ∅ to F (l (j), jt) mapping (pure insertion).",
+        "F[i3] [jt] = min of delete, insert, for + tree, where swap, delete, insert as before and",
+        "In case 1, the ‘forests’ F(l(i), is) and F (l (j), jt) are both single trees and the computed forest distance is transferred to the tree-distance table T. In case 2, at least one of F(l(i), is) or F (l (j ), jt) represents a forest of more than one tree.",
+        "This means there is the possibility that the final trees in the two forests are mapped to each other.",
+        "This quantity is found from the T table.",
+        "This formulation gives the whole-tree distance between S and T. For the sub-tree distance, you take the minimum of the final column of T. For the sub-traversal case, you do the same but on the final iteration, you set the pure deletion column of F to all 0s, and take the minimum of the final column ofF.",
+        "To accommodate wild-card target trees, case 1 in the above is extended to allow T[is][jt] = F[is][jt] = 0 in case jt is the root of a wild-card tree.",
+        "To accommodate self-effacing source trees, case 2 in the above is extended to also consider for + tree del = F[l(is) − 1, jt]."
+      ]
+    }
+  ]
+}

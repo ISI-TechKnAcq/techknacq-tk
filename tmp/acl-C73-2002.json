@@ -1,0 +1,123 @@
+{
+  "info": {
+    "authors": [
+      "Ralph D. Beebe"
+    ],
+    "book": "International Conference on Computational Linguistics",
+    "id": "acl-C73-2002",
+    "title": "The Frequency Distribution of English Syntagms",
+    "url": "https://aclweb.org/anthology/C73-2002",
+    "year": 1973
+  },
+  "references": [],
+  "sections": [
+    {
+      "heading": "1. INTRODUCTION",
+      "text": [
+        "People use language principally as a means of communication, each language community determining the scope of the particular language it uses.",
+        "Within the language, various sets and subsets may exist depending upon regional and social differences.",
+        "Most studies of such subsets have been concerned with lexical variations.",
+        "In this paper, a methodology is outlined by which the frequency usage of syntactic structures can be measured for subsets of a language, and for a language as a whole.",
+        "In order to establish homogeneity features within a subset, reliance is made on calculations of chisquare on batches of sentences within the subset.",
+        "Before considering whether or not a more sensitive test should be applied to detect significant differences within and among subsets of a language, it seemed advisable to determine the frequency distribution of syntagms throughout particular genres.",
+        "An extension of the methodology to accomplish this objective is described and the results for one type of syntactic structure within one genre are tabulated.",
+        "These results indicate that the frequency distribution of syntagms within these limitations approximates to a Poisson distribution."
+      ]
+    },
+    {
+      "heading": "2. METHODOLOGY",
+      "text": [
+        "There are five main steps in the methodology: the isolation of each and every syntagm in the corpus of sentences; the assembly of the isolated syntagms into a matrix, each row of which contains syn",
+        "tagms having the same head-character; the comparison, for particular syntagms, of the frequencies with which the syntagms occur in different genres; the record-keeping of the quantities of sentences in which particular syntagms occur once, twice,...n times; and the comparison of those quantities with standard statistical distributions.",
+        "The first step in the isolation of the syntagms is the transcription of the syntactic structure of the sentences into linearized form, preparatory to their being used in the computer.",
+        "A criterion used for the selection of a grammar on which to base the syntactic structure description was that, for purposes additional to those required for this investigation, namely the support of remedial English-teaching courses, a manual system of parsing had to be provided for use by other users reasonably familiar with traditionally-accepted terminology.",
+        "The methodology was designed to provide a means whereby comparisons of genres for frequency-usage of syntactic structures could be made, so that teaching courses for particular genres could emphasize the structures most frequently used in those genres.",
+        "The methodology had to be such that users quite unfamiliar with computer techniques could prepare the data in suitable form for feeding into the computer, and use prepared programs to obtain the necessary results.",
+        "For the above reasons, a dependency grammar was selected, details of which are shown in Figs.",
+        "1 and 2.",
+        "The method for linearizing syntactic trees, such as those shown typically in Fig. 2, was based on the line-formula chemical notation developed by W. J. Wiswesser (W. J. WISWESSER, 1954; E. G. SMITH, 1968).",
+        "The simple rules applying to the Beebe line notation are that",
+        "starting from the first character of a sentence group such as the subject group, verb group, or object group, and proceeding from the leftmost path of the tree, characters are recorded in sequential order until a termination of a branch of the tree is reached.",
+        "At that point, a return to the nearest branching point in the tree is made, recording a dash for each step retraced from the terminating point to the branching point.",
+        "The next leftmost path is then followed with the same retracing proc12 RALPH D. BEEBE ess until all the paths in the group have been followed to their terminations.",
+        "A boundary-marker is then inserted in the linearization to mark the boundary between the subject group and the verb group, and the procedure repeated for the verb group until all the paths in that group have similarly been followed.",
+        "Another boundary marker is then inserted in the linearization, and the next group is then processed until the end of the sentence has been reached.",
+        "Level Numbers: 12212323443440112222332344344565677677654323334401 Fig. 2 (c).",
+        "Typical Linearization of a Sentence The data is then keypunched in the following sequence: a header card for the number and title of the batch of sentences; a card for the natural text of the sentence; a card for the linearization.",
+        "This data is then fed into the computer, where it is processed by a very simple program which contains the following instructions: read the characters in the linearization one by one, and if the first character is alphabetical, prepare a record string commencing with the numeral 1.",
+        "If the next character in the linearization is also alphabetical, increment this numeral by one and enter the result in the next position in the record string.",
+        "Continue so doing until a dash is met.",
+        "For a dash, reduce the numeral by one, and for a group boundary marker, record a zero.",
+        "The effect of this program is to produce for each sentence a record string of numerals, as shown in Fig. 2, corresponding to the level numbers of the nodes in the syntactic tree.",
+        "The header card, the natural text card, and the linearization card are then transferred to magnetic tape records together with the numerical record string representing the assignment of the levels.",
+        "These records are then available for calling upon for processing for the isolation of the syntagms.",
+        "The isolation procedure commences by first drawing the records of the linearizations, one at a time, into an array, while at the same time drawing the corresponding record of level numbers into another array.",
+        "Both arrays are then scanned simultaneously under the following conditions: each character of the linearization is transferred as it is scanned, to a further array, while the level numbers corresponding to the characters are checked until a number is encountered less in value than the number of the first character in the linearization.",
+        "The transferred string of characters then represents the syntagm which has been isolated.",
+        "The scanning process is then repeated starting from the next character in the linearization until the next syntagm has been isolated.",
+        "The procedure is continued starting from successive characters in the linearization until all the characters in the linearization have been processed.",
+        "As they are produced, the isolated syntagms are fed into the appropriate rows of a matrix, so that each row contains only syntagms having the same head character.",
+        "Before each syntagm is entered into a row of the matrix, the previous entries in that row are scanned to see if a similar syntagm has already been entered.",
+        "Only when there has been no previous entry of a similar syntagm, is a new syntagm entered in that row.",
+        "If there has been a similar entry, a frequency count adjacent to the entry is incremented by one.",
+        "Optionally, each new entry can have an additional entry inserted adjacent to it of the dominant node in the syntactic tree.",
+        "The depth of the syntagm, calculated by subtracting the level of the head character from the maximum level of the syntagm, is also entered, as is the length, calculated by adding the number of characters, including dashes, in the line notation for the syntagm.",
+        "A control feature is included, which permits the matrix either to be cleared at the end of a batch, or to stay filled so that syntagms from successive batches of the same genre can be added, to produce cumulative results.",
+        "Rows of the matrix can be selectively printed.",
+        "At the end of a run, a summary of the entries in each row of the"
+      ]
+    },
+    {
+      "heading": "14 RALPH D. BEEBE",
+      "text": [
+        "matrix is made.",
+        "The type/token ratio is calculated by dividing the number of discrete entries by the total number of syntagms in the row.",
+        "Graphic plotting programs have been written to display scatter diagrams of length against depth, of quantities of discrete and of total syntagms against quantity of sentences, and of type/token ratios against quantity of sentences.",
+        "See Figs.",
+        "3 and 4.",
+        "The system of parsing allows for the inclusion of any degree of sub-categorization of syntactic categories.",
+        "See Tables 1 and 2.",
+        "A refinement of the parsing allows the inclusion of left and right arrowheads to display departures from arbitrarily-selected norms of the linear order of the words of the natural text.",
+        "Comparisons of quantities of syntagms with and without such arrowheads provide measures of the actual departures from the norms, and thereby provide an evaluation of the validity of the norms.",
+        "The levels-assignment program contains a provision for not changing the level when scanning a sub-categorization number or an arrowhead.",
+        "As each syntagm is isolated and fed into the matrix, a corresponding entry is made in a duplicate matrix, this second entry containing the number of times that the syntagm has been found in the one sentence.",
+        "When the end of the sentence has been reached, there is also entered at that point in the second matrix an adjacent entry of an increment in an array at a position corresponding to the number of times that the syntagm was found in that sentence.",
+        "The second matrix therefore contains a growing record of the number of sentences in which the syntagm appears once, twice, ...n times.",
+        "From preliminary investigations, it was found that n rarely exceeded ten.",
+        "The provision of an array with fourteen elements was therefore ample for the keeping of such records.",
+        "Usage frequencies extracted from the first matrix can be used as input data for a chisquare calculation program to ascertain the homogeneity of usage within a batch of sentences, or to find if there are significant differences between genres.",
+        "See Tables 3-6."
+      ]
+    },
+    {
+      "heading": "3. RESULTS",
+      "text": [
+        "No significant differences were found in the relative proportions of particular syntagms (prepositional phrases, in the cases displayed) among Batches 1-10 of one genre (newspaper editorials), although differences significant at the .05 level were noted among Batches 11-20 of the same genre.",
+        "When the totals for each group of ten batches were compared, however, there were no significant differences.",
+        "Four batches of another genre, Higher School Certificate Examination (University Entrance) Essays, produced no significant differences within the genre, but did produce significant differences at the .01 level when compared with the same number of sentences from the previous genre.",
+        "It appears from the results obtained that the frequency usage of syntactic structures is a valid criterion of distinctiveness, and can be used as a means of comparing genres.",
+        "The entries in the second matrix give the frequency distribution of each syntagm within the corpus.",
+        "See Table 7.",
+        "Comparisons of specimen syntagms (prepositional phrases) are given in Table 8.",
+        "It will be observed that the actual distributions are almost exactly in conformity with the distributions expected from a Poisson distribution.",
+        "20 RALPH D. BEEBE This study must be considered as a pilot study to prove the methodology.",
+        "Further processing of a much larger corpus will no doubt reveal more illuminating results.",
+        "ni is the number of sentences in which a given syntagm appears xi times.",
+        "ei is the expected value of ni using the Poisson distribution.",
+        "xi 0 1 2 3 4 ni 227 129 45 11 3 En; = 415",
+        "xi 0 1 2 3 4 and over ni 227 129 45 11 3 ei 219.68 139.74 44.45 9.21 1.92 dig 7.32 10.74 0.55 1.79 1.08 diffa 0.244 0.827 0.007 0.273 0.608",
+        "xi 0 1 2 and over ni 323 82 10 ei 322.23 81.53 11.24 dig' 0.77 0.47 1.24 1Iiff2 0.002 0.003 0.136 ei Chisquare = 0.141 Degrees of freedom =-- 1 Significance = N.S.",
+        "TABLE 8 (f).",
+        "HP-NQ xi 0 1 2 and over ni 343 66 6 ei 343.90 64.64 6.46 diff 0.90 1.36 0.46 ego 0.002 0.058 0.033 ei Chisquare =-- 0.093 Degrees of freedom . 1 Significance = N.S.",
+        "TABLE 8 (g).",
+        "HP-NT-Q xi 0 1 2 and over ii 379 35 1 ei 379.60 33.84 1.56 diff 0.60 1.16 0.56 dir 0.001 0.040 0.201 ei Chisquare = 0.242 Degrees of freedom ---- 1 Significance = N.S.",
+        "TABLE 8 (h).",
+        "HP-R xi 0 1 2 and over ni 378 35 2 ei 377.78 35.50 1.72 diff 0.22 0.50 0.28 diff2 0.001 0.070 0.046 ei Chisquare = 0.116 Degrees of freedom = 1 Significance = N.S."
+      ]
+    },
+    {
+      "heading": "REFERENCES",
+      "text": []
+    }
+  ]
+}

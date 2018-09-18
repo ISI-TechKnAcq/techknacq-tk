@@ -1,0 +1,209 @@
+{
+  "info": {
+    "authors": [
+      "Satoshi Sato"
+    ],
+    "book": "International Conference on Computational Linguistics",
+    "id": "acl-C92-4203",
+    "title": "CTM: An Example-Based Translation Aid System",
+    "url": "https://aclweb.org/anthology/C92-4203",
+    "year": 1992
+  },
+  "references": [],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "This paper describes a Japanese-English translation aid system, CTM, which has a useful capability for flexible retrieval of texts from bilingual corpora or translation databases.",
+        "Translation examples (pairs of a text and its translation equivalent) are very helpful for us to translate the similar text.",
+        "Our character-based best match retrieval method can retrieve translation examples similar to the given input.",
+        "This method has the following advantages: ( I) this method accepts freestyle translation examples, i.e., pairs of any text string and its translation equivalent, (2) morphological analysis is unnecessary, (3) this method accepts freestyle inputs (i.e., any text, strings) for retrieval.",
+        "We show the retrieval examples with the following characteristic features: phrasal expression, long-distance dependency, idiom, synonym, and semantic ambiguity."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "In the late 1980's, several commercial Japanese-English machine translation systems had been developed in Japan.",
+        "In these systems, the computer is the agent of translation, while the user assists in editing the translation inputs and revising the results.",
+        "Although they are useful to translate large amounts of texts roughly and rapidly, high quality translation is impossible.",
+        "Translation aid is another kind of machine translation: the user is the agent of translation, while the computer provides him or her with the helpful tools, e.g., quick-retrieval electronic dictionaries.",
+        "A quick-retrieval bilingual corpus is also useful, specifically when it has the flexible (best match) retrieval mechanism.",
+        "Because translation examples (pairs of source text and its translation equivalent) are very helpful for us to translate the similar text.",
+        "This type of system is called as example-based translation aid [6], and there are two prototype systems in Japanese-English translation: E'I'OC [8] and Na.kamura's system [5].",
+        "Figure I shows the basic configuration of example-based translation aid (EBTA ).",
+        "It consists of two components: the translation database is the collection of translation examples, and the best match retrieval engine is to retrieve the example that is the most similar to the given input text.",
+        "The characteristic of the EBTA system is that it accepts freestyle text inputs for the retrieval: it frees the user from learning the formal language for database query.",
+        "The central problem in EBTA is the implementation of the best match retrieval.",
+        "Two methods were proposed: one is the syntax-matching driven by generalization rules in ETOC [8], and the other is Nakamura's method using content words [5].",
+        "They are the word-based best match retrieval methods', which need morphological analysis.",
+        "This paper proposes the character-based best match retrieval method, specifically for Japanese texts.",
+        "Compared with the word-based methods, the character-based method has the following advantages:",
+        "• Morphological analysis is unnecessary.",
+        "• Some kind of synonyms can he retrieved without.",
+        "a thesaurus.",
+        "This method has been implemented in C'I'M2, Japanese-English translation aid system for writing/translating technical papers."
+      ]
+    },
+    {
+      "heading": "2 The Character-Based Best Match Retrieval Method",
+      "text": []
+    },
+    {
+      "heading": "2.1 Characteristics of Japanese Written Texts",
+      "text": [
+        "Japanese written texts have remarkable characteristics as follows.",
+        "They cannot he found in European languages, i.e., English, French, and German.",
+        "1.",
+        "The number of characters is very large.",
+        "The number of characters that are used in text is more than 7,000 in Japanese, while it is less than a hundred in a European language.",
+        "2.",
+        "Synonyms often have the same Kanji character.",
+        "3.",
+        "There is no delimiter between words.",
+        "In European languages, the white space is the delimiter for word separation.",
+        "In contrast, Japanese has no explicit delimiter.",
+        "Therefore, the main part of Japanese morphological analysis is to divide a text string into words: it is not.",
+        "easy task'.",
+        "These characteristics of Japanese suggest.",
+        "the character-based best match, because I.",
+        "While the word-based method needs morphological analysis, the character-based method does not need it.",
+        "2.",
+        "In order to retrieve synonyms the word-based method needs a thesaurus.",
+        "In contrast, the character-based method can retrieve some kind of synonyms without a thesaurus, because synonyms often have the same Kanji character in Japanese."
+      ]
+    },
+    {
+      "heading": "2.2 The Character-Based Best Match",
+      "text": [
+        "The character-based best.",
+        "match can be determined by defining the distance or similarity measure between two strings.",
+        "The simple measure of similarity between two strings, A a2 • • B bib2 • • by, is the mini-ber of the matching characters considering the character order constraint.",
+        "It is not particularly good 'For example, a Japanese morphological analysis program developed by Kyoto University fails to analyse 3 is, 5 % of sent ences.",
+        "measure, but makes a convenient starting point.",
+        "We define it as follows:",
+        "This measure often produces the undesirable results, because we ignore continuation of matching characters.",
+        "For example, consider the following strings:",
+        "(He solved the problem yesterday.)",
+        "rtf106Dff (determine the method for solving the problem) We want to he S(A, B) > S(A, B'), hut the above measure produces S(A, 8) < S(A, B').",
+        "To solve the problem, we consider the bonus for continuous matching characters.",
+        "It can be done by modifying m(i, j) in the the above definition:",
+        "This is the similarity score that we use, where 14\" is a parameter that determines the maximum value of the bonus for the continuous matching characters.",
+        "When 14' = 1, this definition is the same with the previous definition.",
+        "'fable 1 shows S(A, B) and S(A, B') with varying values of W. Usually we use IV 4.4 4 This valuewas determined empirically.",
+        "It may be explained as follows.",
+        "'Elie average character length of f a Japanese wont is slangIwo, arid we fret that the continuous matching of two words is the strong match."
+      ]
+    },
+    {
+      "heading": "2.3 Acceleration by Character Index",
+      "text": [
+        "At the best match retrieval, we use the acceleration method using the character index.",
+        "The character index is the table of every character with ID's of examples in which the character is appeared.",
+        "Table 2 shows an example of translation database and Table 3 shows the character index of it.",
+        "In the first stage of the retrieval, the character index is used for the pre-selection of the examples.",
+        "Figure 2 illustrates the pre-selection process: it is",
+        "1 Look up the records for the characters that are appeared in the input string.",
+        "2.",
+        "For every example, compute the pre-selection score, P SS , which can be obtained by counting the number of the example 113's in the records.",
+        "It.",
+        "is the number of matching characters between the input string and the example ignoring the character order constraint.",
+        "3.",
+        "Select the top N examples that have the largest pre-selection score, where N is the parameter and we usually use N = 200.",
+        "In the second stage of the retrieval, the similarity scores of preselected examples are computed, and the examples are ordered by the score."
+      ]
+    },
+    {
+      "heading": "3 The CTM System",
+      "text": [
+        "Above mentioned retrieval mechanism has been implemented in CTM, a Japanese-English translation 'We cannot compute the similarity score of every example in the [lat./dime, because the computation needs shout 5 mil-hsecond between die average input string (10 characters) and the average example (50 characters) on SparcStation 2.",
+        "'This value was determined empirically.",
+        "aid system.",
+        "CTM is written by C and runs on Sun Workstations.",
+        "Figure 3 shows the configuration of CTM: it consists of three programs.",
+        "rukdb The program to create the character index from the translation database.",
+        "CTM server The main program, which retrieves the best matched examples with the given input.\"' MTC 8 The client program on NE/Imes (Nihongo (Japanese) GlN I) Emacs), which interacts the con server via Ethernet.",
+        "The translation database of CTM is text files, in which a Japanese text.",
+        "string and an English text string appear one after the other.",
+        "These files can be made from Japanese text files and the correspondent English text files by using the alignment program [1] semi-automatically, We have made the translation database from several sources: Table 4 shows our translation databases."
+      ]
+    },
+    {
+      "heading": "4 Retrieval Examples",
+      "text": [
+        "We show here CTM retrieval examples with the following features: phrasal expression, long-distance dependency, idiom, synonym.",
+        "and semantic ambiguity.",
+        "Figure 4 shows a retrieval example of phrasal expression < (consider from several points of view)\".",
+        "Although there is no exact matched expression in the database, CTM can retrieve helpful examples for us to translate it.",
+        "'The (:TM server has other facilities: die character-based exact match retrieval for Japanese texts, and the word-based best or exact match retrieval for English texts.",
+        "\"MTC is named horn the .1apnilese phrase.",
+        "\"Motto Tsillmtte Cliondai\", which means \"use it more and more\".",
+        "From the viewpoint of several material limits, then, gallium arsenide offers advantages over silicon in speed.",
+        "Score 24, DB Science8710, II) = 549, File 03.6",
+        "Each level of the hierarchy can be considered from three different points of view, which are respectively theory, practice and historical analogy.",
+        "This is no small undertaking, however, and success presupposes that society generates significant demand.",
+        "Score = 9, DB Science8710, ID = 1944, File 09.ej C: .hit#14 -/ – 5 L, c 5 illiti4:01Mff bti-L-CnAtZ COD-C417:c5,0 This view is not really in conflict with the traditional model of medical libraries as information centers.",
+        "I grasped the tail of a cat.",
+        "Score = 18, DII MTE, = 78, File = inttest.je 4.41ILIfi0) L, -.3111-0 7)' AL\".",
+        "I found his weak point.",
+        "C'I'M supports the retrieval of long-distance dependency: Figure 5 shows a retrieval example, where -C\" is an adverb, and \"7:4'0\" is an auxiliary adjective for negation, and they are often used together with the general meaning \"never\".",
+        "CT M also supports the retrieval of idiomatic expression: Figure 6 shows an example.",
+        "In this figure, the first retrieval example is the literal meaning, and the second is the idiomatic meaning.",
+        "The character-based best match method can retrieve synonyms.",
+        "Figure 7 shows an example: in this case, CTM retrieved an exact match example CTM(Al)> $3 Score = 10, DII r M1,1, ID = 605, File = 03.ej E a) fl 1-c` ( 11W , A Z1111.V)41Q101.1 .4:.",
+        "1-- \\--Ce-.11, – r z .k -) *, t C'fb..1L.",
+        "tt.t.",
+        ":it 4 [14j – oist4L (MSC - -.ORIL) .M,-.D 11.",
+        "Z tYlIOD-lf-a:#3%V.r.",
+        "In particular, we examine methods for finding the maximally-specific conjunctive generalizations (MSC-generalizations) that cover all of the training examples of a given concept.",
+        "Score = 7, DB = Science9003, ID = 468, File = mental.e.ej 13-f (, <, it:041-0W1111„1841-0)IgiVeiti-N,A1A-e, figthr)ttzglMa),ba)r)W. „t ; n ft7h,17M-1-Z0) ,kwIzt:f6 -).",
+        "Presumably the therapist's interpretations help patients to gain insight into the effects of the unconscious mind on their conscious thoughts, feelings arid behaviors.",
+        "Score = 6, DB = MLI, ID = 147, File = 01.6 •fterefIV-0,VPMUM4a-4'ML-C-E-0Ail044 A,10,110-1-Z.",
+        "• Active experimentation, where the learner perturbs the environment to observe the results of its perturbations.",
+        "with (consider/examine)\" and two examples with two synonyms, \"ilii1t1-4- 7.)",
+        "(gain insight into)\" and \"rtItti--Z (observe)\" Figure 8 shows three retrieval examples for the Japanese construction \"NOU A.D t:\", where \"I:\" is a case marker and I:\" is the past form of the verb \"At\".",
+        "There are several translation of \"AZ\".",
+        "The first input \"ITS (office) l X o has two meaning: one is \"entered the office\" and the other is \"joined as a new member of the office\".",
+        "The second input \"If (ear) 1 do/i-:\" is an idiomatic expression that.",
+        "means \"heard\".",
+        "The last input \"44: (bookstore) is more complicated: the translation depends on not only \"I: (ni)\"-case but also \"71 (ga)\"-case.",
+        "The retrieval examples show the following three cases:",
+        "1.",
+        "\"A (human)+ (room)+4:+),..Z\" (human enters the room) 2.",
+        "\"K (wind)+71141iiii (room)+E:+A,6\" (the wind blows into the room) 3.",
+        "\"* (book)+ (bookstore)+ (the book arrives at the bookstore)"
+      ]
+    },
+    {
+      "heading": "5 Evaluation",
+      "text": [
+        "It is very difficult to evaluate a translation aid system, because its effectiveness essentially depends on the user's satisfaction: when the user feels that the system is helpful, it is effective.",
+        "The evaluation of GEM is now in progress, and we show some results of experiments here."
+      ]
+    },
+    {
+      "heading": "The Retrieval Time",
+      "text": [
+        "Empirically, we obtained the following equation, which estimates the retrieval time (millisecond).",
+        "tirne(l, k, N) = 1 x (10 x k + 2/3 x N) where 1 is the length of the input string, A' (mega byte) is the database size, and N is the pre-selection parameter.",
+        "For example, if 1 = 10 (characters), k = 8 (mega byte), N 200, then rime = 2,133 (millisecond).",
+        "It shows that the current system responses in a few seconds and it is not so fast.",
+        "The more acceleration is need for the larger database.",
+        "Evaluation of 100 retrievals We have evaluated 100 retrieval results by hand.",
+        "We have given one of the following grades to each retrieved example.",
+        "A The example exactly matches the input.",
+        "B ihe example provides enough information about the translation of the whole input.",
+        "C The example provides information about the translation of some part of the input.",
+        "F The example provides almost no information about the translation of the input.",
+        "We evaluated top five examples for each retrieval, and the hest grade of them is used for the evaluation of a retrieval.' Table 5 shows the result of the evaluation.",
+        "The table shows that (I) we can obtain very useful information from 47% of the retrievals, (2) we can obtain at least some information from 81% of the retrievals."
+      ]
+    },
+    {
+      "heading": "Acknowledgments",
+      "text": [
+        "The author would like to thank Ms. Yuko Tornita, who helped me to make the translation databases."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,168 @@
+{
+  "info": {
+    "authors": [
+      "Kadri Hacioglu",
+      "Sameer S. Pradhan",
+      "Wayne H. Ward",
+      "James H. Martin",
+      "Daniel Jurafsky"
+    ],
+    "book": "Conference on Computational Natural Language Learning CoNLL",
+    "id": "acl-W04-2416",
+    "title": "Semantic Role Labeling by Tagging Syntactic Chunks",
+    "url": "https://aclweb.org/anthology/W04-2416",
+    "year": 2004
+  },
+  "references": [
+    "acl-E99-1023",
+    "acl-N03-2009",
+    "acl-W04-2412",
+    "acl-W95-0107"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "In this paper, we present a semantic role labeler (or chunker) that groups syntactic chunks (i.e. base phrases) into the arguments of a predicate.",
+        "This is accomplished by casting the semantic labeling as the classification of syntactic chunks (e.g. NP-chunk, PP-chunk) into one of several classes such as the beginning of an argument (B-ARG), inside an argument (I-ARG) and outside an argument (O).",
+        "This amounts to tagging syntactic chunks with semantic labels using the IOB representation.",
+        "The chunker is realized using support vector machines as one-versus-all classifiers.",
+        "We describe the representation of data and information used to accomplish the task.",
+        "We participate in the “closed challenge” of the CoNLL-2004 shared task and report results on both development and test sets."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "In semantic role labeling the goal is to group sequences of words together and classify them by using semantic labels.",
+        "For meaning representation the predicate-argument structure that exists in most languages is used.",
+        "In this structure a word (most frequently a verb) is specified as a predicate, and a number of word groups are considered as arguments accompanying the word (or predicate).",
+        "In this paper, we select support vector machines (SVMs) (Vapnik, 1995; Burges, 1998) to implement the semantic role classifiers, due to their ability to handle an extremely large number of (overlapping) features with quite strong generalization properties.",
+        "Support vector machines for semantic role chunking were first used * This research was partially supported by the ARDA AQUAINT program via contract OCG4423B and by the NSF via grant IIS-9978025 in (Hacioglu and Ward, 2003) as word-by-word (W-by-W) classifiers.",
+        "The system was then applied to the constituent-by-constituent (C-by-C) classification in (Hacioglu et al., 2003).",
+        "In (Pradhan et al., 2003; Pradhan et al., 2004), several extensions to the basic system have been proposed, extensively studied and systematically compared to other systems.",
+        "In this paper, we implement a system that classifies syntactic chunks (i.e. base phrases) instead of words or the constituents derived from syntactic trees.",
+        "This system is referred to as the phrase-by-phrase (P-by-P) semantic role classifier.",
+        "We participate in the “closed challenge” of the CoNLL-2004 shared task and report results on both development and test sets.",
+        "A detailed description of the task, data and related work can be found in (Carreras and M`arquez, 2004)."
+      ]
+    },
+    {
+      "heading": "2 System Description",
+      "text": []
+    },
+    {
+      "heading": "2.1 Data Representation",
+      "text": [
+        "In this paper, we change the representation of the original data as follows:",
+        "• Bracketed representation of roles is converted into IOB2 representation (Ramhsaw and Marcus, 1995; Sang and Veenstra, 1995) • Word tokens are collapsed into base phrase (BP) tokens.",
+        "Since the semantic annotation in the PropBank corpus does not have any embedded structure there is no loss of information in the first change.",
+        "However, this results in a simpler representation with a reduced set of tagging labels.",
+        "In the second change, it is possible to miss some information in cases where the semantic chunks do not align with the sequence of BPs.",
+        "However, in Section 3.2 we show that the loss in performance due to the misalignment is much less than the gain in performance that can be achieved by the change in representation.",
+        "phrase data representation used in this paper.",
+        "Words are collapsed into base phrase types retaining only headwords with their respective features.",
+        "Bracketed representation of semantic role labels is converted into IOB2 representation.",
+        "See text for details.",
+        "The new representation is illustrated in Figure 1 along with the original representation.",
+        "Comparing both we note the following differences and advantages in the new representation:",
+        "• BPs are being classified instead of words.",
+        "• Only the BP headwords (rightmost words) are retained as word information.",
+        "• The number of tagging steps is smaller.",
+        "• A fixed context spans a larger segment of a sentence.",
+        "Therefore, the P-by-P semantic role chunker classifies larger units, ignores some of the words, uses a relatively larger context for a given window size and performs the labeling faster."
+      ]
+    },
+    {
+      "heading": "2.2 Features",
+      "text": [
+        "The following features, which we refer to as the base features, are provided in the shared task data for each sentence;",
+        "• Words • Predicate lemmas • Part of Speech tags • BP Positions: The position of a token in a BP using the IOB2 representation (e.g. B-NP, I-NP, O etc.)",
+        "• Clause tags: The tags that mark token positions in a sentence with respect to clauses.",
+        "(e.g *S)*S) marks a position that two clauses end) • Named entities: The IOB tags of named entities.",
+        "There are four categories; LOC, ORG, PERSON and MISC.",
+        "Using available information we have created the following token level features:",
+        "• Token Position: The position of the phrase with respect to the predicate.",
+        "It has three values as “before”, “after” and “-” for the predicate.",
+        "• Path: It defines a flat path between the token and the predicate as a chain of base phrases.",
+        "At both ends, the chain is terminated with the POS tags of the predicate and the headword of the token.",
+        "• Clause bracket patterns: We use two patterns of clauses for each token.",
+        "One is the clause bracket chain between the token and the predicate, and the other is from the token to sentence begin or end depending on token’s position with respect to the predicate.",
+        "• Clause Position: a binary feature that indicates the token is inside or outside of the clause which contains the predicate • Headword suffixes: suffixes of headwords of length 2, 3 and 4.",
+        "• Distance: we have two notions of distance; the first is the distance of the token from the predicate as a number of base phrases, and the second is the same distance as the number of VP chunks.",
+        "• Length: the number of words in a token.",
+        "We also use some sentence level features: • Predicate POS tag: the part of speech category of the predicate • Predicate Frequency; this is a feature which indicates whether the predicate is frequent or rare with respect to the training set.",
+        "The threshold on the counts is currently set to 3.",
+        "• Predicate BP Context : The chain of BPs centered at the predicate within a window of size -2/+2.",
+        "• Predicate POS Context : The POS tags of the words that immediately precede and follow the predicate.",
+        "The POS tag of a preposition is replaced with the preposition itself.",
+        "• Predicate Argument Frames: We used the left and right patterns of the core arguments (A0 through A5) for each predicate.",
+        "We used the three most frequent argument frames for both sides depending on the position of the token in focus with respect to the predicate.",
+        "(e.g. raise has A0 and A1 AO (A0 being the most frequent) as its left argument frames, and A1, A1 A2 and A2 as the three most frequent right argument frames) • Number of predicates: This is the number of predicates in the sentence.",
+        "For each token (base phrase) to be tagged, a set of ordered features is created from a fixed size context that surrounds each token.",
+        "In addition to the above features, we also use previous semantic IOB tags that have already been assigned to the tokens contained in the context.",
+        "A 5-token sliding window is used for the context.",
+        "A greedy left-to-right tagging is performed.",
+        "All of the above features are designed to implicitly capture the patterns of sentence constructs with respect to different word/predicate usages and senses.",
+        "We acknowledge that they significantly overlap and extensive experiments are required to determine the impact of each feature on the performance."
+      ]
+    },
+    {
+      "heading": "2.3 Classifier",
+      "text": [
+        "All SVM classifiers were realized using TinySVM1 with a polynomial kernel of degree 2 and the general purpose SVM based chunker YamCha 2.",
+        "SVMs were trained for begin (B) and inside (I) classes of all arguments and one outside (O) class for a total of 78 one-vs-all classifiers (some arguments do not have an I-tag).",
+        "Both systems use the base features provided (i.e. no feature engineering is done).",
+        "Results are on dev set."
+      ]
+    },
+    {
+      "heading": "3 Experimental Results",
+      "text": []
+    },
+    {
+      "heading": "3.1 Data and Evaluation Metrics",
+      "text": [
+        "The data provided for the shared task is a part of the February 2004 release of the PropBank corpus.",
+        "It consists of sections from the Wall Street Journal part of the Penn Treebank.",
+        "All experiments were carried out using Sections 15-18 for training Section-20 for development and Section-21 for testing.",
+        "The results were evaluated for precision, recall and F0=1 numbers using the srl-eval.pl script provided by the shared task organizers."
+      ]
+    },
+    {
+      "heading": "3.2 W-by-W and P-by-P Experiments",
+      "text": [
+        "In these experiments we used only the base features to compare the two approaches.",
+        "Table 1 illustrates the overall performance on the dev set.",
+        "Although both systems were trained using the same number of sentences, the actual number of training examples in each case were quite different.",
+        "Those numbers are presented in Table 2.",
+        "It is clear that P-by-P method uses much less data for the same number of sentences.",
+        "Despite this we particularly note a considerable improvement in recall.",
+        "Actually, the data reduction was not without a cost.",
+        "Some arguments have been missed as they do not align with the base phrase chunks due to inconsistencies in semantic annotation and due to errors in automatic base phrase chunking.",
+        "The percentage of this misalignment was around 2.5% (over the dev set).",
+        "We observed that nearly 45% of the mismatches were for the “outside” chunks.",
+        "Therefore, sequences of words with outside tags were not collapsed."
+      ]
+    },
+    {
+      "heading": "3.3 Best System Results",
+      "text": [
+        "In these experiments all of the features described earlier were used with the P-by-P system.",
+        "Table 3 presents our best system performance on the development set.",
+        "Additional features have improved the performance from 61.02 to 71.72.",
+        "The performance of the same system on the test set is similarly illustrated in Table 4."
+      ]
+    },
+    {
+      "heading": "4 Conclusions",
+      "text": [
+        "We have described a semantic role chunker using SVMs.",
+        "The chunking method has been based on a chunked sentence structure at both syntactic and semantic levels.",
+        "We have jointly performed semantic chunk segmentation and labeling using a set of one-vs-all SVM classifiers on a phrase-by-phrase basis.",
+        "It has been argued that the new representation has several advantages as compared to the original representation.",
+        "It yields a semantic role labeler that classifies larger units, exploits relatively larger context, uses less data (possibly, redundant and noisy data are filtered out), runs faster and performs better."
+      ]
+    }
+  ]
+}

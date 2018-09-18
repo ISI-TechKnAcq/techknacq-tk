@@ -1,0 +1,257 @@
+{
+  "info": {
+    "authors": [
+      "Dmitry Zelenko",
+      "Chinatsu Aone",
+      "Jason Tibbetts"
+    ],
+    "book": "Conference on Reference Resolution and Its Applications",
+    "id": "acl-W04-0704",
+    "title": "Coreference Resolution for Information Extraction",
+    "url": "https://aclweb.org/anthology/W04-0704",
+    "year": 2004
+  },
+  "references": [
+    "acl-A00-1011",
+    "acl-C96-1021",
+    "acl-J01-4004",
+    "acl-J94-4002",
+    "acl-P02-1014",
+    "acl-W98-1119",
+    "acl-W99-0611"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "We compare several approaches to coreference resolution in the context of information extraction.",
+        "We present a loss-based decoding framework for coreference resolution and a greedy algorithm for approximate coreference decoding, in conjunction with Perceptron and logistic regression learning algorithms.",
+        "We experimentally evaluate the presented approaches using the Automatic Content Extraction evaluation methodology, with promising results."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Coreference resolution is an important problem of determining whether discourse references in text correspond to the same real world entities (Mitkov, 2002).",
+        "In this paper, we address a restricted version of the coreference resolution problem in the context of information extraction.",
+        "The information extraction perspective on coreference resolution imposes a limited scope on the set of entities to be resolved.",
+        "We are not interested in resolving all coreferences in a document, but only those involving entities to be extracted as part of a specific extraction task.",
+        "Thus, we can safely ignore coreference resolution of those names, noun phrases, and pronouns that are deemed irrelevant to the extraction task at hand.",
+        "The extraction-oriented coreference resolution problem is motivated by the Entity Detection and Tracking (EDT) task of the Automatic Content Extraction evaluation (ACE, 2003).",
+        "The EDT task requires detecting of named, nominal, and pronominal mentions and tracking mentions corresponding to the same real world entities.",
+        "We adopt the ACE convention of using mentions for the names, noun phrases, and pronouns, while reserving entities to represent the equivalence classes of mentions, i.e. , the sets of mentions corresponding to the same real world entities.",
+        "In this paper, we will take an entity mention extraction component as given (the mention extraction component of (Aone and RamosSantacruz, 2000)), and consider coreference resolution algorithms that work with already extracted entity mentions.",
+        "A brief outline of the paper follows.",
+        "In Section 2, we survey previous work on coreference resolution.",
+        "In Section 3, we present our coreference resolution framework that encompasses a number of standard coreference resolution approaches.",
+        "In Section 4, we introduce a loss-based coreference decoding methodology and present an approximate greedy coreference decoding algorithm.",
+        "In Section 5, we experimentally evaluate several coreference resolution architectures, in the context of information extraction."
+      ]
+    },
+    {
+      "heading": "2 Coreference Resolution Overview",
+      "text": [
+        "The problem of anaphora resolution is often studied (Mitkov, 2002), which is closely related to the coreference resolution problem.",
+        "Anaphora is a phenomenon of referring to a preceding mention in a document.",
+        "The reference is then called an anaphor and the referred mention is termed an antecedent.",
+        "Anaphora resolution problem is often restricted to nominal and pronominal anaphors, thereby ignoring the problem of name coreference, which is extremely important for information extraction.",
+        "Additionally, since anaphora addresses (literally) only backward references, the infrequent phenomenon of forward references (termed cat-aphora) is not covered by anaphora resolution.",
+        "In our presentation, the term \"coreference res-olution\" implies resolution of named, nominal, and pronominal entity mentions that subsumes both backward and forward references.",
+        "Let us define the coreference relation core f on a set of document entity mentions.",
+        "We say that the relation core f (x, y) holds if and only if the mentions x and y are coreferent.",
+        "It is frequently helpful to compartmentalize the relation core f (x, y) and, hence, the coreference resolution task into three different subtasks corresponding to different kinds of entities involved.",
+        "More precisely, if x or y is a pronominal entity, then we obtain a pronoun resolution problem.",
+        "Otherwise, if x or y is a nominal entity, then we have a noun phrase resolution problem.",
+        "Finally, if both x and y are named entities, then it is a name resolution problem.",
+        "An information extraction system needs to address all three aspects of the coreference resolution problem.",
+        "Yet different modeling and algorithmic choices may be appropriate for name, noun phrase, and pronoun resolution.",
+        "Most early work on coreference and anaphora resolution dealt with pronoun coreference (Lap-pin and Leass, 1994; Kennedy and Boguraev, 1996).",
+        "The early approaches identified a set of pronouns in a document, and, for each pronoun, sought to determine the best antecedent.",
+        "Different definitions of \"best\" led to different carefully designed and complex rules that were sometimes based on existing discourse theories (Sidner, 1979).",
+        "The area of pronoun and noun phrase coreference resolution was greatly revitalized since mid-1990s by application of learning approaches to the problem.",
+        "We note, amongst many, the work of (Aone and Bennett, 1996; McCarthy and Lehnert, 1995; Ng, 2001; Ng and Cardie, 2002) .",
+        "A coreference example is a feature-based representation of a pair of mentions that is designed to make manifest the properties of the anaphor and its candidate antecedent that are most helpful in making the decision whether the anaphor indeed refers to the antecedent in question.",
+        "A coreference example has a binary label reflecting whether the entities that constitute the example are indeed coreferent or not.",
+        "Most learning-based systems for coreference resolution employed larger hand-crafted feature sets (Ng, 2001).",
+        "A number of learning algorithms have been experimentally evaluated on the coreference resolution problem.",
+        "Many published studies employed a decision tree algorithm (Aone and Bennett, 1996; Ng, 2001; Ng and Cardie, 2002).",
+        "We also note a few global probabilistic modeling approaches to coreference resolution: the generative probabilistic model of (Charniak et al., 1998) and the conditional random filed model of (McCallum and Wellner, 2003).",
+        "The coreference classifiers tha are output by learning algorithms need to be used in conjunction with coreference decoding algorithms in order to induce the core f equivalence relation on the set of mentions.",
+        "A most popular coreference decoding algorithm links an anaphor to the first preceding antecedent predicted as coreferent with the anaphor (Ng, 2001).",
+        "We will call it the link-first decoding algorithm.",
+        "An alternative decoding algorithm (termed link-best) links the anaphor to the most probable preceding antecedent, where the probability of antecedent is taken to the confidence of the coreference classifier prediction (Ng and Cardie, 2002).",
+        "We will consider both link-first and link-best decoding algorithms and compare them with the new decoding framework that we introduce in Section 4.",
+        "Our decoding framework most resembles the work of (McCallum and Wellner, 2003), where a coreference model represents a conditional random field.",
+        "The coreference decoding problem for the conditional random field leads to a correlation clustering problem (Bansal et al., 2002).",
+        "We also reduce the coreference decoding problem to a correlation clustering problem, but use a different approximation algorithm for its solution.",
+        "In the absence of training data, we note application of clustering for coreference of noun phrases (Cardie and Wagstaff, 1999).",
+        "Namely, the noun phrase attributes are used to define a distance function that is used within a heuristic clustering algorithm to produce a clustering of noun phrases that aims to correspond to the coreference partition of the corresponding noun phrase entities.",
+        "In addition to the work on coreference resolution within documents, there is an emerging body on a more general identity uncertainty problem, which is concerned with determining whether two records describe the same entity (Pasula et al., 2003)."
+      ]
+    },
+    {
+      "heading": "3 Coreference Resolution Architecture",
+      "text": [
+        "We consider the following components in adaptive approaches to coreference resolution.",
+        "• Coreference examples and their feature representation.",
+        "• Coreference examples' generation process.",
+        "• Learning algorithms for coreference classifiers.",
+        "• Decoding algorithm that combines predictions of coreference classifiers into a coherent discourse interpretation.",
+        "Let us examine the components in more detail."
+      ]
+    },
+    {
+      "heading": "3.1 Coreference Examples and Classifiers",
+      "text": [
+        "We use entity mentions produced by the mention extraction system (Aone and RamosSantacruz, 2000) that augments mentions with the following additional attributes (when appropriate): POS (a part of speech tag from a restricted set of POS tags), head (the mention head, mostly pertinent for named and nominal mentions), gender (the gender of the mention, if available), number (plurality of the mention), first name (the first name of the mention, if available), last name (the last name of the mention, if available), determiner (the string value of the mention determiner, if available), personal pronoun type (for pronouns, the first/second/third person pronoun indicator), possessive pronoun type (for pronouns, the possessive pronoun indicator).",
+        "For an anaphor/ antecedent pair, we will use the following set of features in coreference examples.",
+        "• Every conjunction A = X n B = Y, where A is an anaphor attribute, B is an antecedent attribute, and X and Y are the corresponding values of the attributes in the given anaphor and the antecedent.",
+        "• For every common attribute A of an anaphor and an antecedent, the value of the proposition, anaphor.A = antecedent.A that reflects the same attributes have the same value in both the given anaphor and the antecedent.",
+        "• For nominal and pronominal anaphors, we used distance features (number of words/sentences/paragraphs between an anaphor and an antecedent).",
+        "The distance features are discretized using the entropy-based discretization algorithm with the minimal description length stopping criterion (Dougherty et al., 1995).",
+        "• For nominal anaphors, we used the \"appositive\" feature, if the anaphor is in apposition with the antecedent.",
+        "• For named anaphors, we used the substring feature (indicating whether one name is a",
+        "substring of the other) and the common acronym/alias feature (indicating whether one name is a common acronym/alias of the other).",
+        "We note that the extracted mentions are typed, and we will consider only an anaphor/antecedent pair, where the anaphor and the antecedent belong to the same type (e.g., we will not try to corefer a person with an organization).",
+        "We also incorporate additional knowledge in the coreference resolution process by imposing constraints on the set of possible anaphor/ antecedent pairs.",
+        "Note that, for the sake of brevity, we use the words \"anaphor\" (ana) and \"antecedent\" (ante) for both anaphora and cataphora phenomena.",
+        "The constraints are specified by the following relation tsCandidateAntecedent:",
+        "and ante is a name 1, if anaphora is a name, and antecedent is a name that precedes anaphora 0, otherwise The constraints restrict the list of possible antecedents for different classes of anaphora by incorporating coreference knowledge.",
+        "The knowledge specifies that pronominal anaphora never refer forward to other pronouns, that nominal anaphora refer to preceding nominals or names, and names refer only to preceding names.",
+        "We also relax the assumption of the single classifier.",
+        "Instead, we split the coreference resolution classifier into several distinct projected classifiers depending on the type and level of an anaphor.",
+        "The classifiers are presented in Table 1.",
+        "The split is a result of the fact that different features are appropriate for different types and levels of an anaphor.",
+        "For example, while the distance between an anaphor and antecedent (in terms of words, sentences, paragraphs) might be extremely useful for pronominal anaphors, it is not a valuable feature for name coreference resolution.",
+        "Also, different coreference usage patterns may be prevalent for different kinds of anaphor.",
+        "For instance, we may expect that the _ �������������������� ������������������� pronouns \"I\" and \"it\" behave differently with respect to coreference phenomena.",
+        "Hence, different models may be appropriate for different kinds of pronominal anaphors.",
+        "Thus, for the 5 entity types used in our evaluation in Section 5, we learn 15 distinct coreference classifiers."
+      ]
+    },
+    {
+      "heading": "3.2 Coreference Example Generation",
+      "text": [
+        "We employ two strategies for coreference example generation.",
+        "For classifiers used in the link-first decoding algorithm, we proceed from a fixed anaphora backward (in text), and generate a negative example for each candidate antecedent until an antecedent coreferent with the anaphor is encountered.",
+        "A positive example is generated for the antecedent, and the process of generating examples for the fixed anaphor stops.",
+        "We also impose an upper bound M on the number of preceding candidate antecedents that we consider.",
+        "If none of the M preceding candidate antecedents is coreferent with the anaphor, then we proceed from the anaphor forward in the same fashion until we encounter an antecedent coreferent anaphor or exhaust the M forward candidate antecedents.",
+        "This is termed a sequential example generation process.",
+        "For classifiers used in the link-best decoding algorithm and the loss-based decoding framework presented in Section 4, we generate an example for every candidate antecedent residing within the window of M candidate antecedents around the anaphor.",
+        "This is termed an exhaustive example generation process."
+      ]
+    },
+    {
+      "heading": "3.3 Coreference Decoding Algorithms",
+      "text": [
+        "The coreference decoding procedure combines the predictions of coreference classifiers into a single coherent interpretation.",
+        "The most prevalent decoding approach is the link-first coreference decoding algorithm (Ng, 2001).",
+        "The algorithm processes mentions sequentially in order of their appearance in the document and establishes a coreference relation between a mention mi and the closest preceding candidate antecedent classified as coreferent with mi by the learned coreference classifier, among the M preceding candidate antecedents.",
+        "If no such preceding mention is found, the algorithm establishes a coreference relation between the mention mi and the closest following candidate antecedent classified as coreferent with mi, among the M following candidate antecedents.",
+        "After a single pass through the document, the equivalence classes are constructed via the transitive closure of the established coreference relations.",
+        "A popular alternative to link-first is the link-best coreference decoding algorithm (Ng and Cardie, 2002).",
+        "The algorithm processes mentions sequentially in order of their appearance in the document and establishes a coreference relation between a mention mi and the most probable candidate antecedent classified as coreferent with mi by the learned coreference classifier, among the M preceding and M following candidate antecedents.",
+        "After a single pass through the document, the equivalence classes are again constructed via the transitive closure of the established coreference relations."
+      ]
+    },
+    {
+      "heading": "3.4 Machine Learning Algorithms",
+      "text": [
+        "We will use two machine learning algorithms in our experiments: logistic regression (Berk-son, 1944) and the (voted) Perceptron algorithm (Freund and Schapire, 1999).",
+        "We introduce the following notation.",
+        "Let x E X denote a (coreference) example, where X C_ RN is an example space.",
+        "Let y E Y = {�1,1} be an example label, where �1(+1) corresponds to a negative (positive) coreference example.",
+        "We term a pair (x, y) a labeled example.",
+        "Let S = {(xl, y'), ... , (xs, ys)} be a (training) sample of labeled examples.",
+        "A learning algorithm A uses the sample S to produce a classifier c : X – � Y.",
+        "Both Perceptron and logistic regression learn linear classifiers' in RN , that is, cu,(x) = sgn(wTx).",
+        "Perceptron and logistic regression seek classifiers that minimize particular loss functions l (c, x, y) with respect to the",
+        "The Perceptron learning algorithm approximately minimizes the 0-1 loss function 1 = 10 = (sgn( – gwTx))+, where (a)+ = 1 if a > 0 and (a)+ = 0, otherwise.",
+        "Logistic regression minimizes the logistic loss function 1 = 1log = 1n(1 + e – �w TX)."
+      ]
+    },
+    {
+      "heading": "4 Loss-based Coreference Decoding",
+      "text": [
+        "Let M = m1, ... , mn be the set of document mentions of the same type.",
+        "Let A be a learning algorithm for learning a coreference classifier c mapping a pair of mentions (mi, mj) to { – 1, 1}.",
+        "Let 1 be a loss function that is being minimized by A.",
+        "Let M1, M2,..., Mk be an equivalence class partition of M. Define the variable mij that indicates whether two mentions belong to the same equivalence class, as follows: 1, if 31 E {1, ... ,k}, so that miEMland mjEMl – 1, otherwise Let .M = {mij} be an equivalence class partition of the entities M, and let xij denote the coreference example computed for mentions mi and mj.",
+        "Then, the partition induces the following loss with respect to the classifier c:",
+        "During decoding, we seek the partition .M* that minimizes the partition loss (2), given the classifier c.",
+        "We note that the classification decisions are not independent of one another, since the equivalence relation is transitive, and mij = 1nmjk = 1 implies that mik = 1.",
+        "Let us denote wij = wTxij.",
+        "In order to make (2) more manageable for our particular loss functions, we observe that",
+        "where g(c, xij, mij) = 1(c, xij, – mij) – 1(c, xij, mij).",
+        "In particular, for the Perceptron",
+        "The optimization problems (3) and (4) are the formulations of the unweighted and weighted versions, respectively, of the correlation clustering problem (Bansal et al., 2002).",
+        "Both versions are NP-hard, so we have to resort to approximation algorithms for their solution.",
+        "(Bansal et al., 2002) presents two approximation algorithms for the correlation clustering problem, and (McCallum and Wellner, 2003) use a variant of the Minimizing Disagreements algorithm in conjunction with their conditional random field coreference model.",
+        "We instead introduce a simple greedy decoding algorithm presented in the following section."
+      ]
+    },
+    {
+      "heading": "4.1 Greedy Coreference Decoding Algorithm",
+      "text": [
+        "The greedy decoding algorithm incrementally optimizes the (gain) function Ei j gijmij (where gij is either wij or sgn(wij)).",
+        "The logistic regression version of the algorithm is presented as Algorithm 1.",
+        "The algorithm initially puts each mention into a separate entity and then iteratively merges the entities, while the merge improves the gain function.",
+        "During each iteration, the pair of entities is selected in a greedy fashion to optimize the gain improvement achieved by the merge.",
+        "Note that the algorithm iteratively updates the weights between the already merged entities.",
+        "We note that no approximation results are known for Algorithm 1.",
+        "We experimentally evaluate the greedy decoding algorithm in Section 5 and compare it with link-first and link-best decoding algorithms."
+      ]
+    },
+    {
+      "heading": "5 Experiments",
+      "text": [
+        "We evaluate several coreference resolution configurations composed of the different compo",
+        "Algorithm 1 The Greedy Decoding Algorithm (m�, m2, ... , mn) is the list of mentions ordered by their location in the document cu, is the coreference classifier",
+        "nents presented in Section 3.",
+        "The six different system configurations are shown in Table 2.",
+        "We set the value of M = 10 (the maximum anaphora/ antecedent distance) for example generation and link-best decoding procedures.",
+        "All systems use the same features and the same classifier configuration presented in Section 3.",
+        "The data for our experiments comprised a collection of news articles from the last 3 months of 2000 used as development data in the ACE 2003 evaluation (ACE, 2003).",
+        "The 105 articles were split randomly into the training/testing sets.",
+        "The training set contained 53 articles, and the testing set contained 52 articles.",
+        "We use the evaluation methodology of the Automatic Content Extraction (ACE) program (ACE, 2003).",
+        "The ACE program quantifies performance of information extraction systems in terms of the value measure that ranges between 100 (a perfect system) to 0 (a system that outputs nothing) to �oc.",
+        "It is possible for the value to be negative, if a system outputs too many incorrect entities.",
+        "We note that our coreference resolution evaluation is somewhat indirect since we measure not the coreference performance per se (e.g., the MUC coreference measure (MUC, 1998)), but the impact on coreference resolution on infor",
+        "mation extraction performance.",
+        "The ACE evaluation measure is also intrinsically imbalanced, that is, it penalizes for under-merging entities a lot more than it penalizes for over-merging entities.",
+        "To counter this, we optimized the cost ratios3 of coreference classifiers on the training sets using the 5-fold cross-validation."
+      ]
+    },
+    {
+      "heading": "5.1 Coreference Evaluation Results",
+      "text": [
+        "The Table 3 presents the ACE values for the coreference decoding algorithms combined with the corresponding learning algorithms.",
+        "It is worth noting that human-level performance for the task is circa 85(LDC, 2003).",
+        "Therefore, the systems achieve more than 85% of the human-level performance.",
+        "The results indicate that the greedy decoding algorithm compares favorably with the more traditional coreference decoding approaches.",
+        "Surprisingly, for our dataset, the link-best decoding algorithm did not perform as well as the competing approaches.",
+        "The slight boost in the performance obtained by employing the weighted version of the greedy decoding algorithm derived from the logistic loss function indicates that the greedy decoding algorithm is able to take into account calibrated loss values of the logistic function."
+      ]
+    },
+    {
+      "heading": "References 2003. Automatic Content Extraction.",
+      "text": [
+        "http://www.nist.gov/speech/tests/ace/index.htm."
+      ]
+    },
+    {
+      "heading": "6 Discussion",
+      "text": [
+        "Our work addresses coreference resolution from the principled decoding perspective.",
+        "While there has been a lot of work on using machine learning for coreference resolution, the decoding algorithms for coreference resolution were rarely studied, and usually considered separately from the underlying learning problems (with the notable exception of (McCallum and Wellner, 2003)).",
+        "Our coreference decoding methodology couples the learning algorithm loss functions with the decoding objectives and reformulates the decoding problem as a correlation clustering problem with a learned distance metric.",
+        "The correlation clustering problem is beginning to be widely studied, and we plan to evaluate experimentally many pertinent algorithms proposed within the theoretical computer science community (Charikar et al., 2003; Demaine and Immorlica, 2003).",
+        "We presented coreference resolution in the context of information extraction and evaluated extrinsically the performance of several coreference resolution configurations.",
+        "Perhaps due to the extrinsic evaluation, the conclusions are not clear-cut, and an additional intrinsic evaluation will be necessary to ascertain our results.",
+        "Nevertheless, we believe that our framework is useful for designing coreference resolution systems, and our results call for further research."
+      ]
+    }
+  ]
+}

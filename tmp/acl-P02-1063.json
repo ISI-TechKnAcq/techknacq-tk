@@ -1,0 +1,229 @@
+{
+  "info": {
+    "authors": [
+      "Tetsuji Nakagawa",
+      "Taku Kudo",
+      "Yuji Matsumoto"
+    ],
+    "book": "Annual Meeting of the Association for Computational Linguistics",
+    "id": "acl-P02-1063",
+    "title": "Revision Learning and Its Application to Part-Of-Speech Tagging",
+    "url": "https://aclweb.org/anthology/P02-1063",
+    "year": 2002
+  },
+  "references": [
+    "acl-A00-1031",
+    "acl-J01-2002",
+    "acl-J95-4004",
+    "acl-J96-1002",
+    "acl-P98-1029",
+    "acl-W00-0730",
+    "acl-W01-0502",
+    "acl-W99-0608"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "This paper presents a revision learning method that achieves high performance with small computational cost by combining a model with high generalization capacity and a model with small computational cost.",
+        "This method uses a high capacity model to revise the output of a small cost model.",
+        "We apply this method to English part-of-speech tagging and Japanese morphological analysis, and show that the method performs well."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Recently, corpus-based approaches have been widely studied in many natural language processing tasks, such as part-of-speech (POS) tagging, syntactic analysis, text categorization and word sense disambiguation.",
+        "In corpus-based natural language processing, one important issue is to decide which learning model to use.",
+        "Various learning models have been studied such as Hidden Markov models (HMMs) (Rabiner and Juang, 1993), decision trees (Breiman et al., 1984) and maximum entropy models (Berger et al., 1996).",
+        "Recently, Support Vector Machines (SVMs) (Vapnik, 1998; Cortes and Vapnik, 1995) are getting to be used, which are supervised machine learning algorithm for binary classification.",
+        "SVMs have good generalization performance and can handle a large number of features, and are applied to some tasks * Presently with Oki Electric Industry successfully (Joachims, 1998; Kudoh and Matsumoto, 2000).",
+        "However, their computational cost is large and is a weakness of SVMs.",
+        "In general, a trade-off between capacity and computational cost of learning models exists.",
+        "For example, SVMs have relatively high generalization capacity, but have high computational cost.",
+        "On the other hand, HMMs have lower computational cost, but have lower capacity and difficulty in handling data with a large number of features.",
+        "Learning models with higher capacity may not be of practical use because of their prohibitive computational cost.",
+        "This problem becomes more serious when a large amount of data is used.",
+        "To solve this problem, we propose a revision learning method which combines a model with high generalization capacity and a model with small computational cost to achieve high performance with small computational cost.",
+        "This method is based on the idea that processing the entire target task using a model with higher capacity is wasteful and costly, that is, if a large portion of the task can be processed easily using a model with small computational cost, it should be processed by such a model, and only difficult portion should be processed by the model with higher capacity.",
+        "Revision learning can handle a general multi-class classification problem, which includes POS tagging, text categorization and many other tasks in natural language processing.",
+        "We apply this method to English POS tagging and Japanese morphological analysis.",
+        "This paper is organized as follows: Section 2 describes the general multi-class classification problem and the one-versus-rest method which is known as one of the solutions for the problem.",
+        "Section 3 introduces revision learning, and discusses how to combine learning models.",
+        "Section 4 describes one way to conduct Japanese morphological analysis with revision learning.",
+        "Section 5 shows experimental results of English POS tagging and Japanese morphological analysis with revision learning.",
+        "Section 6 discusses related works, and Section 7 gives conclusion."
+      ]
+    },
+    {
+      "heading": "2 Multi-Class Classification Problems and the One-versus-Rest Method",
+      "text": [
+        "Let us consider the problem to decide the class of an example x among multiple classes.",
+        "Such a problem is called multi-class classification problem.",
+        "Many tasks in natural language processing such as POS tagging are regarded as a multi-class classification problem.",
+        "When we only have binary (positive or negative) classification algorithm at hand, we have to reformulate a multi-class classification problem into a binary classification problem.",
+        "We assume a binary classifier f (x) that returns positive or negative real value for the class of x, where the absolute value If (x)| reflects the confidence of the classification.",
+        "The one-versus-rest method is known as one of such methods (Allwein et al., 2000).",
+        "For one training example of a multi-class problem, this method creates a positive training example for the true class and negative training examples for the other classes.",
+        "As a result, positive and negative examples for each class are generated.",
+        "Suppose we have five candidate classes A, B, C, D and E , and the true class of x is B.",
+        "Figure 1 (left) shows the created training examples.",
+        "Note that there are only two labels (positive and negative) in contrast with the original problem.",
+        "Then a binary classifier for each class is trained using the examples, and five classifiers are created for this problem.",
+        "Given a test example x', all the classifiers classify the example whether it belongs to a specific class or not.",
+        "Its class is decided by the classifier that gives the largest value of f (x').",
+        "The algorithm is shown in Figure 2 in a pseudo-code.",
+        "However, this method has the problem of being computationally costly in training, because the negative examples are created for all the classes other than the true class, and the total number of the training examples becomes large (which is equal to the number of original training examples multiplied by the number of classes).",
+        "The computational cost in testing is also large, because all the classifiers have to work on each test example."
+      ]
+    },
+    {
+      "heading": "3 Revision Learning",
+      "text": [
+        "As discussed in the previous section, the one-versus-rest method has the problem of computational cost.",
+        "This problem become more serious when costly binary classifiers are used or when a large amount of data is used.",
+        "To cope with this problem, let us consider the task of POS tagging.",
+        "Most portions of POS tagging is not so difficult and a simple POS-based HMMs learning 1 achieves more than 95% accuracy simply using the POS context (Brants, 2000).",
+        "This means that the low capacity model is enough to do most portions of the task, and we need not use a high accuracy but costly algorithm in every portion of the task.",
+        "This is the base motivation of the revision model we are proposing here.",
+        "Revision learning uses a binary classifier with higher capacity to revise the errors made by the stochastic model with lower capacity as follows: During the training phase, a ranking is assigned to each class by the stochastic model for a training example, that is, the candidate classes are sorted in descending order of its conditional probability given the example.",
+        "Then, the classes are checked in their ranking order to create binary classifiers as follows.",
+        "If the class is incorrect (i.e. it is not equal to the true class for the example), the example is added to the training data for that class as a negative example, and the next ranked class is checked.",
+        "If the class is correct, the example is added to the training data for that class as a positive exam",
+        "ple, and the remaining ranked classes are not taken into consideration (Figure 1, right).",
+        "Using these training data, binary classifiers are created.",
+        "Note that each classifier is a pure binary classifier regardless with the number of classes in the original problem.",
+        "The binary classifier is trained just for answering whether the output from the stochastic model is correct or not.",
+        "During the test phase, first the ranking of the candidate classes for a given example is assigned by the stochastic model as in the training.",
+        "Then the binary classifier classifies the example according to the ranking.",
+        "If the classifier answers the example as incorrect, the next highest ranked class becomes the next candidate for checking.",
+        "But if the example is classified as correct, the class of the classifier is returned as the answer for the example.",
+        "The algorithm is shown in Figure 3.",
+        "The amount of training data generated in the revision learning can be much smaller than that in one-versus-rest.",
+        "Since, in revision learning, negative examples are created only when the stochastic model fails to assign the highest probability to the correct POS tag, whereas negative examples are created for all but one class in the one-versus-rest method.",
+        "Moreover, testing time of the revision learning is shorter, because only one classifier is called as far as it answers as correct, but all the classifiers are called in the one-versus-rest method."
+      ]
+    },
+    {
+      "heading": "4 Morphological Analysis with Revision Learning",
+      "text": [
+        "We introduced revision learning for multi-class classification in the previous section.",
+        "However, Japanese morphological analysis cannot be regarded as a simple multi-class classification problem, because words in a sentence are not separated by spaces in Japanese and the morphological analyzer has to segment the sentence into words as well as to decide the POS tag of the words.",
+        "So in this section, we describe how to apply revision learning to Japanese morphological analysis.",
+        "For a given sentence, a lattice consisting of all possible morphemes can be built using a mor",
+        "# Training Procedure of Revision Learning # This procedure is given training examples # {(xi, yi)}, and creates classifiers.",
+        "# C = {c0,... , ck-1}: the set of classes, # xi: the ith training example, # yi ∈ C: the class of xi, # k: the number of classes, # l: the number of training examples, # ni: the ordered indexes of C # (see the following code), # fc(·): the binary classifier for the class c # (see the text).",
+        "procedure TrainRL({(x0, y0), .",
+        ".",
+        ".",
+        ", (xl-1, yl-1)})",
+        "# Test Function of Revision Learning # This function is given a test example and # returns the predicted class of it.",
+        "# C = {c0,...,ck-1}: the set of classes, # x: the test example, # k: the number of classes, # ni: the ordered indexes of C # (see the following code), # fc(·): binary classifier trained with the # algorithm above.",
+        "pheme dictionary as in Figure 4.",
+        "Morphological analysis is conducted by choosing the most likely path on it.",
+        "We adopt HMMs as the stochastic model and SVMs as the binary classifier.",
+        "For any sub-paths from the beginning of the sentence (BOS) in the lattice, its generative probability can be calculated using HMMs (Nagata, 1999).",
+        "We first pick up the end node of the sentence as the current state node, and repeat the following revision learning process backward until the beginning of the sentence.",
+        "Rankings are calculated by HMMs to all the nodes connected to the current state node, and the best of these nodes is identified based on the SVMs classifiers.",
+        "The selected node then becomes the current state node in the next round.",
+        "This can be seen as SVMs deciding whether two adjoining nodes in the lattice are connected or not.",
+        "In Japanese morphological analysis, for any given morpheme µ, we use the following features for the SVMs:",
+        "1. the POS tags, the lexical forms and the inflection forms of the two morphemes preceding µ; 2. the POS tags and the lexical forms of the two morphemes following µ; 3. the lexical form and the inflection form of µ.",
+        "The preceding morphemes are unknown because the processing is conducted from the end of the sentence, but HMMs can predict the most likely preceding morphemes, and we use them as the features for the SVMs.",
+        "English POS tagging is regarded as a special case of morphological analysis where the segmentation is done in advance, and can be conducted in the same way.",
+        "In English POS tagging, given a word w, we use the following features for the SVMs: 1. the POS tags and the lexical forms of the two words preceding w, which are given by HMMs; 2. the POS tags and the lexical forms of the two words following w; 3. the lexical form of w and the prefixes and suffixes of up to four characters, the existence of numerals, capital letters and hyphens in w."
+      ]
+    },
+    {
+      "heading": "5 Experiments",
+      "text": [
+        "This section gives experimental results of English POS tagging and Japanese morphological analysis with revision learning."
+      ]
+    },
+    {
+      "heading": "5.1 Experiments of English Part-of-Speech Tagging",
+      "text": [
+        "Experiments of English POS tagging with revision learning (RL) are performed on the Penn Treebank WSJ corpus.",
+        "The corpus is randomly separated into training data of 41,342 sentences and test data of 11,771 sentences.",
+        "The dictionary for HMMs is constructed from all the words in the training data.",
+        "T3 of ICOPOST release 0.9.0 (Schr¨oder, 2001) is used as the stochastic model for ranking stage.",
+        "This is equivalent to POS-based second order HMMs.",
+        "SVMs with second order polynomial kernel are used as the binary classifier.",
+        "The results are compared with TnT (Brants, 2000) based on second order HMMs, and with POS tagger using SVMs with one-versus-rest (1- v-r) (Nakagawa et al., 2001).",
+        "The accuracies of those systems for known words, unknown words and all the words are shown in Table 1.",
+        "The accuracies for both known words and unknown words are improved through revision learning.",
+        "However, revision learning could not surpass the one-versus-rest.",
+        "The main difference in the accuracies stems from those for unknown words.",
+        "The reason for that seems to be that the dictionary of HMMs for POS tagging is obtained from the training data, as a result, virtually no unknown words exist in the training data, and the HMMs never make mistakes for unknown words during the training.",
+        "So no example of unknown words is available in the training data for the SVM reviser.",
+        "This is problematic: Though the HMMs handles unknown words with an exceptional method, SVMs cannot learn about errors made by the unknown word processing in the HMMs.",
+        "To cope with this problem, we force the HMMs to make mistakes by eliminating low frequent words from the dictionary.",
+        "We eliminated the words appearing only once in the training data so as to make SVMs to learn about unknown words.",
+        "The results are shown in Table 1 (row “cutoff-1”).",
+        "Such procedure improves the accuracies for unknown words.",
+        "One advantage of revision learning is its small computational cost.",
+        "We compare the computation time with the HMMs and the one-versus-rest.",
+        "We also use SVMs with linear kernel function that has lower capacity but lower computational cost compared to the second order polynomial kernel SVMs.",
+        "The experiments are performed on an Alpha 21164A 500MHz processor.",
+        "Table 2 shows the total number of training examples, training time, testing time and accuracy for each of the five systems.",
+        "The training time and the testing time of revision learning are considerably smaller than those of the one-versus-rest.",
+        "Using linear kernel, the accuracy decreases a little, but the computational cost is much lower than the second order polynomial kernel."
+      ]
+    },
+    {
+      "heading": "5.2 Experiments of Japanese Morphological Analysis",
+      "text": [
+        "We use the RWCP corpus and some additional spoken language data for the experiments of Japanese morphological analysis.",
+        "The corpus is randomly separated into training data of 33,831 sentences and test data of 3,758 sentences.",
+        "As the dictionary for HMMs, we use IPADIC version 2.4.4 with 366,878 morphemes (Matsumoto and Asahara, 2001) which is originally constructed for the Japanese morphological analyzer ChaSen (Matsumoto et al., 2001).",
+        "A POS bigram model and ChaSen version 2.2.8 based on variable length HMMs are used as the stochastic models for the ranking stage, and SVMs with the second order polynomial kernel are used as the binary classifier.",
+        "We use the following values to evaluate Japanese morphological analysis: (# of correct morphemes in system’s output) (# of morphemes in test data) I precision = (# of correct morphemes in system’s output) (# of morphemes in system’s output) 2 X recall X precision recall + precision The results of the original systems and those with revision learning are shown in Table 3, which provides the recalls, precisions and F-measures for two cases, namely segmentation (i.e. segmentation of the sentences into morphemes) and tagging (i.e. segmentation and POS tagging).",
+        "The one-versus-rest method is not used because it is not applicable to morphological analysis of non-segmented languages directly.",
+        "When revision learning is used, all the measures are improved for both POS bigram and ChaSen.",
+        "Improvement is particularly clear for the tagging task.",
+        "The numbers of correct morphemes for each POS category tag in the output of ChaSen with and without revision learning are shown in Table 4.",
+        "Many particles are correctly revised by revision learning.",
+        "The reason is that the POS tags for particles are often affected by the following words in Japanese, and SVMs can revise such particles because it uses the lexical forms of the following words as the features.",
+        "This is the advantage of our method compared to simple HMMs, because HMMs have difficulty in handling a lot of features such as the lexical forms of words."
+      ]
+    },
+    {
+      "heading": "6 Related Works",
+      "text": [
+        "Our proposal is to revise the outputs of a stochastic model using binary classifiers.",
+        "Brill studied transformation-based error-driven learning (TBL) (Brill, 1995), which conducts POS tagging by applying the transformation rules to the POS tags of a given sentence, and has a resemblance to revision learning in that the second model revises the output of the first model.",
+        "However, our method differs from TBL in two ways.",
+        "First, our revision learner simply answers whether a given pattern is correct or not, and any types of binary classifiers are applicable.",
+        "Second, in our model, the second learner is applied to the output of the first learner only once.",
+        "In contrast, rewriting rules are applied repeatedly in the TBL.",
+        "Recently, combinations of multiple learners have been studied to achieve high performance (Alpaydm, 1998).",
+        "Such methodologies to combine multiple learners can be distinguished into two approaches: one is the multi-expert method and the other is the multi-stage method.",
+        "In the former, each learner is trained and answers independently, and the final decision is made based on those answers.",
+        "In the latter, the multiple learners are ordered in series, and each learner is trained and answers only if the previous learner rejects the examples.",
+        "Revision learning belongs to the latter approach.",
+        "In POS tagging, some studies using the multi-expert method were conducted (van Halteren et al., 2001; M`arquez et al., 1999), and Brill and Wu (1998) combined maximum entropy models, TBL, unigram and trigram, and achieved higher accuracy than any of the four learners (97.2% for WSJ corpus).",
+        "Regarding the multi-stage methods, cascading (Alpaydin and Kaynak, 1998) is well known, and Even-Zohar and Roth (2001) proposed the sequential learning model and applied it to POS tagging.",
+        "Their methods differ from revision learning in that each learner behaves in the same way and more than one learner is used in their methods, but in revision learning the stochastic model assigns rankings to candidates and the binary classifier selects the output.",
+        "Furthermore, mistakes made by a former learner are fatal in their methods, but is not so in revision learning because the binary classifier works to revise them.",
+        "The advantage of the multi-expert method is that each learner can help each other even if it has some weakness, and generalization errors can be decreased.",
+        "On the other hand, the computational cost becomes large because each learner is trained using every training data and answers for every test data.",
+        "In contrast, multi-stage methods can decrease the computational cost, and seem to be effective when a large amount of data is used or when a learner with high computational cost such as SVMs is used."
+      ]
+    },
+    {
+      "heading": "7 Conclusion",
+      "text": [
+        "In this paper, we proposed the revision learning method which combines a stochastic model and a binary classifier to achieve higher performance with lower computational cost.",
+        "We applied it to English POS tagging and Japanese morphological analysis, and showed improvement of accuracy with small computational cost.",
+        "Compared to the conventional one-versus-rest method, revision learning has much lower computational cost with almost comparable accuracy.",
+        "Furthermore, it can be applied not only to a simple multi-class classification task but also to a wider variety of problems such as Japanese morphological analysis."
+      ]
+    },
+    {
+      "heading": "Acknowledgments",
+      "text": [
+        "We would like to thank Ingo Schr¨oder for making ICOPOST publicly available."
+      ]
+    }
+  ]
+}

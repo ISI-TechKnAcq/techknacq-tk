@@ -1,0 +1,232 @@
+{
+  "info": {
+    "authors": [
+      "Nathan Gilbert",
+      "Ellen Riloff"
+    ],
+    "book": "ACL",
+    "id": "acl-P13-2015",
+    "title": "Domain-Specific Coreference Resolution with Lexicalized Features",
+    "url": "https://aclweb.org/anthology/P13-2015",
+    "year": 2013
+  },
+  "references": [
+    "acl-C08-1033",
+    "acl-C98-1012",
+    "acl-D08-1031",
+    "acl-D10-1048",
+    "acl-I05-1065",
+    "acl-M95-1005",
+    "acl-N04-1001",
+    "acl-N04-1038",
+    "acl-P02-1014",
+    "acl-P09-1074",
+    "acl-P10-2029",
+    "acl-P11-1082",
+    "acl-W11-0210",
+    "acl-W11-1813",
+    "acl-W11-1905"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "Most coreference resolvers rely heavily on string matching, syntactic properties, and semantic attributes of words, but they lack the ability to make decisions based on individual words.",
+        "In this paper, we explore the benefits of lexicalized features in the setting of domain-specific coreference resolution.",
+        "We show that adding lexicalized features to off-the-shelf coreference resolvers yields significant performance gains on four domain-specific data sets and with two types of coreference resolution architectures."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Coreference resolvers are typically evaluated on collections of news articles that cover a wide range of topics, such as the ACE (ACE03, 2003; ACE04, 2004; ACE05, 2005) and OntoNotes (Pradhan et al., 2007) data sets.",
+        "Many NLP applications, however, involve text analysis for specialized domains, such as clinical medicine (Gooch and Roudsari, 2012; Glinos, 2011), legal text analysis (Bouayad-Agha et al., 2009), and biological literature (Batista-Navarro and Ananiadou, 2011; Castan?o et al., 2002).",
+        "Learning-based coreference resolvers can be easily retrained for a specialized domain given annotated training texts for that domain.",
+        "However, we found that retraining an off-the-shelf coreference resolver with domain-specific texts showed little benefit.",
+        "This surprising result led us to question the nature of the feature sets used by noun phrase (NP) coreference resolvers.",
+        "Nearly all of the features employed by recent systems fall into three categories: string match and word overlap, syntactic properties (e.g., appositives, predicate nominals, parse features, etc.",
+        "), and semantic matching (e.g., gender agreement, WordNet similarity, named entity classes, etc.).",
+        "Conspicuously absent from most systems are lexical features that allow the classifier to consider the specific words when making a coreference decision.",
+        "A few researchers have experimented with lexical features, but they achieved mixed results in evaluations on broad-coverage corpora (Bengston and Roth, 2008; Bjo?rkelund and Nugues, 2011; Rahman and Ng, 2011a).",
+        "We hypothesized that lexicalized features can have a more substantial impact in domain-specific settings.",
+        "Lexical features can capture domain-specific knowledge and subtle semantic distinctions that may be important within a domain.",
+        "For example, based on the resolutions found in domain-specific training sets, our lexicalized features captured the knowledge that ?tomcat?",
+        "can be coreferent with ?plane?, ?UAW?",
+        "can be coreferent with ?union?, and ?anthrax?",
+        "can be coreferent with ?diagnosis?.",
+        "Capturing these types of domain-specific information is often impossible using only general-purpose resources.",
+        "For example, WordNet defines ?tomcat?",
+        "only as an animal, does not contain an entry for ?UAW?, and categorizes ?anthrax?",
+        "and ?diagnosis?",
+        "very differently.1 In this paper, we evaluate the impact of lexicalized features on 4 domains: management succession (MUC-6 data), vehicle launches (MUC-7 data), disease outbreaks (ProMed texts), and terrorism (MUC-4 data).",
+        "We incorporate lexicalized feature sets into two different coreference architectures: Reconcile (Stoyanov et al., 2010), a pairwise coreference classifier, and Sieve (Raghu-nathan et al., 2010), a rule-based system.",
+        "Our results show that lexicalized features significantly improve performance in all four domains and in both types of coreference architectures."
+      ]
+    },
+    {
+      "heading": "2 Related Work",
+      "text": [
+        "We are not the first researchers to use lexicalized features for coreference resolution.",
+        "However, pre"
+      ]
+    },
+    {
+      "heading": "The Paired Permutation test (Pesarin, 2001) was used for statistical significance testing and gray cells",
+      "text": [
+        "represent results that are not significantly different from the best result.",
+        "vious work has evaluated the benefit of lexical features only for broad-coverage data sets.",
+        "Bengston and Roth (2008) incorporated a memorization feature to learn which entities can refer to one another.",
+        "They created a binary feature for every pair of head nouns, including pronouns.",
+        "They reported no significant improvement from these features on the ACE 2004 data.",
+        "Rahman and Ng (2011a) also utilized lexical features, going beyond strict memorization with methods to combat data sparseness and incorporating semantic information.",
+        "They created a feature for every ordered pair of head nouns (for pronouns and nominals) or full NPs (for proper nouns).",
+        "Semi-lexical features were also used when one NP was a Named Entity, and unseen features were used when the NPs were not in the training set.",
+        "Their features did yield improvements on both the ACE 2005 and OntoNotes-2 data, but the semi-lexical features included Named Entity classes as well as word-based features.",
+        "Rahman and Ng (2011b) explored the use of lexical features in greater detail and showed their benefit on the ACE05 corpus independent of, and combined with, a conventional set of coreference features.",
+        "The ACE05 corpus is drawn from six sources (Newswire, Broadcast News, Broadcast Conversations, Conversational Telephone Speech, Webblogs, and Usenet).",
+        "The authors experimented with utilizing lexical information drawn from different sources.",
+        "The results showed that the best performance came from training and testing with lexical knowledge drawn from the same source.",
+        "Although our approach is similar, this paper focuses on learning lexical information from different domains as opposed to the different genres found in the six sources of the ACE05 corpus.",
+        "Bjo?rkelund and Nugues (2011) used lexical word pairs for the 2011 CoNLL Shared Task, showing significant positive impact on performance.",
+        "They used over 2000 annotated documents from the broad-coverage OntoNotes corpus for training.",
+        "Our work aims to show the benefit of lexical features using much smaller training sets (< 50 documents) focused on specific domains.",
+        "Lexical features have also been used for slightly different purposes.",
+        "Florian et al. (2004) utilized lexical information such as mention spelling and context for entity tracking in ACE.",
+        "Ng (2007) used lexical information to assess the likelihood of a noun phrase being anaphoric, but this did not show clear improvements on ACE data.",
+        "There has been previous work on domain-specific coreference resolution for several domains, including biological literature (Castan?o et al., 2002; Liang and Lin, 2005; Gasperin and Briscoe, 2008; Kim et al., 2011; Batista-Navarro and Ananiadou, 2011), clinical medicine (He, 2007; Zheng et al., 2011; Glinos, 2011; Gooch and Roudsari, 2012) and legal documents (Bouayad-Agha et al., 2009).",
+        "In addition, BABAR (Bean and Riloff, 2004) used contextual role knowledge for coreference resolution in the domains of terrorism and natural disasters.",
+        "But BABAR acquired and used lexical information to match the compatibility of contexts surrounding NPs, not the NPs themselves.",
+        "To the best of our knowledge, our work is the first to examine the impact of lexicalized features for domain-specific coreference resolution."
+      ]
+    },
+    {
+      "heading": "3 Exploiting Lexicalized Features",
+      "text": [
+        "Table 1 shows the performance of a learning-based coreference resolver, Reconcile (Stoyanov et al., 2010), with its default feature set using different combinations of training and testing data.",
+        "Reconcile does not include any lexical features, but does contain over 60 general features covering semantic agreement, syntactic constraints, string match and recency.",
+        "Each row represents a training set, each column represents a test set, and each cell shows precision (P), recall (R), and F score results under the B3 metric when using the corresponding training and test data.",
+        "The best results for each test set appear",
+        "in boldface.",
+        "We performed statistical significance testing using the Paired Permutation test (Pesarin, 2001) and the gray cells represent results where there was not significant difference from the best results in the same column.",
+        "If just one cell is gray in a column, that indicates the result was significantly better than the other results in the same column with p ?",
+        "0.05.",
+        "Table 1 does not show much benefit from training on the same domain as the test set.",
+        "Three different training sets produce F scores that are not significantly different for both the MUC-6 and MUC-4 test data.",
+        "For ProMed, training on the MUC-7 data yields significantly better results than training on all the other data sets, including ProMed texts!",
+        "Based on these results, it would seem that training on the MUC-7 texts is likely to yield the best results no matter what domain you plan to use the coreference resolver for.",
+        "The goal of our work is to investigate whether lexical features can extract additional knowledge from domain-specific training texts to help tailor a coreference resolver to perform better for a specific domain."
+      ]
+    },
+    {
+      "heading": "3.1 Extracting Coreferent Training Pairs",
+      "text": [
+        "We adopt the terminology introduced by Stoyanov et al. (2009) to define a coreference element (CE) as a noun phrase that can participate in a coreference relation based on the task definition.",
+        "Each training document has manually annotated gold coreference chains corresponding to the sets of CEs that are coreferent.",
+        "For each CE in a gold chain, we pair that CE with all of the other CEs in the same chain.",
+        "We consider the coreference relation to be bi-directional, so we don't retain information about which CE was the antecedent.",
+        "We do not extract CE pairs that share the same head noun because they are better handled with string match.",
+        "For nominal NPs, we retain only the head noun, but we use the entire NP for proper names.",
+        "We discard pairs that include a pronoun, and normalize strings to lower case for consistency."
+      ]
+    },
+    {
+      "heading": "3.2 Lexicalized Feature Sets",
+      "text": [
+        "We explore two ways to capture lexicalized information as features.",
+        "The first approach indicates whether two CEs have ever been coreferent in the training data.",
+        "We create a single feature called LEXLOOKUP(X,Y) that receives a value of 1 when x and y have been coreferent at least twice, or a value of 0 otherwise.2 LEXLOOKUP(X,Y) is a single feature that captures all CE pairs that were coreferent in the training data.",
+        "We also created set-based features that capture the set of terms that have been coreferent with a particular CE.",
+        "The CorefSet(x) is the set of CEs that have appeared in the same coreference chain as mention x at least twice.",
+        "We create a set of binary-valued features LEXSET(X,Y), one for each CE x in the training data.",
+        "Given a pair of CEs, x and y, LEXSET(X,Y) = 1 if y ?",
+        "CorefSet(x), or 0 otherwise.",
+        "The benefit of the set-based features over a single monolithic feature is that the classifier has one set-based feature for each mention found in the training data, so it can learn to handle individual terms differently.",
+        "We also tried encoding a separate feature for each distinct pair of words, analogous to the memorization feature in Bengston and Roth (2008).",
+        "This did not improve performance as much as the other feature representations presented here."
+      ]
+    },
+    {
+      "heading": "4 Evaluation",
+      "text": []
+    },
+    {
+      "heading": "4.1 Data Sets",
+      "text": [
+        "We evaluated the performance of lexicalized features on 4 domain-specific corpora including two standard coreference benchmarks, the MUC-6 and MUC-7 data sets.",
+        "The MUC-6 domain is management succession and consists of 30 training texts and 30 test texts.",
+        "The MUC-7 domain is vehicle",
+        "launches and consists of 30 training texts and 20 test texts.",
+        "We used these standard train/test splits to be consistent with previous work.",
+        "We also created 2 new coreference data sets which we will make freely available.",
+        "We manually annotated 45 ProMed-mail articles (www.promedmail.org) about disease outbreaks and 45 MUC-4 texts about terrorism, following the MUC guidelines (Hirschman, 1997).",
+        "Inter-annotator agreement between two annotators was .77 (?)",
+        "on ProMed and .84 (MUC F Score)(Villain et al., 1995) on both ProMed and MUC-4.3 We performed 5-fold cross-validation on both data sets and report the micro-averaged results.",
+        "Gold CE spans were used in all experiments to factor out issues with markable identification and anaphoricity across the different domains."
+      ]
+    },
+    {
+      "heading": "4.2 Coreference Resolution Models",
+      "text": [
+        "We conducted experiments using two coreference resolution architectures.",
+        "Reconcile4 (Stoyanov et al., 2010) is a freely available pairwise mention classifier.",
+        "For classification, we chose Weka's (Witten and Frank, 2005) Decision Tree learner inside Reconcile.",
+        "Reconcile contains roughly 60 features (none lexical), largely modeled after Ng and Cardie (2002).",
+        "We modified Reconcile's Single Link clustering scheme to enforce an additional rule that non-overlapping proper names cannot be merged into the same chain.",
+        "We also conducted experiments with the Sieve coreference resolver, which applies high precision heuristic rules to incrementally build coreference chains.",
+        "We implemented the LEXLOOKUP(X,Y) feature as an additional heuristic rule.",
+        "We tried inserting this heuristic before Sieve's other rules (LexBegin), and also after Sieve's other rules (LexEnd)."
+      ]
+    },
+    {
+      "heading": "4.3 Experimental Results",
+      "text": [
+        "Table 2 presents results for Reconcile trained with and without lexical features and when adding a lexical heuristic with data drawn from same-domain texts to Sieve.",
+        "The first row shows the results without the lexicalized features (from Table 1).",
+        "All F scores for Reconcile with lexicalized features are significantly better than without these features based on",
+        "p ?",
+        "0.05.",
+        "MUC-4 showed the largest gain for Reconcile, with the F score increasing from 69.5 to over 74.",
+        "For most domains, adding the lexical features to Reconcile substantially increased precision with comparable levels of recall.",
+        "The bottom half of Table 2 contains the results of adding a lexical heuristic to Sieve.",
+        "The first row shows the default system with no lexical information.",
+        "All F scores with the lexical heuristic are significantly better than without it.",
+        "In Sieve's high-precision coreference architecture, the lexical heuristic yields additional recall gains without sacrificing much precision.",
+        "feature sets on the broad-coverage ACE 2004 data set.",
+        "Table 3 shows the results for Reconcile and Sieve when training and testing on the ACE 2004 data.",
+        "Here, we see little improvement from adding lexical information.",
+        "For Reconcile, the small differences in F scores are not statistically significant.",
+        "For Sieve, the unlexicalized system yields a significantly higher F score than when adding the lexical heuristic.",
+        "These results support our hypothesis that lexicalized information can be beneficial for capturing domain-specific word associations, but may not be as helpful in a broad-coverage setting where the language covers a diverse set of topics.",
+        "Table 4 shows a re-evaluation of the cross-domain experiments from Table 1 for Reconcile with the LexSet features added.",
+        "The bottom half of the table shows cross-domain experiments for Sieve using the lexical heuristic at the end of its rule set (LexEnd).",
+        "Results are presented using both the B3 metric and the MUC Score (Villain et al., 1995).",
+        "Training and testing on the same domain always produced the highest recall scores for MUC7, ProMed, and MUC-4 when utilizing lexical features.",
+        "In all cases, lexical features acquired from same-domain texts yield results that are either clearly the best or not significantly different from the best.",
+        "represent results that are not significantly different from the best results in the column at the 0.05 p-level.",
+        "For MUC-6 and MUC-7, the highest F score results almost always come from training on same-domain texts, although in some cases these results are not significantly different from training on other domains.",
+        "Lexical features can yield improvements when training on a different domain if there is overlap in the vocabulary across the domains.",
+        "For the ProMed domain, the Sieve system performs significantly better, under both metrics, with same-domain lexical features than with lexical features acquired from a different domain.",
+        "For Reconcile, there is not a significant difference in the F score for ProMed when training on ProMed, MUC-4, or MUC-7.",
+        "In the MUC-4 domain, using same-domain lexical information always produces the best F score, under both metrics and in both coreference systems."
+      ]
+    },
+    {
+      "heading": "5 Conclusions",
+      "text": [
+        "We explored the use of lexical information for domain-specific coreference resolution using 4 domain-specific data sets and 2 coreference resolvers.",
+        "Lexicalized features consistently improved performance for all of the domains and in both coreference architectures.",
+        "We see benefits from lexicalized features in cross-domain training, but the gains are often more substantial when utilizing same-domain lexical knowledge.",
+        "In the future, we plan to explore additional types of lexical information to benefit domain-specific coreference resolution."
+      ]
+    },
+    {
+      "heading": "Acknowledgments",
+      "text": [
+        "This material is based upon work supported by the National Science Foundation under Grant No.",
+        "IIS-1018314 and the Defense Advanced Research Projects Agency (DARPA) Machine Reading Program under Air Force Research Laboratory (AFRL) prime contract no.",
+        "FA8750-09-C-0172.",
+        "Any opinions, findings, and conclusion or recommendations expressed in this material are those of the authors and do not necessarily reflect the view of the DARPA, AFRL, or the U.S. government."
+      ]
+    }
+  ]
+}

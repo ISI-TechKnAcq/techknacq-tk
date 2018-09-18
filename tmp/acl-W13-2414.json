@@ -1,0 +1,197 @@
+{
+  "info": {
+    "authors": [
+      "Michał Marcińczuk",
+      "Jan Kocoń"
+    ],
+    "book": "Workshop on Balto-Slavonic Natural Language Processing",
+    "id": "acl-W13-2414",
+    "title": "Recognition of Named Entities Boundaries in Polish Texts",
+    "url": "https://aclweb.org/anthology/W13-2414",
+    "year": 2013
+  },
+  "references": [
+    "acl-M92-1002",
+    "acl-P05-1045"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "In the paper we discuss the problem of low recall for the named entity (NE) recognition task for Polish.",
+        "We discuss to what extent the recall of NE recognition can be improved by reducing the space of NE categories.",
+        "We also present several extensions to the binary model which give an improvement of the recall.",
+        "The extensions include: new features, application of external knowledge and post-processing.",
+        "For the partial evaluation the final model obtained 90.02% recall with 91.30% precision on the corpus of economic news."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Named entity recognition (NER) aims at identifying text fragments which refer to some objects and assigning a category of that object from a predefined set (for example: person, location, organization, artifact, other).",
+        "According to the ACE"
+      ]
+    },
+    {
+      "heading": "(Automatic Content Extraction) English Annota",
+      "text": [
+        "tion Guidelines for Entities (LDC, 2008) there are several types of named entities, including: proper names, definite descriptions and noun phrases.",
+        "In this paper we focus on recognition of proper names (PNs) in Polish texts.",
+        "For Polish there are only a few accessible models for PN recognition.",
+        "Marcin?czuk and Jan-icki (2012) presented a hybrid model (a statistical model combined with some heuristics) which obtained 70.53% recall with 91.44% precision for a limited set of PN categories (first names, last names, names of countries, cities and roads) tested on the CEN corpus1 (Marcin?czuk et al., 2013).",
+        "A model for an extended set of PN categories (56 categories) presented by Marcin?czuk et al. (2013) obtained much lower recall of 54% with 93% precision tested on the same corpus.",
+        "Savary",
+        "and Waszczuk (2012) presented a statistical model which obtained 76% recall with 83% precision for names of people, places, organizations, time expressions and name derivations tested on the National Corpus of Polish2 (Przepi?rkowski et al., 2012).",
+        "There are also several other works on PN recognition for Polish where a rule-based approach was used.",
+        "Piskorski et al. (2004) constructed a set of rules and tested them on 100 news from the Rzecz-pospolita newspaper.",
+        "The rules obtained 90.6% precision and 85.3% recall for person names and 87.9% precision and 56.6% recall for company names.",
+        "Urban?ska and Mykowiecka (2005) also constructed a set of rules for recognition of person and organization names.",
+        "The rules were tested on 100 short texts from the Internet.",
+        "The rules obtained 98% precision and 89% recall for person names and 85% precision and 73% recall for organization names.",
+        "Another rule-based approach for an extended set of proper names was presented by Abramowicz et al. (2006).",
+        "The rules were tested on 156 news from the Rzeczpospolita newspaper, the Tygodnik Powszechny newspaper and the news web portals.",
+        "The rules obtained 91% precision and 93% recall for country names, 55% precision and 73% recall for city names, 87% precision and 70% recall for road names and 82% precision and 66% recall for person names.",
+        "The accessible models for PN recognition for Polish obtain relatively good performance in terms of precision.",
+        "However, in some NLP tasks like recognition of semantic relations between PNs (Marcin?czuk and Ptak, 2012), coreference resolution (Kopec?",
+        "and Ogrodniczuk, 2012; Broda et al., 2012a), machine translation (Gralin?ski et al., 2009a) or sensitive data anonymization (Gralin?ski et al., 2009b) the recall is much more important than the fine-grained categorization of PNs.",
+        "Unfortunately, the only model recognising wide range of PN categories obtains only 54% recall.",
+        "Therefore, our goal is to evaluate to what extent the recall for this model can be improved."
+      ]
+    },
+    {
+      "heading": "2 Evaluation methodology",
+      "text": [
+        "In the evaluation we used two corpora annotated with 56 categories of proper names: KPWr3 (Broda et al., 2012b) and CEN (already mentioned in Section 1).",
+        "The KPWr corpus consists of 747 documents containing near 200K tokens and 16.5K NEs.",
+        "The CEN corpus consists of 797 documents containing 148K tokens and 13.6K NEs.",
+        "Both corpora were tagged using the morphological tagger WCRFT (Radziszewski, 2013).",
+        "We used a 10-fold cross validation on the KPWr corpus to select the optimal model.",
+        "The CEN corpus was used for a cross-corpus evaluation of the selected model.",
+        "In this case the model was trained on the KPWr corpus and evaluated on the CEN corpus.",
+        "We presented results for strict and partial matching evaluation (Chinchor, 1992).",
+        "The experiments were conducted using an open-source framework for named entity recognition called Liner24 (Marcin?czuk et al., 2013)."
+      ]
+    },
+    {
+      "heading": "3 Reduction of NE categories",
+      "text": [
+        "In this section we investigate to what extent the recall of NE recognition can be improved by reducing the number of NE categories.",
+        "As a reference model we used the statistical model presented by Marcin?czuk and Janicki (2012).",
+        "The model uses the Conditional Random Fields method and utilize four types of features, i.e. orthographic (18 features), morphological (6 features), wordnet (4 features) and lexicon (10 features) ?",
+        "38 features in total.",
+        "The model uses only local features from a window of two preceding and two following tokens.",
+        "The detailed description of the features is presented in Marcin?czuk et al. (2013).",
+        "We did not used any post-processing methods described by Marcin?czuk and Janicki (2012) (unambiguous gazetteer chunker, heuristic chunker) because they were tuned for the specific set of NE categories.",
+        "We have evaluated two schemas with a limited number of the NE categories.",
+        "In the first more common (Finkel et al., 2005) schema, all PNs are divided into four MUC categories, i.e. person, organization, location and other.",
+        "In the other",
+        "schema, assuming a separate phases for PN recognition and classification (Al-Rfou?",
+        "and Skiena, 2012), we mapped all the PN categories to a single category, namely NAM.",
+        "For the MUC schema we have tested two approaches.",
+        "In the first approach we trained a single classifier for all the NE categories and in the second approach we trained four classifiers ?",
+        "one for each category.",
+        "This way we have evaluated three models: Multi-MUC ?",
+        "a cascade of four classifiers, one classifier for every NE category; One-MUC ?",
+        "a single classifier for all MUC categories; One-NAM ?",
+        "a single classifier for NAM category.",
+        "For each model we performed the 10-fold cross-validation on the KPWr corpus and the results are presented in Table 1.",
+        "As we expected the highest performance was obtained for the One-NAM model where the problem of PN classification was ignored.",
+        "The model obtained recall of 78% with 80% precision.",
+        "The results also show that the local features used in the model are insufficient to predict the PN category."
+      ]
+    },
+    {
+      "heading": "4 Improving the binary model",
+      "text": [
+        "In this section we present and evaluate several extensions which were introduced to the One-NAM model in order to increase its recall.",
+        "The extensions include: new features, application of external resources and post processing."
+      ]
+    },
+    {
+      "heading": "4.1 Extensions",
+      "text": [
+        "The reference model (Marcin?czuk and Janicki, 2012) uses only five gazetteers of PNs (first names, last names, names of countries, cities and roads).",
+        "To include the other categories of PNs we used two existing resources: a gazetteer of proper names called NELexicon5 containing ca.",
+        "1.37 million of forms and a gazetteer of PNs extracted from the National Corpus of Polish6 containing 153,477",
+        "forms.",
+        "The categories of PNs were mapped into four MUC categories: person, location, organization and other.",
+        "The numbers of PNs for each category are presented in Table 2.",
+        "We added four features, one for every category.",
+        "The features were defined as following:",
+        "where c ?",
+        "{per, loc, org, oth} and n is the token index in a sentence.",
+        "If two or more PNs from the same gazetteer overlap, then the first and longest PN is taken into account.",
+        "A trigger is a word which can indicate presence of a proper name.",
+        "Triggers can be divided into two groups: external (appear before or after PNs) and internal (are part of PNs).",
+        "We used a lexicon of triggers called PNET (Polish Named Entity Triggers)7.",
+        "The lexicon contains 28,000 inflected forms divided into 8 semantic categories (bloc, country, district, geogName, orgName, per-sName, region and settlement) semi-automatically extracted from Polish Wikipedia8.",
+        "We divided the lexicon into 16 sets ?",
+        "two for every semantic category (with internal and external triggers).",
+        "We defined one feature for every lexicon what gives 16 features in total.",
+        "The feature were defined as fol",
+        "An agreement of the morphological attributes between two consecutive words can be an indicator of phrase continuity.",
+        "This observation was used by Radziszewski and Pawlaczek (2012) to recognize noun phrases.",
+        "This information can be also helpful in PN boundaries recognition.",
+        "The feature was defined as following:",
+        "The agr(n) feature for a token n has value 1 when the nth and n ?",
+        "1-th words have the same",
+        "There are many proper names which are well known and can be easily recognized using gazetteers.",
+        "However, some of the proper names present in the gazetteers can be also common words.",
+        "In order to avoid this problem we used an unambiguous gazetteer lookup (Marcin?czuk and Janicki, 2012).",
+        "We created one gazetteer containing all categories of PNs (see Section 4.1.1) and discarded all entries which were found in the SJP dictionary9 in a lower case form.",
+        "We created several simple rules to recognize PNs on the basis of the orthographic features.",
+        "The following phrases are recognized as proper names regardless the context: ?",
+        "a camel case word ?",
+        "a single word containing one or more internal upper case letters and at least one lower case letter, for example RoboRally ?",
+        "a name of board game, ?",
+        "a sequence of words in the quotation marks ?",
+        "the first word must be capitalised and shorter than 5 characters to avoid matching ironic or apologetic words and citations, ?",
+        "a sequence of all-uppercase words ?",
+        "we discard words which are roman numbers and ignore all-uppercase sentences.",
+        "The reference model does not contain any document-based features.",
+        "This can be a problem for documents where the proper names occur several times but only a few of its occurrences are recognised by the statistical model.",
+        "The other may not be recognized because of the unseen or unambiguous contexts.",
+        "In such cases the global information about the recognized occurrences could be used to recognize the other unrecognized names.",
+        "However, a simple propagation of all recognized names might cause loss in the precision because of the common words which are also proper names.",
+        "To handle this problem we defined a set of patterns and propagate only those proper names which match one of the following pattern:",
+        "(1) a sequence of two or more capitalised words; (2) all-uppercase word ended with a number; or (3) all-uppercase word ended with hyphen and inflectional suffix."
+      ]
+    },
+    {
+      "heading": "4.2 Evaluation",
+      "text": [
+        "Table 3 contains results of the 10-fold cross validation on the KPWr corpus for the One-NAM model, One-NAM with every single extension and a complete model with all extensions.",
+        "The bold values indicate an improvement comparing to the base One-NAM model.",
+        "To check the statistical significance of precision, recall and F-measure difference we used Student's t-test with a significance level ?",
+        "= 0.01 (Dietterich, 1998).",
+        "The asterisk indicates the statistically significant improvement.",
+        "corpus for One-NAM model with different extensions.",
+        "Five out of six extensions improved the performance.",
+        "Only for the name propagation we did not observe any improvement because the KPWr corpus contains only short documents (up to 300 words) and it is uncommon that a name will appear more than one time in the same fragment.",
+        "However, tests on random documents from the Internet showed the usefulness of this extension.",
+        "For the unambiguous gazetteer lookup and the heuristics we obtained a statistically significant improvement of the recall.",
+        "In the final model we included all the presented extensions.",
+        "The final model achieved a statistically significant improvement of the recall and the F-measure.",
+        "To check the generality of the extensions, we performed the cross-domain evaluation on the CEN corpus (see Section 2).",
+        "The results for the 56nam, the One-NAM and the Improved One-NAM models are presented in Table 4.",
+        "For the strict evaluation, the recall was improved by almost 4 percentage points with a small precision improvement by almost 2 percentage points."
+      ]
+    },
+    {
+      "heading": "5 Conclusions",
+      "text": [
+        "In the paper we discussed the problem of low recall of models for recognition of a wide range of PNs for Polish.",
+        "We tested to what extent the reduction of the PN categories can improve the recall.",
+        "As we expected the model without PN classification obtained the best results in terms of precision and recall.",
+        "Then we presented a set of extensions to the One-NAM model, including new features (morphological agreement, triggers, gazetteers), application of external knowledge (a set of heuristics and a gazetteer-based recogniser) and post-processing (proper names propagation).",
+        "The final model obtained 90.02% recall with 91.30% precision on the CEN corpus for the partial evaluation what is a good start of further NE categorization phase."
+      ]
+    },
+    {
+      "heading": "Acknowledgments",
+      "text": [
+        "This work was financed by Innovative Economy Programme project POIG.01.01.02-14-013/09."
+      ]
+    }
+  ]
+}

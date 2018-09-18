@@ -1,0 +1,312 @@
+{
+  "info": {
+    "authors": [
+      "Masaaki Nagata"
+    ],
+    "book": "COLING-ACL",
+    "id": "acl-P98-2152",
+    "title": "Japanese OCR Error Correction using Character Shape Similarity and Statistical Language Model",
+    "url": "https://aclweb.org/anthology/P98-2152",
+    "year": 1998
+  },
+  "references": [
+    "acl-C96-2136",
+    "acl-P96-1010",
+    "acl-W96-0108"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "We present a novel OCR error correction method for languages without word delimiters that have a large character set, such as Japanese and Chinese.",
+        "It consists of a statistical OCR model, an approximate word matching method using character shape similarity, and a word segmentation algorithm using a statistical language model.",
+        "By using a statistical OCR model and character shape similarity, the proposed error corrector outperforms the previously published method.",
+        "When the baseline character recognition accuracy is 90%, it achieves 97.4% character recognition accuracy."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "As our society is becoming more computerized, people are getting enthusiastic about entering everything into computers.",
+        "So the need for OCR in areas such as office automation and information retrieval is becoming larger, contrary to our expectation.",
+        "In Japanese, although the accuracy of printed character OCR is about 98%, sources such as old books, poor quality photocopies, and faxes are still difficult to process and cause many errors.",
+        "The accuracy of handwritten OCR is still about 90% (Hildebrandt and Liu, 1993), and it worsens dramatically when the input quality is poor.",
+        "If NLP techniques could be used to boost the accuracy of handwriting and poor quality documents, we could enjoy a very large market for OCR related applications.",
+        "OCR error correction can be thought of a spelling correction problem.",
+        "Although spelling correction has been studied for several decades (Kukich, 1992), the traditional techniques are implicitly based on English and cannot be used for Asian languages such as Japanese and Chinese.",
+        "The traditional strategy for English spelling correction is called isolated word error correction: Word boundaries are placed by white spaces.",
+        "If the tokenized string is not in the dictionary, it is a non-word.",
+        "For a non-word, correction candidates are retrieved from the dictionary by approximate string match techniques using context-independent word distance measures such as edit distance (Wagner and Fischer, 1974) and ngram distance (Angell et al., 1983).",
+        "Recently, statistical language models and feature-based method have been used for context-sensitive spelling correction, where errors are corrected considering the context in which the error occurs (Church and Gale, 1991; Mays et al., 1991; Golding and Schabes, 1996).",
+        "Similar techniques are used for correcting the output of English OCRs (Tong and Evans, 1996) and English speech recognizers (Ring-ger and Allen, 1996).",
+        "There are two problems in Japanese (and Chinese) spelling correction.",
+        "The first is the word boundary problem.",
+        "It is impossible to use isolated word error correction techniques because there are no delimiters between words.",
+        "The second is the short word problem.",
+        "Word distance measures are useless because the average word length is short (< 2), and the character set is large (> 3000).",
+        "There are a much larger number of one edit distance neighbors for a word, compared with English.",
+        "Recently, the first problem was solved by selecting the most likely word sequence from all combinations of exactly and approximately matched words using a Viterbi-like word segmentation algorithm and a statistical language model considering unknown words and non-words (Nagata, 1996).",
+        "However, the second problem is not solved yet, at least elegantly.",
+        "The solution presented in (Nagata, 1996) which sorts a list of one edit distance words considering the context in which it will be placed is inaccurate because the context itself might include some errors.",
+        "In this paper, we present a context-independent approximate word match method using character shape similarity.",
+        "This is suitable for languages with large character sets, such as Japanese and Chinese.",
+        "We also present a method to build a statistical OCR model by smoothing the character confusion probability using character shape similarity.",
+        "It seems previous NLP researchers are reluctant",
+        "to use resources such as the character confusion matrix and feature vectors of the characters, and try to solve the problem by using only linguistic devices.",
+        "We found that, by using character shape similarity, the resulting OCR error corrector is robust and accurate enough to correct unrestricted texts with a wide range of recognition accuracies."
+      ]
+    },
+    {
+      "heading": "2 OCR Model",
+      "text": []
+    },
+    {
+      "heading": "2.1 Noisy Channel Model",
+      "text": [
+        "First, we formulate the spelling correction of OCR errors in the noisy channel paradigm.",
+        "Let C represent the input string and X represent the OCR output string.",
+        "Finding the most probable string given the OCR output X amounts to maximizing the function P(XIC)P(C),",
+        "P(C) is called the language model.",
+        "It is computed from the training corpus.",
+        "Let us call P(XIC) the OCR model.",
+        "It can be computed from the a priori likelihood estimates for individual characters,",
+        "where n is the string length.",
+        "P(x, Icz) is called the characters confusion probability."
+      ]
+    },
+    {
+      "heading": "2.2 Zero-Frequency Problem",
+      "text": [
+        "The character confusion probabilities are computed from the character confusion matrix, which is a set of the frequencies of the input-output character pairs of the OCR.",
+        "The confusion matrix, however, is highly dependent on the character recognition method and the quality of the input image.",
+        "It is a labor intensive task to make a confusion matrix, since Japanese has more than 3,000 characters.",
+        "But the more serious problem is that the confusion matrix is too sparse to be used for statistical modeling.",
+        "For example, suppose the word \"Ma\" (environment) is incorrectly recognized as a non-word \"tt a\".",
+        "The following is an excerpt of a confusion matrix, where the pair of a character and a number separated by a slash represents the output character and its frequency.",
+        "input character M : /1289 tg /1 it /1 input character 41: t1/1282 */5 /1 Vf /1 /1 r0 /1 /1.",
+        "Even if we collect more than one thousand recognition examples, there are no examples in which `M' is recognized as 15V.",
+        "To compute the confusion probability P(Ekla), we need a smoothing method.",
+        "This is called the zero-frequency problem.",
+        "Although it has been studied in many areas such as speech recognition, statistical language modeling and text compression, no previous work has examined on the smoothing of the character confusion probabilities.",
+        "This is probably because the problem arises only when we consider OCR error correction of languages with large character sets.",
+        "We propose a novel method to smooth the character confusion probabilities.",
+        "First, we estimate the sum of the probabilities of novel events.",
+        "We then distribute the probability mass to each novel event based on character similarity.",
+        "We use a scheme, which we refer to as the Witten-Bell method (Witten and Bell, 1991), to estimate the sum of the probabilities for all novel events because it is simple and robust 1.",
+        "Let C(ci, c; ) be the frequency of events where ci and cl are the input and the output characters, respectively.",
+        "Let 13(c2) be the sum of the probabilities of unseen output characters where the input character is c2.",
+        "By using the Witten-Bell method, /3(c,.)",
+        "is estimated as,",
+        "where",
+        "In the above example, V' appears 1291(= 1289+1+ 1) times as input and there are three distinct characters in the output.",
+        "Therefore, the probability of observing novel characters is 3/(1291 +3) = 3/1294.",
+        "One of the possible alternatives to the Witten-Bell method is the Good-Turing method (Good, 1953).",
+        "But we didn't use the method since it assumes the distribution of the frequency of frequencies to be relatively smooth, which is not the case in the character confusion matrix."
+      ]
+    },
+    {
+      "heading": "2.3 Back-off Smoothing",
+      "text": [
+        "Both the Witten-Bell and Good-Turing methods do not in themselves tell one how to share 0(c2) among 'In (Witten and Bell, 1991), the method is referred to as \"method C\" for estimating the escape probability in a text compression method, Prediction by Partial Matching (PPM).",
+        "It estimates the probability of observing novel events to be r/(n r), where n is the total number of events seen previously, and r is the number of symbols that are distinct.",
+        "The probability of the event observed c times is cl(n+ r).",
+        "the distinct unseen events.",
+        "The simplest strategy is to assume all unseen events are equally probable, but this is not reasonable because recognition errors are more likely to occur among characters with similar shapes.",
+        "Therefore, we distributed the probability mass 0(c2) based on character shape similarity computed from feature vectors.",
+        "First, we made an appropriate number of character classes in which similar characters are gathered.",
+        "This is done by clustering the feature vectors of each character; details are described in the next subsection.",
+        "We then made a confusion matrix between the character classes from the character confusion matrix.",
+        "Let C(classj, class j) be the frequency that the characters in class' are recognized as the characters in class j.",
+        "It is computed as the sum of the elements in the character confusion matrix associated with the characters in class' and class j.",
+        "By using the Witten-Bell method, we can estimate the class confusion probabilities between arbitrary classes.",
+        "We then distribute the probability for unseen events in proportion to the class confusion probability,",
+        "where",
+        "is a normalizing constant, and class(c2) is the function that returns the class of character Numerical values for a's as well as the character class confusion probabilities can be precomputed.",
+        "Therefore, the method is computationally efficient."
+      ]
+    },
+    {
+      "heading": "2.4 Character Clustering",
+      "text": [
+        "In general, character recognition consists of feature extraction and classification.",
+        "Feature extraction is applied to concentrate the information in the image into a few, highly selective features.",
+        "Classification is accomplished by comparing the feature vector corresponding to the input character with the representatives of each character, using a distance metric.",
+        "Therefore, if we cluster feature vectors of each character, the members of the resulting class are characters with similar shape, and so tend to cause confusion.",
+        "The feature we used in the clustering experiment is PDC (Peripheral Direction Contributivity) (Hagita et al., 1983), which is one of the best features for Japanese character recognition 2.",
+        "We clustered the feature vectors for 3021 Japanese characters into 128 classes by using the LBG algorithm (Linde et al., 1980), which is one of the most popular vector quantization methods.",
+        "Let's go back to the previous example of estimating P(RIM).",
+        "After character clustering, `M' and `a' are clustered into class 29 and 119, respectively.",
+        "• ttk tc tit tI2",
+        "Here is the excerpt of the class confusion matrix for class 29. input class 29:",
+        "Since class 29 appears 31036(30884 + 23 + -) times as input and there are 36 distinct classes in the output, where class 119 appeared 7 times, P(c/assinic/ass29) = 7/(31036 + 36) = 7/31072.",
+        "This class confusion probability and the normalizing constant a(M) are used to compute P(I) using equation (7)."
+      ]
+    },
+    {
+      "heading": "3 Language Model",
+      "text": []
+    },
+    {
+      "heading": "3.1 Word Segmentation Model",
+      "text": [
+        "Let the input Japanese character sequence be C = c1c2 cm, which can be segmented into word sequence W = w1w2 wn.",
+        "We approximate P(C) in Equation (1) by the joint probability of word sequence P(W).",
+        "P(W) is then approximated by the product of word bigram probabilities P(wziwz--1).",
+        "2PDC features are formed by assigning stroke directions to pixels and selecting just pixels on the first, second, and third stroke encountered by the scan line.",
+        "The marginal distribution of the four direction contributivity of such three pixels is then taken along 16 lines in eight different directions.",
+        "Therefore, the dimension of the original PDC feature vector is 8*3*4*16=1536.",
+        "By using 2-stage feature selection, it can be reduced to 256, while still preserving the original recognition ability.",
+        "Using the language model (9), the OCR error correction task can be defined as finding a word sequence W that maximizes the joint probability of word sequence given recognized character sequence P(WIX).",
+        "By using Bayes' rule, this amounts to maximizing the product of P(XIW) and P(W).",
+        "= arg mvax P(W IX) = arg P(XIW)P(W) (10) The maximization search can be efficiently implemented by using the Viterbi-like dynamic programing procedure described in (Nagata, 1996).",
+        "The algorithm starts from the beginning of the input sentence, and proceeds character by character.",
+        "At each point in the sentence, it looks up the combination of the best partial word segmentation hypothesis ending there and all word hypotheses starting there.",
+        "The word hypotheses proposed at each point include both exactly matched words and approximately matched words.",
+        "All prefixes of the substring starting at the point are also proposed as unknown words if they are not in the dictionary."
+      ]
+    },
+    {
+      "heading": "3.2 Word Model for Unknown Words",
+      "text": [
+        "We defined a statistical word model to assign a reasonable word probability to an arbitrary substring in the input sentence.",
+        "The word model is formally defined as the joint probability of the character sequence w2 = c1 ck if it is an unknown word.",
+        "We decompose it into the product of word length probability and word spelling probability,",
+        "where k is the length of the character sequence and <UNK> represents unknown word.",
+        "We assume that word length probability P(k) obeys a Poisson distribution whose parameter is the average word length A in the training corpus.",
+        "This means that we regard word length as the interval between hidden word boundary markers, which are randomly placed with an average interval equal to the average word length.",
+        "We approximate the spelling probability given word length P(ci ck lk) by the word-based character bigram model, regardless of word length.",
+        "where \"#\" indicates the word boundary marker."
+      ]
+    },
+    {
+      "heading": "4 Approximate Word Matching",
+      "text": [
+        "Since there are no delimiters between words in Japanese, we have to hypothesize all substrings in the input sentence as words, and retrieve their approximately matching words from the dictionary as correction candidates.",
+        "The most likely correction candidate is selected by the word segmentation algorithm using the OCR model and the language model.",
+        "For simplicity, we will present the method as if it were for an isolated word error correction.",
+        "In English spelling correction, correction candidates are generated by the minimum edit distance technique (Wagner and Fischer, 1974).",
+        "Edit distance is the minimum number of editing operations (insertions, deletions, and substitutions) required to transform one string into another.",
+        "Since the target is OCR output, we can restrict the type of errors to substitutions only.",
+        "Thus, the edit distance of two words becomes cln, where c is the number of matched characters and n is the length of the misspelled (and the dictionary) word.",
+        "Since the cost of computing the edit distance between a string and all dictionary words is expensive, we create an inverted index into the dictionary using character bigrams as the access keys (Angell et al., 1983).",
+        "In Japanese OCR spelling correction, it is reasonable to generate correction candidates by edit distance for words longer than 2 characters since the number of correction candidates would be small.",
+        "However, for two character words, edit distance is useless, because there are a large number of words with one edit distance.",
+        "Since the average word length of Japanese is about two characters, this is a serious problem.",
+        "We propose an approximate word matching method that uses character similarity.",
+        "Let X be a non-word caused by OCR errors, and W be a correction candidate word.",
+        "X would be corrected by W if the following relationship holds,",
+        "The left hand side represents the probability that X is an unknown word and that it is correctly recognized.",
+        "The right hand side represents the probability that W is incorrectly recognized as X.",
+        "The larger the product of the word unigram probability P(W) and the word confusion probability P(XIW), the more likely word W is the correct word for X.",
+        "Therefore, for two character words, we sort the list of all one edit distance words by P(W)P(XIW), and select the top-k words as the correction candidates.",
+        "For example, if \"M*\" is incorrectly recognized as there are at least 20 dictionary words whose edit distance is one.",
+        "If we sort the list of one edit distance words by P(W), P(XIW), and P(W)P(XIW), the correction candidates become as follows,",
+        "Thus, by using P(W)P(XIW), we can make \"a *\" the most likely correction word.",
+        "The approximate word matching method is so accurate that, in practice, it is sufficient to use only the top 5 candidates.",
+        "This makes the program very efficient."
+      ]
+    },
+    {
+      "heading": "5 Experiments",
+      "text": []
+    },
+    {
+      "heading": "5.1 Training Data for the Language Model",
+      "text": [
+        "We used the EDR Japanese Corpus Version 1.0 (EDR, 1991) to train the language model.",
+        "It is a corpus of approximately 5.1 million words (208 thousand sentences).",
+        "It contains a variety of Japanese sentences taken from newspapers, magazines, dictionaries, encyclopedias, textbooks, etc.",
+        "It has a variety of annotations including word segmentation, pronunciation, and part of speech.",
+        "In this experiment, we randomly selected 90% of the sentences in the EDR Corpus for training.",
+        "The first column of Table 1 shows the number of sentences, words, and characters of the training set.",
+        "There were 133281 distinct words in the training data.",
+        "We discarded the words whose frequency was one, and made a dictionary of 65152 words.",
+        "We then counted the vocabulary dependent word bigrams.",
+        "That is, the words that were not in the dictionary were replaced with the unknown word symbol <UNK> before counting the bigrams.",
+        "There were 758172 distinct word bigrams.",
+        "We discarded the bigrams whose frequency was one, and the remaining 294668 bigrams were used in the word segmentation model.",
+        "In the word model, we used 3167 character uni-grams and 91198 character bigrams.",
+        "All unigrams and bigrams whose frequencies were one were discarded.",
+        "As for the average word length, instead of averaging all words in the corpus (=1.58), we averaged the words whose frequency was one (=4.76) in order to avoid the influence of highly frequent words."
+      ]
+    },
+    {
+      "heading": "5.2 Testl: Handwritten OCR",
+      "text": [
+        "We designed two experiments to evaluate the performance of the OCR error corrector.",
+        "The first experiment used simulated outputs of a handwriting OCR, while the second used real outputs of a printed character OCR.",
+        "The first experiment was designed to test the OCR error corrector over a wide range of baseline recognition accuracies.",
+        "The use of the OCR simulator was necessary because it is very difficult to obtain a large amount of test data with arbitrary accuracies.",
+        "We selected 100 sentences from the remaining 10% of the EDR corpus for testing.",
+        "The second column of Table 1 shows the number of sentences, words, and characters of the test set.",
+        "By using an OCR simulator, we made four sets of character matrices whose first-rank recognition accuracies were 70%, 80%, 90%, and 95%.",
+        "They contained at most 10 candidates for each character and their cumulative recognition accuracies were 90%, 95%, 98%, and 98%, respectively.",
+        "For comparison, we implemented the OCR error correction method, which does not use character similarity information, presented in (Nagata, 1996).",
+        "Instead of using character confusion matrix, he approximated it by the correct character distribution over the rank of the candidates 3.",
+        "We refer to his method as the candidate rank method, and our method as the character similarity method.",
+        "Figure 1 shows the recognition accuracies after error correction for various baseline OCR accuracies.",
+        "The horizontal axis represents the accuracies of the baseline OCR, while the vertical axis represents the accuracies after error correction.",
+        "The farther the point lies above the diagonal line, the more improvements are brought by the OCR error corrector.",
+        "3 In (Nagata, 1996), it was assumed that the rank order distribution of the correct characters is a geometric distribution whose parameter is the accuracy of the first candidate.",
+        "Let ci be the i-th character in the input, xii be the j-th candidate for ci in the output, and p be the probability that the first candidate is correct.",
+        "The confusion probability P(si,lci) is approximated as,",
+        "The character similarity method is significantly better than the candidate rank method for all baseline recognition accuracies examined.",
+        "For example, when the baseline accuracy is 90%, the character similarity method achieved 97.4%, while the accuracy of the candidate rank method was 93.9% 4 ."
+      ]
+    },
+    {
+      "heading": "5.3 Test2: Printed Character OCR",
+      "text": [
+        "The second experiment was designed to test the OCR error corrector on unrestricted text and unknown OCR.",
+        "In the first experiment, although the test sentences were open data, their statistical characteristics are expected to be similar to the training data because both of them were taken from the same corpus.",
+        "Moreover, since the OCR simulator and the OCR error corrector used the same character confusion matrix, the input character matrices were closed data with respect to OCR.",
+        "We selected 30 documents, each of which contained about 1000 characters.",
+        "These documents had nothing to do with the EDR corpus.",
+        "Ten of them were newspapers and the other 20 documents were a miscellaneous collection of novels, essays, patents, laws, scientific papers, etc.. Table 2 shows the breakdown of document type and image resolution.",
+        "Newspapers were scanned at 300dpi and 400dpi, two of",
+        "200dpi 300dpi 400dpi newspapers 0 8 10 miscellaneous 20 20 10 them, scanned at 300dpi, were discarded because of low quality.",
+        "Other miscellaneous documents were mainly scanned at 200dpi and 300dpi.",
+        "Ten that used smaller fonts were also scanned at 400dpi.",
+        "The printed character OCR used was a commercial product (RICOH Yomitori-Monogatari).",
+        "It outputs at most 10 candidates for each character as well as a score ranging from 0 to 100 that represents the certainty of the first candidate.",
+        "In fact, we know nothing about the algorithm and the training data of the OCR.",
+        "At least, the training data should be different from ours since one is created for printed characters while the other was designed for handwritten characters.",
+        "The 68 test document images contained 69102 input characters.",
+        "After character recognition, there were 69305 output characters where 67639 (97.9%) characters were correct.",
+        "There were 1422 (2.1%) replacement errors, 244 (0.4%) insertion errors and 41 (0.06%) deletion errors.",
+        "By using the OCR error corrector, 575 characters were corrected, where 294 were right and 281 were wrong.",
+        "The net improvement was only 13 characters.",
+        "Figure 2 shows the recognition accuracies of each document image before and after error correc",
+        "Wrong correction can be avoided if the certainty of the character recognition (OCR score) is available.",
+        "Table 3 shows the number of right and wrong corrections when correction is allowed only if the the OCR score is less than a certain threshold.",
+        "The score of the printed character OCR ranges from 0 to 100, where 100 means it is pretty sure about the output.",
+        "If we reject the corrections suggested by the error corrector when the OCR score is more than 80, the number of wrong corrections is reduced from 281 to 48, while that of right correction is reduced from 294 to 199.",
+        "Thus, the number of net improvements increases from 13 to 151, which means a 10.6% (151/1422) reduction in replacement errors."
+      ]
+    },
+    {
+      "heading": "6 Discussion",
+      "text": [
+        "Most previous works on Japanese OCR error correction considered only printed character OCRs and their target domain was limited.",
+        "(Takao and Nishino, 1989) used part of speech bigram model and heuristic templates for unknown words.",
+        "They achieved about 95% accuracy when the baseline accuracy was 91% for magazines and introductory textbooks of science and technology.",
+        "(Ito and Maruyama, 1992) used part of speech bigram model and beam search in order to get multiple candidates in their interactive OCR corrector.",
+        "They achieved 94.61% accuracy when the baseline accuracy was 87.46% for patents in electric engineering.",
+        "We used word bigram model, a statistical word model for unknown words, and a statistical OCR model.",
+        "We achieved 97.4% accuracy, when the baseline accuracy was 90% and the domain was not limited.",
+        "It is very difficult to compare our results with the previous results because the experiment conditions are completely different.",
+        "However, considering the fact that we did not restrict the target domain, our method arguably outperformed the previously published results, when the baseline accuracy is more then 90%.",
+        "There is only one published work investigating the baseline accuracy much lower than 90% (Nagata, 1996).",
+        "As we proved in the experiment, we outperformed his results significantly."
+      ]
+    },
+    {
+      "heading": "7 Conclusion",
+      "text": [
+        "We have presented a Japanese OCR error corrector.",
+        "It arguably outperforms previously published techniques.",
+        "To improve the error correction accuracy, a more sophisticated language model for unknown words, including numbers, acronyms, and transliterated foreign words, must be investigated."
+      ]
+    }
+  ]
+}

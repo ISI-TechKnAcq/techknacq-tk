@@ -1,0 +1,186 @@
+{
+  "info": {
+    "authors": [
+      "Eric Sven Ristad",
+      "Robert G. Thomas"
+    ],
+    "book": "Annual Meeting of the Association for Computational Linguistics",
+    "id": "acl-P97-1049",
+    "title": "Hierarchical Non-Emitting Markov Models",
+    "url": "https://aclweb.org/anthology/P97-1049",
+    "year": 1997
+  },
+  "references": [],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "We describe a simple variant of the interpolated Markov model with non-emitting state transitions and prove that it is strictly more powerful than any Markov model.",
+        "Empirical results demonstrate that the non-emitting model outperforms the interpolated model on the Brown corpus and on the Wall Street Journal under a wide range of experimental conditions.",
+        "The non-emitting model is also much less prone to overtraining."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "The Markov model has long been the core technology of statistical language modeling.",
+        "Many other models have been proposed, but none has offered a better combination of predictive performance, computational efficiency, and ease of implementation.",
+        "Here we add hierarchical non-emitting state transitions to the Markov model.",
+        "Although the states in our model remain Markovian, the model itself is no longer Markovian because it can represent unbounded dependencies in the state distribution.",
+        "Consequently, the non-emitting Markov model is strictly more powerful than any Markov model, including the context model (Rissanen, 1983; Rissanen, 1986), the backoff model (Cleary and Witten, 1984; Katz, 1987), and the interpolated Markov model (Jelinek and Mercer, 1980; MacKay and Peto, 1994).",
+        "More importantly, the non-emitting model consistently outperforms the interpolated Markov model on natural language texts, under a wide range of experimental conditions.",
+        "We believe that the superior performance of the non-emitting model is due to its ability to better model conditional independence.",
+        "Thus, the non-emitting model is better able to represent both conditional independence and long-distance dependence, ie., it is simply a better statistical model.",
+        "The non-emitting model is also nearly as computationally efficient and easy to implement as the interpolated model.",
+        "The remainder of our article consists of four sections.",
+        "In section 2, we review the interpolated Markov model and briefly demonstrate that all interpolated models are equivalent to some basic Markov model of the same model order.",
+        "Next, we introduce the hierarchical non-emitting Markov model in section 3, and prove that even a lowly second order non-emitting model is strictly more powerful than any basic Markov model, of any model order.",
+        "In section 4, we report empirical results for the interpolated model and the non-emitting model on the Brown corpus and Wall Street Journal.",
+        "Finally, in section 5 we conjecture that the empirical success of the non-emitting model is due to its ability to better model a point of apparent independence, such as may occur at a sentence boundary.",
+        "Our notation is as follows.",
+        "Let A be a finite alphabet of distinct symbols, At = k, and let XT E AT denote an arbitrary string of length T over the alphabet A.",
+        "Then xi denotes the substring of XT that begins at position i and ends at position j.",
+        "For con.",
+        "venience, we abbreviate the unit length substring x: as xi and the length t prefix of XT as xt."
+      ]
+    },
+    {
+      "heading": "2 Background",
+      "text": [
+        "Here we review the basic Markov model and the interpolated Markov model, and establish their equivalence.",
+        "A basic Markov model 0 = (A, n, On) consists of an alphabet A, a model order n, n > 0, and the state transition probabilities 6„, : An x A [0, 1].",
+        "With probability 6„(yle), a Markov model in the state xn will emit the symbol y and transition to the state x`21y.",
+        "Therefore, the probability prn(xtIxt-1, 0) assigned by an order n basic Markov model 0 to a symbol x' in the history xt-i depends only on the last n symbols of the history.",
+        "An interpolated Markov model 0 = (A, n, 6) consists of a finite alphabet A, a maximal model order n,.",
+        "the state transition probabilities 6 = 6o • • •6n, bi :A2 x A --■ [0, 1], and the state-conditional interpolation parameters A = Ao ... An, Ai : A' – ■ [0, 1].",
+        "The probability assigned by an interpolated model is a linear combination of the probabilities assigned by all the lower order Markov models.",
+        "where Ai(xi) = 0 for i > n, and and therefore pc (xi , 0) = pc(xtIx ie., the prediction depends only on the last n symbols of the history.",
+        "In the interpolated model, the interpolation parameters smooth the conditional probabilities estimated from longer histories with those estimated from shorter histories (Jelinek and Mercer, 1980).",
+        "Longer histories support stronger predictions, while shorter histories have more accurate statistics.",
+        "Interpolating the predictions from histories of different lengths results in more accurate predictions than can be obtained from any fixed history length.",
+        "A quick glance at the form of (2) and (1) reveals the fundamental simplicity of the interpolated Markov model.",
+        "Every interpolated model q5 is equivalent to some basic Markov model 0' (lemma 2.1), and every basic Markov model 0 is equivalent to some interpolated context model q5' (lemma 2.2).",
+        "Proof.",
+        "We may convert the interpolated model 0 into a basic model 0' of the same model order n, simply by setting (ylxn) equal to pc(ylx\", 0) for all states xn E An and symbols y E A.",
+        "0",
+        "Proof.",
+        "Every basic model is equivalent to an interpolated model whose interpolation values are unity for states of order n. 0 The lemmas suffice to establish the following theorem.",
+        "Theorem 1 The class of interpolated Markov models is equivalent to the class of basic Markov models.",
+        "Proof.",
+        "By lemmas 2.1 and 2.2.",
+        "0 A similar argument applies to the backoff model.",
+        "Every backoff model can be converted into an equivalent basic model, and every basic model is a backoff model."
+      ]
+    },
+    {
+      "heading": "3 Non-Emitting Markov Models",
+      "text": [
+        "A hierarchical non-emitting Markov model 0 = (A, n, 6) consists of an alphabet A, a maximal model order n, the state transition probabilities, = 60 ...bn, bi : Ai x A [0, 1], and the non-emitting state transition probabilities A = .Ao • • • A., Ai : A' [0, 1].",
+        "With probability 1 – Ai(xs), a non-emitting model will transition from the state x' to the state x'2 without emitting a symbol.",
+        "With probability A1(e)62(y1x2), a non-emitting model will transition from the state x' to the state x'y and emit the symbol y.",
+        "Therefore, the probability p,(y1 Ix', (0) assigned to a string yi in the history x' by a non-emitting model 0 has the recursive form (3),",
+        "where Ai(xi) = 0 for i> n and Ao(f) = 1.",
+        "Note that, unlike the basic Markov model, pc(xtlx' ,c1)) pE(xtlxr_nl , 0) because the state distribution of the non-emitting model depends on the prefix xi'.",
+        "This simple fact will allow us to establish that there exists a non-emitting model that is not equivalent to any basic model.",
+        "Lemma 3.1 states that there exists a non-emitting model 0 that cannot be converted into an equivalent basic model of any order.",
+        "There will always be a string xT that distinguishes the non-emitting model 0 from any given basic model 0' because the non-emitting model can encode unbounded dependencies in its state distribution.",
+        "Proof.",
+        "The idea of the proof is that our non-emitting model will encode the first symbol x1 of the string XT in its state distribution, for an unbounded distance.",
+        "This will allow it to predict the last symbol xT using its knowledge of the first symbol xi.",
+        "The basic model will only be able predict the last symbol XT using the preceding n symbols, and therefore when T is greater than n, we can arrange for pc(xTIO,T) to differ from any p(xT , T), simply by our choice of xi.",
+        "The smallest non-emitting model capable of exhibiting the required behavior has order 2.",
+        "The non-emitting transition probabilities A and the interior of the string x7).-1 will be chosen so that the non-emitting model is either in an order 2 state or an order 0 state, with no way to transition from one to the other.",
+        "The first symbol xi will determine whether the non-emitting model goes to the order 2 state or stays in the order 0 state.",
+        "No matter what probability the basic model assigns to the final symbol XT, the non-emitting model can assign a different probability by the appropriate choice of xi, 60(xT), and 62 ( Consider the second order non-emitting model over a binary alphabet with A(0) = 1, A(1) = 0, and A(11) = 1 on strings in Al\" A.",
+        "When xi = 0, then x2 will be predicted using the 1st order model 61(x2lx 1), and all subsequent xt will be predicted by the second order model b2(xt Ix).",
+        "When xi = 0, then all subsequent st will be predicted by the 0th order model .50(xt).",
+        "Thus for all t > p, Pf(xtixt-1) pc(xtlxr_pl) for any fixed p, and no basic model is equivalent to this simple non-emitting model.",
+        "0 It is obvious that every basic model is also a non-emitting model, with the appropriate choice of non",
+        "emitting transition probabilities.",
+        "These lemmas suffice to establish the following theorem.",
+        "Theorem 2 The class of non-emitting Markov models is strictly more powerful than the class of basic Markov models, because it is able to represent a larger class of probability distributions on strings.",
+        "Proof.",
+        "By lemmas 3.1 and 3.2.",
+        "0 Since interpolated models and backoff models are equivalent to basic Markov models, we have as a corollary that non-emitting Markov models are strictly more powerful than interpolated models and backoff models as well.",
+        "Note that non-emitting Markov models are considerably less powerful than the full class of stochastic finite state automaton (SFSA) because their states are Markovian.",
+        "Non-emitting models are also less powerful than the full class of hidden Markov models.",
+        "Algorithms to evaluate the probability of a string according to a non-emitting model, and to optimize the non-emitting state transitions on a training corpus are provided in related work (Ristad and Thomas, 1997)."
+      ]
+    },
+    {
+      "heading": "4 Empirical Results",
+      "text": [
+        "The ultimate measure of a statistical model is its predictive performance in the domain of interest.",
+        "To take the true measure of non-emitting models for natural language texts, we evaluate their performance as character models on the Brown corpus (Francis and Kucera, 1982) and as word models on the Wall Street Journal.",
+        "Our results show that the non-emitting Markov model consistently gives better predictions than the traditional interpolated Markov model under equivalent experimental conditions.",
+        "In all cases we compare non-emitting and interpolated models of identical model orders, with the same number of parameters.",
+        "Note that the non-emitting bigram and the interpolated bigram are equivalent.",
+        "All ,\\ values were initialized uniformly to 0.5 and then optimized using deleted estimation on the first 90% of each corpus (Jelinek and Mercer, 1980).",
+        "DELETED-ESTIMATION(B4O) 1.Until convergence 2.",
+        "Initialize A+, A to zero; 3.",
+        "For each block Bi in B 4.",
+        "Initialize 6 using B – Bi; 5.",
+        "ExPEcTATi0N-sTEP(B1,4)+,Al; 6. mAximizATIoN-sTEP(4),AtA); 7.",
+        "Initialize 6 using B;",
+        "Here A+ (xi) accumulates the expectations of emitting a, symbol from state xs while A (xi) accumulates the expectations of transitioning to the state e2 without emitting a symbol.",
+        "The remaining 10% percent of each corpus was used to evaluate model performance.",
+        "No parameter tying was performed.'"
+      ]
+    },
+    {
+      "heading": "4.1 Brown Corpus",
+      "text": [
+        "Our first set of experiments were with character models on the Brown corpus.",
+        "The Brown corpus is an eclectic collection of English prose, containing 6,004,032 characters partitioned into 500 files.",
+        "Deleted estimation used 21 blocks.",
+        "Results are reported as per-character test message entropies (bits/char), – log2 p(y° Iv).",
+        "The non-emitting model outperforms the interpolated model for all nontrivial model orders, particularly for larger model orders.",
+        "The non-emitting model is considerably less prone to overtraining.",
+        "After 10 EM iterations, the order 9 non-emitting model scores 2.0085 bits/char while the order 9 interpolated model scores 2.3338 bits/char after 10 EM iterations."
+      ]
+    },
+    {
+      "heading": "4.2 WSJ 1989",
+      "text": [
+        "The second set of experiments was on the 1989 Wall Street Journal corpus, which contains 6,219,350 words.",
+        "Our vocabulary consisted of the 20,293 words that occurred at least 10 times in the entire WSJ 1989 corpus.",
+        "All out-of-vocabulary words 'In forthcoming work, we compare the performance of the interpolated and non-emitting models on the Brown corpus and Wall Street Journal with ten different parameter tying schemes.",
+        "Our experiments confirm that some parameter tying schemes improve model performance, although only slightly.",
+        "The non-emitting model consistently outperformed the interpolated model on all the corpora for all the parameter tying schemes that we evaluated.",
+        "were mapped to a unique 00V symbol.",
+        "Deleted estimation used 22 blocks.",
+        "Following standard practice in the speech recognition community, results are reported as per-word test message perplexities, p(yv 1v)- .",
+        "Again, the non-emitting model outperforms the interpolated Markov model for all nontrivial model orders."
+      ]
+    },
+    {
+      "heading": "4.3 WSJ 1987-89",
+      "text": [
+        "The third set of experiments was on the 1987-89 Wall Street Journal corpus, which contains 42,373,513 words.",
+        "Our vocabulary consisted of the 20,092 words that occurred at least 63 times in the entire WSJ 1987-89 corpus.",
+        "Again, all out-of-vocabulary words were mapped to a unique 00V symbol.",
+        "Deleted estimation used 152 blocks.",
+        "Results are reported as test message perplexities.",
+        "As with the WSJ 1989 corpus, the non-emitting model outperforms the interpolated model for all nontrivial model orders."
+      ]
+    },
+    {
+      "heading": "5 Conclusion",
+      "text": [
+        "The power of the non-emitting model comes from its ability to represent additional information in its state distribution.",
+        "In the proof of lemma 3.1 above, we used the state distribution to represent a long distance dependency.",
+        "We conjecture, however, that the empirical success of the non-emitting model is due to its ability to remember to ignore (ie., to forget) a misleading history at a point of apparent independence.",
+        "A point of apparent independence occurs when we have adequate statistics for two strings xTh-1 and yn but not yet for their concatenation xn-lyn.",
+        "In the most extreme case, the frequencies of xn-1 and yr are high, but the frequency of even the medial bigram xn_ in, is low.",
+        "In such a situation, we would like to ignore the entire history xn-1 when predicting yn , because all 6(yi 14-1g1 -1) will be close to zero",
+        "for i < n. To simplify the example, we assume that 6(yi lx7-1 y1-1) = 0 for j > land i < n. In such a situation, the interpolated model must repeatedly transition past some suffix of the history xn-1 for each of the next n-1 predictions, and so the total probability assigned to My' le) by the interpolated model is a product of n(n - 1)/2 probabilities.",
+        "In contrast, the non-emitting model will immediately transition to the empty context in order to predict the first symbol Yi, and then it need never again transition past any suffix of xn-1.",
+        "Consequently, the total probability assigned to pc(yn le) by the non-emitting model is a product of only n 1 probabilities.",
+        "Given the same state transition probabilities, note that (4) must be considerably less than (5) because probabilities lie in [0, 1].",
+        "Thus, we believe that the empirical success of the non-emitting model comes from its ability to effectively ignore a misleading history rather than from its ability to remember distant events.",
+        "Finally, we note the use of hierarchical non-emitting transitions is a general technique that may be employed in any time series model, including context models and backoff models.",
+        "Acknowledgments Both authors are partially supported by Young Investigator Award 'RI-0258517 to Eric Ristad from the National Science Foundation."
+      ]
+    }
+  ]
+}

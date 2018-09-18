@@ -1,0 +1,193 @@
+{
+  "info": {
+    "authors": [
+      "John A. Bateman"
+    ],
+    "book": "Annual Meeting of the Association for Computational Linguistics",
+    "id": "acl-P88-1018",
+    "title": "Aspects of Clause Politeness in Japanese: An Extended Inquiry Semantics Treatment",
+    "url": "https://aclweb.org/anthology/P88-1018",
+    "year": 1988
+  },
+  "references": [],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "The inquiry semantics approach of the Nigel computational systemic grammar of English has proved capable of revealing distinctions within propositional content that the text planning process needs to control in order for adequate text to be generated.",
+        "An extension to the chooser and inquiry framework motivated by a Japanese clause generator capable of expressing levels of politeness makes this facility available for revealing the distinctions necessary among interpersonal, social meanings also.",
+        "This paper shows why the previous inquiry framework was incapable of the kind of semantic control Japanese politeness requires and how the implemented extension achieves that control.",
+        "An example is given of the generation of a sentence that is appropriately polite for its context of use and some implications for future work are suggested."
+      ]
+    },
+    {
+      "heading": "1 Introduction - inquiry semantics",
+      "text": [
+        "A crucial task in text generation is to be able to control linguistic resources so as to make what is generated conform to what is to be expressed.",
+        "In the computational systemic-functional grammar (SFG) 'Nigel' (Mann, 1985; Matthiessen, 1985; Mann and Matthiessen, 1985), this task is the responsibility of the grammar's inquiry semantics.",
+        "Nigel follows general systemic-functional linguistics (SFL) practice in presenting grammar as a resource for expressing meanings; meanings are realized by a network of interlocking options and particular grammatical forms are arrived at by making choices in this network.",
+        "Generating appropriate text is then a problem of making the choices in such a way that the distinct needs of individual texts to be expressed are satisfied.",
+        "This is This research was supported by a post-doctoral research fellowship from the Japan Society for the Promotion of Science (Tokyo) and the Royal Society (London), and was principally carried out at the Nagao Laboratory of the Department of Electrical Engineering, Kyoto University.",
+        "achieved by means of choice experts, or choosers, that collectively ensure that the choices made will be those appropriate for any particular text need Each choice point in the grammar network has associated with it a chooser whose responsibility is to interrogate the text need in respect of just those aspects of meaning necessary for determining the appropriate option to take.",
+        "These choosers are formalized as decision trees whose nodes consist of basic knowledge base interrogation primitives called inquiries.",
+        "Each aspect of meaning to be expressed that the grammar needs to know about is made accessible to the choosers by means of a single inquiry whose function is to determine where any particular meaning to be expressed stands on that aspect.",
+        "For example, should the grammar need to know whether the text need was for the expression of a unitary object (say, a lion) rather than a set object (lions), then at the appropriate choice points in the grammar choosers would appeal to the inquiry named MultiplicityQ to determine the text need.",
+        "When fully specified, inquiries have two forms, an informal English gloss representing the function of the inquiry in terms of the theory of meaning adopted, and an implementation, currently in Lisp, of an actual interrogation of a knowledge base.",
+        "Typically, constructing an inquiry proceeds first by means of successive approximations in informal terms, glossed in English, followed by an encoding of the understanding achieved of the semantic distinction at issue.",
+        "This inquiry semantics approach has been very successful in the Nigel grammar of English; the grammar now has a very wide coverage all under inquiry control.",
+        "The type of coverage has, however, been limited primarily to what in SFL terms is called the ideational component of meaning (Halliday, 1985).",
+        "This is the component concerned with expressing our representation of the world in terms of propositional content and logical organization.",
+        "It is natural, therefore, that the inquiry approach should be successful in this domain since this is typically the kind of information that is stored in the knowledge base and so is readily retrievable.",
+        "Another SFL component of meaning, however, is the interpersonal.",
+        "This aspect concerns",
+        "the expression of social relationships, an area that will become increasingly important as more natural interactions between people and machines are attempted.",
+        "Although the Nigel grammar does contain a few inquiries that are termed interpersonal, there has not been enough work here really to determine whether the inquiry framework is going to provide the tools necessary for capturing the kind of meaning this involves.",
+        "If the inquiry framework can be used in this area also, then we can use it to investigate the knowledge base distinctions that will need to be represented in order to control interpersonal grammatical resources.",
+        "This is a methodology that has already been applied with great success to ideational meaning in the Nigel project.",
+        "There, projecting through the inquiry interface from the grammar on to context has allowed for the construction of a domain independent knowledge organization hierarchy called the upper structure (e.g. Moore and Arens, 1985).",
+        "Since inquiries rely upon specific semantic distinctions to control the grammatical choices for which they are responsible, the formulation of a chooser's inquiries amounts to a constraint on the organization and content of the knowledge base and text planning that needs to be done of the following form: if the linguistic distinction for which the present chooser is responsible is to be available as a resource for the text planner to exploit, then that text planner and the knowledge base have at least to support the semantic distinctions identified by the inquiries that constitute that chooser.",
+        "Thus, the semantic distinctions revealed to be necessary for the implementation of the inquiries that control ideational choices have guided the construction of the upper structure.",
+        "To extend the kind of organizational resource the upper structure provides into the interpersonal arena would therefore be very beneficial for our understanding of what needs to be included in the interpersonal area of the knowledge base and the text planning process and so would promise to improve the range and quality of the texts we can generate.",
+        "2 A new domain: The expression of politeness in Japanese clauses As part of a proposed text generation project in Japanese at Kyoto University, some fragments of a systemic-functional grammar of Japanese have been constructed (Bateman, 1985; Bateman et al., 1987).",
+        "In Japanese discourse the grammatical expression of various interpersonal relationships is quite common.",
+        "Gaining control of these resources was therefore an ideal way to test further the applicability of the inquiry semantics approach in a domain which was clearly not ideationaL The particular area of interpersonal meaning examined here is that concerned with the expression of appropriate degrees of humility and respect in references to one's own actions, to those of one's audience, and to those of third parties.",
+        "Although the general rule of being humble about one's own actions and respectful about those of others is complicated by a number of factors, even this simplest case presents problems as far as controlling the grammar is concerned.",
+        "In this section, I will briefly describe some of the forms involved and, in the next, how these create problems for the inquiry and chooser framework as used in NigeL A variety of clause forms are regularly employed in Japanese for the expression of interpersonal meanings related to 'politeness'.",
+        "For example, the 'demotion' of the process information to a nominal-like form preceded by a normal nominal honorific prefix (e.g. o, as in o-eisce 'honorable' tea) supported by an auxiliary verb such as suru, `to do', or naru, `to become', often explicitly expresses the relative social statuses of the participants involved and the fact of those partici-pants' acknowledgment of those statuses.",
+        "This we can see in, o-VERB suns humble referral to do self's action o-VERB- ni naru respectful referral becomes to action of other o-VERB desu more distant respect • be for action of other Another type of form involves combinations of morphemes that conventionally represent distinctive ways of being polite.",
+        "Here, there are a number of different interpersonal speech act types that may be performed.",
+        "For example, both the expression of gratitude for favors received and the expression of the giving of favors are virtually obligatory in normal discourse; this is achieved by appending one of the many verbs expressing 'to give/receive' to the process performed.",
+        "These verbs are highly sensitive to relative social positions and the perspective taken on the action performed (e.g. Kuno and Kaburaki, 1977; Inoue, 1979) and this aspect of their meaning is carried over for the expression of favors done or perceived.'",
+        "Typical combinations also express polite ways of seeking permission for actions; one here modifies the action to be performed by means of the morphemes for causation/allowing, receiving a favor, wishing for, and thinking: a rough literal gloss of this form would be along the lines of 'I think I want to humbly receive from you your allowing me to do X'.",
+        "Thus, the following clause forms are also commonly required in normal discourse: 'Thus, for verbs corresponding to the English 'give' and 'receive', there are seven Japanese verbs in common usage and these differ in most part according to the relative social positions of the participants in the giving.",
+        "VERB-giving doing a `favor': liteness are alternatives at all.",
+        "The next section ex-respectfully or humbly plains why this is so.",
+        "VERB-receiving receiving a `favor': respectfully or humbly [VERB-cause-receive-wish]-think deferential seeking of permission This by no means exhausts the range of forms that are relevant to discussions of politeness, respect, and humility in present-day Japanese, but it will be sufficient as an indication of the kinds of structures and meanings addressed within the present grammar.3 It should also be noted that there are different 'dimensions' of politeness involved in the use of these forms; for example the clause",
+        "well come favor to speaker tag which means 'thanks for coming' is in the familiar level of speech form, i.e. it could only be used between people who are on familiar terms.",
+        "It is nevertheless still necessary for the favor being done to be explicitly acknowledged; not expressing it would result in a clause that would often be inappropriate.",
+        "The present grammar also treats the range of distinctions that arise along this 'familiar'/ 'polite' levels of speech dimension but this will not be of immediate concern here.",
+        "The differences in meaning that these alternative politeness-related forms represent need to be made available to a text generation system.",
+        "This may be done by offering a set of grammatical resources that serves to express interpersonal knowledge about the interactive situation.",
+        "As has been the case in the systemic grammar approach employed in Nigel generally, it is desirable to factor the knowledge and meanings to be expressed in terms of a structured set of alternatives that may be selected from straightforwardly; for ideational meanings this is provided by the upper structure.",
+        "The internal organization of the systemic grammar then takes care of the construction of linguistic structures appropriate to those meanings.",
+        "Now we want to be able to do the same with the linguistic structures described here.",
+        "Information which will need to be held in appropriately constructed speaker and hearer models should be factored according to the inquiries that are necessary for driving the grammatical distinctions concerned.",
+        "A problem arises here, however, in that it is not possible to state within Nigel's grammar and chooser framework that the alternative grammatical forms available for the expression of po-2A very good introduction and summary of the range of meanings and forms devoted to aspects of politeness in Japanese is given in Mizutani and Mizutani (1987).",
+        "3 Problems with the existing formalization of chooser-grammar interaction The principle problem encountered with controlling the deployment of structures such as those introduced in the previous section by means of a chooser mechanism is that, formerly, all chooser decisions have been local.",
+        "Each chooser determines which grammatical feature is to be selected as appropriate for the context of use from a single point of minimal grammatical alternation.",
+        "For example, the grammatical system that presents the minimal grammatical alternation in Japanese between having a constituent express a circumstance of location, and not having such a constituent, has a chooser associated with it which interrogates the knowledge base and text plan by means of its inquiries in order to see which of the two alternatives is applicable in the case at hand.",
+        "If a location is to be expressed a grammatical feature is selected that entails the insertion of a constituent characterized functionally as a location; if there is no location to be expressed than a feature which does not have such an entailment is selected.",
+        "This selection between the alternative grammatical choices, or features, that are offered by a single grammatical system is the only influence that the chooser of that system is permitted to have on the generation process.",
+        "Thus, in the location case, the effects of the chooser responsible for insertion or not of a location constituent are entirely local to the portion of the generation process delimited by the location system of the grammar.",
+        "With the politeness forms we seem to be faced again with a set of alternative meanings concerning level and type of politeness to be expressed.",
+        "However, the problem as far as the previously implemented view of the possible effects of choosers is concerned is that these alternatives correspond to no single points of grammatical alternation.",
+        "For example, if the process of reading (yomu) is to be expressed but we want to make a selection of politeness-related meaning between a simple respectful reference to another's actions and a more distanced, indirect and reserved respectful reference, then the choice of appropriate forms for that process is between o yomi ni naru HONORIFIC reading CASE becoming and o yorni desu HONORIFIC reading COPULA-be",
+        "Now, while the distinction in meaning may be captured by a simple scale of the 'directness' of the sentence that is appropriate for the particular interactive situation in which it is to be used, there is no grammatical system in the grammar of Japanese that offers a direct choice between these two clause structures.",
+        "The former structure is similar to the typical use of the verb 'become' as in z-ni naru, `to become X'; the latter is similar to clauses such as X desu, 'it is X'.",
+        "They are not normally, e.g. in contexts not involving this particular contrast of politeness, in grammatical contrast.",
+        "The distinction is, then; in the use and meaning of the structures rather than in their grammatical construction.",
+        "Indeed, such distinctions may often cross-cut the distinctions that are made in the grammar; this is simply to accept that the semantic and pragmatic distinctions that a language draws need not be matched one-for-one by corresponding minimal points of grammatical alternation.",
+        "The levels of coding are distinct and incorporate distinct aspects of the meaning and construction of the linguistic units involved.",
+        "It is not then possible to associate a 'politeness' chooser with a grammatical system as is done with the choosers for ideational meanings because there is no grammatical system of 'politeness' to which it may be attached.",
+        "A simple choice between minimal alternatives of politeness can result in radically different grammatical structures that differ by virtue of many features.",
+        "This means that politeness of this kind cannot be made available as a controllable expressive resource for a text planner within the chooser framework as it is implemented within the Nigel project."
+      ]
+    },
+    {
+      "heading": "4 An implemented solution",
+      "text": [
+        "In order to meet this problem and to allow full control of politeness phenomena, the following extension was implemented within the context of the computational systemic grammar framework supported at Kyoto.",
+        "The chooser framework is maintained as a decision tree that selects between minimal points of semantic alternation.",
+        "However, it is no longer the case that this needs to be held in a one-to-one correspondence with the minimal alternations that the grammar network represents.",
+        "The possibility of distinct patterns of organization at the two levels, as would be claimed by systemic linguistics proper, is therefore captured.",
+        "Accordingly, any chooser is permitted to make any number of selections of grammatical features from anywhere in the grammatical network.",
+        "Choosers are thereby permitted to take on more of the organizational work required during text planning.",
+        "This extension made it possible to construct a chooser decision tree that interrogates the text need concerning precisely those distinctions in meaning required to ascertain which level and form of politeness to employ.",
+        "The inquiries of this decision tree are free to ask all the questions related to the aspects of the social relationships of the participants in the speech situation that are necessary without being concerned about where in the grammatical network the consequences of those questions will be felt.",
+        "This makes that reasoning available in a modular and easily comprehensible form.",
+        "The result of any particular path through the decision tree is a set of grammatical features that the grammatical product being generated as a whole must bear.",
+        "This can therefore call for very different structural results to be selected which differ by many grammatical features drawn from many distinct grammatical points of alternation.",
+        "The present politeness 'chooser', or decision tree, has around 15 decision points where a distinct inquiry needs to be put to the knowledge base.",
+        "These inquiries are still at the stage of informal approximation.",
+        "For example, after traversal of the decision tree has already established a number of important facts concerning the text need, including that the actor is the hearer, that the situation is not one classifiable as formally 'official', that there is considerable social 'distance' between the speaker and hearer, among others, the simple semantic distinction glossable in English as Is the subject-matter of the process such that additional reserve should be shown?",
+        "which, as we have seen, expresses additional distance between the action and its performance as required.",
+        "The latter set is sufficient to constrain the structure produced to be of the form: o VERB ni naru HONORIFIC X CASE becoming which is the less indirect expression of respect.",
+        "By way of contrast, the portion of the 'politeness' chooser that is concerned with the expression of humility, rather than respect, is shown in figure 1.",
+        "Formerly, any such decision tree would only have been able to call for the appearance of a single grammatical feature; here any number of features may be selected (as indicated by the 1-1-+' operator in figure 1) during the decision tree's traversaL Modelling the kind of non-local organization inherent in the expression of politeness would therefore have required numerous decision trees split according to the grammat",
+        "Is the action independent of others, the audience in particular?",
+        "Yes/ Is the process of the kind that a special lexical verb exists that expresses humility?",
+        "no' positive-social-placing favours special-lexical-placing positive-social-placing Would the performance of the process obligate the hearer in any way?",
+        "\\ryes"
+      ]
+    },
+    {
+      "heading": "(text-plan revision -suggesticm .Find a process vhich does not deoerit the hearer.')",
+      "text": [
+        "Is the process of the kind that a special lexical verb exists that expresses humility?",
+        "Yes positive-social-placing Is there a reason for explicitly making clear consideraticm of the other's wishes • regarding the process, such as in seeking permission for an action Witch may benefit the actor as ouch as more than it does the hearer?",
+        "\\SO .4 special-lexical-placing 4• positive-social-placing ical organization.",
+        "This subordinates the semantic organization to the grammatical organization and necessarily obscures the unity of the politeness masoning process.",
+        "By allowing the two levels of grammar and semantics their own, not necessarily isomorphic, dimensions of organization it is possible to express the unity and coherence of patterns at either level and to capture the relationship between those levels.",
+        "5 Example of the generation of appropriately polite clauses In this section, the generation of an actual utterance exhibiting complex attributes of politeness is illustrated.",
+        "The utterance is drawn from a corpus of telephone conversations concerning hotel reservations.",
+        "The traces given are those actually produced by the currently implemented Japanese systemic grammar program that is written in Symbolics Common Lisp and runs upon a Symbolics 3600 Lisp Machine.",
+        "The context for the utterance is as follows.",
+        "After a negotiation of precisely where, when, and how long the customer is to stay, the person responsible for hotel booking states that he will send the confirmation of the reservation to the customer 'today'.",
+        "It is worth noting that the 'direct' translation of this statement in terms of its ideational content (perhaps glossable as a very neutral I will send it today), such as might be handled by current machine translation systems, would be quite inappropriate in a genuine interactive situation such as the one described.",
+        "What was actually said was of the following form: kyou hassou sasete- itadaki- tai to omoimasu today send do-cause receive wish think forward humbly might I be permitted to send it today?",
+        "During generation the grammar causes the politeness reasoning chooser network to be entered; this performs the classifications shown in figure 2, the humility section of this reasoning may be followed through in figure 1 also.",
+        "The grammatical features constrained to appear in this case, i.e. wishfulness, favours, cause, etc., then result in particular predetermined paths being taken through the grammar network.",
+        "For example, figure 3 shows when the grammatical system responsible for the construction of the functional structure concerned with the expression of causality is entered.3"
+      ]
+    },
+    {
+      "heading": "ENTERED SOCIAL-PLACING-REQUIREMENTS-SYSTEM",
+      "text": []
+    },
+    {
+      "heading": "CHOOSER: inquiring Is it possible for the speaker to identify with the",
+      "text": [
+        "actor of the process SENDING (PROCESS)?",
+        "ENVIRONMENT RESPONSE: YES CHOOSER: inquiring Does the relationship (e. g. one of great social distance) between the current speaker and the hearer require the expression of special social positioning information during the statement of SENDING (PROCESS)?"
+      ]
+    },
+    {
+      "heading": "'MsOI PRESELECTIONS OVERRIDING SELECTED FEATURE is CAUSE REALIZER: inserting REALIZER: conflating REALIZER: preselecting REALIZER: preselecting REALIZER: ordering",
+      "text": [
+        "-"
+      ]
+    },
+    {
+      "heading": "I INITIATOR INITIATOR and AGENT:2 PROCESS for COMPLEX-PROCESS PROCESS for CAUSATIVE",
+      "text": [
+        "This grammatical system offer two alternative selections of feature: one which constrains the structure generated to be an expression of causation and one which does not.",
+        "Here, since the grammatical feature cause has been constrained to appear by the politeness chooser, no further reasoning needs to be done at this point and the construction of the appropriate structure may proceed directly (via excution of the realization statements associated with the cause feature, which call for a variety of operations to be performed on functionally-labelled constituents such as AGENT, PROCESS, etc.).",
+        "Similarly preselected grammatical decisions are made for each of the other regions of the grammar responsible for creating the structure required to express the politeness need as determined during politeness reasoning.",
+        "This serves to build the structure of the example sentence as an appropriate realization of the distinctions in politeness that were ascertained to be necessary by the politeness chooser inquiries."
+      ]
+    },
+    {
+      "heading": "6 Implications for further work",
+      "text": [
+        "It has been shown how a straightforward extension of the chooser and inquiry framework employed within the Nigel grammar permits its application to the control of the resources for expressing politeness in Japanese.",
+        "In addition to the choice of humble and respectful forms of expression illustrated here, this mechanism has been used in one current version of the grammar to support the selection of appropriate verbs of 'giving' and their combinations with other processes for the expression of favors done and consideration for other's actions, the selection of the participants or circumstances in the clause that are to be made 'thematic', and the selection of appropriate levels of speech (familiar, polite, deferential) across a variety of grammatical forms.",
+        "The flexibility that this approach offers for capturing the semantic distinctions involved in interpersonal meanings is allowing us to apply to interpersonal knowledge the technique that was adopted for ideational meanings of determining the knowledge that needs to be maintained for satisfactory control of the resources of the grammar.",
+        "An examination of how the inquiries informally glossed here may be implemented with respect to an actual knowledge base significantly constrains the types of constructs and their interrelationships that that knowledge base will be required to support.",
+        "Thus notions of relative social position, obligations owed, favors done, social situation types, putational systemic framework implemented in Nigel appear in this trace, e.g. the entering of grammatical systems 'recursively' and the insertion of multiple functions of the same type, as in AGENT.1 and AGENT.2.",
+        "These are beyond the scope of this paper however; their details may be found in Bateman et al.",
+        "(1987).",
+        "consequences of actions upon other people, and others that adequate inquiries have been found to rely upon are isolated in a linguistically-motivated and constrained manner for incorporation in the interpersonal component of any knowledge base that is intended to support Japanese text generation.",
+        "It is to be expected that similar results may be found with respect to English also and so the identification of the interpersonal constructs necessary for knowledge bases for English text generation is now a clear priority.",
+        "A more general application of the extension to the inquiry semantics approach illustrated here is that it opens up the possibility of using the chooser and inquiry framework to capture the selection of grammatical forms according to the uses that are to be made of those forms, without imposing the grammar's organization upon the decision trees that control that selection.",
+        "Since this non-isomorphism between distinctions that are to be drawn between uses and the distinctions that are maintained in the grammar is as widespread across English as it is across Japanese, it is to be expected that the mechanism proposed here could find wide application.",
+        "However, further experimentation into the mechanism's utility and appropriateness as a representation of what is involved in areas of language use where this occurs needs to be undertaken."
+      ]
+    },
+    {
+      "heading": "Acknowledgments",
+      "text": [
+        "Many thanks are due to Professors Makoto Nagao and Jun-ichi Tsujil, all the members of the Nagao laboratory, and to the staff and students of the Kyoto Japanese School for attempting to improve my understanding of the Japanese language and its situated use."
+      ]
+    }
+  ]
+}

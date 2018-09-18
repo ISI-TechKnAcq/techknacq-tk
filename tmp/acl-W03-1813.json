@@ -1,0 +1,166 @@
+{
+  "info": {
+    "authors": [
+      "Beata Trawinski"
+    ],
+    "book": "Workshop on Multiword Expressions: Analysis, Acquisition and Treatment",
+    "id": "acl-W03-1813",
+    "title": "Licensing Complex Prepositions Via Lexical Constraints",
+    "url": "https://aclweb.org/anthology/W03-1813",
+    "year": 2003
+  },
+  "references": [],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "In this paper, we will investigate a cross-linguistic phenomenon referred to as complex prepositions (CPs), which is a frequent type of multiword expressions (MWEs) in many languages.",
+        "Based on empirical data, we will point out the problems of the traditional treatment of CPs as complex lexical categories, and, thus, propose an analysis using the formal paradigm of the HPSG in the tradition of (Pollard and Sag, 1994).",
+        "Our objective is to provide an approach to CPs which (1) convincingly explains empirical data, (2) is consistent with the underlying formal framework and does not require any extensions or modifications of the existing description apparatus, (3) is computationally tractable."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Among numerous types of expressions that seem unpredictable regarding standard grammar regularities, sequences consisting of a preposition, a noun, and another preposition (P N P ) are particularly frequent.",
+        "Interestingly, this class of expressions, usually termed in linguistic literature as “complex prepositions” (CPs), “phrasal prepositions”, “quasi-prepositions” or “preposition-like word formations” occurs in many different languages, thereby showing nearly uniform properties (cf. examples below quoted from (Lindqvist, 1994), (Quirk and Mulholland, 1964), (Grochowski et al., 1984) and (Beneš, 1974)).",
+        "Traditionally, CPs are assumed to be complex lexical categories evincing prepositional character.",
+        "As well as in the case of other multiword expressions (MWEs), the question arises of how they should be analyzed to make them suitable for machine processing.1 In this paper, we will propose an HPSG-based linguistically motivated, formal treatment of CPs, applicable for computational platforms intended for developing typed feature structure grammars.",
+        "The starting point of our investigations is the summary of empirical facts about CPs.",
+        "Although, we have indicated above that CPs can be considered a cross-linguistic phenomenon, we will focus in this paper exclusively on German data, because they provide very explicit and convincing linguistic evidence which motivates and supports our approach.",
+        "However, we assert that the analysis proposed here for 'For discussion on various strategies for analyzing MWEs such as listing “words with spaces”, hierarchically organized lexicons, restricted combinatoric rules, lexical selection, “idiomatic constructions” and simple statistical affinity using HPSG grammar framework see (Sag et al., 2002).",
+        "On problems of using corpus-based, statistical methods for identifying P N P word combinations in Dutch referred to in the paper as collocational prepositional phrases (CPPs) see (Bouma and Villada, 2002).",
+        "German can also be applied to other languages such as Polish or English."
+      ]
+    },
+    {
+      "heading": "2 Empirical Data",
+      "text": [
+        "We have taken into account word combinations in German such as those in (1).",
+        "(1) an Hand von (‘by means of’), in Zusammen-hang mit (‘in connection with’), unter Aufsicht von (‘under survey of’) ...2",
+        "These expressions, when combined with NPs, result in PPs, acting as modifiers within the entire sentence (cf. (2)).",
+        "(2) In Bezug auf Privatsphäre gibt es in regard to private_sphere is there im WWW immer noch keine in_the WWW still yet no einheitlichen Richtlinien.",
+        "uniform rules ‘With regard to privacy, there are still no uniform rules in the WWW.’ However, the interdependence between the particular elements of those expressions seems to defy standard constraints on the PP structure of German.",
+        "To see this, we will consider a typical PP in (3).",
+        "Trying to apply the above approach to an analysis of PPs involving a CP presents several problems.",
+        "To see these problems, we will consider one of the CPs combined with an NP, which looks very similar to the PP in (3) (cf. (4)).",
+        "(4) in Verbindung mit diesem Problem in connection with this problem ‘in connection with this problem’ Using PPs such as those in (4) in contexts exemplified in (5), we can observe many contrasts with the traditional PPs such as those in (3).",
+        "(5) In Verbindung mit diesem Problem in connection with this problem möchte ich darauf hinweisen, dass ... would_like I DA_on point_out that",
+        "‘In connection with this problem, I would like to point out that ...’ First of all, the noun Verbindung cannot syntactically select for a determiner or a quantifier, nor it can be combined with possessive pronouns or prenomi-nal genitives (cf. (6a)).3 Secondly, it cannot be modified (cf. (6b) and (6c)).",
+        "Finally, the PP mit den Beratern (’with the advisers’) cannot be deleted (cf. (6d)).",
+        "in a close connection with the advisers ‘in close connection with the advisers’ The standard analysis for such PPs assumes that the preposition in (‘in’) acts as the head of the entire phrase, taking the NP as its complement.",
+        "The selected NP is headed by the noun Verbindung (‘connection’) and contains the adjective engen (‘close’) and the determiner einer (‘a’).",
+        "Furthermore, we have the PP mit den Beratern (‘with the advisers’), which is selected by the noun Verbindung as its complement and can be omitted without causing ungrammaticality (cf.",
+        "Figure 1 on the next page).",
+        "d. * in Verbindung in connection These observations support the traditional analysis which assumes that the string in Verbindung mit (‘in connection with’) in the PP exemplified in (4) is a complex lexical sign.",
+        "Thus, Fries (1988) assumes that PPs which include a CP have the structure such as those in Figure 2.",
+        "The preposition heading the entire phrase is a projection of three lexical categories which form a complex lexical category, in this case, a preposition in Verbindung mit.",
+        "This complex preposition then selects an NP forming a prepositional phrase.",
+        "The main problem with this analysis consists in the assumption that the preposition mit (‘with’) belongs to the complex preposition and cannot form a constituent with the NP diesem Problem.",
+        "However, there are several data demonstrating the opposite.",
+        "Firstly, the combinations P NP where P is realized by von (’of’) can be replaced by the genitive; this replacement of von adheres to the restrictions on the distribution of postnominal genitives and von-PPs in German (cf. (7a)).",
+        "Secondly, the discussed sequences can be substituted by wo/da expressions as in (7b), which are usually considered as proforms for PPs.",
+        "Finally, the P NP sequences can be coordinated with PPs headed by the same preposition (cf. (7c)).",
+        "‘in connection with what/with it’ c. in Verbindung mit diesem Problem in connection with this problem und mit seiner möglichen Lösung and with its possible solution ‘in connection with this problem and with its possible solution’ These observations imply that P NP sequences form a constituent.",
+        "Thus, another analysis seems to arise, that assume P N combinations to constitute complex lexical categories, requiring prepositional complements (cf.",
+        "Figure 3).",
+        "However, the following fact argues against the analysis in Figure 3: There is a type of nouns in German that allows for two options in realizing the dative case.",
+        "While the first eventuality relates to suffix-less forms, the second one relates to forms ending in -e. The choice of a given form is usually determined by stylistic effects.",
+        "Examples in (8) show that dative nouns of the discussed declension class can occur within P N sequences in both forms.",
+        "other transitive predicates.",
+        "As we can see in (10), no coindexing is possible between the noun Verbindung and the personal pronoun ihr (‘her’) or the anaphora sich selbst (‘herself’).",
+        "Rather, ihr and sich selbst belong to the argument structure of the noun Verbindung, and are possibly bound by a PRO-like element which belongs to the same argument structure and which is controlled by the noun Sarah.",
+        "These examples illustrate that the declension form of N s is determined not by P N combinations, but by the same factors that otherwise determine the form of inflection realization.",
+        "Thus, the data above clearly eliminate the analysis in Figure 3.",
+        "We will consider one more possible analysis, assuming prepositions heading P N P NPs as selecting for two arguments: a noun and a PP, which would result in structures such as those in Figure 4.",
+        "However, this assumption seems unmaintainable for the following reason: It cannot enforce that whenever a noun appears, a PP headed by a preposition is required.",
+        "In consequence, ungrammatical PPs such as those in (9) cannot be ruled out.",
+        "(9) a.",
+        "* in Verbindung zu diesem Problem in connection to this problem b.",
+        "* in Bezug mit diesem Problem in regard with this problem",
+        "Rather, the assumption seems plausible that syntactic properties of P NP sequences are determined by N s since these properties are identical with the properties of PPs selected by the corresponding nouns in their free occurrences.",
+        "Further evidence seems to argue against the above analysis.",
+        "Namely, if prepositions heading P N P NPs take both N s and P NPs as their arguments assigning theta roles to them, then it is inexplicable why the semantic relationship between these two arguments differs from the semantic relationship between the referential arguments of all All these observations seem to lead to the following conclusions.",
+        "Firstly, the PP mit diesem Problem acts as an argument of the noun Verbindung in that it is determined by this noun with regard to its syntactic properties, e.g. the form of the heading preposition.",
+        "Secondly, the PP mit diesem Problem is theta-marked by the noun Verbindung.",
+        "Finally, the PP mit diesem Problem is expected to be syntactically selected by the noun Verbindung as its complement.",
+        "Thus, we proceed according to the standard methods of handling relational nouns taking prepositional arguments.",
+        "This explains why N P NP sequences within the discussed PPs share many grammatical properties with the appropriate phrases occurring within other syntactic contexts.",
+        "On the other hand, data in (7) indicate for P N P NP expressions constituency such as those in Figure 4.",
+        "On the basis of these observations, the assumption can be made that P NP sequences are lexically selected by N s, yet are realized syntactically by P s."
+      ]
+    },
+    {
+      "heading": "3 The Analysis",
+      "text": [
+        "Formalizing this idea within the HPSG paradigm, we will make use mainly of two features: the ARG-ST feature and the VAL feature, whose value contains three valence lists: the SPR list, the SUB7 list and the COMPS list.",
+        "Specifying the relationship between the values of these features, one can make generalizations about selectional properties of lexical signs.",
+        "Thereby, the relationship between the ARG-ST and the SPR, SUB7 and the COMPS values (which are all assumed to have a form of list) does not always have to be an append relationship.",
+        "Also, other relationships can be assumed, thereby facilitating the expression of possible discrepancies between the structure of the syntactic environment that a given lexical sign can construct, and this lexical sign’s current selectional requirements.",
+        "Such discrepancies appear for instance in the case of argument raising as realized within the HPSG grammar framework.",
+        "To illustrate this idea, we will look at the essential aspect of the German verbal complex analysis in the style of (Hinrichs and Nakazawa, 1989).",
+        "According to this analysis, the lexical entries of German auxiliaries are specified to subcategorize for verbal complements and to raise the arguments of their complements.",
+        "(See the simplified lexical entry for the auxiliary wollen (‘want’) in Figure 5 on the next page.)",
+        "Thus, the auxiliary will (‘wants’) in the structure in Figure 6 selects for the verb lesen (‘read’) first, and then it selects the arguments of lesen (‘read’), the NP das Buch (‘the book’) and the NP Peter (‘Peter’), as its own complements.",
+        "This idea underlies most current HPSG approaches to verbal complexes in Germanic and Romance languages.",
+        "We argue that the same method can also be used to make generalizations about selectional properties of prepositions, and, thereby, to license “complex prepositions”.",
+        "Thus, based on empirical data, we assume two uses of prepositions: the raising and the non-raising usages.",
+        "The preposition in in (1 1a) occurs in a non-raising context, while the preposition in in (1 1b) occurs in a raising context.",
+        "(11) a. in einer engen Verbindung mit den Beratern in a close connection with the advisors ‘in a close connection with the advisors’ b. in Verbindung mit diesem Problem in connection with this problem ‘in connection with this problem’ Our assumption is that both strings mit den Beratern in (1 1a) and mit diesem Problem in (1 1b) act as arguments of the noun Verbindung, and are thus determined by this noun with regard to their syntactic properties.",
+        "Furthermore, we assume that the preposition in in (1 1b) in opposition to in in (11a), which sub-categorizes the saturated NP, selects first the noun Verbindung (which does not realize its complement) and then in selects the complement of Verbindung, the PP mit diesem Problem.",
+        "That is, by virtue of an appropriate lexical principle of grammar specifying the valence of prepositions, the complement of the noun Verbindung is raised by in to become the complement of in, and be realized by in syntactically."
+      ]
+    },
+    {
+      "heading": "4 HPSG Formalization",
+      "text": [
+        "Avoiding redundancies in the lexicon, we specify only one lexical entry for in, thereby underspecify-ing information about its argument.",
+        "In Figure 7 we can see the relevant part of the lexical entry of the preposition in in AVM notation.",
+        "The only information about potential arguments of in which this lexical entry provides is that in can take only one argument, and this argument has to be a noun.",
+        "Here, information about the valence properties neither of that noun nor of the preposition in will be specified.",
+        "The syntactic selection properties of in are licensed by a lexical constraint on the mapping of the elements of the ARG-ST list to the valence lists.",
+        "For prepositions, the principle on mapping of the elements of the ARG-ST list to the valence lists is traditionally assumed to have the form as in Figure 8.",
+        "That is, the ARG-ST value is assumed to be identical with the COMPS value.",
+        "In order to facilitate prepositions to subcategorize nouns which are complement-unsaturated, and then select the complements of those nouns, the above principle has to be reformulated in the way shown in Figure 9.",
+        "Here, the list of complements syntactically selected by a preposition is a concatenation of its own ARG-ST list and the list of complements of its argument.4 It has to be mentioned that the raising of more than one nominal complement result in ungrammatical constructions like those in (12).",
+        "(12) a.",
+        "*in [Verbindung] [der Regierung] in connection the government [mit diesem Problem] with this problem To avoid this problem, we have restricted the ARG-ST value of prepositions to the lists containing either one saturated element, or to the lists containing one element with a singleton COMPS list.",
+        "Additionally, we have specified the LEx value of the second disjunct to be with the idea of marking objects that have realized none of their complements.",
+        "This restriction rules out the selection of relational nouns that have already realized one of their complements (cf. 13).",
+        "The structure in Figure 10 exemplifies the interaction of the above assumptions in the licensing of a PP headed by a raising preposition.",
+        "Due to the ARG-ST Mapping Lexical Principle for Prepositions in Figure 9, the preposition in, which takes one nominal argument with one unrealized complement can be licensed.",
+        "Thus, the syntactic and semantic properties of that complement are determined not by the preposition, but by the noun.",
+        "Thereby, ungrammatical PPs such as those in (9) can be blocked.",
+        "Both the noun and its unrealized complement are mapped to the COMPS list of in and, according to the constraints on the head-complement-structures for prepositions, they are syntactically selected by in.",
+        "The first complement that in selects is the noun.",
+        "By virtue of selectional requirements of restrictive adjectives as well as prepositions modifying nouns, that are specified as combining with complement-saturated nouns only, the modifying of complement-unsaturated nouns is blocked.",
+        "The same restriction holds for determiners and quantifiers in German.",
+        "These constraints, existing in the grammar independently of the principles on the CPs syntax, explain the apparent lexical fixedness of the P N sequences (cf. (6a) and (6b)) without additional stipulations.",
+        "Further on, the preposition in selects the complement of the noun as its own complement, forming a PP.",
+        "Exactly the same lexical entry for preposition in and the same set of principles license PPs headed by non-raising prepositions such as the PP in einer engen Verbindung mit den Beratern (‘in close connection with the advisers’)."
+      ]
+    },
+    {
+      "heading": "6 Summary and Outlook",
+      "text": [
+        "In this paper, syntactic aspects of CPs in German have been investigated.",
+        "We have thereby seen that the previous approaches to this phenomenon are highly problematic.",
+        "We then proposed an HPSG analysis based on the raising mechanism assuming prepositions to be able to raise complements of their arguments.",
+        "Underspecifying valence information within lexical entries of prepositions and applying appropriate lexical constraints, the presented theory offers a non-redundant description of linguistic facts about both the raising and non-raising prepositions.",
+        "The proposed analysis entails a technique which is already well established in the HPSG-based studies.",
+        "We have shown for instance that there are parallels between the raising analysis proposed here for CPs and the raising analysis of German verbal complexes as proposed in (Hinrichs and Nakazawa, 1989).5 In processing systems, an implementation of the idea of raising as presented and formalized in Section Four has already proved to be computationally tractable.",
+        "For instance, there is a large grammar fragment of German developed at the Seminar für Sprachwissenschaft at the University of Tübingen, that has been exhaustively implemented by using a new grammar implementation software TRALE.6 The fragment includes among other phenomena the",
+        "partial fronting theory of (De Kuthy and Meurers, 2001), that is based on the idea of raising.",
+        "Testing and evaluating this analysis using the TRALE system has provided satisfactory results.",
+        "It has to be emphasized that the theory presented in this paper focuses on syntactic aspects of CPs, dealing with problems of constituency and lexical and syntactical selection within P N P NP sequences.",
+        "However, a further module should also be elaborated that account for generalizations about semantic aspects."
+      ]
+    },
+    {
+      "heading": "Acknowledgments",
+      "text": [
+        "I would like to thank Manfred Sailer, Frank Richter, and the anonymous reviewers of the ACL-2003 Workshop on Multiword Expressions: Analysis, Acquisition and Treatment in Sapporo for their interesting comments on the issue presented in this paper and Carmella Payne for help with English."
+      ]
+    }
+  ]
+}

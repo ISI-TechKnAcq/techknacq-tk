@@ -1,0 +1,146 @@
+{
+  "info": {
+    "authors": [
+      "Jesús Giménez",
+      "Lluís Màrquez"
+    ],
+    "book": "Workshop on Statistical Machine Translation",
+    "id": "acl-W06-3126",
+    "title": "The LDV-COMBO System for SMT",
+    "url": "https://aclweb.org/anthology/W06-3126",
+    "year": 2006
+  },
+  "references": [
+    "acl-J03-1002",
+    "acl-J93-2003",
+    "acl-N03-2021",
+    "acl-P01-1067",
+    "acl-P03-1011",
+    "acl-P04-1077",
+    "acl-P05-1066",
+    "acl-W03-1002",
+    "acl-W05-0826",
+    "acl-W05-0909"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "We describe the LDV-COMBO system presented at the Shared Task.",
+        "Our approach explores the possibility of working with alignments at different levels of abstraction using different degrees of linguistic analysis from the lexical to the shallow syntactic level.",
+        "Translation models are built on top of combinations of these alignments.",
+        "We present results for the Spanish-to-English and English-to-Spanish tasks.",
+        "We show that liniguistic information may be helpful, specially when the target language has a rich morphology."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "The main motivation behind our work is to introduce linguistic information, other than lexical units, to the process of building word and phrase alignments.",
+        "In the last years, many efforts have been devoted to this matter (Yamada and Knight, 2001; Gildea, 2003).",
+        "Following our previous work (Gim´enez and M`arquez, 2005), we use shallow syntactic information to generate more precise alignments.",
+        "Far from full syntactic complexity, we suggest going back to the simpler alignment methods first described by IBM (1993).",
+        "Our approach exploits the possibility of working with alignments at two different levels of granularity, lexical (words) and shallow parsing (chunks).",
+        "Apart from redefining the scope of the alignment unit, we may use different linguistic data views.",
+        "We enrich tokens with features further than lexical such as part-of-speech (PoS), lemma, and chunk IOB label.",
+        "For instance, suppose the case illustrated in Figure 1 where the lexical item ‘plays’ is seen acting as a verb and as a noun.",
+        "Considering these two words, with the same lexical realization, as a single token adds noise to the word alignment process.",
+        "Representing this information, by means of linguistic data views, as ‘playsV BZ ’ and ‘playsNNS ’ would allow us to distinguish between the two cases.",
+        "Ideally, one would wish to have still deeper information, moving through syntax onto semantics, such as word senses.",
+        "Therefore, it would be possible to distinguish for instance between two realizations of ‘plays’ with different meanings: ‘hePRP playsVBG guitarNN’ and ‘hePRP playsVBG footballNN’.",
+        "Of course, there is a natural trade-off between the use of linguistic data views and data sparsity.",
+        "Fortunately, we hava data enough so that statistical parameter estimation remains reliable.",
+        "The approach which is closest to ours is that by Schafer and Yarowsky (2003) who suggested a combination of models based on shallow syntactic analysis (part-of-speech tagging and phrase chunking).",
+        "They followed a backoff strategy in the application of their models.",
+        "Decoding was based on Finite State Automata.",
+        "Although no significant improvement in MT quality was reported, results were promising taking into account the short time spent in the development of the linguistic tools utilized.",
+        "Our system is further described in Section 2.",
+        "Results are reported in Section 3.",
+        "Conclusions and further work are briefly outlined in Section 4."
+      ]
+    },
+    {
+      "heading": "2 System Description",
+      "text": [
+        "The LDV-COMBO system follows the SMT architecture suggested by the workshop organizers.",
+        "We use the Pharaoh beam-search decoder (Koehn, 2004).",
+        "First, training data are linguistically annotated.",
+        "In order to achieve robustness the same tools have been used to linguistically annotate both languages.",
+        "The SVMTool1 has been used for PoS-tagging (Gim´enez and M`arquez, 2004).",
+        "The Freeling2 package (Car-reras et al., 2004) has been used for lemmatizing.",
+        "Finally, the Phreco software (Carreras et al., 2005) has been used for shallow parsing.",
+        "In this paper we focus on data views at the word level.",
+        "6 different data views have been built: (W) word, (L) lemma, (WP) word and PoS, (WC) word and chunk IOB label, (WPC) word, PoS and chunk IOB label, (LC) lemma and chunk IOB label.",
+        "Then, running GIZA++ (Och and Ney, 2003), we obtain token alignments for each of the data views.",
+        "Combined phrase-based translation models are built on top of the Viterbi alignments output by GIZA+ +.",
+        "Phrase extraction is performed following the phrase-extract algorithm depicted by Och (2002).",
+        "We do not apply any heuristic refinement.",
+        "We work with phrases up to 5 tokens.",
+        "Phrase pairs appearing only once have been discarded.",
+        "Scoring is performed by relative frequency.",
+        "No smoothing is applied.",
+        "In this paper we focus on the global phrase extraction (GPHEX) method described by Gim´enez",
+        "and M`arquez (2005).",
+        "We build a single translation model from the union of alignments from the 6 data views described above.",
+        "This model must match the input format.",
+        "For instance, if the input is annotated with word and PoS (WP), so must be the translation model.",
+        "Therefore either the input must be enriched with linguistic annotation or translation models must be post-processed in order to remove the additional linguistic annotation.",
+        "We did not observe significant differences in either alternative.",
+        "Therefore, we simply adapted translations models to work under the assumption of unannotated inputs (W)."
+      ]
+    },
+    {
+      "heading": "3 Experimental Work",
+      "text": []
+    },
+    {
+      "heading": "3.1 Setting",
+      "text": [
+        "We have used only the data sets and language model provided by the organization.",
+        "For evaluation we have selected a set of 8 metric variants corresponding to seven different families: BLEU (n = 4) (Pa-pineni et al., 2001), NIST (n = 5) (Lin and Hovy, 2002), GTM Fl-measure (e = 1, 2) (Melamed et al., 2003), 1-WER (Nießen et al., 2000), 1-PER (Leusch et al., 2003), ROUGE (ROUGE-S*) (Lin and Och, 2004) and METEOR3 (Banerjee and Lavie, 2005).",
+        "Optimization of the decoding parameters (Atm, Alm, Aw) is performed by means of the Downhill Simplex Method in Multidimensions (William H. Press and Flannery, 2002) over the BLEU metric."
+      ]
+    },
+    {
+      "heading": "3.2 Results",
+      "text": [
+        "Table 1 presents MT results for the test set both for the Spanish-to-English and English-to-Spanish tasks.",
+        "The variant of the LDV-COMBO system described in Section 2 is compared to a baseline variant based only on lexical items.",
+        "In the case of Spanish-to-English performance varies from metric to metric.",
+        "Therefore, an open issue is which metric should be trusted.",
+        "In any case, the differences are minor.",
+        "However, in the case of English-to-Spanish all metrics but ‘1-WER’ agree to indicate that the LDV-COMBO system significantly outperforms the baseline.",
+        "We suspect this may be due to the richer morphology of Spanish.",
+        "In order to test this hypothesis we performed an error analysys at the sentence level based on the GTM F-measure.",
+        "We found many cases where the LDV-COMBO system outperforms the baseline system by choosing a more accurate translation.",
+        "For instance, in Table 2 we may see a fragment of the case of sentence 2176 in the test set.",
+        "A better translation for “consider” is provided, “pensemos”, which corresponds to the right verb and verbal form (instead of “estiman” ).",
+        "By inspecting translation models we confirmed the better adjustment of probabilities.",
+        "Interestingly, LDV-COMBO translation models are between 30% and 40% smaller than the models based on lexical items alone.",
+        "The reason is that we are working with the union of alignments from different data views, thus adding more constraints into the phrase extraction step.",
+        "Fewer phrase pairs are extracted, and as a consequence we are also effectively eliminating noise from translation models."
+      ]
+    },
+    {
+      "heading": "4 Conclusions and Further Work",
+      "text": [
+        "Many researchers remain sceptical about the usefulness of linguistic information in SMT, because, except in a couple of cases (Charniak et al., 2003; Collins et al., 2005), little success has been reported.",
+        "In this work we have shown that liniguistic information may be helpful, specially when the target language has a rich morphology (e.g. Spanish).",
+        "Moreover, it has often been argued that linguistic information does not yield significant improvements in MT quality, because (i) linguistic processors introduce many errors and (ii) the BLEU score is not specially sensitive to the grammaticality of MT output.",
+        "We have minimized the impact of the first argument by using highly accurate tools for both languages.",
+        "In order to solve the second problem more sophisticated metrics are required.",
+        "Current MT evaluation metrics fail to capture many aspects of MT",
+        "quality that characterize human translations with respect to those produced by MT systems.",
+        "We are devoting most of our efforts to the deployment of a new MT evaluation framework which allows to combine several similarity metrics into a single measure of quality (Gim´enez and Amig´o, 2006).",
+        "We also leave for further work the experimentation of new data views such as word senses and semantic roles, as well as their natural porting from the alignment step to phrase extraction and decoding."
+      ]
+    },
+    {
+      "heading": "Acknowledgements",
+      "text": [
+        "This research has been funded by the Spanish Ministry of Science and Technology (ALIADO TIC2002-04447-C02).",
+        "Authors are thankful to Pa-trik Lambert for providing us with the implementation of the Simplex Method used for tuning."
+      ]
+    }
+  ]
+}

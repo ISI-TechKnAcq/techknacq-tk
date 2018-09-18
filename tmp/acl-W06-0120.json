@@ -1,0 +1,204 @@
+{
+  "info": {
+    "authors": [
+      "Richard Tzong-Han Tsai",
+      "Hsieh-Chuan Hung",
+      "Cheng-Lung Sung",
+      "Hong-Jie Dai",
+      "Wen-Lian Hsu"
+    ],
+    "book": "SIGHAN Workshop on Chinese Language Processing",
+    "id": "acl-W06-0120",
+    "title": "On Closed Task of Chinese Word Segmentation: An Improved CRF Model Coupled With Character Clustering and Automatically Generated Template Matching",
+    "url": "https://aclweb.org/anthology/W06-0120",
+    "year": 2006
+  },
+  "references": [],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "This paper addresses two major problems in closed task of Chinese word segmentation (CWS): tagging sentences interspersed with non-Chinese words, and long named entity (NE) identification.",
+        "To resolve the former, we apply K-means clustering to identify non-Chinese characters, and then adopt a two-tagger architecture: one for Chinese text and the other for non-Chinese text.",
+        "For the latter problem, we apply postprocessing to our CWS output using automatically generated templates.",
+        "The experiment results show that, when non-Chinese characters are sparse in the training corpus, our two-tagger method significantly improves the segmentation of sentences containing non-Chinese words.",
+        "Identification of long NEs and long words is also enhanced by template-based postprocessing.",
+        "In the closed task of SIGHAN 2006 CWS, our system achieved F-scores of 0.957, 0.972, and 0.955 on the CKIP, CTU, and MSR corpora respectively."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "Unlike Western languages, Chinese does not have explicit word delimiters.",
+        "Therefore, word segmentation (CWS) is essential for Chinese text processing or indexing.",
+        "There are two main problems in the closed CWS task.",
+        "The first is to identify and segment non-Chinese word sequences in Chinese documents, especially in a closed task (described later).",
+        "A good CWS system should be able to handle Chinese texts peppered with non-Chinese words or phrases.",
+        "Since non-Chinese language morphologies are quite different from that of Chinese, our approach must depend on how many non-Chinese words appear, whether they are connected with each other, and whether they are interleaved with Chinese words.",
+        "If we can distinguish non-Chinese characters automatically and apply different strategies, the segmentation performance can be improved.",
+        "The second problem in closed CWS is to correctly identify longer NEs.",
+        "Most ML-based CWS systems use a five-character context window to determine the current character’s tag.",
+        "In the majority of cases, given the constraints of computational resources, this compromise is acceptable.",
+        "However, limited by the window size, these systems often handle long words poorly.",
+        "In this paper, our goal is to construct a general CWS system that can deal with the above problems.",
+        "We adopt CRF as our ML model."
+      ]
+    },
+    {
+      "heading": "2 Chinese Word Segmentation System",
+      "text": []
+    },
+    {
+      "heading": "2.1 Conditional Random Fields",
+      "text": [
+        "Conditional random fields (CRFs) are undirected graphical models trained to maximize a conditional probability (Lafferty et al., 2001).",
+        "A linear-chain CRF with parameters Λ={λ1, A2, ...} defines a conditional probability for a state sequence y = y1 ...yT , given that an input sequence x = x1 ...xT is",
+        "where Z,, is the normalization factor that makes the probability of all state sequences sum to one; fk(yt-1, yt, x, t) is often a binary-valued feature function and Ak is its weight.",
+        "The feature",
+        "Proceedings of the Fifth SIGHAN Workshop on Chinese Language Processing, pages 134–137, Sydney, July 2006. c�2006 Association for Computational Linguistics functions can measure any aspect of a state transition, yt-1→yt, and the entire observation sequence, x, centered at the current time step, t. For example, one feature function might have the value 1 when yt-1 is the state B, yt is the state I, and xt is the character “国”."
+      ]
+    },
+    {
+      "heading": "2.2 Character Clustering",
+      "text": [
+        "In many cases, Chinese sentences may be interspersed with non-Chinese words.",
+        "In a closed task, there is no way of knowing how many languages there are in a given text.",
+        "Our solution is to apply a clustering algorithm to find homogeneous characters belonging to the same character clusters.",
+        "One general rule we adopted is that a language’s characters tend to appear together in tokens.",
+        "In addition, character clusters exhibit certain distinct properties.",
+        "The first property is that the order of characters in some pairs can be interchanged.",
+        "This is referred to as exchange-ability.",
+        "The second property is that some characters, such as lowercase characters, can appear in any position of a word; while others, such as uppercase characters, cannot.",
+        "This is referred to as location independence.",
+        "According to the general rule, we can calculate the pairing frequency of characters in tokens by checking all tokens in the corpus.",
+        "Assuming the alphabet is E, we first need to represent each character as a |Σ|- dimensional vector.",
+        "For each character ci, we use v; to represent its ;-dimension value, which is calculated as follows:",
+        "where fi; denotes the frequency with which ci and c; appear in the same word when ci’s position precedes that of c;.",
+        "We take the minimum value of fi; and f;i because even when ci and c; have a high co-occurrence frequency, if either fi; or f;i is low, then one order does not occur often, so v;’s value will be low.",
+        "We use two parameters to normalize v; within the range 0 to 1; a is used to enlarge the gap between non-zero and zero frequencies, and y is used to weaken the influence of very high frequencies.",
+        "Next, we apply the K-means algorithm to generate candidate cluster sets composed of K clusters (Hartigan et al., 1979).",
+        "Different K’s, a’s, and y’s are used to generate possible character cluster sets.",
+        "Our K-means algorithm uses the cosine distance.",
+        "After obtaining the K clusters, we need to select the N1 best character clusters among them.",
+        "Assuming the angle between the cluster centroid vector and (1, 1, ..., 1) is 0, the cluster with the largest cosine 0 will be removed.",
+        "This is because characters whose co-occurrence frequencies are nearly all zero will be transformed into vectors very close to (a, a, ... , a); thus, their centroids will also be very close to (a, a, ... , a), leading to unreasonable clustering results.",
+        "After removing these two types of clusters, for each character c in a cluster M, we calculate the inverse relative distance (IRDist) of c using (3):",
+        "where mi stands for the centroid of cluster Mi, and m stands for the centroid of M. We then calculate the average inverse distance for each cluster M. The N1 best clusters are selected from the original K clusters.",
+        "The above K-means clustering and character cluster selection steps are executed iteratively for each cluster set generated from K-means clustering with different K’s, a’s, and y’s.",
+        "After selecting the N1 best clusters for each cluster set, we pool and rank them according to their inner ratios.",
+        "Each cluster’s inner ratio is calculated by the following formula:",
+        "where co-occurrence(ci, c;) denotes the frequency with which characters ci and c; co-occur in the same word.",
+        "To ensure that we select a balanced mix of clusters, for each character in an incoming cluster M, we use Algorithm 1 to check if the frequency of each character in CUM is greater than a threshold r."
+      ]
+    },
+    {
+      "heading": "Algorithm 1 Balanced Cluster Selection",
+      "text": [
+        "Input: A set of character clusters P= {M1 , .",
+        ".",
+        ".",
+        ", MK} Number of selections N2,",
+        "Output: A set of clusters Q={ M, , .",
+        ".",
+        ".",
+        ", M' N2 }.",
+        "1: C={} 2: sort the clusters in P by their inner ratios; 3: while |C|< =N2 do 4: pick the cluster M that has highest inner ratio; 5: for each character c in M do 6: if the frequency of c in C ∪ M is over threshold z 7: PAP – M; 8: continue; 9 : else",
+        "The above algorithm yields the best N1 clusters in terms of exchangeability.",
+        "Next, we execute the above procedures again to select the best N2 clusters based on their location independence and exchangeability.",
+        "However, for each character ci, we use vj to denote the value of its j-th dimension.",
+        "We calculate vj as follows: 'vj =α+(1−α)[min(f.,f'ij ,fji,f'ji )]r , (5) where fij stands for the frequency with which ci and cj appear in the same word when ci is the first character; and f’ij stands for the frequency with which ci and cj co-occur in the same word when ci precedes cj but not in the first position.",
+        "We choose the minimum value from fij , f’ij, fji , and f’ji because if ci and cj both appear in the first position of a word and their order is exchangeable, the four frequency values, including the minimum value, will all be large enough.",
+        "Our next goal is to create the best hybrid of the above two cluster sets.",
+        "The set selected for exchangeability is referred to as the EX set, while the set selected for both exchangeability and location independence is referred to as the EL set.",
+        "We create a development set and use the best first strategy to build the optimal cluster set from EX ∪ EL.",
+        "The EX and EL for the CTU corpus are shown in Table 1."
+      ]
+    },
+    {
+      "heading": "2.3 Handling Non-Chinese Words",
+      "text": [
+        "Non-Chinese characters suffer from a serious data sparseness problem, since their frequencies are much lower than those of Chinese characters.",
+        "In bigrams containing at least one non-Chinese character (referred as non-Chinese bigrams), the problem is more serious.",
+        "Take the phrase “約莫 20 歲” (about 20 years old) for example.",
+        "“2” is usually predicted as I, (i.e., “約莫” is connected with “2”) resulting in incorrect segmentation, because the frequency of “2” in the I class is much higher than that of “2” in the B class, even though the feature C-2C-1=”約莫” has a high weight for assigning “2” to the B class.",
+        "Traditional approaches to CWS only use one general tagger (referred as the G tagger) for segmentation.",
+        "In our system, we use two CWS taggers.",
+        "One is a general tagger, similar to the traditional approaches; the other is a specialized tagger designed to deal with non-Chinese words.",
+        "We refer to the composite tagger (the general tagger plus the specialized tagger) as the GS tagger.",
+        "Here, we refer to all characters in the selected clusters as non-Chinese characters.",
+        "In the development stage, the best-first feature selector determines which clusters will be used.",
+        "Then, we convert each sentence in the training data and test data into a normalized sentence.",
+        "Each non-Chinese character c is replaced by a cluster representative symbol aM, where c is in the cluster M. We refer to the string composed of all aM as F. If the length of F is more than that of W, it will be shortened to W. The normalized sentence is then placed in one file, and the non-Chinese character sequence is placed in another.",
+        "Next, we use the normalized training and test file for the general tagger, and the non-Chinese sequence training and test file for the specialized tagger.",
+        "Finally, the results of these two taggers are combined.",
+        "The advantage of this approach is that it resolves the data sparseness problem in non-Chinese bigrams.",
+        "Consider the previous example in which a stands for the numeral cluster.",
+        "Since there is a phrase “約莫 8 年” in the training data, C-1C0= “莫 8” is still an unknown bigram using the G tagger.",
+        "By using the GS tagger, however, “約莫20 歲” and “約莫//yy8 年”will be converted as “約莫aa 歲” and “fi J莫a 年”, respectively.",
+        "Therefore, the bigram feature C-1C0=“ 莫 a” is no longer unknown.",
+        "Also, since a in “ 莫 a” is tagged as B, (i.e., “莫” and “a” are separated), “莫” and “a” will be separated in “約莫 aa歲”."
+      ]
+    },
+    {
+      "heading": "2.4 Generating and Applying Templates Template Generation",
+      "text": [
+        "We first extract all possible word candidates from the training set.",
+        "Given a minimum word length L, we extract all words whose length is greater than or equal to L, after which we align all word pairs.",
+        "For each pair, if more than fifty",
+        "percent of the characters are identical, a template will be generated to match both words in the pair."
+      ]
+    },
+    {
+      "heading": "Template Filtering",
+      "text": [
+        "We have two criteria for filtering the extracted templates.",
+        "First, we test the matching accuracy of each template t on the development set.",
+        "This is calculated by the following formula:"
+      ]
+    },
+    {
+      "heading": "3.2 Results",
+      "text": [
+        "Table 3 lists the best combination of n-gram features used in the G tagger.",
+        "In our system, templates whose accuracy is lower than the threshold τ1 are discarded.",
+        "For the remaining templates, we apply two different strategies.",
+        "According to our observations of the development set, most templates whose accuracy is less than r2 are ineffective.",
+        "To refine such templates, we employ the character class information generated by character clustering to impose a class limitation on certain template slots.",
+        "This regulates the potential input and improves the precision.",
+        "Consider a template with one or more wildcard slots.",
+        "If any string matched with these wildcard slots contains characters in different clusters, this template is also discarded."
+      ]
+    },
+    {
+      "heading": "Template-Based Post-Processing (TBPP)",
+      "text": [
+        "After the generated templates have been filtered, they are used to match our CWS output and check if the matched tokens can be combined into complete words.",
+        "If a template’s accuracy is greater than r2, then all separators within the matched strings will be eliminated; otherwise, for a template t with accuracy between τ1 and r2, we eliminate all separators in its matched string if no substring matched with t’s wildcard slots contains characters in different clusters.",
+        "Resultant words of less than three characters in length are discarded because CRF performs well with such words."
+      ]
+    },
+    {
+      "heading": "3 Experiment",
+      "text": []
+    },
+    {
+      "heading": "3.1 Dataset",
+      "text": [
+        "We use the three larger corpora in SIGHAN Bakeoff 2006: a Simplified Chinese corpus provided by Microsoft Research Beijing, and two Traditional Chinese corpora provided by Academia Sinica in Taiwan and the City University of Hong Kong respectively.",
+        "Details of each corpus are listed in Table 2.",
+        "Table 4 compares the baseline G tagger and the enhanced GST tagger.",
+        "We observe that the GST tagger outperforms the G tagger on all three corpora.",
+        "Conf R P F ROOV RIV CKIP-g 0.958 0.949 0.954 0.690 0.969 CKIP-gst 0.961 0.953 0.957 0.658 0.974 CTU-g 0.966 0.967 0.966 0.786 0.973 CTU-gst 0.973 0.972 0.972 0.787 0.981 MSR-g 0.949 0.957 0.953 0.673 0.959 MSR-gst 0.953 0.956 0.955 0.574 0.966 Table 4 Performance Comparison of the G Tagger and the GST Tagger"
+      ]
+    },
+    {
+      "heading": "4 Conclusion",
+      "text": [
+        "The contribution of this paper is two fold.",
+        "First, we successfully apply the K-means algorithm to character clustering and develop several cluster set selection algorithms for our GS tagger.",
+        "This significantly improves the handling of sentences containing non-Chinese words as well as the overall performance.",
+        "Second, we develop a postprocessing method that compensates for the weakness of ML-based CWS on longer words."
+      ]
+    }
+  ]
+}

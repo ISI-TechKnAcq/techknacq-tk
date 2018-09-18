@@ -1,0 +1,157 @@
+{
+  "info": {
+    "authors": [
+      "Junko Hosaka",
+      "Judice Koh",
+      "Akihiko Konagaya"
+    ],
+    "book": "Conference of the European Association for Computational Linguistics",
+    "id": "acl-E03-1013",
+    "title": "Effect of Utilizing Terminology on Extraction of Protein-Protein Interaction Information from Biomedical Literature",
+    "url": "https://aclweb.org/anthology/E03-1013",
+    "year": 2003
+  },
+  "references": [
+    "acl-J97-1002"
+  ],
+  "sections": [
+    {
+      "heading": "Abstract",
+      "text": [
+        "As the amount of on-line scientific literature in the biomedical domain increases, automatic processing has become a promising approach for accelerating research.",
+        "We are applying syntactic parsing trained on the general domain to identify protein-protein interactions.",
+        "One of the main difficulties obstructing the use of language processing is the prevalence of specialized terminology.",
+        "Accordingly, we have created a specialized dictionary by compiling on-line glossaries, and have applied it for information extraction.",
+        "We conducted preliminary experiments on one hundred sentences, and compared the extraction performance when (a) using only a general dictionary and (b) using this plus our specialized dictionary.",
+        "Contrary to our expectation, using only the general dictionary resulted in better performance (recall 93.0%, precision 91.0%) than with the terminology-based approach (recall 92.9%, precision 89.6%)."
+      ]
+    },
+    {
+      "heading": "1 Introduction",
+      "text": [
+        "With the increasing amount of on-line literature in the biomedical domain, research can be greatly accelerated by extracting information automatically from text resources.",
+        "Approaches to automatic extraction have used co-occurrence (Jenssen, 2001), full parsing (Yakushiji, 2001), manually built templates (Blaschke, 2001), and a natural language system developed for a neighboring domain, with modifications e.g. regarding semantic categories (Friedman, 2001).",
+        "In order to extract information such as protein-protein interactions from scientific text, it is insufficient to check only co-occurrences.",
+        "Constructing a satisfactory set of rules for full parser is quite complex and the processing requires a tremendous amount of calculation.",
+        "One of the main difficulties in using language processing in the biomedical domain is the prevalence of specialized terminology, including protein names.",
+        "It is impossible to obtain a complete list of protein names in the current rapidly developing circumstances: notations vary, and new names are steadily coined.",
+        "To bypass these problems, we start with words expressing interactions, and then seek the elements which are actually interacting, based on the syntactic structure.",
+        "These elements may be the proteins which interest us.",
+        "We are using the Apple Pie Parser ver.5.9, a syntactic parser trained on the Penn Tree Bank (PTB) (recall 77.45%, precision 75.58%)."
+      ]
+    },
+    {
+      "heading": "2 Data Preparation",
+      "text": [
+        "We restricted test sentences to syntactically well-formed ones, so that we could examine the adequacy of our syntactically-based extraction rules.",
+        "We assumed that a general-purpose dictionary (GPD) obtained from the PTB would be insufficient for handling biomedical literature.",
+        "Therefore, we combined on-line glossaries to construct our own terminology dictionary, which we call the Medical Library Dictionary (MLD).",
+        "http://www.es ■nvu.edu/cs/proiccts/protcus/app/ We received from a biologist a list of words denoting interactions and 1000 abstracts retrieved from Medline using the PubMed.",
+        "These abstracts are related to Interleukin-6, a secreted protein whose main function is to mediate inflammatory response in the body.",
+        "Medline is the bibliographic database of the National Library of Medicine (NLM) in the United States.",
+        "PubMed is an NLM service which provides access to Medline and additional life science journals.",
+        "Out of the word list, we focused on \"activate\", as this can effectively express the interaction of two elements.",
+        "We first ran the syntactic parser on the sentences containing the string \"activat*\", then picked only sentences that contain the verbal \"activat*\".",
+        "There were approximately 1000 such sentences.",
+        "Second, we consulted the sentences annotated by two professional annotators.",
+        "They marked phrases containing verbal \"activat*\" and the corresponding agents and recipients.",
+        "They also evaluated the parsing results related to the phrases.",
+        "We then selected 100 sentences randomly from the sentences to which both annotators gave the same marking and same evaluation.",
+        "To determine the reliability of the annotators' judgment and the difficulty of the task, we calculated the KAPPA coefficient of their responses, and found it to be 0.54 (Hosaka and Umetsu, 2002).",
+        "This degree of agreement can be interpreted as \"moderate\" (Carletta, 1997).",
+        "We assumed that biological, chemical, and medical terminology is used in our domain.",
+        "Therefore, the MLD was compiled from four glossaries in these areas: Biochemical Glossary (BG), Can-cernet Dictionary (CD), Medical Chemistry Dictionary (MCD) and Life Science Dictionary (LSD).",
+        "In addition to the MLD, we used the Medical Subject Headings (MeSH).",
+        "MeSH is a controlled vocabulary created by the NLM.",
+        "We used the C chapter (Diseases).",
+        "The dictionary size is given in Table 1.",
+        "The number of terms for 'httn://www, fhsu.edu/chemistrv/twiese/glossarv/biochemg1ossarv.htm ' http://www.cancer.gov/dictionarv/ ' http://www.chem.qmw.ac.uk/iupac/medchem/ * http://www.nlm.nih.gov/mcsh/mcshhomc.html MeSH represents unique terms, and includes synonyms as well as chemical names: The MLD contained 32,698 unique terms and the GPD 88,707 words.",
+        "We then removed MLD terms which already were listed in the GPD.",
+        "This removal resulted in a reduced MLD consisting of 25,772 terms (uniMLD).",
+        "In addition, there were 401 duplicated terms found in both the MeSH and the MLD.",
+        "In this case, we retained the words in the MLD, so that the number of MeSH terms decreased to 300,263 (uniMeSH).",
+        "For the experiment, we used the combination of uniMLD and uniMeSH (MLD-M).",
+        "When we used both GPD and MLD-M, we called this combination MLD+.",
+        "Table 2 summarizes the dictionary sizes: Among the four glossaries, only the LSD had part of speech (POS), since it was a bilingual resource.",
+        "The MeSH had only nouns.",
+        "In the other three glossaries, the POS has not been defined.",
+        "Our parser included out-of-vocabulary handling.",
+        "We supposed, however, that appropriate POS would raise the performance.",
+        "Therefore, we assigned POS to these entries semi-automatically."
+      ]
+    },
+    {
+      "heading": "3 Extraction Rules",
+      "text": [
+        "We manually defined extraction rules for active and passive sentences.",
+        "We converted the parsing output into XML format, and then applied the rules.",
+        "The following example illustrates the procedure.",
+        "The parser can print the parsing results in several ways, with or without POS.",
+        "Our extraction rules do specify POS; however, for simplicity, we suppress them in the example below.",
+        "• Find a VP \"activât*\" as a starting word.",
+        "• Extract the highest VP containing \"activât*\" up to the point where a PP headed by \"by\" is encountered.",
+        "\"can be activated\" \"activât*\" phrase.• Find the nearest NP/NPL to the left of the"
+      ]
+    },
+    {
+      "heading": "4 Preliminary Evaluation",
+      "text": [
+        "We applied our extraction rules to two sets consisting of the parsing outputs from 100 sentences: parsing with the GPD and with the MLD+.",
+        "To measure the extraction performance, we prepared a gold standard: a biologist marked phrases containing verbal \"activât*\" and its corresponding interacting entities.",
+        "We regarded system extractions as correct if they contained the marked phrases.",
+        "The matrix shown in Table 3 defines three combinations of gold standard and system extraction results, A, B, and C: We measured our system's recall and precision rates shown in Table 4 as follows: We found that it is most difficult to extract an Agent.",
+        "For this task only, use of our MLD+ improved the system's performance.",
+        "For other phrases, however, the system performed slightly better when the GDP alone was used."
+      ]
+    },
+    {
+      "heading": "5 Effect of Specialized Terminology",
+      "text": [
+        "Our 100 sentences contained about 2,500 words.",
+        "From the MLD-M, 236 terms (uniMeSH 48, un-iMLD 188) were identified.",
+        "That is, specialized terms contributed about 9 percent of all words.",
+        "If we consider that the uniMLD is about one-third the size of the GPD, as shown in Table 2, the actual hit rate for terms turned out to be rather low.",
+        "As shown in Table 4, use of a terminology dictionary does not always raise the extraction performance.",
+        "We analyzed sentences from which the information was correctly extracted when only the GPD was used but erroneously extracted when the MLD+ was used.",
+        "There were six sentences with nine such cases.",
+        "We found the following three reasons for negative effects:",
+        "1.",
+        "A POS was incorrectly assigned for the context (three cases) 2.",
+        "A term was correctly identified, but a multi-word building failed (two cases) 3.",
+        "A POS was correctly assigned, but a phrase building failed (four cases)",
+        "Some examples follow.",
+        "In these, the categories were taken from the PTB.",
+        "On the left is the parsing result with the GPD only, and on the right is that with the MLD+:",
+        "In the presence of Tax, both Cdk4 and Cdk6 were activated.",
+        "In, the string \"activated\", which should be a verb, was assigned falsely as an adjective.",
+        "In the LSD, \"activated\" is listed as both POS.",
+        "This suggests that \"activated\" is more often used as an adjective in this context in the general domain.",
+        "We recently found that... PI3K was activated in vitro by direct tyrosine phosphorylation.",
+        "With GPD With MLD+ Furt/ier, tf?e appearance of... suggested that CNF1 activated the Cdc42....",
+        "In Figure 3, \"CNF1\" got the right POS.",
+        "However, the preceding \"that\" is falsely assigned as a determiner.",
+        "Nouns may often be used with determiners in the general domain."
+      ]
+    },
+    {
+      "heading": "6 Discussion and Conclusion",
+      "text": [
+        "In this experiment, information extraction with a general dictionary resulted in slightly better performance than that with specialized dictionary.",
+        "Even if a POS is correctly assigned, parsing can fail if the parser is trained on a different domain.",
+        "To retrain a parser, an annotated corpus is needed, though a construction of such a corpus will be time consuming.",
+        "In the meantime, we believe the best way is to represent domain-specific structures manually through rules.",
+        "We observed cases where a term was correctly recognized but the system failed to identify a multiword-term.",
+        "To cope with this problem, we will further integrate terminology dictionaries, such as the Unified Medical Language System.",
+        "We conducted this experiment with a small set of syntactically well-formed sentences.",
+        "To examine the validity of the result, we are planning further tests with more sentences."
+      ]
+    },
+    {
+      "heading": "Acknowledgement",
+      "text": [
+        "We thank Dr.",
+        "I. Kurochkin for his biomedical advice and Dr. M. Seligman for reading the draft."
+      ]
+    }
+  ]
+}
