@@ -1,0 +1,21 @@
+Comandos Mallet
+
+Toma el archivo del parser, y lo convierte a un archivo del tipo .mallet para poder trabajarlo posteriormente en la confeccion del clasificador
+
+bin/mallet import-file --input entradaMallet.txt --output textos.mallet
+
+Toma el archivo del parser, y lo convierte a un archivo del tipo .mallet para poder trabajarlo posteriormente en la confeccion del clasificador, y ademas elimina las "stopwords"
+
+bin/mallet import-file --input entradaMallet.txt --output textos.mallet --remove-stopwords
+
+Crea el clasificador
+
+bin/mallet train-classifier --input textos.mallet --output-classifier my.classifier 
+
+Crea el clasificador con el 90% de los datos de entrada, y se testea con el 10% restante
+
+bin/mallet train-classifier --input textos.mallet --output-classifier my.classifier --training-portion 0.9.
+
+Clasificar texto desde un archivo externo mediante un .classifier generado con anterioridad
+
+bin/mallet classify-file --input entradaAClasificar.txt --output clasificacion.txt --classifier my.classifier
