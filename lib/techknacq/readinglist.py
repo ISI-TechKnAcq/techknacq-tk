@@ -36,19 +36,24 @@ ADVANCED_DOC_PREFS = [
     'empirical', 'tutorial', 'resource', 'manual', 'survey', 'reference',
     'other'
 ]
-
+#kieubinh analyzes code
 class ReadingList:
+
+    #input: concept graph (json format), query (string)
+    #output: a list of ACL papers
     def __init__(self, cg, query, user_model=None, docs=True):
         self.cg = cg
-
+        #tokenize of query by ' ' or '-' and lower this
         self.query = word_tokenize(' '.join(query).replace('-', ' ').lower())
 
+        #default user model -> beginer
         self.user_model = user_model
         if self.user_model is None:
             self.user_model = {}
             for c in cg.concepts():
                 self.user_model[c] = BEGINNER
 
+        #stemmer query words
         self.stemmer = LancasterStemmer()
         self.query_words = [(x, self.stemmer.stem(x))
                             for x in self.query]
@@ -56,6 +61,7 @@ class ReadingList:
         self.covered_concepts = set()
         self.covered_documents = set()
         self.covered_titles = set()
+        #score match?
         self.relevance = {c: self.score_match(c) for c in cg.concepts()}
         self.rl = []
 
@@ -63,6 +69,8 @@ class ReadingList:
 
         for c, score in sorted(self.relevance.items(), key=lambda x: x[1],
                                reverse=True)[:MAX_MATCHES]:
+            #each concept -> depth-first traveral to find
+            print("matched concept "+c+" with score "+str(score))
             entry = self.traverse(c, score)
             if entry:
                 self.rl.append(entry)
@@ -79,6 +87,8 @@ class ReadingList:
         # 1. Find the most relevant documents for the topic.
 
         docs = self.cg.topic_docs(c)
+
+        print("most relevant documents for the topic "+c+" -> size of docs "+str(len(docs)))
 
         # 2. Stable sort documents by pedagogical role preference:
         #    ped_score = 1.0 * role1 + 0.85 * role2 + 0.7 * role3 +
