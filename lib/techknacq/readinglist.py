@@ -46,7 +46,12 @@ class ReadingList:
         #tokenize of query by ' ' or '-' and lower this
         self.query = word_tokenize(' '.join(query).replace('-', ' ').lower())
 
+<<<<<<< HEAD
         #default user model -> beginer
+=======
+        self.query = word_tokenize(' '.join(query).replace('-', ' ').lower())
+
+>>>>>>> 394a483e98357f42659fd7641090aa4c084bbf01
         self.user_model = user_model
         if self.user_model is None:
             self.user_model = {}
