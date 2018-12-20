@@ -83,7 +83,16 @@ class ConceptGraph:
         return (n for n in self.g if
                 self.g.node[n].get('type', '') == 'document')
 
+    #return docs that cover the the topic with the number of docs <= budget - submodular
+    def topic_coverage_docs(self, topic_id, budget):
+        #G = null
+        edges = []
 
+
+
+        return edges
+
+    #return at least 25 most relevant docs and at most 200 most relevant docs with relevant weights > 0.6
     def topic_docs(self, topic_id, min_docs=25, max_docs=200, threshold=0.6):
         """Return a sorted list of (document_id, weight) pairs for the
         documents that are most relevant to the specified topic_id,

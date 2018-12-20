@@ -77,7 +77,17 @@ class ReadingList:
             entry = self.traverse(c, score)
             if entry:
                 self.rl.append(entry)
-                break
+                #break
+
+        print(len(self.rl))
+
+        # for c, score in sorted(self.relevance.items(), key=lambda x: x[1], reverse=True)[:MAX_MATCHES]:
+        #     print("matched concept " + c + " with score " + str(score))
+        #     entry = self.coverage(c)
+        #     if entry:
+        #         self.rl.append(entry)
+
+
 
 
     def best_docs(self, c, roles=None):
@@ -168,6 +178,9 @@ class ReadingList:
         #
         # Documents to print before any dependencies:
         #
+
+        print("intro-docs : "+str(num_intro_docs)+ " - "+str(len(intro_docs)))
+        print("advanced-docs : "+str(num_advanced_docs)+ " - "+str(len(advanced_docs)))
 
         for doc_id, doc_weight in intro_docs:
             if num_intro_docs == 0:
