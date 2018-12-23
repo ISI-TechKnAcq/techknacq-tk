@@ -151,7 +151,7 @@ class ConceptGraph:
 
 
     def load(self, fname):
-        j = json.load(open(fname))
+        j = json.load(open(fname, encoding="utf8"))
 
         try:
             self.id = j['id']

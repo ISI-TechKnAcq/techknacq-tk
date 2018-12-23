@@ -72,7 +72,7 @@ class TopicDependency:
         """Read the cross-entropy edges from the alledges.tsv output file."""
 
         self.edges = defaultdict(dict)
-        for line in open('data/alledge.tsv'):
+        for line in open('data/alledge.tsv', encoding="utf8"):
             try:
                 tokens = line.strip().split()
                 if tokens[0] == 'sid':
@@ -112,7 +112,7 @@ class TopicDependency:
     def generate_topicgraph(self):
         """Produce the topicgraph.txt file used by techknacq-server."""
 
-        with open('topicgraph.txt', 'w') as fout:
+        with open('topicgraph.txt', 'w', encoding="utf8") as fout:
             fout.write('%d\n' % (len(self.edges)))
             for t1 in self.edges:
                 good_edges = sorted([(y, self.edges[t1][y])
@@ -138,8 +138,8 @@ class TopicDependency:
             a = iter(iterable)
             return zip(a, a)
 
-        with open(fname, 'w') as fout:
-            for line in open(self.model.dtfile):
+        with open(fname, 'w', encoding="utf8") as fout:
+            for line in open(self.model.dtfile, encoding="utf8"):
                 if line[0] == '#':
                     continue
                 elts = line.strip().split()[1:]
@@ -171,13 +171,13 @@ class TopicDependency:
                                       self.model.topic_pairs(t)[:5]]) + '-')
 
         # Generate input file for Infomap.
-        with open(self.prefix + 'infomap.net', 'w') as fout:
+        with open(self.prefix + 'infomap.net', 'w', encoding="utf8") as fout:
             fout.write('*Vertices %d\n' % (len(self.model.topics)))
             for v in range(len(self.model.topics)):
                 fout.write('%d "%s"\n' % (v, keynames[v]))
             out_text = ''
             edge_count = 0
-            for i, line in enumerate(open(self.model.cofile)):
+            for i, line in enumerate(open(self.model.cofile, encoding="utf8")):
                 for j, count in enumerate(re.split('[^0-9]+', line.strip())):
                     if int(count) > 0 and j > i:
                         out_text += '%d %d %s\n' % (i, j, count)
@@ -209,7 +209,7 @@ class TopicDependency:
         print('Building citation network.')
         fname = self.prefix + 'cite.txt'
 
-        with open(fname, 'w') as fout:
+        with open(fname, 'w', encoding="utf8") as fout:
             for doc in self.corpus:
                 try:
                     for ref in doc.references:
@@ -263,7 +263,7 @@ def main(corpusdir, topic_prefix, method, threshold, num_topics):
     if os.path.exists('data/alt-dt.txt'):
         print('Loading alternative document-topic composition.')
         new_dt = [{} for n in range(len(model.topics))]
-        for line in open('data/alt-dt.txt'):
+        for line in open('data/alt-dt.txt', encoding="utf8"):
             elts = line.strip().split('\t')
             tnum = int(elts[0])
             for e in elts[1:]:
