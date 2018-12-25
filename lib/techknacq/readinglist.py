@@ -39,6 +39,8 @@ ADVANCED_DOC_PREFS = [
 #kieubinh analyzes code
 class ReadingList:
 
+    readinglist=[]
+
     #input: concept graph (json format), query (string)
     #output: a list of ACL papers
     def __init__(self, cg, query, user_model=None, docs=True):
@@ -283,6 +285,22 @@ class ReadingList:
         if form == 'html':
             print('</dl>')
 
+    def convert2List(self, rl=None, depth=1):
+        if rl is None:
+            rl = self.rl
+
+        for entry in rl:
+
+            for doc in entry['documents1']:
+                self.readinglist.append(doc)
+
+            self.convert2List(entry['subconcepts'], depth + 1)
+
+            for doc in entry['documents2']:
+                self.readinglist.append(doc)
+
+    def getReadinglist(self):
+        return self.readinglist
 
     def print_doc(self, doc_id, depth, form='text'):
         if form == 'html':
