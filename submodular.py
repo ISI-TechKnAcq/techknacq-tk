@@ -79,9 +79,9 @@ def main(concept_graph, query):
     print(len(summarizedlist))
     for doc in summarizedlist:
         print(doc['id'])
-    #Lambda = 4.0 -> as paper
-    print("#Lambda = 4.0 -> as the paper chosen")
-    Lambda = 4.0
+    #Lambda = 3.0 -> as paper
+    print("#Lambda = 3.0 -> as the paper chosen")
+    Lambda = 3.0
     summarizedlist = greedyAlg(readinglist, Lambda)
     print(len(summarizedlist))
     for doc in summarizedlist:
@@ -109,7 +109,8 @@ def greedyAlg(readinglist, Lambda):
 
 
 def findArgmax(g, u, v, Lambda):
-    bound = mmrCal(g,v, Lambda)
+    #bound = mmrCal(g,v, Lambda)
+    bound = crlCal(g, v, Lambda)
     print("bound: "+str(bound))
     maxF = None
     argmax = None
@@ -118,7 +119,8 @@ def findArgmax(g, u, v, Lambda):
         for x in g:
             t.append(x)
         t.append(doc)
-        ft=mmrCal(t, v, Lambda)
+        #ft=mmrCal(t, v, Lambda)
+        ft=crlCal(t, v, Lambda)
         #print("function mmr calculate: "+str(ft))
         if (maxF==None or maxF<ft):
             maxF=ft
@@ -127,14 +129,56 @@ def findArgmax(g, u, v, Lambda):
     print("find mmr max: " + str(maxF))
     return argmax, maxF-bound
 
+#as paper
 def mmrCal(s,v, Lambda):
     if ConstantValues.SIMILARITY_MEASUE=='title':
         return mmrCal4Title(s, v, Lambda)
     elif ConstantValues.SIMILARITY_MEASUE=='abstract':
         return mmrCal4Abstract(s, v, Lambda)
 
+#concept reading list
+def crlCal(s,v, Lambda):
+    if ConstantValues.SIMILARITY_MEASUE=='title':
+        return crlCal4Title(s, v, Lambda)
+    elif ConstantValues.SIMILARITY_MEASUE=='abstract':
+        return crlCal4Abstract(s, v, Lambda)
+
+def crlCal4Abstract(s, v, Lambda):
+    fcover = 0
+    # print(str(len(s))+' - '+str(len(v)))
+    for doc in s:
+        fcover+=doc['score']
+    fpenalty = 0
+    for doc1 in s:
+        for doc2 in s:
+            if (doc1 != doc2):
+                fpenalty += cosineOf2Text(doc1['title'], doc2['title'])
+    return fcover - Lambda * fpenalty
+
+def crlCal4Title(s, v, Lambda):
+    fcover = 0.0
+    # print(str(len(s))+' - '+str(len(v)))
+    for doc in s:
+        fcover+=doc['score']
+    fpenalty = 0.0
+    count=0
+    for doc1 in s:
+        for doc2 in s:
+            if (doc1 != doc2):
+                abstract1 = ""
+                abstract2 = ""
+                for sentence in doc1['abstract']:
+                    abstract1 += sentence
+                for sentence in doc2['abstract']:
+                    abstract2 += sentence
+                fpenalty += cosineOf2Text(abstract1, abstract2)
+                count+=1
+    if count==0:
+        count=1
+    return fcover - Lambda * (fpenalty/count)
+
 def mmrCal4Abstract(s, v, Lambda):
-    fcut = 0
+    fcover = 0.0
     # print(str(len(s))+' - '+str(len(v)))
     for doc1 in s:
         for doc2 in v:
@@ -147,8 +191,9 @@ def mmrCal4Abstract(s, v, Lambda):
                 for sentence in doc2['abstract']:
                     abstract2+=sentence
                 #print("abstract1 : \n" + abstract1 + " \n abstract2: \n " + abstract2)
-                fcut += cosineOf2Text(abstract1, abstract2)
-    fpenalty = 0
+                fcover += cosineOf2Text(abstract1, abstract2)
+    fpenalty = 0.0
+    count=0
     for doc1 in s:
         for doc2 in s:
             if (doc1 != doc2):
@@ -160,22 +205,25 @@ def mmrCal4Abstract(s, v, Lambda):
                     abstract2 += sentence
                 #print("abstract1 : \n" + abstract1 + " \n abstract2: \n " + abstract2)
                 fpenalty += cosineOf2Text(abstract1, abstract2)
-    return fcut - Lambda * fpenalty
+                count+=1
+    if count==0:
+        count=1
+    return fcover - Lambda * (fpenalty/count)
 
 def mmrCal4Title(s, v, Lambda):
-    fcut=0
+    fcover=0
     #print(str(len(s))+' - '+str(len(v)))
     for doc1 in s:
         for doc2 in v:
             #print(str(doc2['title'])+ " "+str(doc2 in s))
             if (doc2 not in s):
-                fcut+= cosineOf2Text(doc1['title'], doc2['title'])
+                fcover+= cosineOf2Text(doc1['title'], doc2['title'])
     fpenalty = 0
     for doc1 in s:
         for doc2 in s:
             if (doc1 != doc2):
                 fpenalty+= cosineOf2Text(doc1['title'], doc2['title'])
-    return fcut - Lambda * fpenalty
+    return fcover - Lambda * fpenalty
 
 def cosineOf2Text(text1, text2):
     vector1 = text_to_vector(text1)

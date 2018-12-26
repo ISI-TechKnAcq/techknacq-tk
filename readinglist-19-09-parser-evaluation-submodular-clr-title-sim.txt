@@ -1,0 +1,390 @@
+Before Submodular: 
+18
+acl-P88-1031 - {'authors': ['Masaru Tomita'], 'type': 'unknown', 'id': 'acl-P88-1031', 'abstract': ['A general device for handling nondeterminism in stack operations is described.', 'The device, called a Graph-structured Stack can eliminate duplication of operations throughout the nondeterministic processes.', 'This paper then applies the graph-structured stack to various natural language parsing methods, including ATN, LA parsing, categorial grammar and principle-based parsing.', 'The relationship between the graph-structured stack and a chart in chart parsing is also discussed.'], 'url': 'https://aclweb.org/anthology/P88-1031', 'year': 1988, 'book': 'Annual Meeting of the Association for Computational Linguistics', 'title': 'Graph-Structured Stack and Natural Language Parsing', 'score': 0.7512082911136091}
+acl-A00-2033 - {'authors': ['Robert C. Moore'], 'type': 'unknown', 'id': 'acl-A00-2033', 'abstract': ['A long-standing issue regarding algorithms that manipulate context-free grammars (CFGs) in a "topdown" left-to-right fashion is that left recursion can lead to nontermination.', 'An algorithm is known that transforms any CFG into an equivalent non-left-recursive CFG, but the resulting grammars are often too large for practical use.', 'We present a new method for removing left recursion from CFGs that is both theoretically superior to the standard algorithm, and produces very compact non-left-recursive CFGs in practice.'], 'url': 'https://aclweb.org/anthology/A00-2033', 'year': 2000, 'book': 'Applied Natural Language Processing Conference and Meeting of the North American Association for Computational Linguistics', 'title': 'Removing Left Recursion from Context-Free Grammars', 'score': 0.6870728125739042}
+acl-P89-1029 - {'authors': ['Andrew R. Haas'], 'type': 'unknown', 'id': 'acl-P89-1029', 'abstract': ['The offline parsable grammars apparently have enough formal power to describe human language, yet the parsing problem for these grammars is solvable.', 'Unfortunately they exclude grammars that use x-bar theory - and these grammars have strong linguistic justification.', 'We define a more general class of unification grammars, which admits x-bar grammars while preserving the desirable properties of offline parsable grammars.', 'Consider a unification grammar based on term unification.', 'A typical rule has the form to --> ti tn where to is a term of first order logic, and ti...tn are either terms or terminal symbols.', 'Those ti which are terms are called the top-level terms of the rule.', 'Suppose that no top-level term is a variable.', 'Then erasing the arguments of the top-level terms gives a new rule'], 'url': 'https://aclweb.org/anthology/P89-1029', 'year': 1989, 'book': 'Annual Meeting of the Association for Computational Linguistics', 'title': 'A Generalization of the Offline Parsable Grammars', 'score': 0.5964853664965046}
+acl-C02-1066 - {'authors': ['Efrat Jaeger', 'Nissim Francez', 'Shuly Wintner'], 'type': 'unknown', 'id': 'acl-C02-1066', 'abstract': ['Unification grammars are known to be Turing-equivalent; given a grammar and a word , it is undecidable whether .', 'In order to ensure decidability, several constraints on grammars, commonly known as off-line parsability (OLP) were suggested.', 'The recognition problem is decidable for grammars which satisfy OLP.', 'An open question is whether it is decidable if a given grammar satisfies OLP.', 'In this paper we investigate various definitions of OLP, discuss their interrelations and show that some of them are undecidable.'], 'url': 'https://aclweb.org/anthology/C02-1066', 'year': 2002, 'book': 'International Conference on Computational Linguistics', 'title': 'Guaranteeing Parsing Termination of Unification Grammars', 'score': 0.5886567533272893}
+acl-J89-4001 - {'authors': ['Andrew R. Haas'], 'type': 'unknown', 'id': 'acl-J89-4001', 'abstract': ['We describe a table-driven parser for unification grammar that combines bottom-up construction of phrases with top-down filtering.', 'This algorithm works on a class of grammars called depth-bounded grammars, and it is guaranteed to halt for any input string.', 'Unlike many unification parsers, our algorithm works directly on a unification grammarit does not require that we divide the grammar into a context-free "backbone" and a set of feature agreement constraints.', 'We give a detailed proof of correctness.', 'For the case of a pure bottom-up parser, our proof does not rely on the details of unification it works for any pattern-matching technique that satisfies certain simple conditions.'], 'url': 'https://aclweb.org/anthology/J89-4001', 'year': 1989, 'book': 'Computational Linguistics', 'title': 'A Parsing Algorithm for Unification Grammar', 'score': 0.5647626737302678}
+acl-P08-1108 - {'authors': ['Joakim Nivre', 'Ryan McDonald'], 'type': 'unknown', 'id': 'acl-P08-1108', 'abstract': ['Vaxjo University Uppsala University Computer Science Linguistics and Philology SE-35195 Vaxjo SE-75126 Uppsala nivre@msi.vxu.se', 'Google Inc. 76 Ninth Avenue New York, NY 10011', 'Previous studies of data-driven dependency parsing have shown that the distribution of parsing errors are correlated with theoretical properties of the models used for learning and inference.', 'In this paper, we show how these results can be exploited to improve parsing accuracy by integrating a graph-based and a transition-based model.', 'By letting one model generate features for the other, we consistently improve accuracy for both models, resulting in a significant improvement of the state of the art when evaluated on data sets from the CoNLL-X shared task.'], 'url': 'https://aclweb.org/anthology/P08-1108', 'year': 2008, 'book': 'Proceedings of the 9th SIGdial Workshop on Discourse and Dialogue', 'title': 'Integrating Graph-Based and Transition-Based Dependency Parsers', 'score': 0.6786024644449983}
+acl-E09-1034 - {'authors': ['Carlos Gómez-Rodríguez', 'David Weir', 'John Carroll'], 'type': 'unknown', 'id': 'acl-E09-1034', 'abstract': ['Parsing Mildly Non-projective Dependency Structures*', 'Carlos Gomez-Rodriguez David Weir and John Carroll', 'Departamento de Computation Department oflnformatics', 'Universidade da Corutia, Spain University of Sussex, United Kingdom', 'We present parsing algorithms for various mildly non-projective dependency formalisms.', 'In particular, algorithms are presented for: all well-nested structures of gap degree at most 1, with the same complexity as the best existing parsers for constituency formalisms of equivalent generative power; all well-nested structures with gap degree bounded by any constant k; and a new class of structures with gap degree up to k that includes some ill-nested structures.', 'The third case includes all the gap degree k structures in a number of dependency treebanks.'], 'url': 'https://aclweb.org/anthology/E09-1034', 'year': 2009, 'book': 'EACL', 'title': 'Parsing Mildly Non-Projective Dependency Structures', 'score': 0.6828890329374105}
+acl-J11-3004 - {'authors': ['Carlos Gómez-Rodríguez', 'John Carroll', 'David Weir'], 'type': 'unknown', 'id': 'acl-J11-3004', 'abstract': ['Carlos Gomez-Rodriguez*', 'Universidade da Coruna, Spain', 'John Carroll** University of Sussex, UK', 'David Weir" University of Sussex, UK', "We introduce dependency parsing schemata, a formal framework based on Sikkel's parsing schemata for constituency parsers, which can be used to describe, analyze, and compare dependency parsing algorithms.", 'We use this framework to describe several well-known projective and non-projective dependency parsers, build correctness proofs, and establish formal relationships between them.', 'We then use the framework to define new polynomial-time parsing algorithms for various mildly non-projective dependency formalisms, including well-nested structures with their gap degree bounded by a constant k in time O(n+2k), and a new class that includes all gap degree k structures present in several natural language treebanks (which we call mildly ill-nested structures for gap degree k)intime O(n+3k).', 'Finally, we illustrate how the parsing schema framework can be applied to Link Grammar, a dependency-related formalism.'], 'url': 'https://aclweb.org/anthology/J11-3004', 'year': 2011, 'book': 'Computational Linguistics', 'title': 'Dependency Parsing Schemata and Mildly Non-Projective Dependency Parsing', 'score': 0.5591926761269549}
+acl-D11-1117 - {'authors': ['Valentin I. Spitkovsky', 'Hiyan Alshawi', 'Daniel Jurafsky'], 'type': 'unknown', 'id': 'acl-D11-1117', 'abstract': ['We present new training methods that aim to mitigate local optima and slow convergence in unsupervised training by using additional imperfect objectives.', 'In its simplest form, lateen EM alternates between the two objectives of ordinary "soft" and "hard" expectation maximization (EM) algorithms.', 'Switching objectives when stuck can help escape local optima.', 'We find that applying a single such alternation already yields state-of-the-art results for English dependency grammar induction.', 'More elaborate lateen strategies track both objectives, with each validating the moves proposed by the other.', 'Disagreements can signal earlier opportunities to switch or terminate, saving iterations.', 'De-emphasizing fixed points in these ways eliminates some guesswork from tuning EM.', 'An evaluation against a suite of unsupervised dependency parsing tasks, for a variety of languages, showed that lateen strategies significantly speed up training of both EM algorithms, and improve accuracy for hard EM.'], 'url': 'https://aclweb.org/anthology/D11-1117', 'year': 2011, 'book': 'EMNLP', 'title': 'Lateen EM: Unsupervised Training with Multiple Objectives, Applied to Dependency Grammar Induction', 'score': 0.6385078215474692}
+acl-N10-1116 - {'authors': ['Valentin I. Spitkovsky', 'Hiyan Alshawi', 'Daniel Jurafsky'], 'type': 'unknown', 'id': 'acl-N10-1116', 'abstract': ['From Baby Steps to Leapfrog: How "Less is More" in Unsupervised Dependency Parsing*', 'Valentin I. Spitkovsky Hiyan Alshawi', "We present three approaches for unsupervised grammar induction that are sensitive to data complexity and apply them to Klein and Manning's Dependency Model with Valence.", 'The first, Baby Steps, bootstraps itself via iterated learning of increasingly longer sentences and requires no initialization.', "This method substantially exceeds Klein and Manning's published scores and achieves 39.4% accuracy on Section 23 (all sentences) of the Wall Street Journal corpus.", 'The second, Less is More, uses a low-complexity subset of the available data: sentences up to length 15.', 'Focusing on fewer but simpler examples trades off quantity against ambiguity; it attains 44.1% accuracy, using the standard linguistically-informed prior and batch training, beating state-of-the-art.', 'Leapfrog, our third heuristic, combines Less is More with Baby Steps by mixing their models of shorter sentences, then rapidly ramping up exposure to the full training set, driving up accuracy to 45.0%.', 'These trends generalize to the Brown corpus; awareness of data complexity may improve other parsing models and unsupervised algorithms.'], 'url': 'https://aclweb.org/anthology/N10-1116', 'year': 2010, 'book': 'Human Language Technologies: the 2010 Annual Conference of the North American Chapter of the Association for Computational Linguistics', 'title': 'From Baby Steps to Leapfrog: How “Less is More” in Unsupervised Dependency Parsing', 'score': 0.5929615489213668}
+acl-W00-0737 - {'authors': ['Guodong Zhou', 'Jian Su', 'TongGuan Tey'], 'type': 'unknown', 'id': 'acl-W00-0737', 'abstract': ['This paper proposes an error-driven HMM-based text chunk tagger with context-dependent lexicon.', 'Compared with standard HMM-based tagger, this tagger incorporates more contextual information into a lexical entry.', 'Moreover, an error-driven learning approach is adopted to decrease the memory requirement by keeping only positive lexical entries and makes it possible to further incorporate more context-dependent lexical entries.', 'Finally, memory-based learning is adopted to further improve the performance of the chunk tagger.'], 'url': 'https://aclweb.org/anthology/W00-0737', 'year': 2000, 'book': 'Conference on Computational Natural Language Learning and of the Second Learning Language in Logic Workshop CoNLL and LLL', 'title': 'Hybrid Text Chunking', 'score': 0.6440890431216987}
+acl-W00-0733 - {'authors': ['Erik F. Tjong Kim Sang'], 'type': 'unknown', 'id': 'acl-W00-0733', 'abstract': ['Tjong Kim Sang (2000) describes how a system-internal combination of memory-based learners can be used for base noun phrase (baseNP) recognition.', 'The idea is to generate different chunking models by using different chunk representations.', 'Chunks can be represented with bracket structures but alternatively one can use a tagging representation which classifies words as being inside a chunk (I), outside a chunk (0) or at a chunk boundary (B) (Ramshaw and Marcus, 1995).', 'There are four variants of this representation.', 'The B tags can be used for the first word of chunks that immediately follow another chunk (the IOB1 representation) or they can be used for every chunk-initial word (I0B2).', 'Alternatively an E tag can be used for labeling the final word of a chunk immediately preceding another chunk (IOE1) or it can be used for every chunk-final word (10E2).', 'Bracket structures can also be represented as tagging structures by using two streams of tags which define whether words start a chunk or not (0) or whether words are at the end of a chunk or not (C).', 'We need both for encoding the phrase structure and hence we will treat the two tag streams as a single representation (0+C).', 'A combination of baseNP classifiers that use the five representation performs better than any of the included systems (Tjong Kim Sang, 2000).', 'We will apply such a classifier combination to the CoNLL-2000 shared task.'], 'url': 'https://aclweb.org/anthology/W00-0733', 'year': 2000, 'book': 'Conference on Computational Natural Language Learning and of the Second Learning Language in Logic Workshop CoNLL and LLL', 'title': 'Text Chunking by System Combination', 'score': 0.6162144075294403}
+acl-W07-2220 - {'authors': ['Joakim Nivre'], 'type': 'unknown', 'id': 'acl-W07-2220', 'abstract': ['Data-Driven Dependency Parsing across Languages and Domains: Perspectives from the CoNLL 2007 Shared Task', 'Vaxjo University, School of Mathematics and Systems Engineering Uppsala University, Department of Linguistics and Philology E-mail: nivre@msi.vxu.se', 'The Conference on Computational Natural Language Learning features a shared task, in which participants train and test their learning systems on the same data sets.', 'In 2007, as in 2006, the shared task has been devoted to dependency parsing, this year with both a multilingual track and a domain adaptation track.', 'In this paper, I summarize the main findings from the 2007 shared task and try to identify major challenges for the parsing community based on these findings.'], 'url': 'https://aclweb.org/anthology/W07-2220', 'year': 2007, 'book': 'Tenth International Conference on Parsing Technologies', 'title': 'Data-Driven Dependency Parsing across Languages and Domains: Perspectives from the CoNLL-2007 Shared task', 'score': 0.6575056569308046}
+acl-N09-2066 - {'authors': ['Giuseppe Attardi', "Felice Dell'Orletta"], 'type': 'unknown', 'id': 'acl-N09-2066', 'abstract': ["Giuseppe Attardi Felice Dell'Orletta", 'Dipartimento di Informatica Dipartimento di Informatica', 'Universita di Pisa Universita di Pisa', 'Pisa, Italy Pisa, Italy', 'attardi@di.unipi.it felice.dellorletta@di.unipi.it', '1 Introduction', 'Deterministic transition-based Shift/Reduce dependency parsers make often mistakes in the analysis of long span dependencies (McDonald & Nivre, 2007).', 'Titov and Henderson (2007) address this accuracy drop by using a beam search instead of a greedy algorithm for predicting the next parser transition.', 'We propose a parsing method that allows reducing several of these errors, although maintaining a quasi linear complexity.', 'The method consists in two steps: first the sentence is parsed by a deterministic Shift/Reduce parser, then a second deterministic Shift/Reduce parser analyzes the sentence in reverse using additional features extracted from the parse trees produced by the first parser.'], 'url': 'https://aclweb.org/anthology/N09-2066', 'year': 2009, 'book': 'HLT-NAACL, Companion Volume: Short Papers', 'title': 'Reverse Revision and Linear Tree Combination for Dependency Parsing', 'score': 0.6476837707547407}
+acl-C90-2053 - {'authors': ['Hiroaki Numazaki', 'Hozumi Tanaka'], 'type': 'unknown', 'id': 'acl-C90-2053', 'abstract': ["Tomita's parsing algorithm [Tomita 86], which adapted the LR parsing algorithm to context free grammars, makes use of a breadth-first strategy to handle LR table conflicts.", "As the breadth-first strategy is compatible with parallel processing, we can easily develop a parallel generalized LR parser based on Tomita's algorithm [Tanaka 89].", 'However, there is a problem in that this algorithm synchronizes parsing processes on each shift action for the same input word to merge many stacks into Graph Structured Stacks (GSS).', 'In other words, a process that has completed a shift action must wait until all other processes have ended theirs a strategy that reduces parallel performance.', 'We have developed a new parallel parsing algorithm that does not need to wait for shift actions before merging many stacks, using stream communication of a concurrent logic programming language called GHC [Ueda 85].', 'Thus we obtain a parallel generalized LR, parser implemented in GHC.'], 'url': 'https://aclweb.org/anthology/C90-2053', 'year': 1990, 'book': 'International Conference on Computational Linguistics', 'title': 'A New Parallel Algorithm for Generalized LR Parsing', 'score': 0.6948414886580413}
+acl-C88-2138 - {'authors': ['Masaru Tomita'], 'type': 'unknown', 'id': 'acl-C88-2138', 'abstract': ['Maativo -Lomita Canter for It/Wahine Tranalsdiei and Computer _dente De]tannieitt Camcgie-Mellen University Pittsburgh, PAita,:11"1, t.ISA AbSttraui tiOrffialisms (e.g. Categorial Grammar, IIPSO arid GB Grammar), which do not Imo explicit phrase structure roles, are suitable for higher level syntax but not for low level lariguago-specific e0)18trUCtIMIS such as dates (July Pith, 15-JUL-1007, ete), which :,300111 to require the power of phrase atructure re108.', 'paper presents an implementation method to combine lexicon-driven parsing arid phrase structure parsing, with a apecial rriearla called graph-structurnd stook.', "d'.ie Recent linguistic grammar formalisms can be classified Into two families, pluaso-structure-based or lexicon-driven.", 'The phrase-:An:dove-based formalisms include Definite Clause Grammar [U], Lexical Functional Grammar [3], Generalized Phrase Structure Grammar [5, 6] and Functional Unification Grammar [7].', 'They all are based on context-free phrase structure rules which are augmented in ono way or another.', "On the other !land, lexicon-driven fOrlilaliSWS include Categorial Graminar [1], Head-driven ['lobe° Structure Grammar [9, 10] and Gil-Grammar [4, 14 All of these lexicon-driven formalisms do not have any explicit phrase structure rides, but Information about how to combine coristittierria into a high, r constituent is encoded in each lexicon or Colistilomit which is m be combined.", 'It Is often argued that lexicon-driven formalisms can handle some linguistic phenomena such as free-word-order more elegantly, and also they can capture universality of milltiple languages, as described, for example, by Wchrli [14 In section 2, on the other hand, it is argued that, while lexicon-driven formalisms might be suitable to cope with linguistically "interesting" phonomona, they lack the power to express linguistically \'uninteresting" phenomena which are Mien very specific to a particular language.', 'Unfortunately, in order to build a practical parser for a "real" text, one roust handle very many "uninteresting" low level phenomena which cannot be easily formalized in the lexicon-driven way.', 'Hence, if we want to build a practical parser with a theory behind the lexicon-driven formalisms, then it is essential to combine lexicon-driven parsing (tor higher level syntax) and phrase-structure-based parsing (for low level detail and other language-specific/exceptional constructions).', 'In section 3, we generalize the computational models of all the lexicon-driven and phrase-structure-based forstalisins as: sitift-roduco parsing.'], 'url': 'https://aclweb.org/anthology/C88-2138', 'year': 1988, 'book': 'International Conference on Computational Linguistics', 'title': 'Combining Lexicon-Driven Parsing and Phrase-Structure-Based Parsing', 'score': 0.6917377569244731}
+acl-E93-1010 - {'authors': ['Gosse Bouma', 'Gertjan van Noord'], 'type': 'unknown', 'id': 'acl-E93-1010', 'abstract': ['We present evidence that head-driven parsing strategies lead to efficiency gains over standard parsing strategies, for lexicalist, concatenative and unification-based grammars.', 'A head-driven parser applies a rule only after a phrase matching the head has been derived.', 'By instantiating the head of the rule important information is obtained about the left-hand-side and the other elements of the right-hand-side.', 'We have used two different head-driven parsers and a number of standard parsers to parse with lexicalist grammars for English and for Dutch.', "The results indicate that for important classes of lexicalist grammars it is fruitful to apply parsing strategies which are sensitive to the linguistic notion 'head'."], 'url': 'https://aclweb.org/anthology/E93-1010', 'year': 1993, 'book': 'Conference of the European Association for Computational Linguistics', 'title': 'Head-Driven Parsing for Lexicalist Grammars: Experimental Results', 'score': 0.6741468033183979}
+acl-P84-1073 - {'authors': ['Masaru Tomita'], 'type': 'unknown', 'id': 'acl-P84-1073', 'abstract': ['MLR, an extended LA parser, is introduced, and its application to natural language parsing is discussed.', 'An LA parser is a shift-reduce parser which is deterministically guided by a parsing table.', 'A parsing table can be obtained automatically from a context-free phrase structure grammar.', 'LR parsers cannot manage ambiguous grammars such as natural language grammars, because their parsing tables would have multiply-defined entries, which precludes deterministic parsing.', 'MLR, however, can handle multiply-defined entries, using a dynamic programming method.', 'When an input sentence is ambiguous, the MLR parser produces all possible parse trees without parsing any part of the input sentence more than once in the same way, despite the fact that the parser does not maintain a chart as in chart parsing.', 'Our method also provides an elegant solution to the problem of multi-part-of speech words such as "that".', 'The mul parser and its parsing table generator have been implemented at Carnegie-Mellon University.'], 'url': 'https://aclweb.org/anthology/P84-1073', 'year': 1984, 'book': 'International Conference on Computational Linguistics and Annual Meeting of the Association for Computational Linguistics', 'title': 'LR Parsers for Natural Languages', 'score': 0.6652840330369802}
+Lambda = 0 -> No penalty
+bound: 0.0
+find mmr max: 0.7512082911136091
+len: 1 17
+bound: 0.7512082911136091
+find mmr max: 1.4460497797716503
+len: 2 16
+bound: 1.4460497797716503
+find mmr max: 2.1377875366961234
+len: 3 15
+bound: 2.1377875366961234
+find mmr max: 2.8248603492700277
+len: 4 14
+bound: 2.8248603492700277
+find mmr max: 3.507749382207438
+len: 5 13
+bound: 3.507749382207438
+find mmr max: 4.186351846652436
+len: 6 12
+bound: 4.186351846652436
+find mmr max: 4.860498649970834
+len: 7 11
+bound: 4.860498649970834
+find mmr max: 5.525782683007814
+len: 8 10
+bound: 5.525782683007814
+find mmr max: 6.183288339938619
+len: 9 9
+bound: 6.183288339938619
+find mmr max: 6.830972110693359
+len: 10 8
+bound: 6.830972110693359
+find mmr max: 7.475061153815058
+len: 11 7
+bound: 7.475061153815058
+find mmr max: 8.113568975362528
+len: 12 6
+bound: 8.113568975362528
+find mmr max: 8.729783382891968
+len: 13 5
+bound: 8.729783382891968
+find mmr max: 9.326268749388472
+len: 14 4
+bound: 9.326268749388472
+find mmr max: 9.919230298309838
+len: 15 3
+bound: 9.919230298309838
+find mmr max: 10.507887051637127
+len: 16 2
+bound: 10.507887051637127
+find mmr max: 11.072649725367395
+len: 17 1
+bound: 11.072649725367395
+find mmr max: 11.63184240149435
+len: 18 0
+18
+acl-P88-1031
+acl-C90-2053
+acl-C88-2138
+acl-A00-2033
+acl-E09-1034
+acl-P08-1108
+acl-E93-1010
+acl-P84-1073
+acl-W07-2220
+acl-N09-2066
+acl-W00-0737
+acl-D11-1117
+acl-W00-0733
+acl-P89-1029
+acl-N10-1116
+acl-C02-1066
+acl-J89-4001
+acl-J11-3004
+Lambda = 0.5 -> less penalty
+bound: 0.0
+find mmr max: 0.7512082911136091
+len: 1 17
+bound: 0.7512082911136091
+find mmr max: 1.3289677127048038
+len: 2 16
+bound: 1.3289677127048038
+find mmr max: 2.0168799533027486
+len: 3 15
+bound: 2.0168799533027486
+find mmr max: 2.689280930086078
+len: 4 14
+bound: 2.689280930086078
+find mmr max: 3.3700617247309284
+len: 5 13
+bound: 3.3700617247309284
+find mmr max: 4.037212980626553
+len: 6 12
+bound: 4.037212980626553
+find mmr max: 4.697196724644654
+len: 7 11
+bound: 4.697196724644654
+find mmr max: 5.354515642359581
+len: 8 10
+bound: 5.354515642359581
+find mmr max: 6.010299070784554
+len: 9 9
+bound: 6.010299070784554
+find mmr max: 6.664621578920863
+len: 10 8
+bound: 6.664621578920863
+find mmr max: 7.313479385505964
+len: 11 7
+bound: 7.313479385505964
+find mmr max: 7.95256778764028
+len: 12 6
+bound: 7.95256778764028
+find mmr max: 8.567764181854105
+len: 13 5
+bound: 8.567764181854105
+find mmr max: 9.16206637616229
+len: 14 4
+bound: 9.16206637616229
+find mmr max: 9.755266879379143
+len: 15 3
+bound: 9.755266879379143
+find mmr max: 10.347388804587265
+len: 16 2
+bound: 10.347388804587265
+find mmr max: 10.909541113085218
+len: 17 1
+bound: 10.909541113085218
+find mmr max: 11.468874179858414
+len: 18 0
+18
+acl-P88-1031
+acl-A00-2033
+acl-E09-1034
+acl-C90-2053
+acl-C88-2138
+acl-P08-1108
+acl-E93-1010
+acl-P84-1073
+acl-W07-2220
+acl-W00-0737
+acl-N09-2066
+acl-D11-1117
+acl-W00-0733
+acl-P89-1029
+acl-C02-1066
+acl-N10-1116
+acl-J89-4001
+acl-J11-3004
+Lambda = 1.0 -> same degree penalty
+bound: 0.0
+find mmr max: 0.7512082911136091
+len: 1 17
+bound: 0.7512082911136091
+find mmr max: 1.2196543217220945
+len: 2 16
+bound: 1.2196543217220945
+find mmr max: 1.9125897699805736
+len: 3 15
+bound: 1.9125897699805736
+find mmr max: 2.5676425194231927
+len: 4 14
+bound: 2.5676425194231927
+find mmr max: 3.231785680263858
+len: 5 13
+bound: 3.231785680263858
+find mmr max: 3.8955858243563264
+len: 6 12
+bound: 3.8955858243563264
+find mmr max: 4.552109280156553
+len: 7 11
+bound: 4.552109280156553
+find mmr max: 5.199414646803731
+len: 8 10
+bound: 5.199414646803731
+find mmr max: 5.8499344193861695
+len: 9 9
+bound: 5.8499344193861695
+find mmr max: 6.49977356082694
+len: 10 8
+bound: 6.49977356082694
+find mmr max: 7.151897617196871
+len: 11 7
+bound: 7.151897617196871
+find mmr max: 7.791566599918033
+len: 12 6
+bound: 7.791566599918033
+find mmr max: 8.405744980816243
+len: 13 5
+bound: 8.405744980816243
+find mmr max: 9.004923451420936
+len: 14 4
+bound: 9.004923451420936
+find mmr max: 9.595608256042524
+len: 15 3
+bound: 9.595608256042524
+find mmr max: 10.186890557537401
+len: 16 2
+bound: 10.186890557537401
+find mmr max: 10.74643250080304
+len: 17 1
+bound: 10.74643250080304
+find mmr max: 11.305905958222478
+len: 18 0
+18
+acl-P88-1031
+acl-A00-2033
+acl-E09-1034
+acl-W00-0737
+acl-C90-2053
+acl-C88-2138
+acl-P08-1108
+acl-E93-1010
+acl-N09-2066
+acl-P84-1073
+acl-W07-2220
+acl-D11-1117
+acl-W00-0733
+acl-C02-1066
+acl-P89-1029
+acl-N10-1116
+acl-J89-4001
+acl-J11-3004
+Lambda = 2.0 -> double degree penalty
+bound: 0.0
+find mmr max: 0.7512082911136091
+len: 1 17
+bound: 0.7512082911136091
+find mmr max: 1.0036845007200779
+len: 2 16
+bound: 1.0036845007200779
+find mmr max: 1.704009403336224
+len: 3 15
+bound: 1.704009403336224
+find mmr max: 2.370025859099764
+len: 4 14
+bound: 2.370025859099764
+find mmr max: 3.0034706921230527
+len: 5 13
+bound: 3.0034706921230527
+find mmr max: 3.639333223383516
+len: 6 12
+bound: 3.639333223383516
+find mmr max: 4.282023577435225
+len: 7 11
+bound: 4.282023577435225
+find mmr max: 4.918688624789902
+len: 8 10
+bound: 4.918688624789902
+find mmr max: 5.550638389104537
+len: 9 9
+bound: 5.550638389104537
+find mmr max: 6.1875062203882685
+len: 10 8
+bound: 6.1875062203882685
+find mmr max: 6.828734080578684
+len: 11 7
+bound: 6.828734080578684
+find mmr max: 7.4695642244735385
+len: 12 6
+bound: 7.4695642244735385
+find mmr max: 8.081706578740517
+len: 13 5
+bound: 8.081706578740517
+find mmr max: 8.691406766622615
+len: 14 4
+bound: 8.691406766622615
+find mmr max: 9.27966968470625
+len: 15 3
+bound: 9.27966968470625
+find mmr max: 9.865894063437677
+len: 16 2
+bound: 9.865894063437677
+find mmr max: 10.424111905472282
+len: 17 1
+bound: 10.424111905472282
+find mmr max: 10.979969514950607
+len: 18 0
+18
+acl-P88-1031
+acl-E09-1034
+acl-A00-2033
+acl-W00-0737
+acl-C90-2053
+acl-C88-2138
+acl-N09-2066
+acl-P08-1108
+acl-W07-2220
+acl-E93-1010
+acl-P84-1073
+acl-D11-1117
+acl-W00-0733
+acl-C02-1066
+acl-N10-1116
+acl-P89-1029
+acl-J11-3004
+acl-J89-4001
+#Lambda = 3.0 -> as the paper chosen
+bound: 0.0
+find mmr max: 0.7512082911136091
+len: 1 17
+bound: 0.7512082911136091
+find mmr max: 0.7884780890546068
+len: 2 16
+bound: 0.7884780890546068
+find mmr max: 1.505839572078429
+len: 3 15
+bound: 1.505839572078429
+find mmr max: 2.172409198776334
+len: 4 14
+bound: 2.172409198776334
+find mmr max: 2.7751557039822465
+len: 5 13
+bound: 2.7751557039822465
+find mmr max: 3.3865461379583754
+len: 6 12
+bound: 3.3865461379583754
+find mmr max: 4.023274268110898
+len: 7 11
+bound: 4.023274268110898
+find mmr max: 4.647386779828806
+len: 8 10
+bound: 4.647386779828806
+find mmr max: 5.271871072979798
+len: 9 9
+bound: 5.271871072979798
+find mmr max: 5.887247341519876
+len: 10 8
+bound: 5.887247341519876
+find mmr max: 6.515777755943602
+len: 11 7
+bound: 6.515777755943602
+find mmr max: 7.147561849029044
+len: 12 6
+bound: 7.147561849029044
+find mmr max: 7.770289072163406
+len: 13 5
+bound: 7.770289072163406
+find mmr max: 8.377890081824294
+len: 14 4
+bound: 8.377890081824294
+find mmr max: 8.963803684489061
+len: 15 3
+bound: 8.963803684489061
+find mmr max: 9.544897569337952
+len: 16 2
+bound: 9.544897569337952
+find mmr max: 10.102627994326383
+len: 17 1
+bound: 10.102627994326383
+find mmr max: 10.654033071678738
+len: 18 0
+18
+acl-P88-1031
+acl-E09-1034
+acl-W00-0737
+acl-A00-2033
+acl-C90-2053
+acl-N09-2066
+acl-C88-2138
+acl-W07-2220
+acl-D11-1117
+acl-P08-1108
+acl-P84-1073
+acl-E93-1010
+acl-C02-1066
+acl-W00-0733
+acl-N10-1116
+acl-P89-1029
+acl-J11-3004
+acl-J89-4001
