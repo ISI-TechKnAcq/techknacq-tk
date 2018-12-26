@@ -1,0 +1,606 @@
+Before Submodular: 
+34
+acl-P10-5006 - {'type': 'unknown', 'url': 'https://aclweb.org/anthology/P10-5006', 'title': 'Semantic Parsing: The Task, the State of the Art and the Future', 'id': 'acl-P10-5006', 'year': 2010, 'book': 'Tutorial Abstracts of ACL 2010', 'score': 0.46367245368983945, 'authors': ['Rohit J. Kate', 'Yuk Wah Wong'], 'abstract': ['Semantic Parsing: The Task, the State-of-the-Art and the Future', 'Google Inc. Pittsburgh, PA 15213, USA', '1 Introduction', 'Semantic parsing is the task of mapping natural language sentences into complete formal meaning representations which a computer can execute for some domain-specific application.', 'This is a challenging task and is critical for developing computing systems that can understand and process natural language input, for example, a computing system that answers natural language queries about a database, or a robot that takes commands in natural language.', 'While the importance of semantic parsing was realized a long time ago, it is only in the past few years that the state-of-the-art in semantic parsing has been significantly advanced with more accurate and robust semantic parser learners that use a variety of statistical learning methods.', 'Semantic parsers have also been extended to work beyond a single sentence, for example, to use discourse contexts and to learn domain-specific language from perceptual contexts.', 'Some of the future research directions of semantic parsing with potentially large impacts include mapping entire natural language documents into machine processable form to enable automated reasoning about them and to convert natural language web pages into machine processable representations for the Semantic Web to support automated high-end web applications.', 'This tutorial will introduce the semantic parsing task and will bring the audience up-to-date with the current research and state-of-the-art in semantic parsing.', 'It will also provide insights about semantic parsing and how it relates to and differs from other natural language processing tasks.']}
+acl-N06-1055 - {'type': 'unknown', 'url': 'https://aclweb.org/anthology/N06-1055', 'title': 'Semantic Role Labeling of Nominalized Predicates in Chinese', 'id': 'acl-N06-1055', 'year': 2006, 'book': 'Human Language Technology Conference and Meeting of the North American Association for Computational Linguistics', 'score': 0.5986647992134958, 'authors': ['Nianwen Xue'], 'abstract': ['Recent work on semantic role labeling (SRL) has focused almost exclusively on the analysis of the predicate-argument structure of verbs, largely due to the lack of human-annotated resources for other types of predicates that can serve as training and test data for the semantic role labeling systems.', 'However, it is well-known that verbs are not the only type of predicates that can take arguments.', 'Most notably, nouns that are nominalized forms of verbs and relational nouns generally are also considered to have their own predicate-argument structure.', 'In this paper we report results of SRL experiments on nominalized predicates in Chinese, using a newly completed corpus, the Chinese Nombank.', 'We also discuss the impact of using publicly available manually annotated verb data to improve the SRL accuracy of nouns, exploiting a widely-held assumption that verbs and their nominalizations share the same predicate-argument structure.', 'Finally, we discuss the results of applying reranking techniques to improve SRL accuracy for nominalized predicates, which showed insignificant improvement.']}
+acl-A00-2008 - {'type': 'unknown', 'url': 'https://aclweb.org/anthology/A00-2008', 'title': 'The FrameNet Tagset for Frame-Semantic and Syntactic Coding of Predicate-Argument Structure', 'id': 'acl-A00-2008', 'year': 2000, 'book': 'Applied Natural Language Processing Conference and Meeting of the North American Association for Computational Linguistics', 'score': 0.9069124134766423, 'authors': ['Christopher Johnson', 'Charles J. Fillmore'], 'abstract': ['This paper presents the syntactic and semantic tags used to annotate predicate-argument structure in the Berkeley FrameNet Project.', 'It briefly explains the theory of frame semantics on which semantic annotation is based, discusses possible applications of FrameNet annotation, and compares FrameNet to other prominent iexical resources.']}
+acl-N10-1138 - {'type': 'unknown', 'url': 'https://aclweb.org/anthology/N10-1138', 'title': 'Probabilistic Frame-Semantic Parsing', 'id': 'acl-N10-1138', 'year': 2010, 'book': 'Human Language Technologies: the 2010 Annual Conference of the North American Chapter of the Association for Computational Linguistics', 'score': 0.6018481557832629, 'authors': ['Dipanjan Das', 'Nathan Schneider', 'Desai Chen', 'Noah A. Smith'], 'abstract': ['Dipanjan Das Nathan Schneider Desai Chen Noah A. Smith', 'This paper contributes a formalization of frame-semantic parsing as a structure prediction problem and describes an implemented parser that transforms an English sentence into a frame-semantic representation.', 'It finds words that evoke FrameNet frames, selects frames for them, and locates the arguments for each frame.', 'The system uses two feature-based, discriminative probabilistic (log-linear) models, one with latent variables to permit disambiguation of new predicate words.', 'The parser is demonstrated to significantly outperform previously published results.']}
+acl-P07-1032 - {'type': 'unknown', 'url': 'https://aclweb.org/anthology/P07-1032', 'title': 'Formalism-Independent Parser Evaluation with CCG and DepBank', 'id': 'acl-P07-1032', 'year': 2007, 'book': '45th Annual Meeting of the Association of Computational Linguistics', 'score': 0.7628798874192079, 'authors': ['Stephen Clark', 'James R. Curran'], 'abstract': ['Stephen Clark James R. Curran', 'Oxford University Computing Laboratory School of Information Technologies Wolfson Building, Parks Road University of Sydney', 'Oxford, OX1 3QD, UK NSW 2006, Australia', 'stephen.clark@comlab.ox.ac.uk james@it.usyd.edu.au', 'A key question facing the parsing community is how to compare parsers which use different grammar formalisms and produce different output.', 'Evaluating a parser on the same resource used to create it can lead to non-comparable accuracy scores and an overoptimistic view of parser performance.', 'In this paper we evaluate a ccg parser on DepBank, and demonstrate the difficulties in converting the parser output into Dep-Bank grammatical relations.', 'In addition we present a method for measuring the effectiveness of the conversion, which provides an upper bound on parsing accuracy.', 'The ccg parser obtains an F-score of 81.9% on labelled dependencies, against an upper bound of 84.8%.', 'We compare the ccg parser against the rasp parser, outperforming rasp by over 5% overall and on the majority of dependency types.']}
+acl-W07-2208 - {'type': 'unknown', 'url': 'https://aclweb.org/anthology/W07-2208', 'title': 'A log-linear model with an n-gram reference distribution for accurate HPSG parsing', 'id': 'acl-W07-2208', 'year': 2007, 'book': 'Tenth International Conference on Parsing Technologies', 'score': 0.7045689472430644, 'authors': ['Takashi Ninomiya', 'Takuya Matsuzaki', 'Yusuke Miyao', "Jun'ichi Tsujii"], 'abstract': ['A log-linear model with an n-gram reference distribution for accurate HPSG', 'parsing', 'Takashi Ninomiya Takuya Matsuzaki', 'Information Technology Center Department of Computer Science', 'Hongo 7-3-1, Bunkyo-ku, Tokyo, 113-0033, Japan', 'This paper describes a log-linear model with an n-gram reference distribution for accurate probabilistic HPSG parsing.', 'In the model, the n-gram reference distribution is simply defined as the product of the probabilities of selecting lexical entries, which are provided by the discriminative method with machine learning features of word and POS n-gram as defined in the CCG/HPSG/CDG supertagging.', 'Recently, supertagging becomes well known to drastically improve the parsing accuracy and speed, but su-pertagging techniques were heuristically introduced, and hence the probabilistic models for parse trees were not well defined.', 'We introduce the supertagging probabilities as a reference distribution for the log-linear model of the probabilistic HPSG.', "This is the first model which properly incorporates the supertagging probabilities into parse tree's probabilistic model."]}
+acl-N07-1069 - {'type': 'unknown', 'url': 'https://aclweb.org/anthology/N07-1069', 'title': 'Can Semantic Roles Generalize Across Genres?', 'id': 'acl-N07-1069', 'year': 2007, 'book': 'Human Language Technologies 2007: the Conference of the North American Chapter of the Association for Computational Linguistics; Proceedings of the Main Conference', 'score': 0.5947923876841223, 'authors': ['Szuting Yi', 'Edward Loper', 'Martha Palmer'], 'abstract': ['Szu-ting Yi Edward Loper Martha Palmer', 'PropBank has been widely used as training data for Semantic Role Labeling.', "However, because this training data is taken from the WSJ, the resulting machine learning models tend to overfit on idiosyncrasies of that text's style, and do not port well to other genres.", 'In addition, since PropBank was designed on a verb-by-verb basis, the argument labels Arg2 - Arg5 get used for very diverse argument roles with inconsistent training instances.', 'For example, the verb "make" uses Arg2 for the "Material" argument; but the verb "multiply" uses Arg2 for the "Extent" argument.', 'As a result, it can be difficult for automatic classifiers to learn to distinguish arguments Arg2-Arg5.', 'We have created a mapping between PropBank and VerbNet that provides a VerbNet thematic role label for each verb-specific PropBank label.', 'Since VerbNet uses argument labels that are more consistent across verbs, we are able to demonstrate that these new labels are easier to learn.']}
+acl-W05-0635 - {'type': 'unknown', 'url': 'https://aclweb.org/anthology/W05-0635', 'title': 'Semantic Role Labeling Using Complete Syntactic Analysis', 'id': 'acl-W05-0635', 'year': 2005, 'book': 'Conference on Computational Natural Language Learning CoNLL', 'score': 0.5786394202159517, 'authors': ['Mihai Surdeanu', 'Jordi Turmo'], 'abstract': ['In this paper we introduce a semantic role labeling system constructed on top of the full syntactic analysis of text.', 'The labeling problem is modeled using a rich set of lexical, syntactic, and semantic attributes and learned using one-versus-all AdaBoost classifiers.', 'Our results indicate that even a simple approach that assumes that each semantic argument maps into exactly one syntactic phrase obtains encouraging performance, surpassing the best system that uses partial syntax by almost 6%.']}
+acl-C10-1091 - {'type': 'unknown', 'url': 'https://aclweb.org/anthology/C10-1091', 'title': 'Recognition of Affect, Judgment, and Appreciation in Text', 'id': 'acl-C10-1091', 'year': 2010, 'book': 'COLING', 'score': 0.7214042393990717, 'authors': ['Alena Neviarouskaya', 'Helmut Prendinger', 'Mitsuru Ishizuka'], 'abstract': ['Alena Neviarouskaya Helmut Prendinger Mitsuru Ishizuka', 'lena@mi.ci.i.u- Tokyo ishizuka@i.u-', 'The main task we address in our research is classification of text using fine-grained attitude labels.', 'The developed @AM system relies on the compositionality principle and a novel approach based on the rules elaborated for semantically distinct verb classes.', 'The evaluation of our method on 1000 sentences, that describe personal experiences, showed promising results: average accuracy on the finegrained level (14 labels) was 62%, on the middle level (7 labels) - 71%, and on the top level (3 labels) - 88%.']}
+acl-W10-0210 - {'type': 'unknown', 'url': 'https://aclweb.org/anthology/W10-0210', 'title': '@AM: Textual Attitude Analysis Model', 'id': 'acl-W10-0210', 'year': 2010, 'book': 'Proceedings of the NAACL HLT 2010 Workshop on Computational Approaches to Analysis and Generation of Emotion in Text', 'score': 0.7136453734013564, 'authors': ['Alena Neviarouskaya', 'Helmut Prendinger', 'Mitsuru Ishizuka'], 'abstract': ['The automatic analysis and classification of text using fine-grained attitude labels is the main task we address in our research.', 'The developed @AM system relies on compositionality principle and a novel approach based on the rules elaborated for semantically distinct verb classes.', 'The evaluation of our method on 1000 sentences, that describe personal experiences, showed promising results: average accuracy on fine-grained level was 62%, on middle level ?', '71%, and on top level ?', '88%.']}
+acl-E89-1031 - {'type': 'unknown', 'url': 'https://aclweb.org/anthology/E89-1031', 'title': 'Subject Erasing and Pronominalization in Italian Text Generation', 'id': 'acl-E89-1031', 'year': 1989, 'book': 'Conference of the European Association for Computational Linguistics', 'score': 0.7024652715890873, 'authors': ['Fiammetta Namer'], 'abstract': ['Certain Romance languages such as Italian, Spanish and Portuguese allow the subject to be erased in tensed clauses.', 'This paper studies subject erasing in the framework of a text generation system for Italian.', 'We will prove that it is first necessary to try to pronominalize the subject.', 'Therefore, we are led to study the synthesis of subject and complement personal pronouns.', 'In Romance languages, personal pronouns raise many syntactic problems, whose solution is complex in a generation system.', 'We will see that pronominalization plays a fundamental role in the order in which the elements of a clause are synthesized, and consequently in the synthesis of this clause.', 'Moreover, the synthesis of a clause must take into account the fact that subject erasing and the synthesis of complements are phenomena which depend on each other.', 'The complex algorithm that must be used for the synthesis of a clause will be illustred in various examples.', '1 Presentation of the generation system In a generation system, two questions must be answered: "What to say?" (in order to decide on the content of the message to be produced) and "How to say it?" (producing the text which carries this content).', 'We are interested only in the "How to say it?" question.']}
+acl-I05-1074 - {'type': 'unknown', 'url': 'https://aclweb.org/anthology/I05-1074', 'title': 'A Connectionist Model of Anticipation in Visual Worlds', 'id': 'acl-I05-1074', 'year': 2005, 'book': 'Second International Joint Conference on Natural Language Processing: Full Papers', 'score': 0.6517465472066559, 'authors': ['Marshall R. Mayberry', 'Matthew W. Crocker', 'Pia Knoeferle'], 'abstract': ['Marshall R. Mayberry, III, Matthew W. Crocker, and Pia Knoeferle', 'Abstract.', 'Recent "visual worlds" studies, wherein researchers study language in context by monitoring eye-movements in a visual scene during sentence processing, have revealed much about the interaction of diverse information sources and the time course of their influence on comprehension.', 'In this study, five experiments that trade off scene context with a variety of linguistic factors are modelled with a Simple Recurrent Network modified to integrate a scene representation with the standard incremental input of a sentence.', 'The results show that the model captures the qualitative behavior observed during the experiments, while retaining the ability to develop the correct interpretation in the absence of visual input.']}
+acl-H86-1013 - {'type': 'unknown', 'url': 'https://aclweb.org/anthology/H86-1013', 'title': 'Commonsense Metaphysics and Lexical Semantics', 'id': 'acl-H86-1013', 'year': 1986, 'book': 'Workshop on Strategic Computing – Natural Language', 'score': 0.9955198833369663, 'authors': ['Jerry R. Hobbs', 'W. Bruce Croft', 'Todd Davies', 'Douglas Edwards', 'Kenneth Laws'], 'abstract': ['In the TACITUS project for using commonsense knowledge in the understanding of texts about mechanical devices and their failures, we have been developing various commonsense theories that are needed to mediate between the way we talk about the behavior of such devices and causal models of their operation.', 'Of central importance in this effort is the axiomatization of what might be called "commonsense metaphysics".', 'This includes a number of areas that figure in virtually every domain of discourse, such as scalar notions, granularity, time, space, material, physical objects, causality, functionality, force, and shape.', 'Our approach to lexical semantics is then to construct core theories of each of these areas, and then to define, or at least characterize, a large number of lexical items in terms provided by the core theories.', 'In the TACITUS system, processes for solving pragmatics problems posed by a text will use the knowledge base consisting of these theories in conjunction with the logical forms of the sentences in the text to produce an interpretation.', 'In this paper we do not stress these interpretation processes; this is another, important aspect of the TACITUS project, and it will be described in subsequent papers.', 'This work represents a convergence of research in lexical semantics in linguistics and efforts in Al to encode commonsense knowledge.', 'Lexical semanticists over the years have developed formalisms of increasing adequacy for encoding word meaning, progressing from simple sets of features (Katz and Fodor, 1963) to notations for predicate-argument structure (Lakoff, 1972; Miller and Johnson-Laird, 1976), but the early attempts still limited access to world knowledge and assumed only very restricted sorts of processing.', 'Workers in computational linguistics introduced inference (Rieger, 1974; Schwa, 1975) and other complex cognitive processes (Herskovits, 1982) into our understanding of the role of word meaning.', 'Recently, linguists have given greater attention to the cognitive processes that would operate on their representations (e.g., Talmy, 1983; Croft, 1986).']}
+acl-W08-1606 - {'type': 'unknown', 'url': 'https://aclweb.org/anthology/W08-1606', 'title': 'Creating and Querying a Domain dependent Know-How Knowledge Base of Advices and Warnings', 'id': 'acl-W08-1606', 'year': 2008, 'book': 'Coling 2008: Proceedings of the workshop on Cross-Framework and Cross-Domain Parser Evaluation', 'score': 0.8078750252423424, 'authors': ['Lionel Fontan', 'Patrick Saint-Dizier'], 'abstract': ['Creating and Querying a Domain dependent Know-How Knowledge Base', 'of Advices and Warnings', 'Lionel Fontan Patrick Saint-Dizier', 'IRIT - UPS, IRIT - CNRS,', '118 route de Narbonne, 118 route de Narbonne,', '31062 Toulouse Cedex, France.', '31062 Toulouse Cedex, France.', 'antonin_follet@hotmail.f r stdizier@irit.f r', 'In this paper, we present the explanation structure of procedural texts, that supports and motivates the goal-instruction structure.', 'We focus in particular on arguments, and show how arguments of type warnings and advices can be extracted.']}
+acl-W08-2210 - {'type': 'unknown', 'url': 'https://aclweb.org/anthology/W08-2210', 'title': 'Analyzing the Explanation Structure of Procedural Texts: Dealing with Advice and Warnings', 'id': 'acl-W08-2210', 'year': 2008, 'book': 'Semantics in Text Processing. STEP 2008 Conference Proceedings', 'score': 0.7816647058018333, 'authors': ['Lionel Fontan', 'Patrick Saint-Dizier'], 'abstract': ['Analyzing the Explanation Structure of Procedural Texts: Dealing with Advice and', 'Warnings', 'Lionel Fontan Patrick Saint-Dizier', 'IRIT, Toulouse (France)', 'email: stdizier@irit.fr']}
+acl-W01-1303 - {'type': 'unknown', 'url': 'https://aclweb.org/anthology/W01-1303', 'title': 'Towards Invariant Meanings of Spatial Prepositions and Preverbs', 'id': 'acl-W01-1303', 'year': 2001, 'book': 'Workshop on Temporal and Spatial Information Processing', 'score': 0.7403456624586969, 'authors': ['Jean Pierre Descles', 'Ewa Gwiazdecka', 'Azucena Montes-Rendon'], 'abstract': ['This work presents the semantical analysis of the two spatial prepositions and associated prefixes, the French sur, sur- (on) and the Polish przez, prze- (across).', 'We propose a theory of abstract places (loci), as a method of description which helps to build an invariant meanings of the two linguistics units.']}
+acl-C90-3068 - {'type': 'unknown', 'url': 'https://aclweb.org/anthology/C90-3068', 'title': 'A Formal Description of Arabic Syntax in Definite Clause Grammar', 'id': 'acl-C90-3068', 'year': 1990, 'book': 'International Conference on Computational Linguistics', 'score': 0.44132775814020175, 'authors': ['Hisham El-Shishiny'], 'abstract': ['Arabic has some special syntax features which lead to complex syntax structures.', 'We have developed a formal description of Arabic syntax in Definite Clause Grammar.', 'This grammar is characterized by its high descriptive power due to its dual formulation in terms of functions and in terms of grammatical categories.', 'The developed grammar has a high coverage of Arabic language and has context sensitive capabilities.', 'It is suitable for the advanced applications of natural language processing.']}
+acl-W91-0110 - {'type': 'unknown', 'url': 'https://aclweb.org/anthology/W91-0110', 'title': 'A Uniform Architecture for Parsing, Generation and Transfer', 'id': 'acl-W91-0110', 'year': 1991, 'book': 'Workshop on Reversible Grammar in Natural Language Processing', 'score': 0.6702322987637258, 'authors': ['Remi Zajac'], 'abstract': ['We present a uniform computational architecture for developing reversible grammars for parsing and generation, and for bidirectional transfer in MT.', 'We sketch the principles of a general reversible architecture and show how they are realized in the rewriting system for typed feature structures developed at the University of Stuttgart.', 'The reversibility of parsing and generation, and the bidirectionality of transfer rules fall out of general properties of the uniform architecture.']}
+acl-E95-1025 - {'type': 'unknown', 'url': 'https://aclweb.org/anthology/E95-1025', 'title': 'ProFIT: Prolog With Features, Inheritance and Templates', 'id': 'acl-E95-1025', 'year': 1995, 'book': 'Conference of the European Association for Computational Linguistics', 'score': 0.6452077309343562, 'authors': ['Gregor Erbach'], 'abstract': ['ProFIT is an extension of Standard Prolog with Features, Inheritance and Templates.', 'ProFIT allows the programmer or grammar developer to declare an inheritance hierarchy, features and templates.', 'Sorted feature terms can be used in ProFIT programs together with Prolog terms to provide a clearer description language for linguistic structures.', 'ProFIT compiles all sorted feature terms into a Prolog term representation, so that the built-in Prolog term unification can be used for the unification of sorted feature structures, and no special unification algorithm is needed.', 'ProFIT programs are compiled into Prolog programs, so that no meta-interpreter is needed for their execution.', 'ProFIT thus provides a direct step from grammars developed with sorted feature terms to Prolog programs usable for practical NLP systems.']}
+acl-C90-2021 - {'type': 'unknown', 'url': 'https://aclweb.org/anthology/C90-2021', 'title': 'Complex Features in Description of Chinese Language', 'id': 'acl-C90-2021', 'year': 1990, 'book': 'International Conference on Computational Linguistics', 'score': 0.35403920306645875, 'authors': ['Feng Zhiwei'], 'abstract': ['In this paper, the similarity of "multi – value label function" and "complex features" is discussed.', 'The author especially emphasizes the necessity of complex features for description of Chinese language.', 'Multiple – Value Label Function The phrase structure grammar (PSG) was used extensively in the parsing of natural language.', 'A PSG can be expressed by a tree graph where every node has a correspondent label.', 'The relationship between the node x and its label y can be described by a mono – value label function L: L( x) y For every value of node x, there is only one corresponding value of label y.', 'In 1981, we designed a multilingual automatic translation system FAJRA ( from Chinese to French, English, Japanese, Russian, German).', 'In 1985, we designed two automatic translation systems GCAT ( from German to Chinese) and FCAT (from French to Chinese).', 'In system FAJRA, we must do automatic analysis of Chinese, in system GCAT and FCAT, we must do automatic generation of Chinese language.', 'We found that the linguistic features of Chinese expressed by the mono – value label function of PSG is rather limited.', 'In the automatic analysis of Chinese language, PSG can not treat properly the ambiguity, the result of analysis often brings about a lot of ambiguous structures.']}
+acl-H92-1062 - {'type': 'unknown', 'url': 'https://aclweb.org/anthology/H92-1062', 'title': 'Syntactic/Semantic Coupling in the BBN DELPHI System', 'id': 'acl-H92-1062', 'year': 1992, 'book': 'Workshop on Speech and Natural Language', 'score': 0.3507413162657738, 'authors': ['Robert J. Bobrow', 'Robert J. P. Ingria', 'David G. Stallard'], 'abstract': ['parsing showed that substantial time was spent in such logical computations, and it became clear that more efficient data structures and procedural techniques could be used to implement many such computations [3].', 'The current version of the system uses these embedded procedural mechanisms to manipulate specialized data structures that efficently represent the binding state of a constituent, to determine if a proposed grammatical relation leads to a consistent binding state, and if so what the semantic implications of that binding are.', 'A separate system of "binding rules" for each grammatical relation licenses the binding of a constituent to a head via that relation by specifying the semantic implications of binding.', 'These rules generally specify aspects that must be true of the semantic structure of the head and bound constituent in order for the binding to take place, and may also specify certain syntactic requirements.', 'They may take into account the existence of previous bindings to the head, allowing certain semantic roles (such as time specification) to be filled multiply, while other semantic roles may be restricted to having just one filler.', 'As adjuncts are added to a structure the binding list is extended.', 'As layers are added to the onion, a simple linear list of bindings is maintained representing the head and its grammatical relation to each of the constituents added with each layer of the onion.', 'Semantic binding rules are used to verify the local semantic plausibility of a structure, i.e. the semantic plausibility of each proposed grammatical relation.', 'The next phase of semantic interpretation takes place when the onion is complete, i.e. when a constituent X is inserted as other than the head of a larger constituent.', 'This situation provides evidence that the outermost layer of the onion has been reached, and that no more adjuncts are to be added.']}
+acl-S13-2017 - {'type': 'unknown', 'url': 'https://aclweb.org/anthology/S13-2017', 'title': 'MELODI: Semantic Similarity of Words and Compositional Phrases using Latent Vector Weighting', 'id': 'acl-S13-2017', 'year': 2013, 'book': '*SEM', 'score': 0.7176353174278131, 'authors': ['Tim Van de Cruys', 'Stergos Afantenos', 'Philippe Muller'], 'abstract': ['In this paper we present our system for the SemEval 2013 Task 5a on semantic similarity of words and compositional phrases.', 'Our system uses a dependency-based vector space model, in combination with a technique called latent vector weighting.', 'The system computes the similarity between a particular noun instance and the head noun of a particular noun phrase, which was weighted according to the semantics of the modifier.', 'The system is entirely unsupervised; one single parameter, the similarity threshold, was tuned using the training data.']}
+acl-N13-1134 - {'type': 'unknown', 'url': 'https://aclweb.org/anthology/N13-1134', 'title': 'A Tensor-based Factorization Model of Semantic Compositionality', 'id': 'acl-N13-1134', 'year': 2013, 'book': 'NAACL', 'score': 0.6125691942926, 'authors': ['Tim Van de Cruys', 'Thierry Poibeau', 'Anna Korhonen'], 'abstract': ['In this paper, we present a novel method for the computation of compositionality within a distributional framework.', 'The key idea is that compositionality is modeled as a multi-way interaction between latent factors, which are automatically constructed from corpus data.', 'We use our method to model the composition of subject verb object triples.', 'The method consists of two steps.', 'First, we compute a latent factor model for nouns from standard co-occurrence data.', 'Next, the latent factors are used to induce a latent model of three-way subject verb object interactions.', 'Our model has been evaluated on a similarity task for transitive phrases, in which it exceeds the state of the art.']}
+acl-D13-1014 - {'type': 'unknown', 'url': 'https://aclweb.org/anthology/D13-1014', 'title': 'Modeling and Learning Semantic Co-Compositionality through Prototype Projections and Neural Networks', 'id': 'acl-D13-1014', 'year': 2013, 'book': 'EMNLP', 'score': 0.5837141443525813, 'authors': ['Masashi Tsubaki', 'Kevin Duh', 'Masashi Shimbo', 'Yuji Matsumoto'], 'abstract': ['We present a novel vector space model for semantic co-compositionality.', 'Inspired by Generative Lexicon Theory (Pustejovsky, 1995), our goal is a compositional model where both predicate and argument are allowed to modify each others?', 'meaning representations while generating the overall semantics.', 'This readily addresses some major challenges with current vector space models, notably the pol-ysemy issue and the use of one representation per word type.', 'We implement co-compositionality using prototype projections on predicates/arguments and show that this is effective in adapting their word representations.', 'We further cast the model as a neural network and propose an unsupervised algorithm to jointly train word representations with co-compositionality.', 'The model achieves the best result to date (?', '= 0.47) on the semantic similarity task of transitive verbs (Grefenstette and Sadrzadeh, 2011).']}
+acl-P13-2083 - {'type': 'unknown', 'url': 'https://aclweb.org/anthology/P13-2083', 'title': 'A Structured Distributional Semantic Model for Event Co-reference', 'id': 'acl-P13-2083', 'year': 2013, 'book': 'ACL', 'score': 0.5785963102057524, 'authors': ['Kartik Goyal', 'Sujay Kumar Jauhar', 'Huiying Li', 'Mrinmaya Sachan', 'Shashank Srivastava', 'Eduard Hovy'], 'abstract': ['In this paper we present a novel approach to modelling distributional semantics that represents meaning as distributions over relations in syntactic neighborhoods.', 'We argue that our model approximates meaning in compositional configurations more effectively than standard distributional vectors or bag-of-words models.', 'We test our hypothesis on the problem of judging event coreferentiality, which involves compositional interactions in the predicate-argument structure of sentences, and demonstrate that our model outperforms both state-of-the-art window-based word embeddings as well as simple approaches to compositional semantics previously employed in the literature.']}
+acl-P98-1118 - {'type': 'unknown', 'url': 'https://aclweb.org/anthology/P98-1118', 'title': 'A Framework for Customizable Generation of Hypertext Presentations', 'id': 'acl-P98-1118', 'year': 1998, 'book': 'COLING-ACL', 'score': 0.4281055695043407, 'authors': ['Benoit Lavoie', 'Owen Rambow'], 'abstract': ['In this paper, we present a framework, PRE-SENTOR, for the development and customization of hypertext presentation generators.', 'PRE-SENTOR offers intuitive and powerful declarative languages specifying the presentation at different levels: macro-planning, micro-planning, realization, and formatting.', 'PRESENTOR is implemented and is portable cross-platform and cross-domain.', 'It has been used with success in several application domains including weather forecasting, object modeling, system description and requirements summarization.']}
+acl-P98-2216 - {'type': 'unknown', 'url': 'https://aclweb.org/anthology/P98-2216', 'title': 'The Computational Lexical Semantics of Syntagmatic Expressions', 'id': 'acl-P98-2216', 'year': 1998, 'book': 'COLING-ACL', 'score': 0.6183828204163848, 'authors': ['Evelyne Viegas', 'Stephen Beale', 'Sergei Nirenburg'], 'abstract': ['In this paper, we address the issue of syntagmatic expressions from a computational lexical semantic perspective.', 'From a representational viewpoint, we argue for a hybrid approach combining linguistic and conceptual paradigms, in order to account for the continuum we find in natural languages from free combining words to frozen expressions.', 'In particular, we focus on the place of lexical and semantic restricted co-occurrences.', 'From a processing viewpoint, we show how to generate/analyze syntagmatic expressions by using an efficient constraint-based processor, well fitted for a knowledge-driven approach.']}
+acl-T75-2010 - {'type': 'unknown', 'url': 'https://aclweb.org/anthology/T75-2010', 'title': 'Organization and Inference in a Frame-Like System of Common Sense Knowledge', 'id': 'acl-T75-2010', 'year': 1975, 'book': 'Theoretical Issues in Natural Language Processing', 'score': 0.549935541820176, 'authors': ['Eugene Charniak'], 'abstract': ['Rather than write two short papers for the two sessions I participate in (Memory: Organization, and Memory: Reasoning and Inferencing) I have chosen to write one paper of twice the length.', 'My reason for doing so, beyond the fact that it takes less time to write one long paper than two short ones, is that the issues involved are so intertwined as to make separating them an unprofitable task.', 'My goals have not changed since (Charniak 72).', "I am still interested in the construction of a computer program which will answer questions about simple narration (e.g. children's stories).", 'More exactly, if one makes the somewhat unrealistic division of the problem into (a) going from natural language to a convenient internal representation, and (b) being able to "reason" about the information in the story in order to answer questions, my interests are clearly in the latter section.', 'I will take it as given that such reasoning requires large amounts of "common sense knowledge" about the topics mentioned in the text, so I will not demonstrate this point.', '(However it should come out incidentally from the examples used to demonstrate other points.)', 'To reason with this knowledge requires that it be organized, by which I simply mean it must be structured so that the system can get at necessary knowledge when it is needed, but that unnecessary knowledge will not clog the system with the all too familiar "combinatorial explosion".', 'I will start with my current thoughts on organization.', 'The scheme presented, here has been clearly inspired by Minsky \'s "frames paper" (Minsky 74) so I have called the primary organizational grouping a "frame".']}
+acl-J05-1002 - {'type': 'unknown', 'url': 'https://aclweb.org/anthology/J05-1002', 'title': 'Squibs and Discussions - Real Versus Template-Based Natural Language Generation: A False Opposition?', 'id': 'acl-J05-1002', 'year': 2005, 'book': 'Computational Linguistics', 'score': 0.4177600625335297, 'authors': ['Kees van Deemter', 'Emiel Krahmer', 'Mariët Theune'], 'abstract': ['Natural language generation (NLG) systems are sometimes partitioned into application-dependent systems which lack a proper theoretical foundation, on the one hand, and theoretically well-founded systems which embody generic linguistic insights, on the other.', 'Template-based systems are often regarded as automatically falling into the first category.', 'We argue against this view.', 'First, we describe the received view of both template-based and ‘‘standard’’ NLG systems (section 2).', 'Then we describe a class of recent template-based systems (section 3) that will serve as a basis for a comparison between template-based and other NLG systems with respect to their potential for performing NLG tasks (section 4).', 'We ask what the real difference between template-based and other systems is and argue that the distinction between the two is becoming increasingly blurred (section 5).', 'Finally, we discuss the implications of engineering shortcuts (Mellish 2000) and corpus-based methods (section 6).']}
+acl-W00-1410 - {'type': 'unknown', 'url': 'https://aclweb.org/anthology/W00-1410', 'title': 'Reinterpretation of an Existing NLG System in a Generic Generation Architecture', 'id': 'acl-W00-1410', 'year': 2000, 'book': 'International Conference on Natural Language Generation', 'score': 0.41158684503462595, 'authors': ['Lynne J. Cahill', 'Christine Doran', 'Roger Evans', 'Chris S. Mellish', 'Daniel S. Paiva', 'Mike Reape', 'Donia R. Scott', 'Neil Tipper'], 'abstract': ['The RAGS project aims to define a reference architecture for Natural Language Generation (NLG) systems.', 'Currently the major part of this architecture consists of a set of datatype definitions for specifying the input and output formats for modules within NLG systems.', 'In this paper we describe our efforts to reinterpret an existing NLG system in terms of these definitions.', 'The system chosen was the Caption Generation System.']}
+acl-W08-2002 - {'type': 'unknown', 'url': 'https://aclweb.org/anthology/W08-2002', 'title': 'Learning to Map Text to Graph-Based Meaning Representations via Grammar Induction', 'id': 'acl-W08-2002', 'year': 2008, 'book': 'Coling 2008: Proceedings of the workshop on Speech Processing for Safety Critical Translation and Pervasive Applications', 'score': 0.459769123731039, 'authors': ['Smaranda Muresan'], 'abstract': ['Learning to Map Text to Graph-based Meaning Representations via', 'Grammar Induction', 'We argue in favor of using a graph-based representation for language meaning and propose a novel learning method to map natural language text to its graph-based meaning representation.', 'We present a grammar formalism, which combines syntax and semantics, and has ontology constraints at the rule level.', 'These constraints establish links between language expressions and the entities they refer to in the real world.', 'We present a relational learning algorithm that learns these grammars from a small representative set of annotated examples, and show how this grammar induction framework and the ontology-based semantic representation allow us to directly map text to graph-based meaning representations.']}
+acl-C10-2102 - {'type': 'unknown', 'url': 'https://aclweb.org/anthology/C10-2102', 'title': 'A Learnable Constraint-based Grammar Formalism', 'id': 'acl-C10-2102', 'year': 2010, 'book': 'COLING – POSTERS', 'score': 0.45038730051711107, 'authors': ['Smaranda Muresan'], 'abstract': ['Lexicalized Well-Founded Grammar (LWFG) is a recently developed syntactic-semantic grammar formalism for deep language understanding, which balances expressiveness with provable learnability results.', 'The learnability result for LWFGs assumes that the semantic composition constraints are learnable.', 'In this paper, we show what are the properties and principles the semantic representation and grammar formalism require, in order to be able to learn these constraints from examples, and give a learning algorithm.', 'We also introduce a LWFG parser as a deductive system, used as an inference engine during LWFG induction.', 'An example for learning a grammar for noun compounds is given.']}
+acl-P09-1110 - {'type': 'unknown', 'url': 'https://aclweb.org/anthology/P09-1110', 'title': 'Learning Context-Dependent Mappings from Sentences to Logical Form', 'id': 'acl-P09-1110', 'year': 2009, 'book': 'ACL-IJCNLP', 'score': 0.3992527224642248, 'authors': ['Luke Zettlemoyer', 'Michael John Collins'], 'abstract': ['Luke S. Zettlemoyer and Michael Collins', 'MIT CSAIL Cambridge, MA 02139', 'We consider the problem of learning context-dependent mappings from sentences to logical form.', 'The training examples are sequences of sentences annotated with lambda-calculus meaning representations.', 'We develop an algorithm that maintains explicit, lambda-calculus representations of salient discourse entities and uses a context-dependent analysis pipeline to recover logical forms.', 'The method uses a hidden-variable variant of the perception algorithm to learn a linear model used to select the best analysis.', 'Experiments on context-dependent utterances from the ATIS corpus show that the method recovers fully correct logical forms with 83.7% accuracy.']}
+acl-D13-1161 - {'type': 'unknown', 'url': 'https://aclweb.org/anthology/D13-1161', 'title': 'Scaling Semantic Parsers with On-the-Fly Ontology Matching', 'id': 'acl-D13-1161', 'year': 2013, 'book': 'EMNLP', 'score': 0.3845496071759708, 'authors': ['Tom Kwiatkowski', 'Eunsol Choi', 'Yoav Artzi', 'Luke Zettlemoyer'], 'abstract': ['We consider the challenge of learning semantic parsers that scale to large, open-domain problems, such as question answering with Freebase.', 'In such settings, the sentences cover a wide variety of topics and include many phrases whose meaning is difficult to represent in a fixed target ontology.', 'For example, even simple phrases such as ?daughter?', 'and ?number of people living in?', 'cannot be directly represented in Freebase, whose ontology instead encodes facts about gender, parenthood, and population.', 'In this paper, we introduce a new semantic parsing approach that learns to resolve such ontological mismatches.', 'The parser is learned from question-answer pairs, uses a probabilistic CCG to build linguistically motivated logical-form meaning representations, and includes an ontology matching model that adapts the output logical forms for each target ontology.', 'Experiments demonstrate state-of-the-art performance on two benchmark semantic parsing datasets, including a nine point accuracy improvement on a recent Freebase QA corpus.']}
+Lambda = 0 -> No penalty
+bound: 0.0
+find mmr max: 4.822750937347142
+len: 1 33
+bound: 4.822750937347142
+find mmr max: 9.033876323397209
+len: 2 32
+bound: 9.033876323397209
+find mmr max: 12.978001735148611
+len: 3 31
+bound: 12.978001735148611
+find mmr max: 16.082603251732614
+len: 4 30
+bound: 16.082603251732614
+find mmr max: 18.798487180973588
+len: 5 29
+bound: 18.798487180973588
+find mmr max: 21.43293259193782
+len: 6 28
+bound: 21.43293259193782
+find mmr max: 23.531990784421037
+len: 7 27
+bound: 23.531990784421037
+find mmr max: 24.980207828391105
+len: 8 26
+bound: 24.980207828391105
+find mmr max: 26.297955527134995
+len: 9 25
+bound: 26.297955527134995
+find mmr max: 27.105803503385154
+len: 10 24
+bound: 27.105803503385154
+find mmr max: 27.666696958649688
+len: 11 23
+bound: 27.666696958649688
+find mmr max: 28.097833841294367
+len: 12 22
+bound: 28.097833841294367
+find mmr max: 28.388959336320085
+len: 13 21
+bound: 28.388959336320085
+find mmr max: 28.567133497595034
+len: 14 20
+bound: 28.567133497595034
+find mmr max: 28.64886426547378
+len: 15 19
+bound: 28.64886426547378
+find mmr max: 28.668823917919497
+len: 16 18
+bound: 28.668823917919497
+find mmr max: 28.644397915496434
+len: 16 17
+bound: 28.668823917919497
+find mmr max: 28.624237698168066
+len: 16 16
+bound: 28.668823917919497
+find mmr max: 28.52537440132468
+len: 16 15
+bound: 28.668823917919497
+find mmr max: 28.410037755640566
+len: 16 14
+bound: 28.668823917919497
+find mmr max: 28.399831463485267
+len: 16 13
+bound: 28.668823917919497
+find mmr max: 28.338178323783612
+len: 16 12
+bound: 28.668823917919497
+find mmr max: 28.3339235583089
+len: 16 11
+bound: 28.668823917919497
+find mmr max: 28.3299469951097
+len: 16 10
+bound: 28.668823917919497
+find mmr max: 28.28060269255753
+len: 16 9
+bound: 28.668823917919497
+find mmr max: 28.2647333835457
+len: 16 8
+bound: 28.668823917919497
+find mmr max: 28.252062104813795
+len: 16 7
+bound: 28.668823917919497
+find mmr max: 28.15933212390926
+len: 16 6
+bound: 28.668823917919497
+find mmr max: 28.101860980204695
+len: 16 5
+bound: 28.668823917919497
+find mmr max: 28.095920196586217
+len: 16 4
+bound: 28.668823917919497
+find mmr max: 28.090857316911098
+len: 16 3
+bound: 28.668823917919497
+find mmr max: 28.03319073886951
+len: 16 2
+bound: 28.668823917919497
+find mmr max: 27.959196479928934
+len: 16 1
+bound: 28.668823917919497
+find mmr max: 27.728360596265095
+len: 16 0
+16
+acl-A00-2008
+acl-C10-1091
+acl-N13-1134
+acl-P10-5006
+acl-W91-0110
+acl-N06-1055
+acl-T75-2010
+acl-D13-1014
+acl-C90-3068
+acl-J05-1002
+acl-P07-1032
+acl-P13-2083
+acl-P98-2216
+acl-P09-1110
+acl-D13-1161
+acl-W10-0210
+Lambda = 0.5 -> less penalty
+bound: 0.0
+find mmr max: 4.822750937347142
+len: 1 33
+bound: 4.822750937347142
+find mmr max: 8.837760188259026
+len: 2 32
+bound: 8.837760188259026
+find mmr max: 12.460769464872243
+len: 3 31
+bound: 12.460769464872243
+find mmr max: 15.063870592308371
+len: 4 30
+bound: 15.063870592308371
+find mmr max: 17.335533201467747
+len: 5 29
+bound: 17.335533201467747
+find mmr max: 18.845313204534172
+len: 6 28
+bound: 18.845313204534172
+find mmr max: 19.85366189451004
+len: 7 27
+bound: 19.85366189451004
+find mmr max: 20.455182484403597
+len: 8 26
+bound: 20.455182484403597
+find mmr max: 20.967130481749248
+len: 9 25
+bound: 20.967130481749248
+find mmr max: 21.179759996303325
+len: 10 24
+bound: 21.179759996303325
+find mmr max: 21.182196291456524
+len: 11 23
+bound: 21.182196291456524
+find mmr max: 20.894970862393837
+len: 11 22
+bound: 21.182196291456524
+find mmr max: 20.84588717022229
+len: 11 21
+bound: 21.182196291456524
+find mmr max: 20.802730568624348
+len: 11 20
+bound: 21.182196291456524
+find mmr max: 20.77958290002733
+len: 11 19
+bound: 21.182196291456524
+find mmr max: 20.73676088826915
+len: 11 18
+bound: 21.182196291456524
+find mmr max: 20.665115736715407
+len: 11 17
+bound: 21.182196291456524
+find mmr max: 20.58330276192954
+len: 11 16
+bound: 21.182196291456524
+find mmr max: 20.570717005674283
+len: 11 15
+bound: 21.182196291456524
+find mmr max: 20.560479349065325
+len: 11 14
+bound: 21.182196291456524
+find mmr max: 20.541538707315933
+len: 11 13
+bound: 21.182196291456524
+find mmr max: 20.37937694907141
+len: 11 12
+bound: 21.182196291456524
+find mmr max: 20.310674568227142
+len: 11 11
+bound: 21.182196291456524
+find mmr max: 20.3063230087398
+len: 11 10
+bound: 21.182196291456524
+find mmr max: 20.30177658325346
+len: 11 9
+bound: 21.182196291456524
+find mmr max: 20.223785876328982
+len: 11 8
+bound: 21.182196291456524
+find mmr max: 20.186903888770065
+len: 11 7
+bound: 21.182196291456524
+find mmr max: 20.15682806379328
+len: 11 6
+bound: 21.182196291456524
+find mmr max: 20.078332957679663
+len: 11 5
+bound: 21.182196291456524
+find mmr max: 20.01421976598074
+len: 11 4
+bound: 21.182196291456524
+find mmr max: 19.800350466068927
+len: 11 3
+bound: 21.182196291456524
+find mmr max: 19.790339360887792
+len: 11 2
+bound: 21.182196291456524
+find mmr max: 19.487940866685758
+len: 11 1
+bound: 21.182196291456524
+find mmr max: 19.370423052970352
+len: 11 0
+11
+acl-A00-2008
+acl-C10-1091
+acl-N13-1134
+acl-W91-0110
+acl-N06-1055
+acl-P10-5006
+acl-T75-2010
+acl-P07-1032
+acl-W08-2002
+acl-P13-2083
+acl-H86-1013
+Lambda = 1.0 -> same degree penalty
+bound: 0.0
+find mmr max: 4.822750937347142
+len: 1 33
+bound: 4.822750937347142
+find mmr max: 8.64164405312084
+len: 2 32
+bound: 8.64164405312084
+find mmr max: 11.943537194595875
+len: 3 31
+bound: 11.943537194595875
+find mmr max: 14.10052218689382
+len: 4 30
+bound: 14.10052218689382
+find mmr max: 15.67606866091501
+len: 5 29
+bound: 15.67606866091501
+find mmr max: 16.48571740108737
+len: 6 28
+bound: 16.48571740108737
+find mmr max: 16.90317428018071
+len: 7 27
+bound: 16.90317428018071
+find mmr max: 17.301462248102215
+len: 8 26
+bound: 17.301462248102215
+find mmr max: 17.40904826027852
+len: 9 25
+bound: 17.40904826027852
+find mmr max: 17.410922543707372
+len: 10 24
+bound: 17.410922543707372
+find mmr max: 17.119959280628727
+len: 10 23
+bound: 17.410922543707372
+find mmr max: 16.725979470137965
+len: 10 22
+bound: 17.410922543707372
+find mmr max: 16.716955327118747
+len: 10 21
+bound: 17.410922543707372
+find mmr max: 16.709042481096063
+len: 10 20
+bound: 17.410922543707372
+find mmr max: 16.698225898607575
+len: 10 19
+bound: 17.410922543707372
+find mmr max: 16.686773167960986
+len: 10 18
+bound: 17.410922543707372
+find mmr max: 16.662256329545883
+len: 10 17
+bound: 17.410922543707372
+find mmr max: 16.644688992476105
+len: 10 16
+bound: 17.410922543707372
+find mmr max: 16.55539364185924
+len: 10 15
+bound: 17.410922543707372
+find mmr max: 16.468879067388276
+len: 10 14
+bound: 17.410922543707372
+find mmr max: 16.423772558570114
+len: 10 13
+bound: 17.410922543707372
+find mmr max: 16.40481295358982
+len: 10 12
+bound: 17.410922543707372
+find mmr max: 16.335705461733355
+len: 10 11
+bound: 17.410922543707372
+find mmr max: 16.256838337146895
+len: 10 10
+bound: 17.410922543707372
+find mmr max: 16.192565339361956
+len: 10 9
+bound: 17.410922543707372
+find mmr max: 16.131750134241816
+len: 10 8
+bound: 17.410922543707372
+find mmr max: 15.942315505394193
+len: 10 7
+bound: 17.410922543707372
+find mmr max: 15.904244011900452
+len: 10 6
+bound: 17.410922543707372
+find mmr max: 15.899558157271041
+len: 10 5
+bound: 17.410922543707372
+find mmr max: 15.869468452783899
+len: 10 4
+bound: 17.410922543707372
+find mmr max: 15.841999636826316
+len: 10 3
+bound: 17.410922543707372
+find mmr max: 15.402294922872407
+len: 10 2
+bound: 17.410922543707372
+find mmr max: 15.379655385097578
+len: 10 1
+bound: 17.410922543707372
+find mmr max: 14.763981093642181
+len: 10 0
+10
+acl-A00-2008
+acl-C10-1091
+acl-N13-1134
+acl-W91-0110
+acl-N06-1055
+acl-P07-1032
+acl-W08-2002
+acl-H92-1062
+acl-H86-1013
+acl-W10-0210
+Lambda = 2.0 -> double degree penalty
+bound: 0.0
+find mmr max: 4.822750937347142
+len: 1 33
+bound: 4.822750937347142
+find mmr max: 8.249411782844472
+len: 2 32
+bound: 8.249411782844472
+find mmr max: 10.90907265404314
+len: 3 31
+bound: 10.90907265404314
+find mmr max: 12.173825376064714
+len: 4 30
+bound: 12.173825376064714
+find mmr max: 12.914691757678522
+len: 5 29
+bound: 12.914691757678522
+find mmr max: 13.271040080228424
+len: 6 28
+bound: 13.271040080228424
+find mmr max: 13.542160420598027
+len: 7 27
+bound: 13.542160420598027
+find mmr max: 13.401676963595913
+len: 7 26
+bound: 13.542160420598027
+find mmr max: 13.227806938010033
+len: 7 25
+bound: 13.542160420598027
+find mmr max: 12.948586244445648
+len: 7 24
+bound: 13.542160420598027
+find mmr max: 12.801450670820234
+len: 7 23
+bound: 13.542160420598027
+find mmr max: 12.680290763056398
+len: 7 22
+bound: 13.542160420598027
+find mmr max: 12.53583685991471
+len: 7 21
+bound: 13.542160420598027
+find mmr max: 12.449603937282276
+len: 7 20
+bound: 13.542160420598027
+find mmr max: 12.447506164797616
+len: 7 19
+bound: 13.542160420598027
+find mmr max: 12.379442573857691
+len: 7 18
+bound: 13.542160420598027
+find mmr max: 12.21496741016394
+len: 7 17
+bound: 13.542160420598027
+find mmr max: 12.167067611712204
+len: 7 16
+bound: 13.542160420598027
+find mmr max: 12.14934339801884
+len: 7 15
+bound: 13.542160420598027
+find mmr max: 12.010314713955216
+len: 7 14
+bound: 13.542160420598027
+find mmr max: 11.993449971480796
+len: 7 13
+bound: 13.542160420598027
+find mmr max: 11.832218830132792
+len: 7 12
+bound: 13.542160420598027
+find mmr max: 11.77341340615567
+len: 7 11
+bound: 13.542160420598027
+find mmr max: 11.740185030129842
+len: 7 10
+bound: 13.542160420598027
+find mmr max: 11.704943773828688
+len: 7 9
+bound: 13.542160420598027
+find mmr max: 11.639599888307728
+len: 7 8
+bound: 13.542160420598027
+find mmr max: 11.51009902854355
+len: 7 7
+bound: 13.542160420598027
+find mmr max: 11.354911770282623
+len: 7 6
+bound: 13.542160420598027
+find mmr max: 11.125644098678277
+len: 7 5
+bound: 13.542160420598027
+find mmr max: 11.083038602987466
+len: 7 4
+bound: 13.542160420598027
+find mmr max: 10.847335316122733
+len: 7 3
+bound: 13.542160420598027
+find mmr max: 10.833478275095485
+len: 7 2
+bound: 13.542160420598027
+find mmr max: 10.613016665944489
+len: 7 1
+bound: 13.542160420598027
+find mmr max: 10.581910873353113
+len: 7 0
+7
+acl-A00-2008
+acl-C10-1091
+acl-N13-1134
+acl-W91-0110
+acl-D13-1161
+acl-P09-1110
+acl-C90-2021
+#Lambda = 4.0 -> as the paper chosen
+bound: 0.0
+find mmr max: 4.822750937347142
+len: 1 33
+bound: 4.822750937347142
+find mmr max: 7.825403973042781
+len: 2 32
+bound: 7.825403973042781
+find mmr max: 9.504069485491906
+len: 3 31
+bound: 9.504069485491906
+find mmr max: 9.765886534013433
+len: 4 30
+bound: 9.765886534013433
+find mmr max: 9.953188759622218
+len: 5 29
+bound: 9.953188759622218
+find mmr max: 10.101565737318154
+len: 6 28
+bound: 10.101565737318154
+find mmr max: 9.56704325349331
+len: 6 27
+bound: 10.101565737318154
+find mmr max: 9.154756722696492
+len: 6 26
+bound: 10.101565737318154
+find mmr max: 9.091611923955044
+len: 6 25
+bound: 10.101565737318154
+find mmr max: 9.030100538826622
+len: 6 24
+bound: 10.101565737318154
+find mmr max: 8.971852719391451
+len: 6 23
+bound: 10.101565737318154
+find mmr max: 8.017390164771355
+len: 6 22
+bound: 10.101565737318154
+find mmr max: 7.854919179820337
+len: 6 21
+bound: 10.101565737318154
+find mmr max: 7.809906668668928
+len: 6 20
+bound: 10.101565737318154
+find mmr max: 7.605794995132866
+len: 6 19
+bound: 10.101565737318154
+find mmr max: 7.406899371893806
+len: 6 18
+bound: 10.101565737318154
+find mmr max: 7.364348526561274
+len: 6 17
+bound: 10.101565737318154
+find mmr max: 7.220540649734463
+len: 6 16
+bound: 10.101565737318154
+find mmr max: 7.145016372176597
+len: 6 15
+bound: 10.101565737318154
+find mmr max: 6.85973579353697
+len: 6 14
+bound: 10.101565737318154
+find mmr max: 6.811156732078185
+len: 6 13
+bound: 10.101565737318154
+find mmr max: 6.69399649027881
+len: 6 12
+bound: 10.101565737318154
+find mmr max: 6.46487783837712
+len: 6 11
+bound: 10.101565737318154
+find mmr max: 6.22193251366051
+len: 6 10
+bound: 10.101565737318154
+find mmr max: 6.009035971445742
+len: 6 9
+bound: 10.101565737318154
+find mmr max: 5.7449857524535
+len: 6 8
+bound: 10.101565737318154
+find mmr max: 5.583252538727608
+len: 6 7
+bound: 10.101565737318154
+find mmr max: 5.366648717210692
+len: 6 6
+bound: 10.101565737318154
+find mmr max: 5.204406920923155
+len: 6 5
+bound: 10.101565737318154
+find mmr max: 4.954118132823901
+len: 6 4
+bound: 10.101565737318154
+find mmr max: 4.914292556685565
+len: 6 3
+bound: 10.101565737318154
+find mmr max: 4.766214435273209
+len: 6 2
+bound: 10.101565737318154
+find mmr max: 4.6392159443762235
+len: 6 1
+bound: 10.101565737318154
+find mmr max: 1.955673473214187
+len: 6 0
+6
+acl-A00-2008
+acl-I05-1074
+acl-D13-1014
+acl-W00-1410
+acl-D13-1161
+acl-C10-2102

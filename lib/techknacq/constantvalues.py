@@ -8,4 +8,6 @@ class ConstantValues:
     ADVANCED = 3
 
     BUDGET=30
-    PENALTY = 0.8
+    PENALTY = 0.0
+    #SIMILARITY_MEASUE='title'
+    SIMILARITY_MEASUE='abstract'

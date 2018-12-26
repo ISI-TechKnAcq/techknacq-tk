@@ -75,13 +75,14 @@ class ReadingList:
         for c, score in sorted(self.relevance.items(), key=lambda x: x[1],
                                reverse=True)[:MAX_MATCHES]:
             #each concept -> depth-first traveral to find
-            print("matched concept "+c+" with score "+str(score))
+            #print("matched concept "+c+" with score "+str(score))
             entry = self.traverse(c, score)
             if entry:
                 self.rl.append(entry)
-                #break
+                #WHY BREAK ???????????????????????????????????????????????????????????
+                break
 
-        print(len(self.rl))
+        #print(len(self.rl))
 
         # for c, score in sorted(self.relevance.items(), key=lambda x: x[1], reverse=True)[:MAX_MATCHES]:
         #     print("matched concept " + c + " with score " + str(score))
@@ -103,7 +104,7 @@ class ReadingList:
 
         docs = self.cg.topic_docs(c)
 
-        print("most relevant documents for the topic "+c+" -> size of docs "+str(len(docs)))
+        #print("most relevant documents for the topic "+c+" -> size of docs "+str(len(docs)))
 
         # 2. Stable sort documents by pedagogical role preference:
         #    ped_score = 1.0 * role1 + 0.85 * role2 + 0.7 * role3 +
@@ -181,8 +182,8 @@ class ReadingList:
         # Documents to print before any dependencies:
         #
 
-        print("intro-docs : "+str(num_intro_docs)+ " - "+str(len(intro_docs)))
-        print("advanced-docs : "+str(num_advanced_docs)+ " - "+str(len(advanced_docs)))
+        #print("intro-docs : "+str(num_intro_docs)+ " - "+str(len(intro_docs)))
+        #print("advanced-docs : "+str(num_advanced_docs)+ " - "+str(len(advanced_docs)))
 
         for doc_id, doc_weight in intro_docs:
             if num_intro_docs == 0:
