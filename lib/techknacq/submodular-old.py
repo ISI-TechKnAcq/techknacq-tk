@@ -1,10 +1,13 @@
-
-import re, math
+import math
+import re
 from collections import Counter
+
+import click
+
+from lib.submodular.constantvalues import ConstantValues
 from lib.techknacq.conceptgraph import ConceptGraph
 from lib.techknacq.readinglist import ReadingList
-from lib.techknacq.constantvalues import ConstantValues
-import click
+
 
 def text_to_vector(text):
     WORD = re.compile(r'\w+')

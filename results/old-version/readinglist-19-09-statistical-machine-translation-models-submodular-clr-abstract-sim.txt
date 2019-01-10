@@ -1,0 +1,1025 @@
+Before Submodular: 
+56
+acl-P08-2040 - {'id': 'acl-P08-2040', 'abstract': ['Boxing Chen, Min Zhang, Aiti Aw and Haizhou Li', 'Institute for Infocomm Research 21 Heng Mui Keng Terrace, 119613, Singapore {bxchen, mzhang, aaiti, hli}@i2r.a-star.edu.sg', 'Word and n-gram posterior probabilities estimated on N-best hypotheses have been used to improve the performance of statistical machine translation (SMT) in a rescoring framework.', 'In this paper, we extend the idea to estimate the posterior probabilities on N-best hypotheses for translation phrase-pairs, target language n-grams, and source word re-orderings.', 'The SMT system is self-enhanced with the posterior knowledge learned from N-best hypotheses in a re-decoding framework.', 'Experiments on NIST Chinese-to-English task show performance improvements for all the strategies.', 'Moreover, the combination of the three strategies achieves further improvements and outperforms the baseline by 0.67 BLEU score on NIST-2003 set, and 0.64 on NIST-2005 set, respectively.'], 'url': 'https://aclweb.org/anthology/P08-2040', 'book': 'Annual Meeting of the Association for Computational Linguistics', 'type': 'unknown', 'year': 2008, 'score': 0.5261784134372253, 'title': 'Exploiting N-best Hypotheses for SMT Self-Enhancement', 'authors': ['Boxing Chen', 'Min Zhang', 'Aiti Aw', 'Haizhou Li']}
+acl-P00-1056 - {'id': 'acl-P00-1056', 'abstract': ['In this paper, we present and compare various single-word based alignment models for statistical machine translation.', 'We discuss the five IBM alignment models, the Hidden-Markov alignment model, smoothing techniques and various modifications.', 'We present different methods to combine alignments.', 'As evaluation criterion we use the quality of the resulting Viterbi alignment compared to a manually produced reference alignment.', 'We show that models with a first-order dependence and a fertility model lead to significantly better results than the simple models IBM-1 or IBM-2, which are not able to go beyond zero-order dependencies.'], 'url': 'https://aclweb.org/anthology/P00-1056', 'book': 'Annual Meeting of the Association for Computational Linguistics', 'type': 'unknown', 'year': 2000, 'score': 0.767028756136451, 'title': 'Improved Statistical Alignment Models', 'authors': ['Franz Josef Och', 'Hermann Ney']}
+acl-P14-2095 - {'id': 'acl-P14-2095', 'abstract': ['Proceedings of the 52nd Annual Meeting of the Association for Computational Linguistics (Short Papers), pages 579?585, Baltimore, Maryland, USA, June 23-25 2014. c?2014 Association for Computational Linguistics Cross-lingual Model Transfer Using Feature Representation Projection Mikhail Kozhevnikov MMCI, University of Saarland Saarbr?ucken, Germany mkozhevn@mmci.uni-saarland.de Ivan Titov ILLC, University of Amsterdam Amsterdam, Netherlands titov@uva.nl', 'Abstract', 'We propose a novel approach to cross-lingual model transfer based on feature representation projection.', 'First, a compact feature representation relevant for the task in question is constructed for either language independently and then the mapping between the two representations is determined using parallel data.', 'The target instance can then be mapped into the source-side feature representation using the derived mapping and handled directly by the source-side model.', 'This approach displays competitive performance on model transfer for semantic role labeling when compared to direct model transfer and annotation projection and suggests interesting directions for further research.'], 'url': 'https://aclweb.org/anthology/P14-2095', 'book': 'ACL', 'type': 'unknown', 'year': 2014, 'score': 0.44787132327976686, 'title': 'Cross-lingual Model Transfer Using Feature Representation Projection', 'authors': ['Mikhail Kozhevnikov', 'Ivan Titov']}
+acl-W09-2413 - {'id': 'acl-W09-2413', 'abstract': ['Els Lefever1,2 and Veronique Hoste', 'LT3, Language and Translation Technology Team, University College Ghent', 'Groot-Brittannielaan 45, 9000 Gent, Belgium Department of Applied Mathematics and Computer Science, Ghent University Krijgslaan 281 (S9), 9000 Gent, Belgium', '(Els.Lefever, Veronique.Hoste}@hogent.be', 'We propose a multilingual unsupervised Word Sense Disambiguation (WSD) task for a sample of English nouns.', 'Instead of providing manually sense-tagged examples for each sense of a polysemous noun, our sense inventory is built up on the basis of the Europarl parallel corpus.', 'The multilingual setup involves the translations of a given English polyse-mous noun in five supported languages, viz. Dutch, French, German, Spanish and Italian.', 'The task targets the following goals: (a) the manual creation of a multilingual sense inventory for a lexical sample of English nouns and (b) the evaluation of systems on their ability to disambiguate new occurrences of the selected polysemous nouns.', 'For the creation of the hand-tagged gold standard, all translations of a given polysemous English noun are retrieved in the five languages and clustered by meaning.', 'Systems can participate in 5 bilingual evaluation subtasks (English - Dutch, English - German, etc.)'], 'url': 'https://aclweb.org/anthology/W09-2413', 'book': 'Proceedings of the Workshop on Semantic Evaluations: Recent Achievements and Future Directions (SEW-2009)', 'type': 'unknown', 'year': 2009, 'score': 0.4206817456456919, 'title': 'SemEval-2010 Task 3: Cross-lingual Word Sense Disambiguation', 'authors': ['Els Lefever', 'Véronique Hoste']}
+acl-P08-2038 - {'id': 'acl-P08-2038', 'abstract': ['In this paper, we propose a linguistically annotated reordering model for BTG-based statistical machine translation.', 'The model incorporates linguistic knowledge to predict orders for both syntactic and non-syntactic phrases.', 'The linguistic knowledge is automatically learned from source-side parse trees through an annotation algorithm.', 'We empirically demonstrate that the proposed model leads to a significant improvement of 1.55% in the BLEU score over the baseline reordering model on the NIST MT-05 Chinese-to-English translation task.'], 'url': 'https://aclweb.org/anthology/P08-2038', 'book': 'Annual Meeting of the Association for Computational Linguistics', 'type': 'unknown', 'year': 2008, 'score': 0.6368380145476898, 'title': 'A Linguistically Annotated Reordering Model for BTG-based Statistical Machine Translation', 'authors': ['Deyi Xiong', 'Min Zhang', 'Aiti Aw', 'Haizhou Li']}
+acl-J10-3009 - {'id': 'acl-J10-3009', 'abstract': ['Linguistic knowledge plays an important role in phrase movement in statistical machine translation.', 'To efficiently incorporate linguistic knowledge into phrase reordering, we propose a new approach: Linguistically Annotated Reordering (LAR).', 'In LAR, we build hard hierarchical skeletons and inject soft linguistic knowledge from source parse trees to nodes ofhard skeletons during translation.', 'The experimental results on large-scale training data show that LAR is comparable to boundary word-based reordering (BWR) (Xiong, Liu, and Lin 2006), which is a very competitive lexicalized reordering approach.', 'When combined with BWR, LAR provides complementary information for phrase reordering, which collectively improves the BLEU score significantly.', 'To further understand the contribution oflinguistic knowledge in LAR to phrase reordering, we introduce a syntax-based analysis method to automatically detect constituent movement in both reference and system translations, and summarize syntactic reordering patterns that are captured by reordering models.', 'With the proposed analysis method, we conduct a comparative analysis that not only provides the insight into how linguistic knowledge affects phrase movement but also reveals new challenges in phrase reordering.'], 'url': 'https://aclweb.org/anthology/J10-3009', 'book': 'Computational Linguistics', 'type': 'unknown', 'year': 2010, 'score': 0.5665052485545983, 'title': 'Linguistically Annotated Reordering: Evaluation and Analysis', 'authors': ['Deyi Xiong', 'Min Zhang', 'Aiti Aw', 'Haizhou Li']}
+acl-C94-2175 - {'id': 'acl-C94-2175', 'abstract': ['This paper describes a unified framework for bilingual text matching by combining existing handwritten bilingual dictionaries and statistical techniques.', 'The process of bilingual text matching consists of two major steps: sentence alignment and structural matching of bilingual sentences.', 'Statistical techniques are applied to estimate word correspondences not included in bilingual dictionaries.', 'Estimated word correspondences are useful for improving both sentence alignment and structural matching.'], 'url': 'https://aclweb.org/anthology/C94-2175', 'book': 'International Conference on Computational Linguistics', 'type': 'unknown', 'year': 1994, 'score': 0.5927511131437411, 'title': 'Bilingual Text, Matching Using Bilingual Dictionary and Statistics', 'authors': ['Takehito Utsuro', 'Hiroshi Ikeda', 'Masaya Yamane', 'Yuji Matsumoto', 'Makoto Nagao']}
+acl-W04-1121 - {'id': 'acl-W04-1121', 'abstract': ['Large amounts of bilingual resource on the Internet provide us with the probability of building a large scale of bilingual corpus.', 'The irregular characteristics of the real texts, especially without the strictly aligned paragraph boundaries, bring a challenge to alignment technology.', 'The traditional alignment methods have some difficulties in competency for doing this.', 'This paper describes a new method for aligning real bilingual texts using sentence pair location information.', 'The model was motivated by the observation that the location of a sentence pair with certain length is distributed in the whole text similarly.', 'It uses (1:1) sentence beads instead of high frequency words as the candidate anchors.', 'The method was developed and evaluated through many different test data.', 'The results show that it can achieve good aligned performance and be robust and language independent.', 'It can resolve the alignment problem on real bilingual text.'], 'url': 'https://aclweb.org/anthology/W04-1121', 'book': 'Workshop on Automatic Alignment and Extraction of Bilingual Domain Ontology for Medical Domain Web Search', 'type': 'unknown', 'year': 2004, 'score': 0.5317585015077735, 'title': 'Aligning Bilingual Corpora Using Sentences Location Information', 'authors': ['Weigang Li', 'Ting Liu', 'Zhen Wang', 'Sheng Li']}
+acl-J13-3001 - {'id': 'acl-J13-3001', 'abstract': ['Paraphrases are sentences or phrases that convey the same meaning using different wording.', 'Although the logical definition of paraphrases requires strict semantic equivalence, linguistics accepts a broader, approximate, equivalence?thereby allowing far more examples of ?quasi-paraphrase.?', 'But approximate equivalence is hard to define.', 'Thus, the phenomenon of paraphrases, as understood in linguistics, is difficult to characterize.', 'In this article, we list a set of 25 operations that generate quasi-paraphrases.', 'We then empirically validate the scope and accuracy of this list by manually analyzing random samples of two publicly available paraphrase corpora.', 'We provide the distribution of naturally occurring quasi-paraphrases in English text.'], 'url': 'https://aclweb.org/anthology/J13-3001', 'book': 'Computational Linguistics', 'type': 'unknown', 'year': 2013, 'score': 0.6501073523435825, 'title': 'Squibs: What is a Paraphrase?', 'authors': ['Rahul Bhagat', 'Eduard Hovy']}
+acl-C10-4001 - {'id': 'acl-C10-4001', 'abstract': ['Shiqi Zhao Haifeng Wang', 'Baidu, Inc. Baidu, Inc.'], 'url': 'https://aclweb.org/anthology/C10-4001', 'book': 'COLING – Tutorial Notes', 'type': 'unknown', 'year': 2010, 'score': 0.5877299308358976, 'title': 'Paraphrases and Applications', 'authors': ['Shiqi Zhao', 'Haifeng Wang']}
+acl-W11-2103 - {'id': 'acl-W11-2103', 'abstract': ['Chris Callison-Burch Philipp Koehn', 'Center for Language and Speech Processing School of Informatics', 'Johns Hopkins University University of Edinburgh', 'Informatics Institute University of Amsterdam', 'Center for Language and Speech Processing Johns Hopkins University', 'This paper presents the results of the WMT11 shared tasks, which included a translation task, a system combination task, and a task for machine translation evaluation metrics.', 'We conducted a large-scale manual evaluation of 148 machine translation systems and 41 system combination entries.', 'We used the ranking of these systems to measure how strongly automatic metrics correlate with human judgments of translation quality for 21 evaluation metrics.', 'This year featured a Haitian Creole to English task translating SMS messages sent to an emergency response service in the aftermath of the Haitian earthquake.', "We also conducted a pilot 'tunable metrics' task to test whether optimizing a fixed system to different metrics would result in perceptibly different translation quality."], 'url': 'https://aclweb.org/anthology/W11-2103', 'book': 'Proceedings of the Sixth Workshop on Statistical Machine Translation', 'type': 'unknown', 'year': 2011, 'score': 0.7275698227756415, 'title': 'Findings of the 2011 Workshop on Statistical Machine Translation', 'authors': ['Chris Callison-Burch', 'Philipp Koehn', 'Christof Monz', 'Omar F. Zaidan']}
+acl-W10-1703 - {'id': 'acl-W10-1703', 'abstract': ['Chris Callison-Burch Philipp Koehn Christof Monz', 'Johns Hopkins University University of Edinburgh University of Amsterdam ccb@cs.jhu.edu pkoehn@inf.ed.ac.uk c.monz@uva.nl', 'Kay Peterson and Mark Przybocki Omar F. Zaidan', 'This paper presents the results of the WMT10 and MetricsMATR10 shared tasks, which included a translation task, a system combination task, and an evaluation task.', 'We conducted a large-scale manual evaluation of 104 machine translation systems and 41 system combination entries.', 'We used the ranking of these systems to measure how strongly automatic metrics correlate with human judgments of translation quality for 26 metrics.', "This year we also investigated increasing the number of human judgments by hiring non-expert annotators through Amazon's Mechanical Turk."], 'url': 'https://aclweb.org/anthology/W10-1703', 'book': 'Proceedings of the Joint Fifth Workshop on Statistical Machine Translation and MetricsMATR', 'type': 'unknown', 'year': 2010, 'score': 0.6678447745451398, 'title': 'Findings of the 2010 Joint Workshop on Statistical Machine Translation and Metrics for Machine Translation', 'authors': ['Chris Callison-Burch', 'Philipp Koehn', 'Christof Monz', 'Kay Peterson', 'Mark A. Przybocki', 'Omar F. Zaidan']}
+acl-P12-2007 - {'id': 'acl-P12-2007', 'abstract': ["This paper presents an extension of Chiang's hierarchical phrase-based (HPB) model, called Head-Driven HPB (HD-HPB), which incorporates head information in translation rules to better capture syntax-driven information, as well as improved reordering between any two neighboring non-terminals at any stage of a derivation to explore a larger reordering search space.", "Experiments on Chinese-English translation on four NIST MT test sets show that the HD-HPB model significantly outperforms Chiang's model with average gains of 1.91 points absolute in BLEU."], 'url': 'https://aclweb.org/anthology/P12-2007', 'book': 'ACL', 'type': 'unknown', 'year': 2012, 'score': 0.7662520728002502, 'title': 'Head-Driven Hierarchical Phrase-based Translation', 'authors': ['Junhui Li', 'Zhaopeng Tu', 'Guodong Zhou', 'Josef van Genabith']}
+acl-P09-1063 - {'id': 'acl-P09-1063', 'abstract': ['Yang Liu and Yajuan Lii and Qun Liu', 'Key Laboratory of Intelligent Information Processing Institute of Computing Technology Chinese Academy of Sciences P.O.', 'Box 2704, Beijing 100190, China (yliu,lvyajuan,liuqun}@ict.ac.cn', 'Current tree-to-tree models suffer from parsing errors as they usually use only 1-best parses for rule extraction and decoding.', 'We instead propose a forest-based tree-to-tree model that uses packed forests.', 'The model is based on a probabilistic synchronous tree substitution grammar (STSG), which can be learned from aligned forest pairs automatically.', 'The decoder finds ways of decomposing trees in the source forest into elementary trees using the source projection of STSG while building target forest in parallel.', 'Comparable to the state-of-the-art phrase-based system Moses, using packed forests in tree-to-tree translation results in a significant absolute improvement of 3.6 BLEU points over using 1-best trees.'], 'url': 'https://aclweb.org/anthology/P09-1063', 'book': 'ACL-IJCNLP', 'type': 'unknown', 'year': 2009, 'score': 0.7290738296043581, 'title': 'Improving Tree-to-Tree Translation with Packed Forests', 'authors': ['Yang Liu', 'Yajuan Lü', 'Qun Liu']}
+acl-C04-1032 - {'id': 'acl-C04-1032', 'abstract': ['In this paper, we address the word alignment problem for statistical machine translation.', 'We aim at creating a symmetric word alignment allowing for reliable one-to-many and many-to-one word relationships.', 'We perform the iterative alignment training in the source-to-target and the target-to-source direction with the well-known IBM and HMM alignment models.', 'Using these models, we robustly estimate the local costs of aligning a source word and a target word in each sentence pair.', 'Then, we use efficient graph algorithms to determine the symmetric alignment with minimal total costs (i. e. maximal alignment probability).', 'We evaluate the automatic alignments created in this way on the German–English Verb-mobil task and the French–English Canadian Hansards task.', 'We show statistically significant improvements of the alignment quality compared to the best results reported so far.', 'On the Verbmobil task, we achieve an improvement of more than 1% absolute over the baseline error rate of 4.7%.'], 'url': 'https://aclweb.org/anthology/C04-1032', 'book': 'International Conference on Computational Linguistics', 'type': 'unknown', 'year': 2004, 'score': 0.720495037846413, 'title': 'Symmetric Word Alignments for Statistical Machine Translation', 'authors': ['Evgeny Matusov', 'Richard Zens', 'Hermann Ney']}
+acl-C04-1045 - {'id': 'acl-C04-1045', 'abstract': ['In this paper, we present an approach to include morpho-syntactic dependencies into the training of the statistical alignment models.', 'Existing statistical translation systems usually treat different derivations of the same base form as they were independent of each other.', 'We propose a method which explicitly takes into account such interdependencies during the EM training of the statistical alignment models.', 'The evaluation is done by comparing the obtained Viterbi alignments with a manually annotated reference alignment.', 'The improvements of the alignment quality compared to the, to our knowledge, best system are reported on the German-English Verbmobil corpus.'], 'url': 'https://aclweb.org/anthology/C04-1045', 'book': 'International Conference on Computational Linguistics', 'type': 'unknown', 'year': 2004, 'score': 0.6975033529905635, 'title': 'Improving Word Alignment Quality Using Morpho-Syntactic Information', 'authors': ['Hermann Ney', 'Maja Popović']}
+acl-W12-3147 - {'id': 'acl-W12-3147', 'abstract': ['This paper describes the development of French?English and English?French statistical machine translation systems for the 2012 WMT shared task evaluation.', 'We developed phrase-based systems based on the Moses decoder, trained on the provided data only.', 'Additionally, new features this year included improved language and translation model adaptation using the cross-entropy score for the corpus selection.'], 'url': 'https://aclweb.org/anthology/W12-3147', 'book': 'Proceedings of the Seventh Workshop on Statistical Machine Translation', 'type': 'unknown', 'year': 2012, 'score': 0.62039405477476, 'title': 'LIUM’s SMT Machine Translation Systems for WMT 2012', 'authors': ['Christophe Servan', 'Patrik Lambert', 'Anthony Rousseau', 'Holger Schwenk', 'Loïc Barrault']}
+acl-I08-1042 - {'id': 'acl-I08-1042', 'abstract': ['Jesus Gimenez and Lluis Märquez', 'Combining different metrics into a single measure of quality seems the most direct and natural way to improve over the quality of individual metrics.', 'Recently, several approaches have been suggested (Kulesza and Shieber, 2004; Liu and Gildea, 2007; Albrecht and Hwa, 2007a).', 'Although based on different assumptions, these approaches share the common characteristic of being parametric.', 'Their models involve a number of parameters whose weight must be adjusted.', 'As an alternative, in this work, we study the behaviour of non-parametric schemes, in which metrics are combined without having to adjust their relative importance.', 'Besides, rather than limiting to the lexical dimension, we work on a wide set of metrics operating at different linguistic levels (e.g., lexical, syntactic and semantic).', 'Experimental results show that non-parametric methods are a valid means of putting different quality dimensions together, thus tracing a possible path towards heterogeneous automatic MT evaluation.'], 'url': 'https://aclweb.org/anthology/I08-1042', 'book': 'Proceedings of the Third International Joint Conference on Natural Language Processing', 'type': 'unknown', 'year': 2008, 'score': 0.7490549476435829, 'title': 'Heterogeneous Automatic MT Evaluation Through Non-Parametric Metric Combinations', 'authors': ['Jesús Giménez', 'Lluís Màrquez']}
+acl-W12-3107 - {'id': 'acl-W12-3107', 'abstract': ["This paper describes Stanford University's submission to the Shared Evaluation Task of WMT 2012.", 'Our proposed metric (SPEDE) computes probabilistic edit distance as predictions of translation quality.', 'We learn weighted edit distance in a probabilistic finite state machine (pFSM) model, where state transitions correspond to edit operations.', 'While standard edit distance models cannot capture long-distance word swapping or cross alignments, we rectify these shortcomings using a novel pushdown automaton extension of the pFSM model.', 'Our models are trained in a regression framework, and can easily incorporate a rich set of linguistic features.', 'Evaluated on two different prediction tasks across a diverse set of datasets, our methods achieve state-of-the-art correlation with human judgments.'], 'url': 'https://aclweb.org/anthology/W12-3107', 'book': 'Proceedings of the Seventh Workshop on Statistical Machine Translation', 'type': 'unknown', 'year': 2012, 'score': 0.7397981177652936, 'title': 'SPEDE: Probabilistic Edit Distance Metrics for MT Evaluation', 'authors': ['Mengqiu Wang', 'Christopher Manning']}
+acl-W11-2158 - {'id': 'acl-W11-2158', 'abstract': ["LIUM's SMT Machine Translation Systems for WMT 2011", 'Holger Schwenk, Patrik Lambert, Loïc Barrault, Christophe Servan, Haithem Afli, Sadaf Abdul-Rauf and Kashif Shah', 'LIUM, University of Le Mans 72085 Le Mans cedex 9, FRANCE FirstName.LastName@lium.univ-lemans.fr', 'Abstract 2 Resources Used', 'This paper describes the development of French-English and English-French statistical machine translation systems for the 2011 WMT shared task evaluation.', 'Our main systems were standard phrase-based statistical systems based on the Moses decoder, trained on the provided data only, but we also performed initial experiments with hierarchical systems.', 'Additional, new features this year include improved translation model adaptation using monolingual data, a continuous space language model and the treatment of unknown words.'], 'url': 'https://aclweb.org/anthology/W11-2158', 'book': 'Proceedings of the Sixth Workshop on Statistical Machine Translation', 'type': 'unknown', 'year': 2011, 'score': 0.6155744999697585, 'title': 'LIUM’s SMT Machine Translation Systems for WMT 2011', 'authors': ['Holger Schwenk', 'Patrik Lambert', 'Loïc Barrault', 'Christophe Servan', 'Sadaf Abdul-Rauf', 'Haithem Afli', 'Kashif Shah']}
+acl-W10-1716 - {'id': 'acl-W10-1716', 'abstract': ['Patrik Lambert, Sadaf Abdul-Rauf and Holger Schwenk', 'LIUM, University of Le Mans 72085 Le Mans cedex 9, FRANCE FirstName.LastName@lium.univ-lemans.fr', 'This paper describes the development of French-English and English-French machine translation systems for the 2010 WMT shared task evaluation.', 'These systems were standard phrase-based statistical systems based on the Moses decoder, trained on the provided data only.', 'Most of our efforts were devoted to the choice and extraction of bilingual data used for training.', 'We filtered out some bilingual corpora and pruned the phrase table.', 'We also investigated the impact of adding two types of additional bilingual texts, extracted automatically from the available monolingual data.', 'We first collected bilingual data by performing automatic translations of monolingual texts.', 'The second type of bilingual text was harvested from comparable corpora with Information Retrieval techniques.'], 'url': 'https://aclweb.org/anthology/W10-1716', 'book': 'Proceedings of the Joint Fifth Workshop on Statistical Machine Translation and MetricsMATR', 'type': 'unknown', 'year': 2010, 'score': 0.6131327846717648, 'title': 'LIUM SMT Machine Translation System for WMT 2010', 'authors': ['Patrik Lambert', 'Sadaf Abdul-Rauf', 'Holger Schwenk']}
+acl-H93-1001 - {'id': 'acl-H93-1001', 'abstract': ['For five years, 1988-1992, the Defense Advanced Projects Agency sponsored a series of meetings called the DARPA Speech and Natural Language Workshops.', 'These workshops provided a forum where researchers in speech and natural language, particularly as relating to the DARPA programs in spoken and written language understanding, could exchange information about recent research and technical progress.', 'Participants included researchers funded under the DARPA programs, other researchers who voluntarily participated in these programs or in related evaluations, government researchers and consumers of these research results, and invited attendees from inside and outside the US.', 'Proceedings of these workshops were published by Morgan Kaufmann.'], 'url': 'https://aclweb.org/anthology/H93-1001', 'book': 'Human Language Technology Conference', 'type': 'unknown', 'year': 1993, 'score': 0.6896844984773962, 'title': 'Overview of the ARPA Human Language Technology Workshop', 'authors': ['Madeleine Bates']}
+acl-W00-1429 - {'id': 'acl-W00-1429', 'abstract': ['We describe the knowledge acquisition (KA) techniques used to build the STOP system, especially sorting and think-aloud protocols.', 'That is, we describe the ways in which we interacted with domain experts to determine appropriate user categories, schemas, detailed content rules, and so forth for STOP.', 'Informal evaluations of these techniques suggest that they had some benefit, but perhaps were most successful as a source of insight and hypotheses, and should ideally have been supplemented by other techniques when deciding on the specific rules and knowledge incorporated into STOP.'], 'url': 'https://aclweb.org/anthology/W00-1429', 'book': 'International Conference on Natural Language Generation', 'type': 'unknown', 'year': 2000, 'score': 0.5257659543297751, 'title': 'Knowledge Acquisition for Natural Language Generation', 'authors': ['Ehud Reiter', 'Roma Robertson', 'Liesl Osman']}
+acl-P01-1057 - {'id': 'acl-P01-1057', 'abstract': ['The STOP system, which generates personalised smoking-cessation letters, was evaluated by a randomised controlled clinical trial.', 'We believe this is the largest and perhaps most rigorous task effectiveness evaluation ever performed on an NLG system.', 'The detailed results of the clinical trial have been presented elsewhere, in the medical literature.', 'In this paper we discuss the clinical trial itself: its structure and cost, what we did and did not learn from it (especially considering that the trial showed that STOP was not effective), and how it compares to other NLG evaluation techniques.'], 'url': 'https://aclweb.org/anthology/P01-1057', 'book': 'Annual Meeting of the Association for Computational Linguistics', 'type': 'unknown', 'year': 2001, 'score': 0.519462531022038, 'title': 'Using a Randomised Controlled Clinical Trial to Evaluate an NLG System', 'authors': ['Ehud Reiter', 'Roma Robertson', 'A. Scott Lennox', 'Liesl Osman']}
+acl-C08-2019 - {'id': 'acl-C08-2019', 'abstract': ['We report on work in progress on using very simple statistics in an unsupervised fashion to re-rank search engine results when review-oriented queries are issued; the goal is to bring opinionated or subjective results to the top of the results list.', 'We find that our proposed technique performs comparably to methods that rely on sophisticated pre-encoded linguistic knowledge, and that both substantially improve the initial results produced by the Yahoo!', 'search engine.'], 'url': 'https://aclweb.org/anthology/C08-2019', 'book': 'COLING – Posters', 'type': 'unknown', 'year': 2008, 'score': 0.1716554896314715, 'title': 'Using Very Simple Statistics for Review Search: An Exploration', 'authors': ['Bo Pang', 'Lillian Lee']}
+acl-P12-2018 - {'id': 'acl-P12-2018', 'abstract': ['Variants of Naive Bayes (NB) and Support Vector Machines (SVM) are often used as baseline methods for text classification, but their performance varies greatly depending on the model variant, features used and task/ dataset.', 'We show that: (i) the inclusion of word bigram features gives consistent gains on sentiment analysis tasks; (ii) for short snippet sentiment tasks, NB actually does better than SVMs (while for longer documents the opposite result holds); (iii) a simple but novel SVM variant using NB log-count ratios as feature values consistently performs well across tasks and datasets.', 'Based on these observations, we identify simple NB and SVM variants which outperform most published results on sentiment analysis datasets, sometimes providing a new state-of-the-art performance level.'], 'url': 'https://aclweb.org/anthology/P12-2018', 'book': 'ACL', 'type': 'unknown', 'year': 2012, 'score': 0.1673894466436222, 'title': 'Baselines and Bigrams: Simple, Good Sentiment and Topic Classification', 'authors': ['Sida Wang', 'Christopher Manning']}
+acl-W12-3212 - {'id': 'acl-W12-3212', 'abstract': ['We describe how paperXML, a logical document structure markup for scholarly articles, is generated on the basis of OCR tool outputs.', 'PaperXML has been initially developed for the ACL Anthology Searchbench.', 'The main purpose was to robustly provide uniform access to sentences in ACL Anthology papers from the past 46 years, ranging from scanned, typewriter-written conference and workshop proceedings papers, up to recent high-quality typeset, born-digital journal articles, with varying layouts.', 'PaperXML markup includes information on page and paragraph breaks, section headings, footnotes, tables, captions, boldface and italics character styles as well as bibliographic and publication meta-data.', 'The role of paperXML in the ACL Contributed Task Rediscovering 50 Years of Discoveries is to serve as fall-back source (1) for older, scanned papers (mostly published before the year 2000), for which born-digital PDF sources are not available, (2) for born-digital PDF papers on which the PDFExtract method failed, (3) for document parts where PDFExtract does not output useful markup such as currently for tables.', "We sketch transformation of paperXML into the ACL Contributed Task's TEI P5 XML."], 'url': 'https://aclweb.org/anthology/W12-3212', 'book': 'Proceedings of the ACL-2012 Special Workshop on Rediscovering 50 Years of Discoveries', 'type': 'unknown', 'year': 2012, 'score': 0.6676956381545492, 'title': 'Combining OCR Outputs for Logical Document Structure Markup. Technical Background to the ACL 2012 Contributed Task', 'authors': ['Ulrich Schäfer', 'Benjamin Weitz']}
+acl-W06-1613 - {'id': 'acl-W06-1613', 'abstract': ['Citation function is defined as the author’s reason for citing a given paper (e.g. acknowledgement of the use of the cited method).', 'The automatic recognition of the rhetorical function of citations in scientific text has many applications, from improvement of impact factor calculations to text summarisation and more informative citation indexers.', 'We show that our annotation scheme for citation function is reliable, and present a supervised machine learning framework to automatically classify citation function, using both shallow and linguistically-inspired features.', 'We find, amongst other things, a strong relationship between citation function and sentiment classification.'], 'url': 'https://aclweb.org/anthology/W06-1613', 'book': 'Conference on Empirical Methods in Natural Language Processing', 'type': 'unknown', 'year': 2006, 'score': 0.6095497865399048, 'title': 'Automatic Classification of Citation Function', 'authors': ['Simone Teufel', 'Advaith Siddharthan', 'Dan Tidhar']}
+acl-H93-1047 - {'id': 'acl-H93-1047', 'abstract': ['In this paper we describe a new technique for parsing free text: a transformational grammar/ is automatically learned that is capable of accurately parsing text into binary-branching syntactic trees with nonterminals unlabelled.', 'The algorithm works by beginning in a very naive state of knowledge about phrase structure.', 'By repeatedly comparing the results of bracketing in the current state to proper bracketing provided in the training corpus, the system learns a set of simple structural transformations that can be applied to reduce error.', 'After describing the algorithm, we present results and compare these results to other recent results in automatic grammar induction.'], 'url': 'https://aclweb.org/anthology/H93-1047', 'book': 'Human Language Technology Conference', 'type': 'unknown', 'year': 1993, 'score': 0.5671820190796741, 'title': 'Automatic Grammar Induction and Parsing Free Text: A Transformation-Based Approach', 'authors': ['Eric Brill']}
+acl-C00-1074 - {'id': 'acl-C00-1074', 'abstract': ['A hybrid system for tagging part of speech is described that consists of a neuro tagger and a rule-based corrector.', 'The neuro tagger is an initial-state annotator that uses different lengths of contexts based on longest context priority.', 'its inputs are weighted by information gains that are obtained by information maximization.', 'The rule-based corrector is constructed by a set of transformation rules to make up for the shortcomings of the neuro tagger.', 'Computer experiments show that almost 20% of the errors made by the neuro tagger are corrected by these transformation rules, so that the hybrid system can reach an accuracy of 95.5% counting only flue ambiguous words and 99.1% counting all words when a small Thai corpus with 22,311 ambiguous words is used for training.', 'This accuracy is far higher than that using an 11MM and is also higher than that using a rule-based model.'], 'url': 'https://aclweb.org/anthology/C00-1074', 'book': 'International Conference on Computational Linguistics', 'type': 'unknown', 'year': 2000, 'score': 0.5018102050885659, 'title': 'Hybrid Neuro and Rule-Based Part of Speech Taggers', 'authors': ['Qing Ma', 'Masaki Murata', 'Kiyotaka Uchimoto', 'Hitoshi Isahara']}
+acl-P14-2010 - {'id': 'acl-P14-2010', 'abstract': ['aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa References'], 'url': 'https://aclweb.org/anthology/P14-2010', 'book': 'ACL', 'type': 'unknown', 'year': 2014, 'score': 0.9969348779647177, 'title': 'Sprinkling Topics for Weakly Supervised Text Classification', 'authors': ['Swapnil Hingmire', 'Sutanu Chakraborti']}
+acl-P14-2015 - {'id': 'acl-P14-2015', 'abstract': ['aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa aa aa aa aa aaaa aaa aaa aaa aaa aaa aaas aaaa aaa aaa aaa aaaa aaaa aaaa aaaaa aaaaa a aaaa a a a aaa a a a aaaa aa aaaa aaa aaaa aaaa References'], 'url': 'https://aclweb.org/anthology/P14-2015', 'book': 'ACL', 'type': 'unknown', 'year': 2014, 'score': 0.992911134267781, 'title': "Entities' Sentiment Relevance", 'authors': ['Zvi Ben-Ami', 'Ronen Feldman', 'Binyamin Rosenfeld']}
+acl-C10-3013 - {'id': 'acl-C10-3013', 'abstract': ['Dorothée Beermann Pavel Mihaylov', 'Norwegian University of Science and Technology Ontotext', 'The system presented is a web application designed to aid linguistic research with data collection and online publishing.', 'It is a service mainly for linguists and language experts working with language description of less-documented and less-resourced languages.', 'When the central concern is in-depth linguistic analysis, maintaining and administering software can be a burden.', 'Cloud computing offers an alternative.', 'At present mainly used for archiving, we extend linguistic web applications to allow creation, search and storage of interlinear annotated texts.', 'By combining a conceptually appealing online glosser with an SQL database and a wiki, we make the online publication of linguistic data an easy task also for non-computationally oriented researchers.'], 'url': 'https://aclweb.org/anthology/C10-3013', 'book': 'COLING – Demos', 'type': 'unknown', 'year': 2010, 'score': 0.5370970028311163, 'title': 'Cloud Computing for Linguists', 'authors': ['Dorothee Beermann', 'Pavel Mihaylov']}
+acl-P02-1022 - {'id': 'acl-P02-1022', 'abstract': ['In this paper we present GATE, a framework and graphical development environment which enables users to develop and deploy language engineering components and resources in a robust fashion.', 'The GATE architecture has enabled us not only to develop a number of successful applications for various language processing tasks (such as Information Extraction), but also to build and annotate corpora and carry out evaluations on the applications generated.', 'The framework can be used to develop applications and resources in multiple languages, based on its thorough Unicode support.'], 'url': 'https://aclweb.org/anthology/P02-1022', 'book': 'Annual Meeting of the Association for Computational Linguistics', 'type': 'unknown', 'year': 2002, 'score': 0.5053581577856099, 'title': 'GATE: A Framework and Graphical Development Environment for Robust NLP Tools and Applications', 'authors': ['Hamish Cunningham', 'Diana Maynard', 'Kalina Bontcheva', 'Valentin Tablan']}
+acl-W02-0112 - {'id': 'acl-W02-0112', 'abstract': ['The paper gives a review of teaching Computational Linguistics (CL) at the University of Tartu.', 'The current curriculum foresees the possibility of studying CL as an independent 4-year subject in the Faculty of Philosophy on the bachelor stage.', 'In connection with the higher education reform in Estonia, new curricula will be introduced from the next study year where the 3-year bachelor stage will be followed by a 2 year master’s stage.', 'It will then be possible to study CL proceeding from two paths: in the Faculty of Philosophy, and additionally also in the Faculty of Mathematics and Computer Science.', 'This way two types of specialists will be trained who will hopefully be able to complement each other in teamwork.'], 'url': 'https://aclweb.org/anthology/W02-0112', 'book': 'Workshop on Effective Tools and Methodologies for Teaching Natural Language Processing and Computational Linguistics', 'type': 'unknown', 'year': 2002, 'score': 0.6840342841769208, 'title': 'Teaching Computational Linguistics at the University of Tartu: Experience, Perspectives and Challenges', 'authors': ['Mare Koit', 'Tiit Roosmaa', 'Haldur Õim']}
+acl-W02-0106 - {'id': 'acl-W02-0106', 'abstract': ['The Language Technologies Institute (LTI) of the School of Computer Science at Carnegie Mellon University is one of the largest programs of its kind.', 'We present here the initial design and subsequent evolution of our MS and PhD programs in Language Technologies.', 'The motivations for the design and evolution are also presented.'], 'url': 'https://aclweb.org/anthology/W02-0106', 'book': 'Workshop on Effective Tools and Methodologies for Teaching Natural Language Processing and Computational Linguistics', 'type': 'unknown', 'year': 2002, 'score': 0.6798698036644222, 'title': 'Design and Evolution of a Language Technologies Curriculum', 'authors': ['Robert E. Frederking', 'Eric H. Nyberg', 'Teruko Mitamura', 'Jaime G. Carbonnell']}
+acl-A97-1056 - {'id': 'acl-A97-1056', 'abstract': ['Statistical models of word–sense disambiguation are often based on a small number of contextual features or on a model that is assumed to characterize the interactions among a set of features.', 'Model selection is presented as an alternative to these approaches, where a sequential search of possible models is conducted in order to find the model that best characterizes the interactions among features.', 'This paper expands existing model selection methodology and presents the first comparative study of model selection search strategies and evaluation criteria when applied to the problem of building probabilistic classifiers for word–sense disambiguation.'], 'url': 'https://aclweb.org/anthology/A97-1056', 'book': 'Applied Natural Language Processing Conference', 'type': 'unknown', 'year': 1997, 'score': 0.3537152848989457, 'title': 'Sequential Model Selection for Word Sense Disambiguation', 'authors': ['Ted Pedersen', 'Rebecca F. Bruce', 'Janyce Wiebe']}
+acl-J14-3004 - {'id': 'acl-J14-3004', 'abstract': ['Feature-Frequency?Adaptive On-line Training for Fast and Accurate Natural Language Processing Xu Sun?', 'Peking University Wenjie Li??', 'Hong Kong Polytechnic University Houfeng Wang?', 'Peking University Qin Lu?', 'Hong Kong Polytechnic University Training speed and accuracy are two major concerns of large-scale natural language processing systems.', 'Typically, we need to make a tradeoff between speed and accuracy.', 'It is trivial to improve the training speed via sacrificing accuracy or to improve the accuracy via sacrificing speed.', 'Nevertheless, it is nontrivial to improve the training speed and the accuracy at the same time, which is the target of this work.', 'To reach this target, we present a new training method, feature-frequency?adaptive on-line training, for fast and accurate training of natural language processing systems.', 'It is based on the core idea that higher frequency features should have a learning rate that decays faster.'], 'url': 'https://aclweb.org/anthology/J14-3004', 'book': 'CL', 'type': 'unknown', 'year': 2014, 'score': 0.6796828956026063, 'title': 'Feature-Frequency–Adaptive On-line Training for Fast and Accurate Natural Language Processing', 'authors': ['Xu Sun', 'Wenjie Li', 'Houfeng Wang', 'Qin Lu']}
+acl-P09-1054 - {'id': 'acl-P09-1054', 'abstract': ['Stochastic Gradient Descent Training for Ll-regularized Log-linear Models with Cumulative Penalty', 'Yoshimasa Tsuruoka"^ Jun\'ichi Tsujii^* Sophia Ananiadou"^', 't School of Computer Science, University of Manchester, UK', 'Stochastic gradient descent (SGD) uses approximate gradients estimated from subsets of the training data and updates the parameters in an online fashion.', 'This learning framework is attractive because it often requires much less training time in practice than batch training algorithms.', 'However, L1-regularization, which is becoming popular in natural language processing because of its ability to produce compact models, cannot be efficiently applied in SGD training, due to the large dimensions of feature vectors and the fluctuations of approximate gradients.', 'We present a simple method to solve these problems by penalizing the weights according to cumulative values for L1 penalty.', 'We evaluate the effectiveness of our method in three applications: text chunking, named entity recognition, and part-of-speech tagging.', 'Experimental results demonstrate that our method can produce compact and accurate models much more quickly than a state-of-the-art quasiNewton method for L1-regularized loglinear models.'], 'url': 'https://aclweb.org/anthology/P09-1054', 'book': 'ACL-IJCNLP', 'type': 'unknown', 'year': 2009, 'score': 0.5636729215407645, 'title': 'Stochastic Gradient Descent Training for L1-regularized Log-linear Models with Cumulative Penalty', 'authors': ['Yoshimasa Tsuruoka', "Jun'ichi Tsujii", 'Sophia Ananiadou']}
+acl-W96-0210 - {'id': 'acl-W96-0210', 'abstract': ['This paper describes measures for evaluating the three determinants of how well a probabilistic classifier performs on a given test set.', 'These determinants are the appropriateness, for the test set, of the results of (1) feature selection, (2) formulation of the parametric form of the model, and (3) parameter estimation.', 'These are part of any model formulation procedure, even if not broken out as separate steps, so the tradeoffs explored in this paper are relevant to a wide variety of methods.', 'The measures are demonstrated in a large experiment, in which they are used to analyze the results of roughly 300 classifiers that perform word-sense disambiguation.'], 'url': 'https://aclweb.org/anthology/W96-0210', 'book': 'Conference on Empirical Methods in Natural Language Processing', 'type': 'unknown', 'year': 1996, 'score': 0.3205780000583197, 'title': 'The Measure of a Model', 'authors': ['Rebecca F. Bruce', 'Janyce Wiebe', 'Ted Pedersen']}
+acl-J99-2002 - {'id': 'acl-J99-2002', 'abstract': ['at Asheville In this paper, we describe a framework for developing probabilistic classifiers in natural language processing.', 'Our focus is on formulating models that capture the most important interdependencies among features, to avoid overfitting the data while also characterizing the data well.', 'The class of probability models and the associated inference techniques described here were developed in mathematical statistics, and are widely used in artificial intelligence and applied statistics.', 'Our goal is to make this model selection framework accessible to researchers in NLP, and provide pointers to available software and important references.', 'In addition, we describe how the quality of the three determinants of classifier performance (the features, the form of the model, and the parameter estimates) can be separately evaluated.', 'We also demonstrate the classification performance of these models in a large-scale experiment involving the disambiguation of 34 words taken from the HECTOR word sense corpus (Hanks 1996).', 'In 10-fold cross-validations, the model search procedure performs significantly better than naive Bayes on 6 of the words without being significantly worse on any of them.'], 'url': 'https://aclweb.org/anthology/J99-2002', 'book': 'Computational Linguistics', 'type': 'unknown', 'year': 1999, 'score': 0.26524946213472506, 'title': 'Decomposable Modeling in Natural Language Processing', 'authors': ['Rebecca F. Bruce', 'Janyce Wiebe']}
+acl-P09-2060 - {'id': 'acl-P09-2060', 'abstract': ["We investigate the use of Fisher's exact significance test for pruning the translation table of a hierarchical phrase-based statistical machine translation system.", "In addition to the significance values computed by Fisher's exact test, we introduce compositional properties to classify phrase pairs of same significance values.", 'We also examine the impact of using significance values as a feature in translation models.', 'Experimental results show that 1% to 2% BLEU improvements can be achieved along with substantial model size reduction in an Iraqi/English two-way translation task.'], 'url': 'https://aclweb.org/anthology/P09-2060', 'book': 'ACL-IJCNLP: Short Papers', 'type': 'unknown', 'year': 2009, 'score': 0.37934743680956795, 'title': 'Toward Smaller, Faster, and Better Hierarchical Phrase-based SMT', 'authors': ['Mei Yang', 'Jing Zheng']}
+acl-C10-1056 - {'id': 'acl-C10-1056', 'abstract': ['Fei Huang and Bing Xiang', 'IBM T. J. Watson Research Center', 'This paper proposes a new approach to phrase rescoring for statistical machine translation (SMT).', 'A set of novel features capturing the translingual equivalence between a source and a target phrase pair are introduced.', 'These features are combined with linear regression model and neural network to predict the quality score of the phrase translation pair.', "These phrase scores are used to dis-criminatively rescore the baseline MT system's phrase library: boost good phrase translations while prune bad ones.", 'This approach not only significantly improves machine translation quality, but also reduces the model size by a considerable margin.'], 'url': 'https://aclweb.org/anthology/C10-1056', 'book': 'COLING', 'type': 'unknown', 'year': 2010, 'score': 0.3184529170048533, 'title': 'Feature-Rich Discriminative Phrase Rescoring for SMT', 'authors': ['Fei Huang', 'Bing Xiang']}
+acl-D12-1088 - {'id': 'acl-D12-1088', 'abstract': ['Phrase-based machine translation models have shown to yield better translations than Word-based models, since phrase pairs encode the contextual information that is needed for a more accurate translation.', 'However, many phrase pairs do not encode any relevant context, which means that the translation event encoded in that phrase pair is led by smaller translation events that are independent from each other, and can be found on smaller phrase pairs, with little or no loss in translation accuracy.', 'In this work, we propose a relative entropy model for translation models, that measures how likely a phrase pair encodes a translation event that is derivable using smaller translation events with similar probabilities.', 'This model is then applied to phrase table pruning.', 'Tests show that considerable amounts of phrase pairs can be excluded, without much impact on the translation quality.', 'In fact, we show that better translations can be obtained using our pruned models, due to the compression of the search space during decoding.'], 'url': 'https://aclweb.org/anthology/D12-1088', 'book': 'EMNLP', 'type': 'unknown', 'year': 2012, 'score': 0.3114890936388646, 'title': 'Entropy-based Pruning for Phrase-based Machine Translation', 'authors': ['Wang Ling', 'João Graça', 'Isabel Trancoso', 'Alan Black']}
+acl-I05-1051 - {'id': 'acl-I05-1051', 'abstract': ["Hendra Setiawan', Haizhou Li,Min Zhang, and Beng Chin Ooi", 'Institute for Infocomm Research, 21 Heng Mui Keng Terrace, Singapore 119613 {stuhs, hli, mzhang}@i2r.a-star.edu.sg School of Computing, National University of Singapore, Singapore 117543 {hendrase, ooibc}@comp.nus.edu.sg', 'Abstract.', 'The merit of phrase-based statistical machine translation is often reduced by the complexity to construct it.', 'In this paper, we address some issues in phrase-based statistical machine translation, namely: the size of the phrase translation table, the use of underlying translation model probability and the length of the phrase unit.', 'We present Level-Of-Detail (LOD) approach, an agglomerative approach for learning phrase-level alignment.', 'Our experiments show that LOD approach significantly improves the performance of the word-based approach.', 'LOD demonstrates a clear advantage that the phrase translation table grows only sub-linearly over the maximum phrase length, while having a performance comparable to those of other phrase-based approaches.'], 'url': 'https://aclweb.org/anthology/I05-1051', 'book': 'Second International Joint Conference on Natural Language Processing: Full Papers', 'type': 'unknown', 'year': 2005, 'score': 0.3088836790750615, 'title': 'Phrase-Based Statistical Machine Translation: A Level of Detail Approach', 'authors': ['Hendra Setiawan', 'Haizhou Li', 'Min Zhang', 'Beng Chin Ooi']}
+acl-W02-0715 - {'id': 'acl-W02-0715', 'abstract': ['by-one.', 'The actual plotted broken line is averaged over 10 random trials.', 'Figure 9 shows the relationship between iteration and the system’s TOEIC score.', 'In this figure, the horizontal axis represents the iteration, and the vertical axis TOEIC score.', 'The broken line and the solid line are plotted using the same denotation as that in Figure 8.', 'In Figure 8, the solid line always lies on a lower position than the broken line.', 'In Figure 9, from iteration 1 to around iteration 200, the broken line does not deviate from the actual system’s TOEIC score, which is 548.', 'Considering these results, the test set optimized for TDMT is shown to be applicable for evaluating ATR-MATRIX.'], 'url': 'https://aclweb.org/anthology/W02-0715', 'book': 'Workshop on Speech-To-Speech Translation: Algorithms and Systems', 'type': 'unknown', 'year': 2002, 'score': 0.28448395218006456, 'title': 'Quality-Sensitive Test Set Selection for a Speech Translation System', 'authors': ['Fumiaki Sugaya', 'Keiji Yasuda', 'Toshiyuki Takezawa', 'Seiichi Yamamoto']}
+acl-A92-1028 - {'id': 'acl-A92-1028', 'abstract': ['A method of anaphoral resolution of zero pronouns in Japanese language texts using the verbal semantic attributes is suggested.', 'This method focuses attention on the semantic attributes of verbs and examines the context from the relationship between the semantic attributes of verbs governing zero pronouns and the semantic attributes of verbs governing their referents.', 'The semantic attributes of verbs are created using 2 different viewpoints: dynamic characteristics of verbs and the relationship of verbs to cases.', 'By using this method, it is shown that, in the case of translating newspaper articles, the major portion (93%) of anaphoral resolution of zero pronouns necessary for machine translation can be achieved by using only linguistic knowledge.', 'Factors to be given special attention when incorporating this method into a machine translation system are examined, together with suggested conditions for the detection of zero pronouns and methods for their conversion.', 'This study considers four factors that are important when implementing this method in a Japanese to English machine translation system: the difference in conception between Japanese and English expressions, the difference in case frame patterns between Japanese and English, restrictions by voice and restriction by translation structure.', 'Implementation of the proposed method with due consideration of these points leads to a viable method for anaphoral resolution of zero pronouns in a practical machine translation system.'], 'url': 'https://aclweb.org/anthology/A92-1028', 'book': 'Applied Natural Language Processing Conference', 'type': 'unknown', 'year': 1992, 'score': 0.7238661008796474, 'title': 'Zero Pronoun Resolution in a Machine Translation System by Using Japanese to English Verbal Semantic Attributes', 'authors': ['Hiromi Nakaiwa', 'Satoru Ikehara']}
+acl-C96-2146 - {'id': 'acl-C96-2146', 'abstract': ['This paper describes a method for analyzing Japanese double-subject construction having an adjective predicate based on the valency structure.', 'A simple sentence usually has only one subjective case in most languages.', 'However, many Japanese adjectives (and some verbs) can dominate two surface subjective cases within a simple sentence.', 'Such sentence structure is called the double-subject construction.', 'This paper classifies the Japanese double-subject construction into four types and describes problems arising when analyzing these types using ordinary Japanese construction approaches.', 'This paper proposes a method for analyzing a Japanese double-subject construction having an adjective predicate in order to overcome the problems described.', 'By applying this method to Japanese sentence analysis in Japanese-to-English machine translation systems, translation accuracy can be improved because this method can analyze correctly the double-subject construction.'], 'url': 'https://aclweb.org/anthology/C96-2146', 'book': 'International Conference on Computational Linguistics', 'type': 'unknown', 'year': 1996, 'score': 0.6614859634739717, 'title': 'Analyzing Japanese Double-Subject Construction Having an Adjective Predicate', 'authors': ['Masahiro Oku']}
+acl-C04-1014 - {'id': 'acl-C04-1014', 'abstract': ['Ngram models are simple in language modeling and have been successfully used in speech recognition and other tasks.', 'However, they can only capture the short distance context dependency within an n-words window where currently the largest practical n for a natural language is three while much of the context dependency in a natural language occurs beyond a three words window.', 'In order to incorporate this kind of long distance context dependency in the ngram model of our Mandarin speech recognition system, this paper proposes a novel MI-Ngram modeling approach.', 'This new MI-Ngram model consists of two components: a normal ngram model and a novel MI model.', 'The ngram model captures the short distance context dependency within an n-words window while the MI model captures the context dependency between the word pairs over a long distance by using the concept of mutual information.', 'That is, the MI-Ngram model incorporates the word occurrences beyond the scope of the normal ngram model.', 'It is found that MI-Ngram modeling has much better performance than the normal word ngram modeling.', 'Experimentation shows that about 20% of errors can be corrected by using a MI-Trigram model compared with the pure word trigram model.'], 'url': 'https://aclweb.org/anthology/C04-1014', 'book': 'International Conference on Computational Linguistics', 'type': 'unknown', 'year': 2004, 'score': 0.6569717581749753, 'title': 'Modeling of Long Distance Context Dependency', 'authors': ['Guodong Zhou']}
+acl-D09-1078 - {'id': 'acl-D09-1078', 'abstract': ['Robert C. Moore Chris Quirk', 'The recent availability of large corpora for training N-gram language models has shown the utility of models of higher order than just trigrams.', 'In this paper, we investigate methods to control the increase in model size resulting from applying standard methods at higher orders.', 'We introduce significance-based N-gram selection, which not only reduces model size, but also improves perplexity for several smoothing methods, including Katz backoff and absolute discounting.', 'We also show that, when combined with a new smoothing method and a novel variant of weighted-difference pruning, our selection method performs better in the trade-off between model size and perplexity than the best pruning method we found for modified Kneser-Ney smoothing.'], 'url': 'https://aclweb.org/anthology/D09-1078', 'book': 'EMNLP', 'type': 'unknown', 'year': 2009, 'score': 0.6362706169150789, 'title': 'Less is More: Significance-Based N-gram Selection for Smaller, Better Language Models', 'authors': ['Robert C. Moore', 'Chris Quirk']}
+acl-P09-2008 - {'id': 'acl-P09-2008', 'abstract': ["Han-Cheol Cho} Do-Gil Lee,§ Jung-Tae Lee,§ Pontus Stenetorp} Jun'ichi TsujiiWid Hae-Chang Rim§", 't Graduate School of Information Science and Technology, The University of Tokyo, Tokyo, Japan §Dept.', 'of Computer & Radio Communications Engineering, Korea University, Seoul, Korea {hccho,pontus,tsujii}@is.s.u-tokyo.ac.jp, {dglee,jtlee,rim}@nlp.korea.ac.kr', 'Most NLP applications work under the assumption that a user input is error-free; thus, word segmentation (WS) for written languages that use word boundary markers (WBMs), such as spaces, has been regarded as a trivial issue.', 'However, noisy real-world texts, such as blogs, e-mails, and SMS, may contain spacing errors that require correction before further processing may take place.', 'For the Korean language, many researchers have adopted a traditional WS approach, which eliminates all spaces in the user input and reinserts proper word boundaries.', 'Unfortunately, such an approach often exacerbates the word spacing quality for user input, which has few or no spacing errors; such is the case, because a perfect WS model does not exist.', 'In this paper, we propose a novel WS method that takes into consideration the initial word spacing information of the user input.', 'Our method generates a better output than the original user input, even if the user input has few spacing errors.', 'Moreover, the proposed method significantly outperforms a state-of-the-art Korean WS model when the user input initially contains less than 10% spacing errors, and performs comparably for cases containing more spacing errors.'], 'url': 'https://aclweb.org/anthology/P09-2008', 'book': 'ACL-IJCNLP: Short Papers', 'type': 'unknown', 'year': 2009, 'score': 0.2753588349223253, 'title': 'A Novel Word Segmentation Approach for Written Languages with Word Boundary Markers', 'authors': ['Han-Cheol Cho', 'Do-Gil Lee', 'Jung-Tae Lee', 'Pontus Stenetorp', "Jun'ichi Tsujii", 'Hae-Chang Rim']}
+acl-P07-2020 - {'id': 'acl-P07-2020', 'abstract': ['Ensemble Document Clustering Using Weighted Hypergraph Generated by NMF', 'Hiroyuki Shinnou, Minoru Sasaki', 'In this paper, we propose a new ensemble document clustering method.', 'The novelty of our method is the use of Non-negative Matrix Factorization (NMF) in the generation phase and a weighted hypergraph in the integration phase.', 'In our experiment, we compared our method with some clustering methods.', 'Our method achieved the best results.'], 'url': 'https://aclweb.org/anthology/P07-2020', 'book': '45th Annual Meeting of the Association for Computational Linguistics Companion Volume Proceedings of the Demo and Poster Sessions', 'type': 'unknown', 'year': 2007, 'score': 0.23119178840532434, 'title': 'Ensemble document clustering using weighted hypergraph generated by NMF', 'authors': ['Hiroyuki Shinnou', 'Minoru Sasaki']}
+acl-P09-1018 - {'id': 'acl-P09-1018', 'abstract': ['Hua Wu and Haifeng Wang', 'Toshiba (China) Research and Development Center 5/F., Tower W2, Oriental Plaza, Beijing, 100738, China {wuhua, wanghaifeng}@rdc.toshiba.com.cn', 'This paper revisits the pivot language approach for machine translation.', 'First, we investigate three different methods for pivot translation.', 'Then we employ a hybrid method combining RBMT and SMT systems to fill up the data gap for pivot translation, where the source-pivot and pivot-target corpora are independent.', 'Experimental results on spoken language translation show that this hybrid method significantly improves the translation quality, which outperforms the method using a source-target corpus of the same size.', 'In addition, we propose a system combination approach to select better translations from those produced by various pivot translation methods.', 'This method regards system combination as a translation evaluation problem and formalizes it with a regression learning model.', 'Experimental results indicate that our method achieves consistent and significant improvement over individual translation outputs.'], 'url': 'https://aclweb.org/anthology/P09-1018', 'book': 'ACL-IJCNLP', 'type': 'unknown', 'year': 2009, 'score': 0.5256681349989019, 'title': 'Revisiting Pivot Language Approach for Machine Translation', 'authors': ['Hua Wu', 'Haifeng Wang']}
+acl-D14-1174 - {'id': 'acl-D14-1174', 'abstract': ['Proceedings of the 2014 Conference on Empirical Methods in Natural Language Processing (EMNLP), pages 1665?1675, October 25-29, 2014, Doha, Qatar.', 'Abstract To overcome the scarceness of bilingual corpora for some language pairs in machine translation, pivot-based SMT uses pivot language as a "bridge" to generate source-target translation from source-pivot and pivot-target translation.', 'One of the key issues is to estimate the probabilities for the generated phrase pairs.', 'In this paper, we present a novel approach to calculate the translation probability by pivoting the co-occurrence count of source-pivot and pivot-target phrase pairs.', 'Experimental results on Europarl data and web data show that our method leads to significant improvements over the baseline systems.'], 'url': 'https://aclweb.org/anthology/D14-1174', 'book': 'EMNLP', 'type': 'unknown', 'year': 2014, 'score': 0.5239626365947524, 'title': 'Improving Pivot-Based Statistical Machine Translation by Pivoting the Co-occurrence Count of Phrase Pairs', 'authors': ['Xiaoning Zhu', 'Zhongjun He', 'Hua Wu', 'Conghui Zhu', 'Haifeng Wang', 'Tiejun Zhao']}
+acl-W07-0724 - {'id': 'acl-W07-0724', 'abstract': ["NRC's PORTAGE system for WMT 2007", 'Nicola Ueffing, Michel Simard, Samuel Larkin Howard Johnson', 'Interactive Language Technologies Group Interactive Information Group', 'National Research Council Canada', 'Gatineau, Quebec, Canada firstname.lastname@nrc.gc.ca', 'National Research Council Canada Ottawa, Ontario, Canada Howard.Johnson@nrc.gc.ca', 'We present the PORTAGE statistical machine translation system which participated in the shared task of the ACL 2007 Second Workshop on Statistical Machine Translation.', 'The focus of this description is on improvements which were incorporated into the system over the last year.', 'These include adapted language models, phrase table pruning, an IBMl-based decoder feature, and rescor-ing with posterior probabilities.'], 'url': 'https://aclweb.org/anthology/W07-0724', 'book': 'Workshop on Statistical Machine Translation', 'type': 'unknown', 'year': 2007, 'score': 0.5167615615075047, 'title': "NRC's PORTAGE System for WMT 2007", 'authors': ['Nicola Ueffing', 'Michel Simard', 'Samuel Larkin', 'Howard Johnson']}
+acl-D07-1030 - {'id': 'acl-D07-1030', 'abstract': ['Xiaoguang Hu, Haifeng Wang, Hua Wu', 'Toshiba (China) Research and Development Center 5/F., Tower W2, Oriental Plaza No.1, East Chang An Ave., Dong Cheng District Beijing, 100738, China', '{huxiaoguang, wanghaifeng, wuhua}@rdc.toshiba.com.cn', 'This paper proposes a method using the existing Rule-based Machine Translation (RBMT) system as a black box to produce synthetic bilingual corpus, which will be used as training data for the Statistical Machine Translation (SMT) system.', 'We use the existing RBMT system to translate the monolingual corpus into synthetic bilingual corpus.', 'With the synthetic bilingual corpus, we can build an SMT system even if there is no real bilingual corpus.', 'In our experiments using BLEU as a metric, the system achieves a relative improvement of 11.7% over the best RBMT system that is used to produce the synthetic bilingual corpora.', 'We also interpolate the model trained on a real bilingual corpus and the models trained on the synthetic bilingual corpora.', 'The interpolated model achieves an absolute improvement of 0.0245 BLEU score (13.1% relative) as compared with the individual model trained on the real bilingual corpus.'], 'url': 'https://aclweb.org/anthology/D07-1030', 'book': '2007 Joint Conference on Empirical Methods in Natural Language Processing and Computational Natural Language Learning (EMNLP-CoNLL)', 'type': 'unknown', 'year': 2007, 'score': 0.5141486557633063, 'title': 'Using RBMT Systems to Produce Bilingual Corpus for SMT', 'authors': ['Xiaoguang Hu', 'Haifeng Wang', 'Hua Wu']}
+Lambda = 0 -> No penalty
+bound: 0.0
+find mmr max: 0.9969348779647177
+len: 1 55
+bound: 0.9969348779647177
+find mmr max: 1.9898460122324986
+len: 2 54
+bound: 1.9898460122324986
+find mmr max: 2.7568747683689496
+len: 3 53
+bound: 2.7568747683689496
+find mmr max: 3.5231268411691996
+len: 4 52
+bound: 3.5231268411691996
+find mmr max: 4.272181788812783
+len: 5 51
+bound: 4.272181788812783
+find mmr max: 5.011979906578077
+len: 6 50
+bound: 5.011979906578077
+find mmr max: 5.741053736182435
+len: 7 49
+bound: 5.741053736182435
+find mmr max: 6.468623558958076
+len: 8 48
+bound: 6.468623558958076
+find mmr max: 7.192489659837724
+len: 9 47
+bound: 7.192489659837724
+find mmr max: 7.912984697684137
+len: 10 46
+bound: 7.912984697684137
+find mmr max: 8.6104880506747
+len: 11 45
+bound: 8.6104880506747
+find mmr max: 9.300172549152096
+len: 12 44
+bound: 9.300172549152096
+find mmr max: 9.984206833329017
+len: 13 43
+bound: 9.984206833329017
+find mmr max: 10.664076636993439
+len: 14 42
+bound: 10.664076636993439
+find mmr max: 11.343759532596046
+len: 15 41
+bound: 11.343759532596046
+find mmr max: 12.011604307141186
+len: 16 40
+bound: 12.011604307141186
+find mmr max: 12.679299945295735
+len: 17 39
+bound: 12.679299945295735
+find mmr max: 13.340785908769707
+len: 18 38
+bound: 13.340785908769707
+find mmr max: 13.997757666944683
+len: 19 37
+bound: 13.997757666944683
+find mmr max: 14.647865019288265
+len: 20 36
+bound: 14.647865019288265
+find mmr max: 15.284703033835955
+len: 21 35
+bound: 15.284703033835955
+find mmr max: 15.920973650751034
+len: 22 34
+bound: 15.920973650751034
+find mmr max: 16.541367705525793
+len: 23 33
+bound: 16.541367705525793
+find mmr max: 17.156942205495554
+len: 24 32
+bound: 17.156942205495554
+find mmr max: 17.77007499016732
+len: 25 31
+bound: 17.77007499016732
+find mmr max: 18.379624776707224
+len: 26 30
+bound: 18.379624776707224
+find mmr max: 18.972375889850966
+len: 27 29
+bound: 18.972375889850966
+find mmr max: 19.560105820686864
+len: 28 28
+bound: 19.560105820686864
+find mmr max: 20.127287839766538
+len: 29 27
+bound: 20.127287839766538
+find mmr max: 20.693793088321137
+len: 30 26
+bound: 20.693793088321137
+find mmr max: 21.2574660098619
+len: 31 25
+bound: 21.2574660098619
+find mmr max: 21.79456301269302
+len: 32 24
+bound: 21.79456301269302
+find mmr max: 22.326321514200792
+len: 33 23
+bound: 22.326321514200792
+find mmr max: 22.852499927638018
+len: 34 22
+bound: 22.852499927638018
+find mmr max: 23.378265881967792
+len: 35 21
+bound: 23.378265881967792
+find mmr max: 23.903934016966694
+len: 36 20
+bound: 23.903934016966694
+find mmr max: 24.427896653561447
+len: 37 19
+bound: 24.427896653561447
+find mmr max: 24.947359184583487
+len: 38 18
+bound: 24.947359184583487
+find mmr max: 25.46412074609099
+len: 39 17
+bound: 25.46412074609099
+find mmr max: 25.9782694018543
+len: 40 16
+bound: 25.9782694018543
+find mmr max: 26.48362755963991
+len: 41 15
+bound: 26.48362755963991
+find mmr max: 26.985437764728477
+len: 42 14
+bound: 26.985437764728477
+find mmr max: 27.433309088008244
+len: 43 13
+bound: 27.433309088008244
+find mmr max: 27.853990833653935
+len: 44 12
+bound: 27.853990833653935
+find mmr max: 28.233338270463502
+len: 45 11
+bound: 28.233338270463502
+find mmr max: 28.58705355536245
+len: 46 10
+bound: 28.58705355536245
+find mmr max: 28.907631555420767
+len: 47 9
+bound: 28.907631555420767
+find mmr max: 29.226084472425622
+len: 48 8
+bound: 29.226084472425622
+find mmr max: 29.537573566064488
+len: 49 7
+bound: 29.537573566064488
+find mmr max: 29.84645724513955
+len: 50 6
+bound: 29.84645724513955
+find mmr max: 30.130941197319615
+len: 51 5
+bound: 30.130941197319615
+find mmr max: 30.40630003224194
+len: 52 4
+bound: 30.40630003224194
+find mmr max: 30.671549494376666
+len: 53 3
+bound: 30.671549494376666
+find mmr max: 30.902741282781992
+len: 54 2
+bound: 30.902741282781992
+find mmr max: 31.074396772413465
+len: 55 1
+bound: 31.074396772413465
+find mmr max: 31.241786219057087
+len: 56 0
+56
+acl-P14-2010
+acl-P14-2015
+acl-P00-1056
+acl-P12-2007
+acl-I08-1042
+acl-W12-3107
+acl-P09-1063
+acl-W11-2103
+acl-A92-1028
+acl-C04-1032
+acl-C04-1045
+acl-H93-1001
+acl-W02-0112
+acl-W02-0106
+acl-J14-3004
+acl-W10-1703
+acl-W12-3212
+acl-C96-2146
+acl-C04-1014
+acl-J13-3001
+acl-P08-2038
+acl-D09-1078
+acl-W12-3147
+acl-W11-2158
+acl-W10-1716
+acl-W06-1613
+acl-C94-2175
+acl-C10-4001
+acl-H93-1047
+acl-J10-3009
+acl-P09-1054
+acl-C10-3013
+acl-W04-1121
+acl-P08-2040
+acl-W00-1429
+acl-P09-1018
+acl-D14-1174
+acl-P01-1057
+acl-W07-0724
+acl-D07-1030
+acl-P02-1022
+acl-C00-1074
+acl-P14-2095
+acl-W09-2413
+acl-P09-2060
+acl-A97-1056
+acl-W96-0210
+acl-C10-1056
+acl-D12-1088
+acl-I05-1051
+acl-W02-0715
+acl-P09-2008
+acl-J99-2002
+acl-P07-2020
+acl-C08-2019
+acl-P12-2018
+Lambda = 0.5 -> less penalty
+bound: 0.0
+find mmr max: 0.9969348779647177
+len: 1 55
+bound: 0.9969348779647177
+find mmr max: 1.9898460122324986
+len: 2 54
+bound: 1.9898460122324986
+find mmr max: 2.7568747683689496
+len: 3 53
+bound: 2.7568747683689496
+find mmr max: 3.5231268411691996
+len: 4 52
+bound: 3.5231268411691996
+find mmr max: 4.272181788812783
+len: 5 51
+bound: 4.272181788812783
+find mmr max: 4.961866287290179
+len: 6 50
+bound: 4.961866287290179
+find mmr max: 5.6233522507641505
+len: 7 49
+bound: 5.6233522507641505
+find mmr max: 6.273459603107733
+len: 8 48
+bound: 6.273459603107733
+find mmr max: 6.873433987838511
+len: 9 47
+bound: 6.873433987838511
+find mmr max: 7.4611639186744085
+len: 10 46
+bound: 7.4611639186744085
+find mmr max: 7.992922420182182
+len: 11 45
+bound: 7.992922420182182
+find mmr max: 8.50555661105975
+len: 12 44
+bound: 8.50555661105975
+find mmr max: 8.926238356705442
+len: 13 43
+bound: 8.926238356705442
+find mmr max: 9.318786149186455
+len: 14 42
+bound: 9.318786149186455
+find mmr max: 9.559059946880605
+len: 15 41
+bound: 9.559059946880605
+find mmr max: 9.79025173528593
+len: 16 40
+bound: 9.79025173528593
+find mmr max: 9.985644077366494
+len: 17 39
+bound: 9.985644077366494
+find mmr max: 10.07724525452706
+len: 18 38
+bound: 10.07724525452706
+find mmr max: 10.1557836964551
+len: 19 37
+bound: 10.1557836964551
+find mmr max: 10.223161344322154
+len: 20 36
+bound: 10.223161344322154
+find mmr max: 10.183400855434279
+len: 20 35
+bound: 10.223161344322154
+find mmr max: 10.177406572492806
+len: 20 34
+bound: 10.223161344322154
+find mmr max: 10.176938947816192
+len: 20 33
+bound: 10.223161344322154
+find mmr max: 10.12197223103091
+len: 20 32
+bound: 10.223161344322154
+find mmr max: 10.102270044833782
+len: 20 31
+bound: 10.223161344322154
+find mmr max: 10.080517178847405
+len: 20 30
+bound: 10.223161344322154
+find mmr max: 10.068510839882828
+len: 20 29
+bound: 10.223161344322154
+find mmr max: 10.049583391516967
+len: 20 28
+bound: 10.223161344322154
+find mmr max: 10.005859113636609
+len: 20 27
+bound: 10.223161344322154
+find mmr max: 10.00203451515954
+len: 20 26
+bound: 10.223161344322154
+find mmr max: 9.939929282011194
+len: 20 25
+bound: 10.223161344322154
+find mmr max: 9.909981595206665
+len: 20 24
+bound: 10.223161344322154
+find mmr max: 9.885129913213415
+len: 20 23
+bound: 10.223161344322154
+find mmr max: 9.841023752175873
+len: 20 22
+bound: 10.223161344322154
+find mmr max: 9.835731049039083
+len: 20 21
+bound: 10.223161344322154
+find mmr max: 9.777152904459792
+len: 20 20
+bound: 10.223161344322154
+find mmr max: 9.774255601057192
+len: 20 19
+bound: 10.223161344322154
+find mmr max: 9.761463818255447
+len: 20 18
+bound: 10.223161344322154
+find mmr max: 9.760305649369318
+len: 20 17
+bound: 10.223161344322154
+find mmr max: 9.715837947654999
+len: 20 16
+bound: 10.223161344322154
+find mmr max: 9.71357604608687
+len: 20 15
+bound: 10.223161344322154
+find mmr max: 9.711329062050746
+len: 20 14
+bound: 10.223161344322154
+find mmr max: 9.697816767215548
+len: 20 13
+bound: 10.223161344322154
+find mmr max: 9.69574182252886
+len: 20 12
+bound: 10.223161344322154
+find mmr max: 9.687230444349366
+len: 20 11
+bound: 10.223161344322154
+find mmr max: 9.607728056807602
+len: 20 10
+bound: 10.223161344322154
+find mmr max: 9.606213644529685
+len: 20 9
+bound: 10.223161344322154
+find mmr max: 9.589391201150598
+len: 20 8
+bound: 10.223161344322154
+find mmr max: 9.58769557221181
+len: 20 7
+bound: 10.223161344322154
+find mmr max: 9.578386156070572
+len: 20 6
+bound: 10.223161344322154
+find mmr max: 9.551445510332854
+len: 20 5
+bound: 10.223161344322154
+find mmr max: 9.547668194915337
+len: 20 4
+bound: 10.223161344322154
+find mmr max: 9.48834659622062
+len: 20 3
+bound: 10.223161344322154
+find mmr max: 9.398461408865163
+len: 20 2
+bound: 10.223161344322154
+find mmr max: 9.397503537201858
+len: 20 1
+bound: 10.223161344322154
+find mmr max: 9.260878108390816
+len: 20 0
+20
+acl-P14-2010
+acl-P14-2015
+acl-P00-1056
+acl-P12-2007
+acl-I08-1042
+acl-H93-1001
+acl-C96-2146
+acl-J13-3001
+acl-P09-1063
+acl-C10-4001
+acl-W04-1121
+acl-C04-1014
+acl-W09-2413
+acl-P08-2040
+acl-W07-0724
+acl-P07-2020
+acl-W02-0112
+acl-H93-1047
+acl-P14-2095
+acl-W12-3212
+Lambda = 1.0 -> same degree penalty
+bound: 0.0
+find mmr max: 0.9969348779647177
+len: 1 55
+bound: 0.9969348779647177
+find mmr max: 1.9898460122324986
+len: 2 54
+bound: 1.9898460122324986
+find mmr max: 2.7568747683689496
+len: 3 53
+bound: 2.7568747683689496
+find mmr max: 3.5231268411691996
+len: 4 52
+bound: 3.5231268411691996
+find mmr max: 4.272181788812783
+len: 5 51
+bound: 4.272181788812783
+find mmr max: 4.961866287290179
+len: 6 50
+bound: 4.961866287290179
+find mmr max: 5.6233522507641505
+len: 7 49
+bound: 5.6233522507641505
+find mmr max: 6.273459603107733
+len: 8 48
+bound: 6.273459603107733
+find mmr max: 6.861189533943631
+len: 9 47
+bound: 6.861189533943631
+find mmr max: 7.392948035451404
+len: 10 46
+bound: 7.392948035451404
+find mmr max: 7.863822975308601
+len: 11 45
+bound: 7.863822975308601
+find mmr max: 8.284504720954292
+len: 12 44
+bound: 8.284504720954292
+find mmr max: 8.652801344534454
+len: 13 43
+bound: 8.652801344534454
+find mmr max: 8.911718516059256
+len: 14 42
+bound: 8.911718516059256
+find mmr max: 9.14291030446458
+len: 15 41
+bound: 9.14291030446458
+find mmr max: 9.106696338345374
+len: 15 40
+bound: 9.14291030446458
+find mmr max: 8.965845505252238
+len: 15 39
+bound: 9.14291030446458
+find mmr max: 8.948489443693195
+len: 15 38
+bound: 9.14291030446458
+find mmr max: 8.943289765846156
+len: 15 37
+bound: 9.14291030446458
+find mmr max: 8.93300829566174
+len: 15 36
+bound: 9.14291030446458
+find mmr max: 8.900447654836261
+len: 15 35
+bound: 9.14291030446458
+find mmr max: 8.85211586504089
+len: 15 34
+bound: 9.14291030446458
+find mmr max: 8.84966070444879
+len: 15 33
+bound: 9.14291030446458
+find mmr max: 8.848048421548755
+len: 15 32
+bound: 9.14291030446458
+find mmr max: 8.78615129867116
+len: 15 31
+bound: 9.14291030446458
+find mmr max: 8.782719289680546
+len: 15 30
+bound: 9.14291030446458
+find mmr max: 8.773071656681084
+len: 15 29
+bound: 9.14291030446458
+find mmr max: 8.751952542721972
+len: 15 28
+bound: 9.14291030446458
+find mmr max: 8.605367524931605
+len: 15 27
+bound: 9.14291030446458
+find mmr max: 8.600502126507532
+len: 15 26
+bound: 9.14291030446458
+find mmr max: 8.574910903021566
+len: 15 25
+bound: 9.14291030446458
+find mmr max: 8.556939485455024
+len: 15 24
+bound: 9.14291030446458
+find mmr max: 8.552119930650022
+len: 15 23
+bound: 9.14291030446458
+find mmr max: 8.501877220476247
+len: 15 22
+bound: 9.14291030446458
+find mmr max: 8.493028724891527
+len: 15 21
+bound: 9.14291030446458
+find mmr max: 8.455755981329691
+len: 15 20
+bound: 9.14291030446458
+find mmr max: 8.434879854426157
+len: 15 19
+bound: 9.14291030446458
+find mmr max: 8.414330158470696
+len: 15 18
+bound: 9.14291030446458
+find mmr max: 8.38211216683595
+len: 15 17
+bound: 9.14291030446458
+find mmr max: 8.376087070825513
+len: 15 16
+bound: 9.14291030446458
+find mmr max: 8.354056623393172
+len: 15 15
+bound: 9.14291030446458
+find mmr max: 8.332519752006116
+len: 15 14
+bound: 9.14291030446458
+find mmr max: 8.309628917053487
+len: 15 13
+bound: 9.14291030446458
+find mmr max: 8.300689248133285
+len: 15 12
+bound: 9.14291030446458
+find mmr max: 8.240797654483613
+len: 15 11
+bound: 9.14291030446458
+find mmr max: 8.223700134806007
+len: 15 10
+bound: 9.14291030446458
+find mmr max: 8.218906982740508
+len: 15 9
+bound: 9.14291030446458
+find mmr max: 8.187721115718361
+len: 15 8
+bound: 9.14291030446458
+find mmr max: 8.132836604544508
+len: 15 7
+bound: 9.14291030446458
+find mmr max: 8.085158720491155
+len: 15 6
+bound: 9.14291030446458
+find mmr max: 8.074890448090633
+len: 15 5
+bound: 9.14291030446458
+find mmr max: 8.037912662454739
+len: 15 4
+bound: 9.14291030446458
+find mmr max: 7.93736275053134
+len: 15 3
+bound: 9.14291030446458
+find mmr max: 7.9123389220725215
+len: 15 2
+bound: 9.14291030446458
+find mmr max: 7.7589513194979425
+len: 15 1
+bound: 9.14291030446458
+find mmr max: 7.48903938572488
+len: 15 0
+15
+acl-P14-2010
+acl-P14-2015
+acl-P00-1056
+acl-P12-2007
+acl-I08-1042
+acl-H93-1001
+acl-C96-2146
+acl-J13-3001
+acl-C10-4001
+acl-W04-1121
+acl-P09-1063
+acl-W09-2413
+acl-C04-1014
+acl-P08-2040
+acl-P07-2020
+Lambda = 2.0 -> double degree penalty
+bound: 0.0
+find mmr max: 0.9969348779647177
+len: 1 55
+bound: 0.9969348779647177
+find mmr max: 1.9898460122324986
+len: 2 54
+bound: 1.9898460122324986
+find mmr max: 2.7568747683689496
+len: 3 53
+bound: 2.7568747683689496
+find mmr max: 3.5231268411691996
+len: 4 52
+bound: 3.5231268411691996
+find mmr max: 4.272181788812783
+len: 5 51
+bound: 4.272181788812783
+find mmr max: 4.961866287290179
+len: 6 50
+bound: 4.961866287290179
+find mmr max: 5.6233522507641505
+len: 7 49
+bound: 5.6233522507641505
+find mmr max: 6.273459603107733
+len: 8 48
+bound: 6.273459603107733
+find mmr max: 6.861189533943631
+len: 9 47
+bound: 6.861189533943631
+find mmr max: 7.392948035451404
+len: 10 46
+bound: 7.392948035451404
+find mmr max: 7.813629781097096
+len: 11 45
+bound: 7.813629781097096
+find mmr max: 8.044821569502421
+len: 12 44
+bound: 8.044821569502421
+find mmr max: 8.257497619612456
+len: 13 43
+bound: 8.257497619612456
+find mmr max: 8.337119108597808
+len: 14 42
+bound: 8.337119108597808
+find mmr max: 8.328775038210184
+len: 14 41
+bound: 8.337119108597808
+find mmr max: 8.282452098676739
+len: 14 40
+bound: 8.337119108597808
+find mmr max: 8.118287165410468
+len: 14 39
+bound: 8.337119108597808
+find mmr max: 7.668321393889589
+len: 14 38
+bound: 8.337119108597808
+find mmr max: 7.623735783799685
+len: 14 37
+bound: 8.337119108597808
+find mmr max: 7.575954691501762
+len: 14 36
+bound: 8.337119108597808
+find mmr max: 7.5647431840149295
+len: 14 35
+bound: 8.337119108597808
+find mmr max: 7.500869336871339
+len: 14 34
+bound: 8.337119108597808
+find mmr max: 7.487592457385995
+len: 14 33
+bound: 8.337119108597808
+find mmr max: 7.482772902580994
+len: 14 32
+bound: 8.337119108597808
+find mmr max: 7.46693005432572
+len: 14 31
+bound: 8.337119108597808
+find mmr max: 7.416484261618525
+len: 14 30
+bound: 8.337119108597808
+find mmr max: 7.3583516348762394
+len: 14 29
+bound: 8.337119108597808
+find mmr max: 7.3501330719124525
+len: 14 28
+bound: 8.337119108597808
+find mmr max: 7.307658906470661
+len: 14 27
+bound: 8.337119108597808
+find mmr max: 7.157658578708043
+len: 14 26
+bound: 8.337119108597808
+find mmr max: 7.111004385965687
+len: 14 25
+bound: 8.337119108597808
+find mmr max: 7.077979282008777
+len: 14 24
+bound: 8.337119108597808
+find mmr max: 7.066585624389303
+len: 14 23
+bound: 8.337119108597808
+find mmr max: 7.053393380024022
+len: 14 22
+bound: 8.337119108597808
+find mmr max: 7.022235431766562
+len: 14 21
+bound: 8.337119108597808
+find mmr max: 6.9197610239641065
+len: 14 20
+bound: 8.337119108597808
+find mmr max: 6.9177728509684195
+len: 14 19
+bound: 8.337119108597808
+find mmr max: 6.663262855204171
+len: 14 18
+bound: 8.337119108597808
+find mmr max: 6.661531344761164
+len: 14 17
+bound: 8.337119108597808
+find mmr max: 6.661428412600554
+len: 14 16
+bound: 8.337119108597808
+find mmr max: 6.607547930031273
+len: 14 15
+bound: 8.337119108597808
+find mmr max: 6.548975164618518
+len: 14 14
+bound: 8.337119108597808
+find mmr max: 6.528436651804062
+len: 14 13
+bound: 8.337119108597808
+find mmr max: 6.494944833282228
+len: 14 12
+bound: 8.337119108597808
+find mmr max: 6.339852596461136
+len: 14 11
+bound: 8.337119108597808
+find mmr max: 6.31367302463242
+len: 14 10
+bound: 8.337119108597808
+find mmr max: 6.311508421981057
+len: 14 9
+bound: 8.337119108597808
+find mmr max: 6.287207703466297
+len: 14 8
+bound: 8.337119108597808
+find mmr max: 6.1309991547361
+len: 14 7
+bound: 8.337119108597808
+find mmr max: 5.9906865301112004
+len: 14 6
+bound: 8.337119108597808
+find mmr max: 5.9597343779345024
+len: 14 5
+bound: 8.337119108597808
+find mmr max: 5.704925640525626
+len: 14 4
+bound: 8.337119108597808
+find mmr max: 5.617140321656266
+len: 14 3
+bound: 8.337119108597808
+find mmr max: 5.473509573074269
+len: 14 2
+bound: 8.337119108597808
+find mmr max: 5.352013707218936
+len: 14 1
+bound: 8.337119108597808
+find mmr max: 4.685975338834791
+len: 14 0
+14
+acl-P14-2010
+acl-P14-2015
+acl-P00-1056
+acl-P12-2007
+acl-I08-1042
+acl-H93-1001
+acl-C96-2146
+acl-J13-3001
+acl-C10-4001
+acl-W04-1121
+acl-W09-2413
+acl-P07-2020
+acl-P09-1063
+acl-C04-1014
+#Lambda = 3.0 -> as the paper chosen
+bound: 0.0
+find mmr max: 0.9969348779647177
+len: 1 55
+bound: 0.9969348779647177
+find mmr max: 1.9898460122324986
+len: 2 54
+bound: 1.9898460122324986
+find mmr max: 2.7568747683689496
+len: 3 53
+bound: 2.7568747683689496
+find mmr max: 3.5231268411691996
+len: 4 52
+bound: 3.5231268411691996
+find mmr max: 4.272181788812783
+len: 5 51
+bound: 4.272181788812783
+find mmr max: 4.961866287290179
+len: 6 50
+bound: 4.961866287290179
+find mmr max: 5.6233522507641505
+len: 7 49
+bound: 5.6233522507641505
+find mmr max: 6.273459603107733
+len: 8 48
+bound: 6.273459603107733
+find mmr max: 6.861189533943631
+len: 9 47
+bound: 6.861189533943631
+find mmr max: 7.392948035451404
+len: 10 46
+bound: 7.392948035451404
+find mmr max: 7.813629781097096
+len: 11 45
+bound: 7.813629781097096
+find mmr max: 8.044821569502421
+len: 12 44
+bound: 8.044821569502421
+find mmr max: 7.999298729865296
+len: 12 43
+bound: 8.044821569502421
+find mmr max: 7.835767923892957
+len: 12 42
+bound: 8.044821569502421
+find mmr max: 7.769216257202373
+len: 12 41
+bound: 8.044821569502421
+find mmr max: 7.7044402738670685
+len: 12 40
+bound: 8.044821569502421
+find mmr max: 7.4480251533058555
+len: 12 39
+bound: 8.044821569502421
+find mmr max: 7.444045627852708
+len: 12 38
+bound: 8.044821569502421
+find mmr max: 7.14747329467219
+len: 12 37
+bound: 8.044821569502421
+find mmr max: 7.115240412253219
+len: 12 36
+bound: 8.044821569502421
+find mmr max: 7.092790097331001
+len: 12 35
+bound: 8.044821569502421
+find mmr max: 7.087970542526
+len: 12 34
+bound: 8.044821569502421
+find mmr max: 6.778742020275207
+len: 12 33
+bound: 8.044821569502421
+find mmr max: 6.704619167096983
+len: 12 32
+bound: 8.044821569502421
+find mmr max: 6.684824455025188
+len: 12 31
+bound: 8.044821569502421
+find mmr max: 6.645043910043723
+len: 12 30
+bound: 8.044821569502421
+find mmr max: 6.5803115295918655
+len: 12 29
+bound: 8.044821569502421
+find mmr max: 6.568622399157347
+len: 12 28
+bound: 8.044821569502421
+find mmr max: 6.546416234826802
+len: 12 27
+bound: 8.044821569502421
+find mmr max: 6.504110982287752
+len: 12 26
+bound: 8.044821569502421
+find mmr max: 6.468458117655214
+len: 12 25
+bound: 8.044821569502421
+find mmr max: 6.380616674756198
+len: 12 24
+bound: 8.044821569502421
+find mmr max: 6.2911833872103635
+len: 12 23
+bound: 8.044821569502421
+find mmr max: 6.2830384434659265
+len: 12 22
+bound: 8.044821569502421
+find mmr max: 6.280751504934553
+len: 12 21
+bound: 8.044821569502421
+find mmr max: 6.27669560467182
+len: 12 20
+bound: 8.044821569502421
+find mmr max: 6.216716271510226
+len: 12 19
+bound: 8.044821569502421
+find mmr max: 5.989043549416509
+len: 12 18
+bound: 8.044821569502421
+find mmr max: 5.985743021848641
+len: 12 17
+bound: 8.044821569502421
+find mmr max: 5.9185481319224955
+len: 12 16
+bound: 8.044821569502421
+find mmr max: 5.887514177096702
+len: 12 15
+bound: 8.044821569502421
+find mmr max: 5.797075761317677
+len: 12 14
+bound: 8.044821569502421
+find mmr max: 5.616264199806999
+len: 12 13
+bound: 8.044821569502421
+find mmr max: 5.3709905180520705
+len: 12 12
+bound: 8.044821569502421
+find mmr max: 5.281358110519163
+len: 12 11
+bound: 8.044821569502421
+find mmr max: 5.273607159203147
+len: 12 10
+bound: 8.044821569502421
+find mmr max: 5.185008218794064
+len: 12 9
+bound: 8.044821569502421
+find mmr max: 5.09253128538729
+len: 12 8
+bound: 8.044821569502421
+find mmr max: 5.051263203724741
+len: 12 7
+bound: 8.044821569502421
+find mmr max: 4.917433578283684
+len: 12 6
+bound: 8.044821569502421
+find mmr max: 4.834574467790695
+len: 12 5
+bound: 8.044821569502421
+find mmr max: 4.819978725149558
+len: 12 4
+bound: 8.044821569502421
+find mmr max: 4.673578905233287
+len: 12 3
+bound: 8.044821569502421
+find mmr max: 4.540786820574716
+len: 12 2
+bound: 8.044821569502421
+find mmr max: 4.395049750185654
+len: 12 1
+bound: 8.044821569502421
+find mmr max: 3.666706514666358
+len: 12 0
+12
+acl-P14-2010
+acl-P14-2015
+acl-P00-1056
+acl-P12-2007
+acl-I08-1042
+acl-H93-1001
+acl-C96-2146
+acl-J13-3001
+acl-C10-4001
+acl-W04-1121
+acl-W09-2413
+acl-P07-2020
