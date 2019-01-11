@@ -165,3 +165,4 @@ class Submodular:
                     fpenalty+= SimilarityScores(doc1['title'], doc2['title']).getScore()
         return fcover - Lambda * fpenalty
 
+
