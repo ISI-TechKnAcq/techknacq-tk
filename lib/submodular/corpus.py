@@ -10,5 +10,4 @@ class Corpus:
                 print(filename)
                 print(len(text))
 
-
 corpus = Corpus()
